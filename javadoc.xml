@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: javadoc.xml,v 1.1 2006/01/09 12:07:04 Yuki Exp $ -->
+<project default="javadoc">
+	
+	<property name="version" value="3.0b3"/>
+	
+	<property environment="env"/>
+	
+	<property name="bin" value="bin"/>
+	<property name="lib" value="lib"/>
+	<property name="runtime" value="runtime"/>
+	<property name="compiler" value="compiler"/>
+	<property name="asm" value="asm-2.2"/>
+	
+	<property name="javadoc" value="api"/>
+	
+	<target name="javadoc">
+		
+		<mkdir dir="${javadoc}"/>
+		
+		<javadoc access="private" author="true" destdir="${javadoc}"
+			doctitle="HSPLet ソースドキュメント" nodeprecated="false" nodeprecatedlist="false"
+			noindex="false" nonavbar="false" notree="false"
+			packagenames="hsplet,hsplet.*" charset="Windows-31J"
+			docencoding="Shift_JIS" windowtitle="HSPLet ソースドキュメント"
+			overview="${runtime}/overview.html" source="1.5" splitindex="true"
+			use="true" version="true">
+			<sourcepath location="${runtime}"/>
+			<sourcepath location="${compiler}"/>
+			<classpath>
+				<path location="${lib}/${asm}.jar"/>
+			</classpath>
+			<link href="http://java.sun.com/j2se/1.5.0/ja/docs/ja/api/"/>
+			<link href="http://asm.objectweb.org/current/doc/javadoc/user/" />
+			<group title="ランタイム">
+				<package name="hsplet"/>
+				<package name="hsplet.function"/>
+				<package name="hsplet.gui"/>
+				<package name="hsplet.media"/>
+				<package name="hsplet.util"/>
+				<package name="hsplet.variable"/>
+			</group>
+			<group title="コンパイラ" packages="hsplet.compiler"/>
+		</javadoc>
+		
+	</target>
+</project>

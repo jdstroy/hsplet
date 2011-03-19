@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<!--
+ $Id: library-user32.xml,v 1.1 2006/02/11 17:19:30 Yuki Exp $
+-->
+<library name="user32">
+	<summary>
+		<p>user32.dll を使用した Windows API です。
+		</p>
+	</summary>
+	<category name="メニュー操作命令">
+		<function name="CreateMenu" summary="メニュー作成" implement="yes" />
+		<function name="CreatePopupMenu" summary="ポップアップメニュー作成" implement="yes" />
+		<function name="AppendMenuA" summary="メニュー項目登録" implement="partial" >
+			<remarks>
+				<p>グレイ表示しない無効項目は作成できません。<br />
+					オーナードロー・ビットマップは使用できません。
+				</p>
+			</remarks>
+		</function>
+		<function name="SetMenu" summary="ウィンドウにメニューを設定" implement="yes" />
+		<function name="DrawMenuBar" summary="メニューバー再描画" implement="yes" >
+			<remarks>
+				<p>何も行いません。</p>
+			</remarks>
+		</function>
+		<function name="DestroyMenu" summary="メニュー削除" implement="partial" >
+			<remarks>
+				<p>現在のバージョンでは対象のメニューだけが削除されます、サブメニューは削除されないので注意してください。</p>
+			</remarks>
+		</function>
+	</category>
+</library>

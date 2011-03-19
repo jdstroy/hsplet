@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<!--
+ $Id: library-hsp.xml,v 1.9 2006/02/27 15:52:04 Yuki Exp $
+-->
+<library name="HSP 基本命令">
+	<summary>
+		<p>HSP 本体だけで使用できる基本命令です。 </p>
+	</summary>
+	<category name="プリプロセッサ命令">
+		<function name="#addition" summary="別ファイルを結合" implement="yes"/>
+		<function name="#cfunc" summary="外部DLL呼び出し関数登録" implement="note">
+			<param name="name">HSP 内で使用するこの関数の名前</param>
+			<param name="funcName">拡張ライブラリで定義されたこの関数の名前</param>
+			<param name="types...">関数のタイプ</param>
+			<remarks>
+				<p>引数の型は無視され、実際の関数の引数が優先されます。</p>
+				<p> 関数と同名のメソッドが呼ばれることになります。 </p>
+				<p>呼び出されるメソッドの引数は
+					int、double、String、ByteString(Shift_JIS文字列)、Operand(変数)、Context(実行コンテキスト)のいずれかでなければいけません。
+					<br/> Operand を引数にとったときは、必ずその次に int で配列インデックスを受け取らなければいけません。
+					（配列ではないときは 0 が渡されます。）
+					<br/> Context を引数にとったときは HSPLet によって自動的に現在実行されているコンテキストが渡されます。
+					<br/> </p>
+				<p>メソッドの戻り値は void、int、double、String、ByteString、Operand
+					のいずれかでなければいけません。 </p>
+				<p>呼び出されるメソッドが非 static のときは、クラスはインスタンス化できなければいけません。 public
+					で引数の無いコンストラクタか、Context をひとつだけ受け取るコンストラクタが必要です。 </p>
+			</remarks>
+		</function>
+		<function name="#cmd" summary="拡張キーワードの登録" implement="no"/>
+		<function name="#comfunc" summary="外部COM呼び出し命令登録" implement="no"/>
+		<function name="#const" summary="マクロ名の定数定義" implement="yes"/>
+		<function name="#defcfunc" summary="新規関数を登録する" implement="partial">
+			<param name="name">HSP 内で使用するこの関数の名前</param>
+			<param name="params...">引数リスト</param>
+			<remarks> 引数の型は str/int/double/var/array のみサポートされています。 local などは指定できません。
+				</remarks>
+		</function>
+		<function name="#deffunc" summary="新規命令を登録する" implement="partial">
+			<param name="name">HSP 内で使用するこの関数の名前</param>
+			<param name="params...">引数リスト</param>
+			<remarks> 引数の型は str/int/double/var/array のみサポートされています。 local などは指定できません。
+				</remarks>
+		</function>
+		<function name="#define" summary="新規マクロを登録する" implement="yes"/>
+		<function name="#else" summary="コンパイル制御を反転" implement="yes"/>
+		<function name="#endif" summary="コンパイル制御ブロック終了" implement="yes"/>
+		<function name="#enum" summary="マクロ名の定数を列挙" implement="yes"/>
+		<function name="#epack" summary="PACKFILE追加ファイル指定" implement="no"/>
+		<function name="#func" summary="外部DLL呼び出し命令登録" implement="note">
+			<param name="name">HSP 内で使用するこの関数の名前</param>
+			<param name="funcName">拡張ライブラリで定義されたこの関数の名前</param>
+			<param name="types...">関数のタイプ</param>
+			<remarks>
+				<p>#cfunc と同様です。</p>
+			</remarks>
+		</function>
+		<function name="#global" summary="モジュールの終了" implement="yes"/>
+		<function name="#if" summary="数値からコンパイル制御" implement="yes"/>
+		<function name="#ifdef" summary="マクロ定義からコンパイル制御" implement="yes"/>
+		<function name="#ifndef" summary="マクロ定義からコンパイル制御" implement="yes"/>
+		<function name="#include" summary="別ファイルを結合" implement="yes"/>
+		<function name="#modfunc" summary="新規命令を割り当てる" implement="no"/>
+		<function name="#modinit" summary="モジュール初期化処理の登録" implement="no"/>
+		<function name="#modterm" summary="モジュール解放処理の登録" implement="no"/>
+		<function name="#module" summary="モジュールの開始" implement="yes"/>
+		<function name="#pack" summary="PACKFILE追加ファイル指定" implement="no"/>
+		<function name="#packopt" summary="自動作成オプション指定" implement="no"/>
+		<function name="#regcmd" summary="拡張プラグインの登録" implement="no"/>
+		<function name="#runtime" summary="ランタイムファイルの設定" implement="no"/>
+		<function name="#undef" summary="マクロ名の取り消し" implement="yes"/>
+		<function name="#usecom" summary="外部COMの指定" implement="no"/>
+		<function name="#uselib" summary="外部DLLの指定" implement="note">
+			<param name="name">使用するライブラリの名前</param>
+			<remarks>
+				<p>指定された DLL と同名のクラスが読み込まれます。 読み込まれるクラス名は、末尾から .dll または .hpi
+					を除いたものになります。 たとえば、winmm.dll を使用すると、 winmm クラスが読み込まれます。 </p>
+				<p> 独自の拡張ライブラリクラスを作成したときは、JAR ファイルを lib フォルダの中においてください、
+					コンパイラが自動的に認識してコンパイル時にチェックがつけられるようになります。 </p>
+			</remarks>
+		</function>
+		
+	</category>
+	<category name="特殊代入命令">
+		<function name="dup" summary="変数のクローンを作成" implement="yes"/>
+		<function name="dupptr" summary="ポインタからクローン変数を作成" implement="no"/>
+		<function name="mref" summary="特殊なメモリを変数に割り当てる" implement="partial">
+			<param name="variable">割当先の変数</param>
+			<param name="memoryID" default="0">割り当てるメモリのID</param>
+			<remarks>
+				<p>stat/refstr のみ使用可能です。 関数の引数には使用できませんので、3.0 形式の受け取り方をしてください。 </p>
+			</remarks>
+		</function>
+	</category>
+	<category name="プログラム制御命令">
+		<function name="await" summary="一定時間待つ(ACTIVE)" implement="yes"/>
+		<function name="break" summary="ループから抜ける" implement="yes"/>
+		<function name="continue" summary="ループをやり直す" implement="yes"/>
+		<function name="end" summary="プログラム終了" implement="yes"/>
+		<function name="exec" summary="Windowsのファイルを実行する" implement="note">
+			<param name="fileName">表示するファイル名</param>
+			<param name="mode" default="0">無視されます</param>
+			<param name="target" default="_blank">表示するフレーム名</param>
+			<remarks>
+				<p>HTML ページを表示する目的で使用されます。 第3引数の意味がオリジナルの HSP
+					とは違うため、この命令を直接使用することはお勧めしません。 代わりに letutil.hsp 内に定義されている
+					showPage fileName, target 命令を使用することをお勧めします。 </p>
+			</remarks>
+		</function>
+		<function name="exgoto" summary="指定ラベルに条件ジャンプ" implement="yes"/>
+		<function name="foreach" summary="変数の要素数だけ繰り返す" implement="yes"/>
+		<function name="gosub" summary="指定ラベルにサブルーチンジャンプ" implement="yes"/>
+		<function name="goto" summary="指定ラベルにジャンプ" implement="yes"/>
+		<function name="if" summary="条件を満たしていればその行の命令を実行" implement="yes"/>
+		<function name="loop" summary="ループの始まりに戻る" implement="yes"/>
+		<function name="on" summary="数値による分岐" implement="yes"/>
+		<function name="onclick" summary="クリック割り込み実行指定" implement="yes"/>
+		<function name="oncmd" summary="Windowsメッセージ割り込み実行指定" implement="yes"/>
+		<function name="onerror" summary="エラー発生時にジャンプ" implement="yes"/>
+		<function name="onexit" summary="終了時にジャンプ" implement="no"/>
+		<function name="onkey" summary="キー割り込み実行指定" implement="yes"/>
+		<function name="repeat" summary="ループの始まりの場所を示す" implement="yes"/>
+		<function name="return" summary="サブルーチンから復帰" implement="yes"/>
+		<function name="run" summary="指定したファイルに制御を移す" implement="yes"/>
+		<function name="stop" summary="プログラム中断" implement="yes"/>
+		<function name="wait" summary="一定時間待つ" implement="yes"/>
+	</category>
+	<category name="プログラム制御マクロ">
+		<function name="_break" summary="マクロループを脱出する" implement="yes"/>
+		<function name="_continue" summary="マクロループをやり直す" implement="yes"/>
+		<function name="case" summary="デフォルト比較指定" implement="yes"/>
+		<function name="default" summary="デフォルト比較指定" implement="yes"/>
+		<function name="do" summary="条件付き繰り返し開始" implement="yes"/>
+		<function name="for" summary="指定回数繰り返し開始" implement="yes"/>
+		<function name="next" summary="指定回数繰り返し終了" implement="yes"/>
+		<function name="swbreak" summary="比較実行脱出指定" implement="yes"/>
+		<function name="swend" summary="比較ブロック終了" implement="yes"/>
+		<function name="switch" summary="比較ブロック開始" implement="yes"/>
+		<function name="until" summary="条件付き繰り返し終了" implement="yes"/>
+		<function name="wend" summary="条件付き繰り返し終了" implement="yes"/>
+		<function name="while" summary="条件付き繰り返し開始" implement="yes"/>
+		
+	</category>
+	<category name="基本入出力制御命令">
+		<function name="getkey" summary="キー入力チェック" implement="yes"/>
+		<function name="mcall" summary="メソッドの呼び出し" implement="no"/>
+		<function name="mouse" summary="マウスカーソル座標設定" implement="no"/>
+		<function name="randomize" summary="乱数発生の初期化" implement="yes"/>
+		<function name="stick" summary="キー入力情報取得" implement="yes">
+			
+		</function>
+	</category>
+	
+	<category name="オブジェクト制御命令">
+		<function name="button" summary="ボタン表示" implement="yes"/>
+		<function name="chkbox" summary="チェックボックス表示" implement="yes"/>
+		<function name="clrobj" summary="オブジェクトをクリア" implement="yes"/>
+		<function name="combox" summary="コンボボックス表示" implement="yes"/>
+		<function name="input" summary="入力ボックス表示" implement="yes"/>
+		<function name="listbox" summary="リストボックス表示" implement="yes"/>
+		<function name="mesbox" summary="メッセージボックス表示" implement="yes"/>
+		<function name="objmode" summary="オブジェクトモード設定" implement="yes"/>
+		<function name="objprm" summary="オブジェクトの内容を変更" implement="yes"/>
+		<function name="objsel" summary="オブジェクトに入力フォーカスを設定" implement="yes"/>
+		<function name="objsend" summary="オブジェクトにメッセージを送る" implement="no"/>
+		<function name="objsize" summary="オブジェクトサイズ設定" implement="yes"/>
+	</category>
+	<category name="画面制御命令">
+		<function name="axobj" summary="ActiveXコントロールの配置" implement="no"/>
+		<function name="bgscr" summary="ウィンドウIDを初期化" implement="partial">
+			<param name="windowID">初期化するウィンドウ ID</param>
+			<param name="bufferWidth" default="640">初期化するバッファの横幅</param>
+			<param name="bufferHeight" default="480">初期化するバッファの高さ</param>
+			<param name="mode" default="0">ウィンドウ初期化モード</param>
+			<param name="left">ウィンドウ左端</param>
+			<param name="top">ウィンドウ上端</param>
+			<param name="visibleWidth" default="bufferWidth">表示される横幅</param>
+			<param name="visibleHeight" default="bufferHeight">表示される高さ</param>
+			<remarks>
+				<p>パレットモードは使用できません。</p>
+			</remarks>
+		</function>
+		<function name="bmpsave" summary="画面イメージセーブ" implement="no"/>
+		<function name="boxf" summary="矩形を塗りつぶす" implement="yes"/>
+		<function name="buffer" summary="ウィンドウIDを初期化" implement="partial">
+			<param name="windowID">初期化するウィンドウ ID</param>
+			<param name="bufferWidth" default="0">初期化するバッファの横幅</param>
+			<param name="bufferHeight" default="0">初期化するバッファの高さ</param>
+			<param name="mode" default="0">ウィンドウ初期化モード</param>
+			<remarks>
+				<p>パレットモードは使用できません。</p>
+			</remarks>
+		</function>
+		<function name="chgdisp" summary="画像解像度を変更する" implement="no"/>
+		<function name="circle" summary="円を描画する" implement="yes"/>
+		<function name="cls" summary="画面クリア" implement="yes"/>
+		<function name="color" summary="カラー設定" implement="yes"/>
+		<function name="dialog" summary="ダイアログを開く" implement="yes"/>
+		<function name="font" summary="フォント設定" implement="note">
+			<param name="family">フォントファミリ</param>
+			<param name="size">フォントサイズ</param>
+			<param name="style">フォントスタイル</param>
+			<remarks>
+				<p>アンチエリアス、下線、打ち消し線は mes 命令にのみ使用できます（オブジェクトのフォントには指定できません。）</p>
+				<p>環境依存を減らすために以下の特殊な定義済みフォント名が使用できます。</p>
+				<dl>
+					<dt>Serif</dt>
+					<dd>ＭＳ Ｐ明朝のようなひげつき書体。</dd>
+					<dt>SansSerif</dt>
+					<dd>ＭＳ Ｐゴシックのようなひげなし書体。</dd>
+					<dt>Monospaced</dt>
+					<dd>ＭＳ ゴシックのような当幅フォント</dd>
+					<dt>Dialog</dt>
+					<dd>メッセージボックスに使用されるフォント</dd>
+					<dt>DialogInput</dt>
+					<dd>入力ボックスに使用されるフォント</dd>
+				</dl>
+				<p> しかしこれらのフォントはオリジナル HSP では使用できませんので、直接使用することはお勧めしません。 代わりに
+					letutil.hsp 内に定義されている fontSerif 等の汎用的なフォント名を使用することをお勧めします。 </p>
+			</remarks>
+		</function>
+		<function name="gcopy" summary="画面コピー" implement="yes"/>
+		<function name="gmode" summary="画面コピーモード設定" implement="partial">
+			<param name="mode">コピーモード</param>
+			<param name="width">コピー幅</param>
+			<param name="height">コピー高さ</param>
+			<param name="alpha">アルファ値</param>
+			<remarks>
+				<p>モード7はサポートしていません。</p>
+			</remarks>
+		</function>
+		<function name="grect" summary="回転する矩形で塗りつぶす" implement="yes"/>
+		<function name="groll" summary="ウィンドウの描画基点を設定" implement="yes"/>
+		<function name="grotate" summary="矩形画像を回転してコピー" implement="yes"/>
+		<function name="gsel" summary="描画先指定、ウィンドウ最前面、非表示設定" implement="partial">
+			<param name="windowID">描画先ウィンドウID</param>
+			<param name="mode">アクティブ化モード</param>
+			<remarks>
+				<p>モード2はサポートされていません、またモード1で必ずアクティブになるとは限りません。</p>
+			</remarks>
+		</function>
+		<function name="gsquare" summary="任意の四角形画像をコピー" implement="yes"/>
+		<function name="gzoom" summary="変倍して画面コピー" implement="yes"/>
+		<function name="hsvcolor" summary="HSV形式でカラーを設定する" implement="yes"/>
+		<function name="line" summary="直線を描画" implement="yes"/>
+		<function name="mes" summary="メッセージ表示" implement="yes"/>
+		<function name="palcolor" summary="描画パレット設定" implement="no"/>
+		<function name="palette" summary="パレット設定" implement="no"/>
+		<function name="pget" summary="1dotの点を取得" implement="yes"/>
+		<function name="picload" summary="画像ファイルをロード" implement="partial">
+			<param name="fileName">画像ファイル名</param>
+			<param name="mode">読み込みモード</param>
+			<remarks>
+				<p>BMP、JPEG、GIF、PNGの読み込みをサポートしています。 ICOの読み込みはサポートしていません。 </p>
+			</remarks>
+		</function>
+		
+		<function name="pos" summary="カレントポジション設定" implement="yes"/>
+		<function name="print" summary="メッセージ表示" implement="yes"/>
+		<function name="pset" summary="1dotの点を表示" implement="yes"/>
+		<function name="redraw" summary="再描画の設定" implement="yes"/>
+		<function name="screen" summary="ウィンドウIDを初期化" implement="partial">
+			<param name="windowID">初期化するウィンドウ ID</param>
+			<param name="bufferWidth" default="640">初期化するバッファの横幅</param>
+			<param name="bufferHeight" default="480">初期化するバッファの高さ</param>
+			<param name="mode" default="0">ウィンドウ初期化モード</param>
+			<param name="left">ウィンドウ左端</param>
+			<param name="top">ウィンドウ上端</param>
+			<param name="visibleWidth" default="bufferWidth">表示される横幅</param>
+			<param name="visibleHeight" default="bufferHeight">表示される高さ</param>
+			<remarks>
+				<p>パレットモード・ツールウィンドウ・深い淵のあるウィンドウは使用できません。</p>
+			</remarks>
+		</function>
+		<function name="sendmsg" summary="ウィンドウメッセージの送信" implement="no"/>
+		<function name="syscolor" summary="システムカラーを設定する" implement="yes"/>
+		<function name="sysfont" summary="システムフォント選択" implement="yes"/>
+		<function name="title" summary="タイトルバー設定" implement="note">
+			<param name="text">タイトルに設定するテキスト</param>
+			<remarks>
+				<p>アプレットの場合はステータスバーのテキストが変化します。</p>
+			</remarks>
+		</function>
+		<function name="width" summary="ウィンドウサイズ設定" implement="yes"/>
+		<function name="winobj" summary="ウィンドウオブジェクトの配置" implement="no"/>
+		
+	</category>
+	<category name="文字列操作命令">
+		<function name="cnvstow" summary="通常文字列をunicodeに変換" implement="no"/>
+		<function name="getstr" summary="バッファから文字列読み出し" implement="yes"/>
+		<function name="noteadd" summary="指定行の追加・変更" implement="yes"/>
+		<function name="notedel" summary="行の削除" implement="yes"/>
+		<function name="noteget" summary="指定行を読み込み" implement="yes"/>
+		<function name="noteload" summary="対象バッファ読み込み" implement="yes"/>
+		<function name="notesave" summary="対象バッファ保存" implement="no"/>
+		<function name="notesel" summary="対象バッファ指定" implement="yes"/>
+		<function name="noteunsel" summary="対象バッファの復帰" implement="yes"/>
+	</category>
+	<category name="メモリ管理命令">
+		<function name="alloc" summary="バッファを確保" implement="yes"/>
+		<function name="comres" summary="メソッド返値代入変数を設定する" implement="no"/>
+		<function name="ddim" summary="実数型配列変数を作成" implement="yes"/>
+		<function name="delmod" summary="モジュール型変数の要素削除" implement="no"/>
+		<function name="dim" summary="配列変数を作成" implement="yes"/>
+		<function name="dimtype" summary="指定タイプの配列変数を作成" implement="yes"/>
+		<function name="lpoke" summary="バッファに4byte書き込み" implement="yes"/>
+		<function name="memcpy" summary="メモリブロックのコピー" implement="yes"/>
+		<function name="memexpand" summary="メモリブロックの再確保" implement="no"/>
+		<function name="memset" summary="メモリブロックのクリア" implement="yes"/>
+		<function name="newmod" summary="モジュール型変数の作成" implement="no"/>
+		<function name="poke" summary="バッファに1byte書き込み" implement="yes"/>
+		<function name="sdim" summary="文字列型配列変数を作成" implement="yes"/>
+		<function name="setmod" summary="モジュール型変数の再設定" implement="no"/>
+		<function name="wpoke" summary="バッファに2byte書き込み" implement="yes"/>
+	</category>
+	<category name="マルチメディア制御命令">
+		<function name="mci" summary="MCIにコマンドを送る" implement="partial">
+			<param name="command">MCIコマンド文字列</param>
+			<remarks>
+				<p>以下の命令のみサポートされています。</p>
+				<ul>
+					<li>open
+						<i>file</i> alias
+						<i>name</i></li>
+					<li>play
+						<i>name</i></li>
+					<li>seek
+						<i>name</i> to
+						<i>position</i></li>
+					<li>status
+						<i>name</i> position</li>
+					<li>stop
+						<i>name</i></li>
+					<li>close
+						<i>name</i></li>
+				</ul>
+				<p>WAV/AIFF/AU/MIDI/MP3 をサポートしています。 MP3 の再生には付属の jl1.0.jar が必要です。</p>
+			</remarks>
+		</function>
+		<function name="mmload" summary="サウンドファイル読み込み" implement="partial">
+			<param name="fileName">読み込むファイル名</param>
+			<param name="id">読み込んだサウンドにつけるID</param>
+			<param name="mode">再生モード</param>
+			<remarks>
+				<p>WAV/AIFF/AU/MIDI/MP3 をサポートしています。 MP3 の再生には付属の jl1.0.jar が必要です。</p>
+			</remarks>
+		</function>
+		<function name="mmplay" summary="サウンド再生" implement="yes"/>
+		<function name="mmstop" summary="サウンド停止" implement="yes"/>
+		
+	</category>
+	<category name="ファイル操作命令">
+		<function name="bcopy" summary="ファイルのコピー" implement="no"/>
+		<function name="bload" summary="バッファにファイルをロード" implement="yes"/>
+		<function name="bsave" summary="バッファをファイルにセーブ" implement="no"/>
+		<function name="chdir" summary="ディレクトリ移動" implement="partial">
+			<param name="dir">移動先ディレクトリ</param>
+			<remarks>
+				<p>移動先のディレクトリが存在しなくてもエラーになりません。</p>
+			</remarks>
+		</function>
+		<function name="chdpm" summary="DPMファイル設定" implement="no"/>
+		<function name="delete" summary="ファイル削除" implement="no"/>
+		<function name="dirlist" summary="ディレクトリ一覧を取得" implement="no"/>
+		<function name="exist" summary="ファイルのサイズ取得" implement="yes"/>
+		<function name="memfile" summary="メモリストリーム設定" implement="yes"/>
+		<function name="mkdir" summary="ディレクトリ作成" implement="no"/>
+		
+	</category>
+	
+	<category name="HSPシステム制御命令">
+		<function name="assert" summary="デバッグウィンドウ表示" implement="no"/>
+		<function name="logmes" summary="デバッグメッセージ送信" implement="yes">
+			<param name="text">出力テキスト</param>
+			<remarks>
+				<p> メッセージは Java コンソールに出力されます。 </p>
+			</remarks>
+		</function>
+	</category>
+	
+	<category name="基本関数">
+		<function name="int" summary="" implement="yes"/>
+		<function name="rnd" summary="" implement="yes"/>
+		<function name="strlen" summary="" implement="yes"/>
+		<function name="length" summary="" implement="yes"/>
+		<function name="length2" summary="" implement="yes"/>
+		<function name="length3" summary="" implement="yes"/>
+		<function name="length4" summary="" implement="yes"/>
+		<function name="vartype" summary="" implement="yes"/>
+		<function name="gettime" summary="" implement="yes"/>
+		<function name="peek" summary="" implement="yes"/>
+		<function name="wpeek" summary="" implement="yes"/>
+		<function name="lpeek" summary="" implement="yes"/>
+		<function name="varptr" summary="" implement="no"/>
+		<function name="varuse" summary="" implement="no"/>
+		<function name="noteinfo" summary="" implement="yes"/>
+		<function name="instr" summary="" implement="yes"/>
+		<function name="abs" summary="" implement="yes"/>
+		<function name="limit" summary="" implement="yes"/>
+	</category>
+	
+	<category name="文字列関数">
+		<function name="str" summary="" implement="yes"/>
+		<function name="strmid" summary="" implement="yes"/>
+		<function name="strf" summary="" implement="yes"/>
+		<function name="getpath" summary="" implement="yes"/>
+	</category>
+	
+	<category name="数学関数">
+		<function name="sin" summary="" implement="yes"/>
+		<function name="cos" summary="" implement="yes"/>
+		<function name="tan" summary="" implement="yes"/>
+		<function name="atan" summary="" implement="yes"/>
+		<function name="sqrt" summary="" implement="yes"/>
+		<function name="double_" summary="" implement="yes"/>
+		<function name="absf" summary="" implement="yes"/>
+		<function name="expf" summary="" implement="yes"/>
+		<function name="logf" summary="" implement="yes"/>
+		<function name="limitf" summary="" implement="yes"/>
+	</category>
+	
+	<category name="GUI関数">
+		<function name="mousex" summary="" implement="yes"/>
+		<function name="mousey" summary="" implement="yes"/>
+		<function name="mousew" summary="" implement="no"/>
+		<function name="hwnd" summary="" implement="note">
+			<remarls>
+				<p>このシステム変数は現在のウィンドウIDを返します。
+					プラグインなどで使用するときはウィンドウIDからウィンドウオブジェクトにアクセスしてください。 </p>
+				<p> 将来的に動作が変更になる可能性があります。 </p>
+			</remarls>
+		</function>
+		<function name="hinstance" summary="" implement="no"/>
+		<function name="hdc" summary="" implement="note">
+			<remarls>
+				<p>このシステム変数は現在のウィンドウIDを返します。
+					プラグインなどで使用するときはウィンドウIDからグラフィックオブジェクトにアクセスしてください。 </p>
+				<p> 将来的に動作が変更になる可能性があります。 </p>
+			</remarls>
+		</function>
+		<function name="ginfo" summary="" implement="partial">
+			<param name="type">情報タイプ</param>
+			<remarks>
+				<p>タイプ 19、画面のカラーモードは常に 0 を返します。 </p>
+				<p>タイプ 24、oncmd の割り込みウィンドウ ID はサポートされていません。 </p>
+			</remarks>
+		</function>
+		<function name="objinfo" summary="" implement="no"/>
+		<function name="dirinfo" summary="" implement="yes"/>
+		<function name="sysinfo" summary="システム情報の取得" implement="partial">
+			<param name="type">情報タイプ</param>
+			<remarks>
+				<p>CPUコードは文字列で返ります。 </p>
+				<p>物理メモリサイズは Java ランタイムが使用できるメモリ量を返します。 この値は実行中にも変動する可能性があります。</p>
+				<p> スワップファイルサイズは 0 とします。 </p>
+			</remarks>
+		</function>
+	</category>
+	
+</library>

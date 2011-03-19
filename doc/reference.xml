@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<!--
+ $Id: reference.xml,v 1.5 2006/02/11 17:39:31 Yuki Exp $
+-->
+<reference product-name="HSPLet" version="1.6">
+	<page name="README" href="../readme.txt" />
+	<page name="更新履歴" href="../history.txt" />
+	<page name="サンプル" href="sample.html" />
+	<page name="HSPLet の導入" href="introduction.html" />
+	<page name="コンパイラの使い方" href="compiler.html" />
+	<page name="よくある質問(FAQ)" href="faq.html" />
+	<page name="ギャラリ" href="http://www.group-finity.com/LetGallery/" />
+	<page name="最新版のダウンロード" href="http://www.group-finity.com/HSP/HSPLet/" />
+	<library href="library-hsp.xml" />
+	<library href="library-hspsock.xml" />
+	<library href="library-hspsockA.xml" />
+	<library href="library-hspini.xml" />
+	<library href="library-winmm.xml" />
+	<library href="library-user32.xml" />
+</reference>

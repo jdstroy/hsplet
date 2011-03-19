@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<!--
+ $Id: library-hspsock.xml,v 1.1 2006/01/22 16:00:57 Yuki Exp $
+-->
+<library name="hspsock">
+	<summary>
+		<p>hspsock プラグインで使用できる拡張命令です。
+			hspsockA を実装した後に手を加えて hspsock 互換に修正したので、hspsockA の方が信頼性は高いです。
+		</p>
+	</summary>
+	<category name="ソケット通信命令">
+		<function name="sockopen" summary="ソケットを初期化して接続" implement="yes"/>
+		<function name="sockclose" summary="ソケットを切断" implement="yes"/>
+		<function name="sockput" summary="データを送信" implement="yes"/>
+		<function name="sockputc" summary="データを1byte送信" implement="yes"/>
+		<function name="sockputb" summary="バッファのデータを送信" implement="yes"/>
+		<function name="sockget" summary="データを受信" implement="yes"/>
+		<function name="sockgetc" summary="データを1byte受信" implement="yes"/>
+		<function name="sockgetb" summary="バッファにデータを受信" implement="yes"/>
+		<function name="sockmake" summary="ソケットをサーバーとして初期化" implement="no"/>
+		<function name="sockwait" summary="クライアントの着信を待つ" implement="no"/>
+		<function name="sockcheck" summary="データ到着を調べる" implement="yes"/>
+		<function name="ipget" summary="ホストのIPアドレスを取得" implement="yes"/>
+	
+	</category>
+</library>

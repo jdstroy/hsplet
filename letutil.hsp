@@ -1,0 +1,32 @@
+;
+; HSPLet 3.0 Utility macros and functions
+;
+#ifndef __letutil__
+#define __letutil__
+
+	onHSPLet = (hspstat&0x80000000)!=0
+	
+	if onHSPLet {
+		fontSerif = "Serif"
+		fontSansSerif = "SansSerif"
+		fontMonospaced = "Monospaced"
+	} else {
+		fontSerif = "‚l‚r ‚o–¾’©"
+		fontSansSerif = "‚l‚r ‚oƒSƒVƒbƒN"
+		fontMonospaced = "‚l‚r ƒSƒVƒbƒN"
+	}
+
+#module "letutil"
+
+#deffunc showPage str name, str target
+
+	if onHSPLet@ {
+		exec name, 16, target
+	} else {
+		exec name, 16
+	}
+return
+
+#global
+
+#endif

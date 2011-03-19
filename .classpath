@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="runtime"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.4.2_10"/>
+	<classpathentry kind="src" path="compiler"/>
+	<classpathentry sourcepath="D:/asm-2.2/src" kind="lib" path="lib/asm-2.2.jar">
+		<attributes>
+			<attribute value="file:/D:/asm-2.2/doc/javadoc/user/" name="javadoc_location"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="D:/JLayer1.0/src" kind="lib" path="lib/jl1.0.jar">
+		<attributes>
+			<attribute value="file:/D:/JLayer1.0/doc/" name="javadoc_location"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="ext"/>
+	<classpathentry kind="lib" path="lib/hb16.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/j2re1.4.2_10/lib/plugin.jar"/>
+	<classpathentry kind="lib" path="lib/BrowserLauncher2-10rc4.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
