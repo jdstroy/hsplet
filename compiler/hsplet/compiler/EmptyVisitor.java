@@ -122,4 +122,9 @@ public class EmptyVisitor implements MethodVisitor, Serializable {
 
   }
 
+    /*@Override*/
+    public void visitFrame(int type, int nLocal, Object[] local, int nStack, Object[] stack) {
+
+    }
+
 }

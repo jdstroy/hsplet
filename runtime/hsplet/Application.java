@@ -118,7 +118,7 @@ public final class Application extends JFrame implements AppletStub,
 
 	private final Map parameters = new HashMap();
 
-	private final Map streams = Collections.synchronizedMap(new HashMap());
+	private final Map<String,InputStream> streams = Collections.synchronizedMap(new HashMap<String,InputStream>());
 
 	private final hsplet.Applet applet;
 
@@ -215,9 +215,9 @@ public final class Application extends JFrame implements AppletStub,
 		return Applet.newAudioClip(url);
 	}
 
-	public Enumeration getApplets() {
+	public Enumeration<Applet> getApplets() {
 
-		final Vector v = new Vector();
+		final Vector<Applet> v = new Vector<Applet>();
 		v.add(applet);
 
 		return v.elements();
@@ -278,10 +278,10 @@ public final class Application extends JFrame implements AppletStub,
 
 	public InputStream getStream(final String key) {
 
-		return (InputStream) streams.get(key);
+		return streams.get(key);
 	}
 
-	public Iterator getStreamKeys() {
+	public Iterator<String> getStreamKeys() {
 
 		return streams.keySet().iterator();
 	}

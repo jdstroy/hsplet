@@ -15,87 +15,84 @@ import java.util.Set;
 
 public class LibraryLoader extends ClassLoader {
 
-	Set usedLibs = new HashSet();
+    Set<String> usedLibs = new HashSet<String>();
+    Map<String, Class> loadedClasses = new HashMap<String, Class>();
+    String[] optlibs;
+    URLClassLoader[] optloaders;
 
-	Map loadedClasses = new HashMap();
+    public LibraryLoader(String[] libs, String[] libdirs, ClassLoader parent) throws MalformedURLException {
+        super(new URLClassLoader(toURLs(libs), parent));
 
-	String[] optlibs;
+        usedLibs.addAll(Arrays.asList(libs));
 
-	URLClassLoader[] optloaders;
+        this.optlibs = collectLibs(libdirs);
 
-	public LibraryLoader(String[] libs, String[] libdirs, ClassLoader parent) throws MalformedURLException {
-		super(new URLClassLoader(toURLs(libs), parent));
+        optloaders = new URLClassLoader[optlibs.length];
+        for (int i = 0; i < optlibs.length; ++i) {
+            optloaders[i] = new URLClassLoader(new URL[]{new File(optlibs[i]).getAbsoluteFile().toURL()}, parent);
+        }
+    }
 
-		usedLibs.addAll(Arrays.asList(libs));
+    public Set<String> getUsedLibs() {
+        return usedLibs;
+    }
 
-		this.optlibs = collectLibs(libdirs);
+    protected Class findClass(String name) throws ClassNotFoundException {
 
-		optloaders = new URLClassLoader[optlibs.length];
-		for (int i = 0; i < optlibs.length; ++i) {
-			optloaders[i] = new URLClassLoader(new URL[] { new File(optlibs[i]).getAbsoluteFile().toURL() }, parent);
-		}
-	}
+        Class existing = (Class) loadedClasses.get(name);
+        if (existing != null) {
+            return existing;
+        }
 
-	public Set getUsedLibs() {
-		return usedLibs;
-	}
+        for (int i = 0; i < optloaders.length; ++i) {
+            try {
 
-	protected Class findClass(String name) throws ClassNotFoundException {
+                Class loaded = optloaders[i].loadClass(name);
 
-		Class existing = (Class) loadedClasses.get(name);
-		if (existing != null) {
-			return existing;
-		}
+                usedLibs.add(optlibs[i]);
+                loadedClasses.put(name, loaded);
 
-		for (int i = 0; i < optloaders.length; ++i) {
-			try {
+                return loaded;
 
-				Class loaded = optloaders[i].loadClass(name);
+            } catch (Exception e) {
+            }
+        }
 
-				usedLibs.add(optlibs[i]);
-				loadedClasses.put(name, loaded);
+        for (int i = 0; i < optlibs.length; ++i) {
+            System.out.println("Found jar:" + optlibs[i]);
+        }
 
-				return loaded;
+        return super.findClass(name);
+    }
 
-			} catch (Exception e) {
-			}
-		}
+    private static URL[] toURLs(String[] libs) throws MalformedURLException {
 
-		for (int i = 0; i < optlibs.length; ++i) {
-			System.out.println("Found jar:" + optlibs[i]);
-		}
+        URL[] result = new URL[libs.length];
 
-		return super.findClass(name);
-	}
+        for (int i = 0; i < libs.length; ++i) {
+            result[i] = new File(libs[i]).getAbsoluteFile().toURL();
+        }
+        return result;
+    }
 
-	private static URL[] toURLs(String[] libs) throws MalformedURLException {
+    private static String[] collectLibs(String[] libdirs) {
 
-		URL[] result = new URL[libs.length];
+        List<String> result = new ArrayList<String>();
 
-		for (int i = 0; i < libs.length; ++i) {
-			result[i] = new File(libs[i]).getAbsoluteFile().toURL();
-		}
-		return result;
-	}
+        for (int i = 0; i < libdirs.length; ++i) {
 
-	private static String[] collectLibs(String[] libdirs) {
+            File[] files = new File(libdirs[i]).listFiles(new FilenameFilter() {
 
-		List result = new ArrayList();
+                public boolean accept(File dir, String name) {
+                    return name.toLowerCase().endsWith(".jar");
+                }
+            });
 
-		for (int i = 0; i < libdirs.length; ++i) {
+            for (int j = 0; j < files.length; ++j) {
+                result.add(files[j].getPath());
+            }
+        }
 
-			File[] files = new File(libdirs[i]).listFiles(new FilenameFilter() {
-				public boolean accept(File dir, String name) {
-					return name.toLowerCase().endsWith(".jar");
-				}
-			});
-
-			for (int j = 0; j < files.length; ++j) {
-				result.add(files[j].getPath());
-			}
-		}
-
-		return (String[]) result.toArray(new String[0]);
-	}
-
+        return (String[]) result.toArray(new String[0]);
+    }
 }

@@ -8,6 +8,7 @@ import java.io.Serializable;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.tree.MethodNode;
 
 /**
  * クラス生成のデバッグ時に使用。
@@ -57,6 +58,7 @@ public class ClassDebugger extends ClassAdapter implements Serializable {
 	public MethodVisitor visitMethod(int access, String name, String desc,
 			String signature, String[] exceptions) {
 
-		return new MethodDebugger(cv, access, name, desc, signature, exceptions);
+		MethodDebugger dbg = new MethodDebugger(cv, access, name, desc, signature, exceptions);
+                return new MethodCallInliner(access, desc, dbg, new MethodNode(access, name, desc, signature, exceptions), desc, desc);
 	}
 }

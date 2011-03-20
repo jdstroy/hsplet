@@ -18,368 +18,394 @@ import java.util.Set;
  */
 public class VolatileValue extends Operand {
 
-	/** 直列化復元時に、データの互換性を確認するためのバージョン番号。 */
-	private static final long serialVersionUID = -835641208389109876L;
+    /** 直列化復元時に、データの互換性を確認するためのバージョン番号。 */
+    private static final long serialVersionUID = -835641208389109876L;
+    /** このクラスを含むソースファイルのバージョン文字列。 */
+    private static final String fileVersionID = "$Id: VolatileValue.java,v 1.2.2.1 2006/08/02 12:13:06 Yuki Exp $";
+    /** 値を保持するオブジェクト。 */
+    private Operand value;
+    /** 値を更新するオブジェクト。 */
+    public Set<VolatileValueUpdater> updaters = new HashSet<VolatileValueUpdater>();
 
-	/** このクラスを含むソースファイルのバージョン文字列。 */
-	private static final String fileVersionID = "$Id: VolatileValue.java,v 1.2.2.1 2006/08/02 12:13:06 Yuki Exp $";
+    /**
+     * オブジェクトを構築する。
+     *
+     * @param value 値を保持するオブジェクト。
+     */
+    public VolatileValue(final Operand value) {
 
-	/** 値を保持するオブジェクト。 */
-	private Operand value;
+        this.value = value;
+    }
 
-	/** 値を更新するオブジェクト。 */
-	public Set updaters = new HashSet();
+    //@Override
+    public int getType() {
 
-	/**
-	 * オブジェクトを構築する。
-	 * 
-	 * @param value 値を保持するオブジェクト。
-	 */
-	public VolatileValue(final Operand value) {
+        return value.getType();
+    }
 
-		this.value = value;
-	}
+    //@Override
+    public String toString(final int index) {
 
-	//@Override
-	public int getType() {
+        update();
+        return value.toString(index);
+    }
 
-		return value.getType();
-	}
+    //@Override
+    public ByteString toByteString(final int index) {
 
-	//@Override
-	public String toString(final int index) {
+        update();
+        return value.toByteString(index);
+    }
 
-		update();
-		return value.toString(index);
-	}
+    //@Override
+    public int toInt(final int index) {
 
-	//@Override
-	public ByteString toByteString(final int index) {
+        update();
 
-		update();
-		return value.toByteString(index);
-	}
+        return value.toInt(index);
+    }
 
-	//@Override
-	public int toInt(final int index) {
+    //@Override
+    public double toDouble(final int index) {
 
-		update();
+        update();
 
-		return value.toInt(index);
-	}
+        return value.toDouble(index);
+    }
 
-	//@Override
-	public double toDouble(final int index) {
+    //@Override
+    public Operand dup(int index) {
+        return value.dup(index);
+    }
 
-		update();
+    //@Override
+    public int getIndex(final int i0, final int i1) {
 
-		return value.toDouble(index);
-	}
+        return value.getIndex(i0, i1);
+    }
 
-	//@Override
-	public Operand dup(int index) {
-		return value.dup(index);
-	}
+    //@Override
+    public int getIndex(final int i0, final int i1, final int i2) {
 
-	//@Override
-	public int getIndex(final int i0, final int i1) {
+        return value.getIndex(i0, i1, i2);
+    }
 
-		return value.getIndex(i0, i1);
-	}
+    //@Override
+    public int getIndex(final int i0, final int i1, final int i2, final int i3) {
 
-	//@Override
-	public int getIndex(final int i0, final int i1, final int i2) {
+        return value.getIndex(i0, i1, i2, i3);
+    }
 
-		return value.getIndex(i0, i1, i2);
-	}
+    //@Override
+    public void inc(final int index) {
 
-	//@Override
-	public int getIndex(final int i0, final int i1, final int i2, final int i3) {
+        update();
 
-		return value.getIndex(i0, i1, i2, i3);
-	}
+        value.inc(index);
+    }
 
-	//@Override
-	public void inc(final int index) {
+    //@Override
+    public void dec(final int index) {
 
-		update();
+        update();
 
-		value.inc(index);
-	}
+        value.inc(index);
+    }
 
-	//@Override
-	public void dec(final int index) {
+    //@Override
+    public void assign(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        value.assign(index, rhs, rhi);
+    }
 
-		value.inc(index);
-	}
+    //@Override
+    public void assignAdd(final int index, final Operand rhs, final int rhi) {
 
-	//@Override
-	public void assign(final int index, final Operand rhs, final int rhi) {
+        update();
 
-		value.assign(index, rhs, rhi);
-	}
+        value.assignAdd(index, rhs, rhi);
+    }
 
-	//@Override
-	public void assignAdd(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public void assignSub(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		value.assignAdd(index, rhs, rhi);
-	}
+        value.assignSub(index, rhs, rhi);
+    }
 
-	//@Override
-	public void assignSub(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public void assignMul(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		value.assignSub(index, rhs, rhi);
-	}
+        value.assignMul(index, rhs, rhi);
+    }
 
-	//@Override
-	public void assignMul(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public void assignDiv(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		value.assignMul(index, rhs, rhi);
-	}
+        value.assignDiv(index, rhs, rhi);
+    }
 
-	//@Override
-	public void assignDiv(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public void assignMod(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		value.assignDiv(index, rhs, rhi);
-	}
+        value.assignMod(index, rhs, rhi);
+    }
 
-	//@Override
-	public void assignMod(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public void assignAnd(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		value.assignMod(index, rhs, rhi);
-	}
+        value.assignAnd(index, rhs, rhi);
+    }
 
-	//@Override
-	public void assignAnd(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public void assignOr(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		value.assignAnd(index, rhs, rhi);
-	}
+        value.assignOr(index, rhs, rhi);
+    }
 
-	//@Override
-	public void assignOr(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public void assignXor(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		value.assignOr(index, rhs, rhi);
-	}
+        value.assignXor(index, rhs, rhi);
+    }
 
-	//@Override
-	public void assignXor(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public void assignSr(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		value.assignXor(index, rhs, rhi);
-	}
+        value.assignSr(index, rhs, rhi);
+    }
 
-	//@Override
-	public void assignSr(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public void assignSl(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		value.assignSr(index, rhs, rhi);
-	}
+        value.assignSl(index, rhs, rhi);
+    }
 
-	//@Override
-	public void assignSl(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public Operand eq(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		value.assignSl(index, rhs, rhi);
-	}
+        return value.eq(index, rhs, rhi);
+    }
 
-	//@Override
-	public Operand eq(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public Operand ne(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		return value.eq(index, rhs, rhi);
-	}
+        return value.ne(index, rhs, rhi);
+    }
 
-	//@Override
-	public Operand ne(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public Operand gt(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		return value.ne(index, rhs, rhi);
-	}
+        return value.gt(index, rhs, rhi);
+    }
 
-	//@Override
-	public Operand gt(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public Operand lt(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		return value.gt(index, rhs, rhi);
-	}
+        return value.lt(index, rhs, rhi);
+    }
 
-	//@Override
-	public Operand lt(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public Operand ge(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		return value.lt(index, rhs, rhi);
-	}
+        return value.ge(index, rhs, rhi);
+    }
 
-	//@Override
-	public Operand ge(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public Operand le(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		return value.ge(index, rhs, rhi);
-	}
+        return value.le(index, rhs, rhi);
+    }
 
-	//@Override
-	public Operand le(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public Operand add(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		return value.le(index, rhs, rhi);
-	}
+        return value.add(index, rhs, rhi);
+    }
 
-	//@Override
-	public Operand add(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public Operand sub(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		return value.add(index, rhs, rhi);
-	}
+        return value.sub(index, rhs, rhi);
+    }
 
-	//@Override
-	public Operand sub(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public Operand mul(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		return value.sub(index, rhs, rhi);
-	}
+        return value.mul(index, rhs, rhi);
+    }
 
-	//@Override
-	public Operand mul(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public Operand div(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		return value.mul(index, rhs, rhi);
-	}
+        return value.div(index, rhs, rhi);
+    }
 
-	//@Override
-	public Operand div(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public Operand mod(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		return value.div(index, rhs, rhi);
-	}
+        return value.mod(index, rhs, rhi);
+    }
 
-	//@Override
-	public Operand mod(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public Operand and(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		return value.mod(index, rhs, rhi);
-	}
+        return value.and(index, rhs, rhi);
+    }
 
-	//@Override
-	public Operand and(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public Operand or(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		return value.and(index, rhs, rhi);
-	}
+        return value.or(index, rhs, rhi);
+    }
 
-	//@Override
-	public Operand or(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public Operand xor(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		return value.or(index, rhs, rhi);
-	}
+        return value.xor(index, rhs, rhi);
+    }
 
-	//@Override
-	public Operand xor(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public Operand sl(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		return value.xor(index, rhs, rhi);
-	}
+        return value.sl(index, rhs, rhi);
+    }
 
-	//@Override
-	public Operand sl(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public Operand sr(final int index, final Operand rhs, final int rhi) {
 
-		update();
+        update();
 
-		return value.sl(index, rhs, rhi);
-	}
+        return value.sr(index, rhs, rhi);
+    }
 
-	//@Override
-	public Operand sr(final int index, final Operand rhs, final int rhi) {
+    //@Override
+    public int l0() {
 
-		update();
+        return value.l0();
+    }
 
-		return value.sr(index, rhs, rhi);
-	}
+    //@Override
+    public int l1() {
 
-	//@Override
-	public int l0() {
+        return value.l1();
+    }
 
-		return value.l0();
-	}
+    //@Override
+    public int l2() {
 
-	//@Override
-	public int l1() {
+        return value.l2();
+    }
 
-		return value.l1();
-	}
+    //@Override
+    public int l3() {
 
-	//@Override
-	public int l2() {
+        return value.l3();
+    }
 
-		return value.l2();
-	}
+    //@Override
+    public byte peek(int index, int offset) {
 
-	//@Override
-	public int l3() {
+        update();
 
-		return value.l3();
-	}
+        return value.peek(index, offset);
+    }
 
-	//@Override
-	public byte peek(int index, int offset) {
+    //@Override
+    public void poke(int index, int offset, byte value) {
 
-		update();
+        update();
 
-		return value.peek(index, offset);
-	}
+        this.value.poke(index, offset, value);
 
-	//@Override
-	public void poke(int index, int offset, byte value) {
+    }
 
-		update();
+    private void update() {
 
-		this.value.poke(index, offset, value);
+        if (updaters.size() != 0) {
 
-	}
+            for (final Iterator i = updaters.iterator(); i.hasNext();) {
+                ((VolatileValueUpdater) i.next()).update(value);
+            }
 
-	private void update() {
+            updaters.clear();
+        }
+    }
 
-		if (updaters.size() != 0) {
+    @Override
+    public void assignNe(int index, Operand rhs, int rhi) {
+        update();
+        value.assignNe(index, rhs, rhi);
+    }
 
-			for (final Iterator i = updaters.iterator(); i.hasNext();) {
-				((VolatileValueUpdater) i.next()).update(value);
-			}
+    @Override
+    public void assignGt(int index, Operand rhs, int rhi) {
+        update();
+        value.assignGt(index, rhs, rhi);
+    }
 
-			updaters.clear();
-		}
-	}
+    @Override
+    public void assignLt(int index, Operand rhs, int rhi) {
+        update();
+        value.assignLt(index, rhs, rhi);
+    }
 
+    @Override
+    public void assignGtEq(int index, Operand rhs, int rhi) {
+        update();
+        value.assignGtEq(index, rhs, rhi);
+    }
+
+    @Override
+    public void assignLtEq(int index, Operand rhs, int rhi) {
+        update();
+        value.assignLtEq(index, rhs, rhi);
+    }
 }

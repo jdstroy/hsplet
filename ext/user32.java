@@ -1,3 +1,4 @@
+
 import hsplet.Context;
 import hsplet.function.FunctionBase;
 import hsplet.gui.Bmscr;
@@ -17,6 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 
 /**
@@ -27,258 +29,317 @@ import javax.swing.JSeparator;
  */
 public class user32 extends FunctionBase implements Serializable {
 
-	private static final int MF_STRING = 0x00000000;
+    private static final int MF_STRING = 0x00000000;
+    private static final int MF_DISABLED = 0x00000001;
+    private static final int MF_GLAYED = 0x00000002;
+    private static final int MF_BITMAP = 0x00000004;
+    private static final int MF_CHECKED = 0x00000008;
+    private static final int MF_POPUP = 0x00000010;
+    private static final int MF_MENUBARBREAK = 0x00000020;
+    private static final int MF_OWNERDRAW = 0x00000100;
+    private static final int MF_SEPARATOR = 0x00000800;
+    public static final int WM_COMMAND = 0x0111;
+    private static final int MF_BYCOMMAND = 0;
+    private static final int MF_BYPOSITION = 0x400;
+    private Context context;
+    private List objects = new ArrayList();
 
-	private static final int MF_DISABLED = 0x00000001;
+    public user32(final Context context) {
+        this.context = context;
 
-	private static final int MF_GLAYED = 0x00000002;
+        // ID = 0 は使用しない
+        objects.add(new Object());
+    }
 
-	private static final int MF_BITMAP = 0x00000004;
+    public int keybd_event(int a, int b, int c) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
 
-	private static final int MF_CHECKED = 0x00000008;
+    public int GetKeyboardState(hsplet.variable.ByteString str) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
 
-	private static final int MF_POPUP = 0x00000010;
+    private int addObject(final Object o) {
 
-	private static final int MF_MENUBARBREAK = 0x00000020;
+        final int emptyIndex = objects.indexOf(null);
+        if (emptyIndex >= 0) {
+            objects.set(emptyIndex, o);
+            return emptyIndex;
+        }
 
-	private static final int MF_OWNERDRAW = 0x00000100;
+        objects.add(o);
+        return objects.size() - 1;
+    }
 
-	private static final int MF_SEPARATOR = 0x00000800;
+    public int CreateMenu() {
 
-	public static final int WM_COMMAND = 0x0111;
+        return addObject(new JHierarchicalMenuBar());
+    }
 
-	private Context context;
+    public int CreatePopupMenu() {
 
-	private List objects = new ArrayList();
+        return addObject(new JHierarchicalMenu(""));
+    }
 
-	public user32(final Context context) {
-		this.context = context;
+    public int AppendMenuA(final int menuId, final int flags, final int itemId, final String text) {
 
-		// ID = 0 は使用しない
-		objects.add(new Object());
-	}
+        final JComponent menu = (JComponent) objects.get(menuId);
+        final JComponent item;
 
-	private int addObject(final Object o) {
+        final boolean enabled = (flags & (MF_GLAYED | MF_DISABLED)) == 0;
 
-		final int emptyIndex = objects.indexOf(null);
-		if (emptyIndex >= 0) {
-			objects.set(emptyIndex, o);
-			return emptyIndex;
-		}
+        final String label = text.replaceAll("\\&(.)", "$1");
+        final int mnemonicIndex = text.indexOf('&') + 1;
 
-		objects.add(o);
-		return objects.size() - 1;
-	}
+        char mnemonic = 0;
+        if (mnemonicIndex >= 1) {
+            mnemonic = text.charAt(mnemonicIndex);
+        }
 
-	public int CreateMenu() {
+        if ((flags & MF_POPUP) != 0) {
 
-		return addObject(new JHierarchicalMenuBar());
-	}
+            final JHierarchicalMenu submenu = (JHierarchicalMenu) objects.get(itemId);
 
-	public int CreatePopupMenu() {
+            submenu.setText(label);
 
-		return addObject(new JHierarchicalMenu(""));
-	}
+            item = submenu;
+
+        } else if ((flags & MF_SEPARATOR) != 0) {
 
-	public int AppendMenuA(final int menuId, final int flags, final int itemId, final String text) {
+            item = new JSeparator();
 
-		final JComponent menu = (JComponent) objects.get(menuId);
-		final JComponent item;
+        } else if (menu instanceof JHierarchicalMenuBar) {
+            JHierarchicalMenu subitem = new JHierarchicalMenu(label);
+            subitem.addActionListener(new MenuAction(itemId));
+            if (mnemonic != 0) {
+                subitem.setMnemonic(mnemonic);
+            }
+            item = subitem;
+
+        } else if ((flags & MF_CHECKED) != 0) {
+            JHierarchicalCheckBoxMenuItem subitem = new JHierarchicalCheckBoxMenuItem(label);
+            subitem.addActionListener(new MenuAction(itemId));
+            if (mnemonic != 0) {
+                subitem.setMnemonic(mnemonic);
+            }
+            item = subitem;
+
+        } else {
+            JHierarchicalMenuItem subitem = new JHierarchicalMenuItem(label);
+            subitem.addActionListener(new MenuAction(itemId));
+            if (mnemonic != 0) {
+                subitem.setMnemonic(mnemonic);
+            }
+            item = subitem;
+        }
 
-		final boolean enabled = (flags & (MF_GLAYED | MF_DISABLED)) == 0;
+        if (item instanceof HierarchicalMenu) {
+            ((HierarchicalMenu) item).setParentMenu((HierarchicalMenu) menu);
+        }
 
-		final String label = text.replaceAll("\\&(.)", "$1");
-		final int mnemonicIndex = text.indexOf('&') + 1;
+        item.setEnabled(enabled);
+        menu.add(item);
 
-		char mnemonic = 0;
-		if (mnemonicIndex >= 1) {
-			mnemonic = text.charAt(mnemonicIndex);
-		}
+        return 1;
+    }
 
-		if ((flags & MF_POPUP) != 0) {
+    public int SetMenu(final int windowId, final int menuId) {
 
-			final JHierarchicalMenu submenu = (JHierarchicalMenu) objects.get(itemId);
+        final JMenuBar menu = (JMenuBar) objects.get(menuId);
 
-			submenu.setText(label);
+        final Bmscr win = (Bmscr) context.windows.get(windowId);
 
-			item = submenu;
+        if (win.component instanceof JFrame) {
+            ((JFrame) win.component).setJMenuBar(menu);
+            ((JFrame) win.component).pack();
+        } else if (win.component instanceof JApplet) {
+            ((JApplet) win.component).setJMenuBar(menu);
+            win.contents.setSize(win.contents.getWidth(), win.contents.getHeight() - 1);
+            win.contents.setSize(win.contents.getWidth(), win.contents.getHeight() + 1);
+        }
 
-		} else if ((flags & MF_SEPARATOR) != 0) {
+        return 1;
+    }
 
-			item = new JSeparator();
+    public int DrawMenuBar(final int windowId) {
 
-		} else if (menu instanceof JHierarchicalMenuBar) {
-			JHierarchicalMenu subitem = new JHierarchicalMenu(label);
-			subitem.addActionListener(new MenuAction(itemId));
-			if (mnemonic != 0) {
-				subitem.setMnemonic(mnemonic);
-			}
-			item = subitem;
+        return 1;
+    }
 
-		} else if ((flags & MF_CHECKED) != 0) {
-			JHierarchicalCheckBoxMenuItem subitem = new JHierarchicalCheckBoxMenuItem(label);
-			subitem.addActionListener(new MenuAction(itemId));
-			if (mnemonic != 0) {
-				subitem.setMnemonic(mnemonic);
-			}
-			item = subitem;
+    public int DestroyMenu(final int menuId) {
 
-		} else {
-			JHierarchicalMenuItem subitem = new JHierarchicalMenuItem(label);
-			subitem.addActionListener(new MenuAction(itemId));
-			if (mnemonic != 0) {
-				subitem.setMnemonic(mnemonic);
-			}
-			item = subitem;
-		}
+        objects.set(menuId, null);
 
-		if (item instanceof HierarchicalMenu) {
-			((HierarchicalMenu) item).setParentMenu((HierarchicalMenu) menu);
-		}
+        return 1;
+    }
 
-		item.setEnabled(enabled);
-		menu.add(item);
+    public int CheckMenuRadioItem(int hmenu,
+            int idFirst,
+            int idLast,
+            int idCheck,
+            int uFlags) {
+        Object item = objects.get(hmenu);
 
-		return 1;
-	}
+        if (item instanceof JHierarchicalMenu) {
+            JHierarchicalMenu menu = (JHierarchicalMenu) item;
+            List<JHierarchicalCheckBoxMenuItem> itemsToDeselect = new ArrayList<JHierarchicalCheckBoxMenuItem>(idLast - idFirst);
 
-	public int SetMenu(final int windowId, final int menuId) {
+            if ((uFlags & user32.MF_BYPOSITION) != 0) {
+                item = menu.getMenuComponent(idFirst + idCheck);
 
-		final JMenuBar menu = (JMenuBar) objects.get(menuId);
+                for (int i = idFirst; i < idLast; i++) {
+                    Component com = menu.getMenuComponent(i);
+                    if (com instanceof JHierarchicalCheckBoxMenuItem) {
+                        itemsToDeselect.add((JHierarchicalCheckBoxMenuItem) com);
+                    }
+                }
 
-		final Bmscr win = (Bmscr) context.windows.get(windowId);
+            } else {
+                item = objects.get(idCheck);
+                for (int i = idFirst; i < idLast; i++) {
+                    Object com = objects.get(i);
+                    if (com instanceof JHierarchicalCheckBoxMenuItem) {
+                        itemsToDeselect.add((JHierarchicalCheckBoxMenuItem) com);
+                    }
+                }
+            }
 
-		if (win.component instanceof JFrame) {
-			((JFrame) win.component).setJMenuBar(menu);
-			((JFrame) win.component).pack();
-		} else if (win.component instanceof JApplet) {
-			((JApplet) win.component).setJMenuBar(menu);
-			win.contents.setSize(win.contents.getWidth(), win.contents.getHeight() - 1);
-			win.contents.setSize(win.contents.getWidth(), win.contents.getHeight() + 1);
-		}
+            if (item instanceof JHierarchicalCheckBoxMenuItem) {
+                JHierarchicalCheckBoxMenuItem menuItem = (JHierarchicalCheckBoxMenuItem) item;
 
-		return 1;
-	}
+                for (JHierarchicalCheckBoxMenuItem i : itemsToDeselect) {
+                    if (i.getState() && i != menuItem) {
+                        i.setState(false);
+                    }
+                }
 
-	public int DrawMenuBar(final int windowId) {
+                menuItem.setState(true);
+                return 1;
+            }
+        }
+        return 0;
+    }
 
-		return 1;
-	}
+    private static interface HierarchicalMenu {
 
-	public int DestroyMenu(final int menuId) {
+        void setParentMenu(HierarchicalMenu value);
 
-		objects.set(menuId, null);
+        HierarchicalMenu getParentMenu();
+    }
 
-		return 1;
-	}
+    private final class JHierarchicalMenuBar extends JMenuBar implements HierarchicalMenu {
 
-	private static interface HierarchicalMenu {
+        private HierarchicalMenu parentMenu;
 
-		void setParentMenu(HierarchicalMenu value);
+        public HierarchicalMenu getParentMenu() {
+            return parentMenu;
+        }
 
-		HierarchicalMenu getParentMenu();
-	}
+        public void setParentMenu(HierarchicalMenu parentMenu) {
+            this.parentMenu = parentMenu;
+        }
+    }
 
-	private final class JHierarchicalMenuBar extends JMenuBar implements HierarchicalMenu {
+    private final class JHierarchicalMenu extends JMenu implements HierarchicalMenu {
 
-		private HierarchicalMenu parentMenu;
+        private HierarchicalMenu parentMenu;
 
-		public HierarchicalMenu getParentMenu() {
-			return parentMenu;
-		}
+        public JHierarchicalMenu(String label) {
+            super(label);
+        }
 
-		public void setParentMenu(HierarchicalMenu parentMenu) {
-			this.parentMenu = parentMenu;
-		}
-	}
+        public HierarchicalMenu getParentMenu() {
+            return parentMenu;
+        }
 
-	private final class JHierarchicalMenu extends JMenu implements HierarchicalMenu {
+        public void setParentMenu(HierarchicalMenu parentMenu) {
+            this.parentMenu = parentMenu;
+        }
+    }
 
-		private HierarchicalMenu parentMenu;
+    private final class JHierarchicalMenuItem extends JMenuItem implements HierarchicalMenu {
 
-		public JHierarchicalMenu(String label) {
-			super(label);
-		}
+        private HierarchicalMenu parentMenu;
 
-		public HierarchicalMenu getParentMenu() {
-			return parentMenu;
-		}
+        public JHierarchicalMenuItem(String label) {
+            super(label);
+        }
 
-		public void setParentMenu(HierarchicalMenu parentMenu) {
-			this.parentMenu = parentMenu;
-		}
+        public HierarchicalMenu getParentMenu() {
+            return parentMenu;
+        }
 
-	}
+        public void setParentMenu(HierarchicalMenu parentMenu) {
+            this.parentMenu = parentMenu;
+        }
+    }
 
-	private final class JHierarchicalMenuItem extends JMenuItem implements HierarchicalMenu {
+    private final class JHierarchicalRadioButtonMenuItem extends JRadioButton implements HierarchicalMenu {
 
-		private HierarchicalMenu parentMenu;
+        private HierarchicalMenu parentMenu;
 
-		public JHierarchicalMenuItem(String label) {
-			super(label);
-		}
+        public JHierarchicalRadioButtonMenuItem(String label) {
+            super(label);
+        }
 
-		public HierarchicalMenu getParentMenu() {
-			return parentMenu;
-		}
+        public HierarchicalMenu getParentMenu() {
+            return parentMenu;
+        }
 
-		public void setParentMenu(HierarchicalMenu parentMenu) {
-			this.parentMenu = parentMenu;
-		}
+        public void setParentMenu(HierarchicalMenu parentMenu) {
+            this.parentMenu = parentMenu;
+        }
+    }
 
-	}
+    private final class JHierarchicalCheckBoxMenuItem extends JCheckBoxMenuItem implements HierarchicalMenu {
 
-	private final class JHierarchicalCheckBoxMenuItem extends JCheckBoxMenuItem implements HierarchicalMenu {
+        private HierarchicalMenu parentMenu;
 
-		private HierarchicalMenu parentMenu;
+        public JHierarchicalCheckBoxMenuItem(String label) {
+            super(label);
+        }
 
-		public JHierarchicalCheckBoxMenuItem(String label) {
-			super(label);
-		}
+        public HierarchicalMenu getParentMenu() {
+            return parentMenu;
+        }
 
-		public HierarchicalMenu getParentMenu() {
-			return parentMenu;
-		}
+        public void setParentMenu(HierarchicalMenu parentMenu) {
+            this.parentMenu = parentMenu;
+        }
+    }
 
-		public void setParentMenu(HierarchicalMenu parentMenu) {
-			this.parentMenu = parentMenu;
-		}
+    private final class MenuAction implements ActionListener {
 
-	}
+        private int id;
 
-	private final class MenuAction implements ActionListener {
+        public MenuAction(final int id) {
+            this.id = id;
+        }
 
-		private int id;
+        public void actionPerformed(ActionEvent e) {
 
-		public MenuAction(final int id) {
-			this.id = id;
-		}
+            HierarchicalMenu m = (HierarchicalMenu) e.getSource();
+            while (m != null) {
+                if (m.getParentMenu() == null) {
 
-		public void actionPerformed(ActionEvent e) {
+                    Component c = (Component) m;
 
-			HierarchicalMenu m = (HierarchicalMenu) e.getSource();
-			while (m != null) {
-				if (m.getParentMenu() == null) {
+                    while (c != null) {
 
-					Component c = (Component) m;
+                        if (c instanceof HSPScreen) {
 
-					while (c != null) {
+                            final int windowId = context.windows.indexOf(((HSPScreen) c).getBmscr());
 
-						if (c instanceof HSPScreen) {
+                            context.postMessage(windowId, WM_COMMAND, id, 0);
+                        }
 
-							final int windowId = context.windows.indexOf(((HSPScreen) c).getBmscr());
+                        c = c.getParent();
+                    }
 
-							context.postMessage(windowId, WM_COMMAND, id, 0);
-						}
+                }
+                m = m.getParentMenu();
+            }
 
-						c = c.getParent();
-					}
-
-				}
-				m = m.getParentMenu();
-			}
-
-		}
-
-	}
+        }
+    }
 }

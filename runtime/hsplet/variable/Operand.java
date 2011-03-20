@@ -233,6 +233,29 @@ public abstract class Operand implements Serializable {
 	 */
 	public abstract void dec(final int index);
 
+        /*
+         * "assignNe", "assignGt", "assignLt", "assignGtEq", "assignLtEq",
+         */
+        /**
+         * assignNe - assign Not Equal
+         */
+        public abstract void assignNe(final int index, final Operand rhs, final int rhi);
+        /**
+         * assignNe - assign Greater Than
+         */
+        public abstract void assignGt(final int index, final Operand rhs, final int rhi);
+        /**
+         * assignNe - assign Less Than
+         */
+        public abstract void assignLt(final int index, final Operand rhs, final int rhi);
+        /**
+         * assignNe - assign Greater Than or Equal
+         */
+        public abstract void assignGtEq(final int index, final Operand rhs, final int rhi);
+        /**
+         * assignNe - assign Less Than or Equal
+         */
+        public abstract void assignLtEq(final int index, final Operand rhs, final int rhi);
 	/**
 	 * ë„ì¸ÇçsÇ§ÅB
 	 * 

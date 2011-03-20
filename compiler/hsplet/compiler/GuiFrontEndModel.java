@@ -52,13 +52,13 @@ public class GuiFrontEndModel implements Serializable {
 
 	private int height = 480;
 
-	private List packFiles = new ArrayList();
+	private List<String> packFiles = new ArrayList<String>();
 
 	private boolean mp3;
 
 	private boolean strf;
 
-	private List extLibs = new ArrayList();
+	private List<String> extLibs = new ArrayList<String>();
 
 	private String htmlName = "";
 
@@ -89,7 +89,7 @@ public class GuiFrontEndModel implements Serializable {
 
 			packFiles.clear();
 			for (int i = 0; i < gui.packListModel.getSize(); ++i) {
-				packFiles.add(gui.packListModel.get(i));
+				packFiles.add(gui.packListModel.get(i).toString());
 			}
 
 			mp3 = gui.mp3CheckBox.isSelected();
@@ -97,10 +97,10 @@ public class GuiFrontEndModel implements Serializable {
 			strf = gui.strfCheckBox.isSelected();
 
 			extLibs.clear();
-			for (final Iterator i = gui.libChecks.entrySet().iterator(); i.hasNext();) {
-				final Map.Entry libCheck = (Map.Entry) i.next();
+			for (final Iterator<Map.Entry<String, JCheckBox>> i = gui.libChecks.entrySet().iterator(); i.hasNext();) {
+				final Map.Entry<String, JCheckBox> libCheck = i.next();
 
-				if (((JCheckBox) libCheck.getValue()).isSelected()) {
+				if ((libCheck.getValue()).isSelected()) {
 					extLibs.add(libCheck.getKey());
 				}
 			}
@@ -142,12 +142,12 @@ public class GuiFrontEndModel implements Serializable {
 
 		try {
 
-			final Collection packs = new HashSet();
+			final Collection<String> packs = new HashSet<String>();
 			for (int i = 0; i < packFiles.size(); ++i) {
 				packs.add("" + packFiles.get(i));
 			}
 
-			final Collection libs = new HashSet();
+			final Collection<String> libs = new HashSet<String>();
 			libs.addAll(this.extLibs);
 
 			if (mp3) {
@@ -157,7 +157,7 @@ public class GuiFrontEndModel implements Serializable {
 				libs.add(STRF_LIB_NAME);
 			}
 
-			final Collection libdirs = new HashSet();
+			final Collection<String> libdirs = new HashSet<String>();
 			libdirs.add("ext");
 			libdirs.add("lib");
 
@@ -175,7 +175,6 @@ public class GuiFrontEndModel implements Serializable {
 				}
 				BrowserLauncher.openURL("http://localhost:6791" + HttpServer.mapURL(new File(htmlName)));
 			} else {
-
 				JOptionPane.showMessageDialog(null, "コンパイルに成功しました。", "HSPLet", JOptionPane.INFORMATION_MESSAGE);
 
 			}

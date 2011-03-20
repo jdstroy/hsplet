@@ -27,7 +27,7 @@ public class Browser extends JFrame {
 	/** 直列化復元時に、データの互換性を確認するためのバージョン番号。 */
 	private static final long serialVersionUID = 3252110042711048829L;
 
-	public static final Map namedInstance = new HashMap();
+	public static final Map<String, Browser> namedInstance = new HashMap<String, Browser>();
 
 	public static Browser getInstance(final String name) {
 		return (Browser) namedInstance.get(name);

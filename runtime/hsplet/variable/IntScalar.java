@@ -253,4 +253,29 @@ public class IntScalar extends Scalar {
 		this.value |= (value & 0xFF) << (offset % 4 * 8);
 
 	}
+
+    @Override
+    public void assignNe(int index, Operand rhs, int rhi) {
+        value = (value != rhs.toInt(rhi)) ? 1 : 0;
+    }
+
+    @Override
+    public void assignGt(int index, Operand rhs, int rhi) {
+        value = (value > rhs.toInt(rhi)) ? 1 : 0;
+    }
+
+    @Override
+    public void assignLt(int index, Operand rhs, int rhi) {
+        value = (value < rhs.toInt(rhi)) ? 1 : 0;
+    }
+
+    @Override
+    public void assignGtEq(int index, Operand rhs, int rhi) {
+        value = (value >= rhs.toInt(rhi)) ? 1 : 0;
+    }
+
+    @Override
+    public void assignLtEq(int index, Operand rhs, int rhi) {
+        value = (value <= rhs.toInt(rhi)) ? 1 : 0;
+    }
 }

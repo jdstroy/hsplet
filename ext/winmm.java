@@ -41,4 +41,14 @@ public class winmm extends FunctionBase {
 
 		return (int) (System.currentTimeMillis() - startMillis);
 	}
+
+
+        public static int timeBeginPeriod(int i) {
+            throw new UnsupportedOperationException("Not yet implemented.");
+        }
+
+
+        public static int timeEndPeriod(int i) {
+            throw new UnsupportedOperationException("Not yet implemented.");
+        }
 }

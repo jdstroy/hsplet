@@ -41,7 +41,7 @@ public class Mci implements Serializable {
 
 	private final Context context;
 
-	private Map medias = new HashMap();
+	private Map<String, HSPMedia> medias = new HashMap<String, HSPMedia>();
 
 	/**
 	 * mci コマンドを実行する。
@@ -248,7 +248,7 @@ public class Mci implements Serializable {
 
 	private static String[] split(final String command) {
 
-		final List result = new ArrayList();
+		final List<String> result = new ArrayList<String>();
 
 		int i = 0;
 		while (i < command.length()) {

@@ -67,7 +67,7 @@ public class Bmscr implements Serializable {
 
 	public final Window window;
 
-	public final List controls = new ArrayList();
+	public final List<HSPControl> controls = new ArrayList<HSPControl>();
 
 	public void init(final Color backColor) {
 

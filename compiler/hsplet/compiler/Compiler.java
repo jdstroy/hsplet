@@ -43,6 +43,13 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.LocalVariablesSorter;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.IntInsnNode;
+import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
 /**
  * axファイルをコンパイルするクラス。
@@ -63,2021 +70,2074 @@ import org.objectweb.asm.Type;
  */
 public class Compiler implements Opcodes, Serializable {
 
-	/** このクラスを含むソースファイルのバージョン文字列。 */
-	private static final String fileVersionID = "$Id: Compiler.java,v 1.11.2.1 2006/08/02 12:13:06 Yuki Exp $";
-
-	/** 直列化復元時に、データの互換性を確認するためのバージョン番号。 */
-	private static final long serialVersionUID = 8668239863505235428L;
-
-	/** デバッグ出力をするかどうか。 */
-	private static final boolean DEBUG_ENABLED = false;
-
-	/**
-	 * ax ファイルをコンパイルする。
-	 * <p>
-	 * コンパイル後の jar と表示するための HTML が生成される。
-	 * </p>
-	 * 
-	 * @param args
-	 *            実行時の引数。
-	 *            <ol>
-	 *            <li>--jar=生成するJARファイル名</li>
-	 *            <li>--html=生成するHTMLファイル名</li>
-	 *            <li>--template=使用するHTMLテンプレートファイル名</li>
-	 *            <li>--startClass=開始クラス名（オブジェクトファイルから.axを除いたもの）</li>
-	 *            <li>--lib=拡張ライブラリアーカイブ名</li>
-	 *            <li>--libdir=拡張ライブラリ検索ディレクトリ名</li>
-	 *            <li>--pack=アーカイブに入れるファイル</li>
-	 *            <li>--width=横幅</li>
-	 *            <li>--height=高さ</li>
-	 *            <li>--title=ページタイトル</li>
-	 *            </ol>
-	 * @throws IOException
-	 *             入出力エラーが発生したとき。
-	 */
-	public static void main(final String[] args) throws IOException {
-
-		int width = 640;
-		int height = 480;
-		Set libs = new HashSet();
-		Set libdirs = new HashSet();
-		Set packs = new HashSet();
-		String title = "HSPLet";
-		File jarFile = null;
-		File htmlFile = null;
-		File templateFile = null;
-		String startClass = "start";
-
-		for (int i = 0; i < args.length; ++i) {
-
-			final String arg = args[i];
-			if (arg.startsWith("--jar=")) {
-				jarFile = new File(arg.substring("--jar=".length()));
-			} else if (arg.startsWith("--html=")) {
-				htmlFile = new File(arg.substring("--html=".length()));
-			} else if (arg.startsWith("--template=")) {
-				templateFile = new File(arg.substring("--template=".length()));
-			} else if (arg.startsWith("--startClass=")) {
-				startClass = arg.substring("--startClass=".length());
-			} else if (arg.startsWith("--lib=")) {
-				libs.add(arg.substring("--lib=".length()));
-			} else if (arg.startsWith("--libdir=")) {
-				libdirs.add(arg.substring("--libdir=".length()));
-			} else if (arg.startsWith("--pack=")) {
-				packs.add(arg.substring("--pack=".length()));
-			} else if (arg.startsWith("--title=")) {
-				title = arg.substring("--title=".length());
-
-			} else if (arg.startsWith("--width=")) {
-				width = Integer.parseInt(arg.substring("--width=".length()));
-
-			} else if (arg.startsWith("--height=")) {
-				height = Integer.parseInt(arg.substring("--height=".length()));
-
-			}
-		}
-
-		if (jarFile == null) {
-			throw new RuntimeException("出力ファイル名が指定されていません。");
-		}
-
-		build(jarFile, htmlFile, templateFile, startClass, title, packs, libs, libdirs, width, height);
-	}
-
-	public static String generateClassName(final String fileName) {
-		String result = fileName.split("\\.")[0].replaceAll("[^a-zA-Z0-9_]", "");
-		if (result.length() == 0) {
-			return "_start";
-		}
-		if (Character.isDigit(result.charAt(0))) {
-			return "_" + result;
-		}
-
-		return result;
-	}
-
-	public static void build(final File jarFile, final File htmlFile, final File templateFile, final String startClass,
-			final String title, final Collection packs, final Collection libs, final Collection libdirs, int w, int h)
-			throws IOException {
-
-		final LibraryLoader libraryLoader = new LibraryLoader((String[]) libs.toArray(new String[0]),
-				(String[]) libdirs.toArray(new String[0]), Compiler.class.getClassLoader());
-
-		final JarOutputStream jar = new JarOutputStream(new FileOutputStream(jarFile));
-		try {
-
-			if (jarFile.getName().equalsIgnoreCase("hsplet.jar")) {
-				throw new IllegalArgumentException(jarFile.getName() + " という名前は使用できません。");
-			}
-			for (final Iterator i = libs.iterator(); i.hasNext();) {
-				final String extLib = (String) i.next();
-
-				if (jarFile.getName().equalsIgnoreCase(new File(extLib).getName())) {
-					throw new IllegalArgumentException(jarFile.getName() + " という名前はすでに拡張ライブラリで使用されています。");
-				}
-			}
-
-			for (final Iterator i = packs.iterator(); i.hasNext();) {
-				final String pack = (String) i.next();
-				final File packFile = new File(pack);
-
-				if (packFile.getName().toLowerCase().endsWith(".ax")) {
-
-					final String className = generateClassName(packFile.getName());
-
-					final JarEntry je = new JarEntry(className + ".class");
-					je.setMethod(JarEntry.DEFLATED);
-					jar.putNextEntry(je);
-					try {
-						final Compiler c = new Compiler(new ByteCode(new FileInputStream(packFile)),
-								packFile.getName(), libraryLoader);
-						c.compile(className, jar);
-					} finally {
+    /** このクラスを含むソースファイルのバージョン文字列。 */
+    private static final String fileVersionID = "$Id: Compiler.java,v 1.11.2.1 2006/08/02 12:13:06 Yuki Exp $";
+    /** 直列化復元時に、データの互換性を確認するためのバージョン番号。 */
+    private static final long serialVersionUID = 8668239863505235428L;
+    /** デバッグ出力をするかどうか。 */
+    private static final boolean DEBUG_ENABLED = true;
+    private static final boolean TRACE_MOVE_ENABLED = false;
+
+    /**
+     * ax ファイルをコンパイルする。
+     * <p>
+     * コンパイル後の jar と表示するための HTML が生成される。
+     * </p>
+     *
+     * @param args
+     *            実行時の引数。
+     *            <ol>
+     *            <li>--jar=生成するJARファイル名</li>
+     *            <li>--html=生成するHTMLファイル名</li>
+     *            <li>--template=使用するHTMLテンプレートファイル名</li>
+     *            <li>--startClass=開始クラス名（オブジェクトファイルから.axを除いたもの）</li>
+     *            <li>--lib=拡張ライブラリアーカイブ名</li>
+     *            <li>--libdir=拡張ライブラリ検索ディレクトリ名</li>
+     *            <li>--pack=アーカイブに入れるファイル</li>
+     *            <li>--width=横幅</li>
+     *            <li>--height=高さ</li>
+     *            <li>--title=ページタイトル</li>
+     *            </ol>
+     * @throws IOException
+     *             入出力エラーが発生したとき。
+     */
+    public static void main(final String[] args) throws IOException {
+
+        int width = 640;
+        int height = 480;
+        Set<String> libs = new HashSet<String>();
+        Set<String> libdirs = new HashSet<String>();
+        Set<String> packs = new HashSet<String>();
+        String title = "HSPLet";
+        File jarFile = null;
+        File htmlFile = null;
+        File templateFile = null;
+        String startClass = "start";
+
+        for (int i = 0; i < args.length; ++i) {
+
+            final String arg = args[i];
+            if (arg.startsWith("--jar=")) {
+                jarFile = new File(arg.substring("--jar=".length()));
+            } else if (arg.startsWith("--html=")) {
+                htmlFile = new File(arg.substring("--html=".length()));
+            } else if (arg.startsWith("--template=")) {
+                templateFile = new File(arg.substring("--template=".length()));
+            } else if (arg.startsWith("--startClass=")) {
+                startClass = arg.substring("--startClass=".length());
+            } else if (arg.startsWith("--lib=")) {
+                libs.add(arg.substring("--lib=".length()));
+            } else if (arg.startsWith("--libdir=")) {
+                libdirs.add(arg.substring("--libdir=".length()));
+            } else if (arg.startsWith("--pack=")) {
+                packs.add(arg.substring("--pack=".length()));
+            } else if (arg.startsWith("--title=")) {
+                title = arg.substring("--title=".length());
+
+            } else if (arg.startsWith("--width=")) {
+                width = Integer.parseInt(arg.substring("--width=".length()));
+
+            } else if (arg.startsWith("--height=")) {
+                height = Integer.parseInt(arg.substring("--height=".length()));
+
+            }
+        }
+
+        if (jarFile == null) {
+            throw new RuntimeException("出力ファイル名が指定されていません。");
+        }
+
+        build(jarFile, htmlFile, templateFile, startClass, title, packs, libs, libdirs, width, height);
+    }
+
+    public static String generateClassName(final String fileName) {
+        String result = fileName.split("\\.")[0].replaceAll("[^a-zA-Z0-9_]", "");
+        if (result.length() == 0) {
+            return "_start";
+        }
+        if (Character.isDigit(result.charAt(0))) {
+            return "_" + result;
+        }
+
+        return result;
+    }
+
+    public static void build(final File jarFile, final File htmlFile, final File templateFile, final String startClass,
+            final String title, final Collection<String> packs, final Collection<String> libs, final Collection<String> libdirs, int w, int h)
+            throws IOException {
+
+        final LibraryLoader libraryLoader = new LibraryLoader((String[]) libs.toArray(new String[0]),
+                (String[]) libdirs.toArray(new String[0]), Compiler.class.getClassLoader());
+
+        final JarOutputStream jar = new JarOutputStream(new FileOutputStream(jarFile));
+        try {
+
+            if (jarFile.getName().equalsIgnoreCase("hsplet.jar")) {
+                throw new IllegalArgumentException(jarFile.getName() + " という名前は使用できません。");
+            }
+            for (final Iterator<String> i = libs.iterator(); i.hasNext();) {
+                final String extLib = i.next();
+
+                if (jarFile.getName().equalsIgnoreCase(new File(extLib).getName())) {
+                    throw new IllegalArgumentException(jarFile.getName() + " という名前はすでに拡張ライブラリで使用されています。");
+                }
+            }
+
+            for (final Iterator<String> i = packs.iterator(); i.hasNext();) {
+                final String pack = i.next();
+                final File packFile = new File(pack);
+
+                if (packFile.getName().toLowerCase().endsWith(".ax")) {
+
+                    final String className = generateClassName(packFile.getName());
+
+                    final JarEntry je = new JarEntry(className + ".class");
+                    je.setMethod(JarEntry.DEFLATED);
+                    jar.putNextEntry(je);
+                    try {
+                        final Compiler c = new Compiler(new ByteCode(new FileInputStream(packFile)),
+                                packFile.getName(), libraryLoader);
+                        c.compile(className, jar);
+                    } finally {
+
+                        jar.closeEntry();
+                    }
+
+                } else {
+
+                    final JarEntry je = new JarEntry(packFile.getName());
+                    je.setMethod(JarEntry.DEFLATED);
+                    jar.putNextEntry(je);
+
+                    final InputStream in = new FileInputStream(packFile);
+                    try {
+                        connectStream(in, jar);
+
+                    } finally {
+                        in.close();
+                        jar.closeEntry();
+                    }
+                }
+            }
+
+        } finally {
+            jar.close();
+        }
+
+        if (htmlFile != null) {
+
+            final Set<String> libNames = new HashSet<String>();
+            deploy(htmlFile.getAbsoluteFile().getParentFile(), jarFile);
+            libNames.add(jarFile.getName());
+
+            deploy(htmlFile.getAbsoluteFile().getParentFile(), new File("hsplet.jar"));
+            libNames.add("hsplet.jar");
+
+            for (final Iterator<String> i = libraryLoader.getUsedLibs().iterator(); i.hasNext();) {
+                final String extLib = i.next();
+                deploy(htmlFile.getAbsoluteFile().getParentFile(), new File(extLib));
+                libNames.add(new File(extLib).getName());
+            }
+
+            final OutputStream html = new FileOutputStream(htmlFile);
+            try {
+                new HtmlGenerator(generateClassName(startClass), title, libNames, w, h, templateFile).generate(html);
+            } finally {
+                html.close();
+            }
+        }
+
+    }
+
+    private static void deploy(final File destDir, final File file) throws IOException {
+
+        if (file.getAbsoluteFile().getParentFile().equals(destDir)) {
+            return;
+        }
+
+        final FileInputStream in = new FileInputStream(file);
+        try {
+
+            final FileOutputStream out = new FileOutputStream(new File(destDir, file.getName()));
+            try {
+                connectStream(in, out);
+            } finally {
+                out.close();
+            }
+
+        } finally {
+            in.close();
+        }
+    }
+
+    private static void connectStream(final InputStream in, final OutputStream out) throws IOException {
+        final byte[] buffer = new byte[1024];
+        for (;;) {
+
+            final int length = in.read(buffer);
+            if (length < 0) {
+                break;
+            }
+            out.write(buffer, 0, length);
+        }
+    }
+    private static final String contextDesc = Type.getDescriptor(Context.class);
+    private static final String contextIName = Type.getInternalName(Context.class);
+    private static final String opeDesc = Type.getDescriptor(Operand.class);
+    private static final String opeIName = Type.getInternalName(Operand.class);
+    private static final String varDesc = Type.getDescriptor(Variable.class);
+    private static final String varIName = Type.getInternalName(Variable.class);
+    private static final String literalDesc = Type.getDescriptor(Scalar.class);
+    private static final String literalIName = Type.getInternalName(Scalar.class);
+    private static final String parentDesc = Type.getDescriptor(RunnableCode.class);
+    private static final String parentIName = Type.getInternalName(RunnableCode.class);
+    private static final int thisIndex = 0;
+    private static final int jumpLabelIndex = 1; // int
+    private static final int contextIndex = 2; // contextType
+    private static final int assignOffsetIndex = 3; // int
+    private ClassVisitor cw;
+    private String inputName;
+    private String className;
+    private String classIName;
+    private ByteCode ax;
+    private int codeIndex;
+    private List literals;
+    private Stack<Label> loopStarts;
+    private boolean enableVariableOptimization;
+    private RuntimeInfo runtime;
+    private List<Class> instancedLibraries;
+
+    /**
+     * 入力バイトコードを指定してオブジェクトを構築する。
+     *
+     * @param ax
+     *            バイトコード。
+     * @param inputName
+     *            入力ファイル名。
+     * @param libraryLoader 拡張ライブラリローダ。
+     */
+    public Compiler(final ByteCode ax, final String inputName, final ClassLoader libraryLoader) {
+
+        this.ax = ax;
+        this.inputName = inputName;
+
+        this.runtime = new DefaultRuntimeInfo(libraryLoader);
+
+    }
+
+    /**
+     * データをコンパイルする。
+     *
+     * @param className
+     *            コンパイル後のクラス名。
+     * @param out
+     *            出力先。
+     * @throws IOException
+     *             入出力エラーが発生したとき。
+     */
+    public void compile(final String className, final OutputStream out) throws IOException {
+
+        this.className = className;
+        this.classIName = className.replace('.', '/');
+
+        //final ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+        final ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        //final ClassWriter writer = new ClassWriter(true);
+        ClassNode cn = new ClassNode();
+
+        // フィールドの初期化。
+        if (DEBUG_ENABLED) {
+            cw = new ClassDebugger(writer);
+        } else {
+            cw = writer;
+        }
+
+        if (TRACE_MOVE_ENABLED) {
+            cw = cn;
+            if (DEBUG_ENABLED) {
+                cw = new ClassDebugger(cw);
+            }
+        }
+
+        literals = new ArrayList();
+        loopStarts = new Stack<Label>();
+        submethodStartEnds = new ArrayList();
+        instancedLibraries = new ArrayList<Class>();
+        codeIndex = 0;
+        enableVariableOptimization = true;
+
+        // クラス生成
+        cw.visit(V1_4, ACC_PUBLIC, classIName, null, parentIName, new String[0]);
+
+        collectLiterals();
+
+        createRun();
+
+        createSubMethods();
+
+        createConstructor();
+
+        createFields();
+
+        cw.visitEnd();
+
+        // 出力
+        out.write(writer.toByteArray());
+
+        if (TRACE_MOVE_ENABLED) {
+
+            List<MethodNode> mnList = (List<MethodNode>) cn.methods;
+            for (MethodNode node : mnList) {
+                System.out.print(node.name);
+                System.out.println(':');
+
+                if (isExportable(node)) {
+                    System.out.println("Exportable");
+                }
+
+                System.out.println(getExportDegree(node));
+            }
+        }
+
+    }
+
+    public static int getExportDegree(MethodNode node) {
+        int count = 0;
+        InsnList list = node.instructions;
+
+        Iterator<AbstractInsnNode> insnIter = list.iterator();
+
+        while (insnIter.hasNext()) {
+            AbstractInsnNode instr = insnIter.next();
+            int opcode = instr.getOpcode();
+            switch (opcode) {
+                case Opcodes.ALOAD:
+                    // Load "this"
+                    if (((VarInsnNode) instr).var != 0) {
+                        continue;
+                    }
+                case Opcodes.INVOKEINTERFACE:
+                case Opcodes.INVOKESPECIAL:
+                case Opcodes.INVOKEVIRTUAL:
+                    count ++;
+                default:
+            }
+        }
+        return count;
+    }
+
+    public static boolean isExportable(MethodNode node) {
+        if ((node.access & Opcodes.ACC_STATIC) != 0) {
+            return true;
+        }
+
+        InsnList list = node.instructions;
+
+        Iterator<AbstractInsnNode> insnIter = list.iterator();
+
+        while (insnIter.hasNext()) {
+            AbstractInsnNode instr = insnIter.next();
+            int opcode = instr.getOpcode();
+            switch (opcode) {
+                case Opcodes.ALOAD:
+                    // Load "this"
+                    if (((IntInsnNode) instr).operand == 0) {
+                        return false;
+                    }
+                    if (((VarInsnNode) instr).var == 0) {
+                        return false;
+                    } else {
+                        continue;
+                    }
+                case Opcodes.INVOKEINTERFACE:
+                case Opcodes.INVOKESPECIAL:
+                case Opcodes.INVOKEVIRTUAL:
+                    return false;
+                default:
+                    continue;
+            }
+        }
+        return true;
+    }
+
+    private void collectLiterals() {
+
+        // よく使う。
+        literals.add(new Integer(0));
+        literals.add(new Double(0.0));
+        literals.add(new String(""));
+
+        for (int i = 0; i < ax.codes.length; ++i) {
+
+            final Object o = literalValueOf(ax.codes[i]);
+
+            if (o != null) {
+                if (literals.indexOf(o) < 0) {
+                    literals.add(o);
+                }
+            }
+        }
+    }
+
+    private Object literalValueOf(final Code code) {
+
+        switch (code.type) {
+            case ByteCode.Code.Type.String:
+                return new ByteString(ax.datas, code.value, false).toString();
+
+            case ByteCode.Code.Type.DNum:
+                final byte[] b = ax.datas;
+                final int o = code.value;
+                long bits = 0;
+                for (int i = 0; i < 8; ++i) {
+                    bits |= (b[o + i] & 0xFFL) << 8 * i;
+                }
+                return new Double(Double.longBitsToDouble(bits));
+
+            case ByteCode.Code.Type.INum:
+                return new Integer(code.value);
+            default:
+                return null;
+        }
+
+    }
+
+    private void createFields() {
+
+        cw.visitField(ACC_PRIVATE | ACC_FINAL, "context", contextDesc, null, null);
+
+        // 使用する変数を用意する。
+        for (int i = 0; i < ax.header.variableCount; ++i) {
+
+            cw.visitField(ACC_PRIVATE | ACC_FINAL, "v" + i, varDesc, null, null);
+        }
+
+        // 使用する引数を用意する。
+        for (int i = 0; i < ax.parameters.length; ++i) {
+
+            cw.visitField(ACC_PRIVATE | ACC_FINAL, "p" + i, opeDesc, null, null);
+        }
+
+        // 定数を用意する、毎回作っていたら遅い。
+        for (int i = 0; i < literals.size(); ++i) {
+            cw.visitField(ACC_PRIVATE | ACC_FINAL, "c" + i, literalDesc, null, null);
+        }
+
+        // インスタンスが必要なライブラリを用意する。
+        for (int i = 0; i < instancedLibraries.size(); ++i) {
+
+            cw.visitField(ACC_PRIVATE | ACC_FINAL, "l" + i, Type.getDescriptor((Class) instancedLibraries.get(i)),
+                    null, null);
+        }
+    }
+
+    private void createConstructor() {
+
+        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(" + contextDesc + ")V", null, new String[0]);
+
+        mv.visitVarInsn(ALOAD, thisIndex);
+        mv.visitMethodInsn(INVOKESPECIAL, parentIName, "<init>", "()V");
+
+        mv.visitVarInsn(ALOAD, thisIndex);
+        mv.visitVarInsn(ALOAD, 1);
+        mv.visitFieldInsn(PUTFIELD, classIName, "context", contextDesc);
+
+        // 使用する変数を用意する。
+        for (int i = 0; i < ax.header.variableCount; ++i) {
+
+            mv.visitVarInsn(ALOAD, thisIndex);
+            mv.visitTypeInsn(NEW, varIName);
+            mv.visitInsn(DUP);
+            mv.visitMethodInsn(INVOKESPECIAL, varIName, "<init>", "()V");
+            mv.visitFieldInsn(PUTFIELD, classIName, "v" + i, varDesc);
+        }
+
+        // 定数を用意する、毎回作っていたら遅い。
+        for (int i = 0; i < literals.size(); ++i) {
+
+            final Object value = literals.get(i);
+
+            mv.visitVarInsn(ALOAD, thisIndex);
+            mv.visitLdcInsn(value);
+            mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "("
+                    + Type.getDescriptor(value instanceof Integer ? Integer.TYPE
+                    : value instanceof Double ? Double.TYPE : String.class) + ")" + literalDesc);
+
+            mv.visitFieldInsn(PUTFIELD, classIName, "c" + i, literalDesc);
+        }
+
+        // インスタンス化が必要なライブラリを用意する。
+        for (int i = 0; i < instancedLibraries.size(); ++i) {
+
+            final Class clazz = (Class) instancedLibraries.get(i);
+
+            mv.visitVarInsn(ALOAD, thisIndex);
+            try {
+                // Context を受け取るコンストラクタがあるなら。
+                clazz.getConstructor(new Class[]{Context.class});
+
+                mv.visitTypeInsn(NEW, Type.getInternalName(clazz));
+                mv.visitInsn(DUP);
+                mv.visitVarInsn(ALOAD, 1);
+                mv.visitMethodInsn(INVOKESPECIAL, Type.getInternalName(clazz), "<init>", "(" + contextDesc + ")V");
+
+            } catch (Exception e) {
+
+                try {
+                    // デフォルトコンストラクタがあるなら。
+                    clazz.getConstructor(new Class[]{});
+
+                    mv.visitTypeInsn(NEW, Type.getInternalName(clazz));
+                    mv.visitInsn(DUP);
+                    mv.visitMethodInsn(INVOKESPECIAL, Type.getInternalName(clazz), "<init>", "()V");
+                } catch (Exception e1) {
+
+                    mv.visitInsn(ACONST_NULL);
+                }
+            }
+
+            mv.visitFieldInsn(PUTFIELD, classIName, "l" + i, Type.getDescriptor(clazz));
+        }
+
+        mv.visitInsn(RETURN);
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
+
+    }
+    private Map<Integer, Label> labels;
 
-						jar.closeEntry();
-					}
+    private void createRun() {
+
+        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC | ACC_FINAL, "run", "(I)" + opeDesc, null, new String[0]);
+
+        compileLocalVariables(mv);
+
+        prepareLabels();
+
+        final Label start_try = new Label();
+        mv.visitLabel(start_try);
+
+        compileLabelJumpTable(mv);
 
-				} else {
+        compileCodes(mv);
+
+        final Label end_try = new Label();
+        mv.visitLabel(end_try);
+
+        final Label after_try = new Label();
+        mv.visitJumpInsn(GOTO, after_try);
 
-					final JarEntry je = new JarEntry(packFile.getName());
-					je.setMethod(JarEntry.DEFLATED);
-					jar.putNextEntry(je);
+        final Label try_handler = new Label();
+        mv.visitLabel(try_handler);
 
-					final InputStream in = new FileInputStream(packFile);
-					try {
-						connectStream(in, jar);
+        mv.visitTryCatchBlock(start_try, end_try, try_handler, Type.getInternalName(GotoException.class));
 
-					} finally {
-						in.close();
-						jar.closeEntry();
-					}
-				}
-			}
+        mv.visitFieldInsn(GETFIELD, Type.getInternalName(GotoException.class), "label", "I");
 
-		} finally {
-			jar.close();
-		}
+        mv.visitVarInsn(ISTORE, jumpLabelIndex);
+        mv.visitJumpInsn(GOTO, start_try);
 
-		if (htmlFile != null) {
+        mv.visitLabel(after_try);
 
-			final Set libNames = new HashSet();
-			deploy(htmlFile.getAbsoluteFile().getParentFile(), jarFile);
-			libNames.add(jarFile.getName());
+        mv.visitInsn(ACONST_NULL);
+        mv.visitInsn(ARETURN);
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
 
-			deploy(htmlFile.getAbsoluteFile().getParentFile(), new File("hsplet.jar"));
-			libNames.add("hsplet.jar");
+    }
 
-			for (final Iterator i = libraryLoader.getUsedLibs().iterator(); i.hasNext();) {
-				final String extLib = (String) i.next();
-				deploy(htmlFile.getAbsoluteFile().getParentFile(), new File(extLib));
-				libNames.add(new File(extLib).getName());
-			}
+    private void prepareLabels() {
+
+        labels = new HashMap<Integer, Label>();
+
+        // 先頭のラベル
+        labels.put(new Integer(ax.codes[0].offset), new Label());
 
-			final OutputStream html = new FileOutputStream(htmlFile);
-			try {
-				new HtmlGenerator(generateClassName(startClass), title, libNames, w, h, templateFile).generate(html);
-			} finally {
-				html.close();
-			}
-		}
+        for (int i = 0; i < ax.labels.length; ++i) {
 
-	}
+            labels.put(new Integer(ax.labels[i]), new Label());
+        }
 
-	private static void deploy(final File destDir, final File file) throws IOException {
+    }
 
-		if (file.getAbsoluteFile().getParentFile().equals(destDir)) {
-			return;
-		}
+    private Label getLabel(final int index) {
 
-		final FileInputStream in = new FileInputStream(file);
-		try {
+        return labels.get(new Integer(ax.labels[index]));
+    }
 
-			final FileOutputStream out = new FileOutputStream(new File(destDir, file.getName()));
-			try {
-				connectStream(in, out);
-			} finally {
-				out.close();
-			}
+    /**
+     * 必要なローカル変数を用意。
+     *
+     * @param mv
+     */
+    private void compileLocalVariables(final MethodVisitor mv) {
 
-		} finally {
-			in.close();
-		}
-	}
+        mv.visitVarInsn(ALOAD, thisIndex);
+        mv.visitFieldInsn(GETFIELD, classIName, "context", contextDesc);
+        mv.visitVarInsn(ASTORE, contextIndex);
 
-	private static void connectStream(final InputStream in, final OutputStream out) throws IOException {
-		final byte[] buffer = new byte[1024];
-		for (;;) {
+    }
 
-			final int length = in.read(buffer);
-			if (length < 0) {
-				break;
-			}
-			out.write(buffer, 0, length);
-		}
-	}
+    private void compileLabelJumpTable(final MethodVisitor mv) {
 
-	private static final String contextDesc = Type.getDescriptor(Context.class);
+        mv.visitVarInsn(ILOAD, jumpLabelIndex);
+        mv.visitInsn(ICONST_M1);
+        mv.visitVarInsn(ISTORE, jumpLabelIndex);
 
-	private static final String contextIName = Type.getInternalName(Context.class);
+        final Label[] labels = new Label[ax.labels.length];
 
-	private static final String opeDesc = Type.getDescriptor(Operand.class);
+        for (int i = 0; i < labels.length; ++i) {
+            labels[i] = getLabel(i);
+        }
 
-	private static final String opeIName = Type.getInternalName(Operand.class);
+        mv.visitTableSwitchInsn(0, ax.labels.length - 1, (Label) this.labels.get(new Integer(ax.codes[0].offset)),
+                labels);
 
-	private static final String varDesc = Type.getDescriptor(Variable.class);
+    }
 
-	private static final String varIName = Type.getInternalName(Variable.class);
+    private void compileCodes(final MethodVisitor mv) {
 
-	private static final String literalDesc = Type.getDescriptor(Scalar.class);
+        int nextBlock = 1;
 
-	private static final String literalIName = Type.getInternalName(Scalar.class);
+        final Set<Label> unusedLabels = new HashSet<Label>(labels.values());
 
-	private static final String parentDesc = Type.getDescriptor(RunnableCode.class);
+        while (codeIndex < ax.codes.length) {
 
-	private static final String parentIName = Type.getInternalName(RunnableCode.class);
+            final Label label = (Label) labels.get(new Integer(ax.codes[codeIndex].offset));
 
-	private static final int thisIndex = 0;
+            if (label != null) {
+                mv.visitLabel(label);
+                unusedLabels.remove(label);
+            }
 
-	private static final int jumpLabelIndex = 1; // int
+            if (codeIndex >= nextBlock) {
+                // Java の制限で長すぎるコードはコンパイルできないことが判明・・・orz
+                // メソッドに切り出せるものは切り出すのが吉。
+                // ラベルを含まない、goto/return を含まない範囲が切り出せる。
+                final int nextLabelIndex = Math.min(codeIndex + 10000, findNextLabelGotoReturn());
 
-	private static final int contextIndex = 2; // contextType
+                if (nextLabelIndex != codeIndex) {
 
-	private static final int assignOffsetIndex = 3; // int
+                    // 終わっていない if/else/repeat/foreach、始まっていない
+                    // else/loop/break/continue/foreachCheck は除外しなければいけない。
+                    final int blockEnd = findBlockEnd(codeIndex, nextLabelIndex);
+                    final int blockSize = blockEnd - codeIndex;
 
-	private ClassVisitor cw;
+                    if (blockSize >= 20) {
 
-	private String inputName;
+                        submethodStartEnds.add(new int[]{codeIndex, blockEnd});
 
-	private String className;
+                        compileSeparatedMethod(new EmptyVisitor(), blockEnd);
 
-	private String classIName;
+                        mv.visitVarInsn(ALOAD, thisIndex);
+                        mv.visitMethodInsn(INVOKEVIRTUAL, classIName, "m" + (submethodStartEnds.size() - 1), "()V");
 
-	private ByteCode ax;
+                        continue;
+                    } else {
+                        nextBlock = blockEnd;
+                    }
+                }
+            }
 
-	private int codeIndex;
+            compileStatement(mv);
+        }
 
-	private List literals;
+        // 使用されなかったラベルも使ってやらないとエラーになる
+        for (final Iterator<Label> i = unusedLabels.iterator(); i.hasNext();) {
+            final Label label = i.next();
+            mv.visitLabel(label);
+        }
+    }
+    private List submethodStartEnds = new ArrayList();
 
-	private Stack loopStarts;
+    private void compileSeparatedMethod(final MethodVisitor mv, final int endIndex) {
 
-	private boolean enableVariableOptimization;
+        compileLocalVariables(mv);
 
-	private RuntimeInfo runtime;
+        while (codeIndex < endIndex) {
 
-	private List instancedLibraries;
+            final Label label = (Label) labels.get(new Integer(ax.codes[codeIndex].offset));
 
-	/**
-	 * 入力バイトコードを指定してオブジェクトを構築する。
-	 * 
-	 * @param ax
-	 *            バイトコード。
-	 * @param inputName
-	 *            入力ファイル名。
-	 * @param libraryLoader 拡張ライブラリローダ。
-	 */
-	public Compiler(final ByteCode ax, final String inputName, final ClassLoader libraryLoader) {
+            if (label != null) {
+                mv.visitLabel(label);
+            }
 
-		this.ax = ax;
-		this.inputName = inputName;
+            compileStatement(mv);
+        }
 
-		this.runtime = new DefaultRuntimeInfo(libraryLoader);
+        if (codeIndex < ax.codes.length) {
+            final Label label = (Label) labels.get(new Integer(ax.codes[codeIndex].offset));
 
-	}
+            if (label != null) {
+                mv.visitLabel(label);
+            }
+        }
 
-	/**
-	 * データをコンパイルする。
-	 * 
-	 * @param className
-	 *            コンパイル後のクラス名。
-	 * @param out
-	 *            出力先。
-	 * @throws IOException
-	 *             入出力エラーが発生したとき。
-	 */
-	public void compile(final String className, final OutputStream out) throws IOException {
+    }
 
-		this.className = className;
-		this.classIName = className.replace('.', '/');
+    private int findNextLabelGotoReturn() {
 
-		final ClassWriter writer = new ClassWriter(true);
+        for (int i = codeIndex; i < ax.codes.length; ++i) {
 
-		// フィールドの初期化。
-		if (DEBUG_ENABLED) {
-			cw = new ClassDebugger(writer);
-		} else {
-			cw = writer;
-		}
-		literals = new ArrayList();
-		loopStarts = new Stack();
-		submethodStartEnds = new ArrayList();
-		instancedLibraries = new ArrayList();
-		codeIndex = 0;
-		enableVariableOptimization = false;
+            // ラベル
+            if (i != codeIndex && labels.get(new Integer(ax.codes[i].offset)) != null) {
+                if (!isLoopLabel(ax.codes[i].offset)) {
+                    return i;
+                }
+            }
 
-		// クラス生成
-		cw.visit(V1_4, ACC_PUBLIC, classIName, null, parentIName, new String[0]);
+            if (ax.codes[i].type == ByteCode.Code.Type.ProgCmd) {
 
-		collectLiterals();
+                // goto か return か exgoto か on
+                if (ax.codes[i].newLine
+                        && (ax.codes[i].value == 0 || ax.codes[i].value == 2 || ax.codes[i].value == 0x18 || ax.codes[i].value == 0x19)) {
+                    return i;
+                }
 
-		createRun();
+            }
+        }
 
-		createSubMethods();
+        return ax.codes.length;
+    }
 
-		createConstructor();
+    private boolean isLoopLabel(int offset) {
 
-		createFields();
+        for (int i = 0; i < ax.codes.length; ++i) {
+            final Code code = ax.codes[i];
 
-		cw.visitEnd();
+            if (code.type == Code.Type.CmpCmd) {
 
-		// 出力
-		out.write(writer.toByteArray());
-	}
+                if (code.value == 0 || code.value == 1) {
+                    // if のターゲット?
+                    if (ax.codes[i + 1].value + ax.codes[i + 2].offset == offset) {
+                        return false;
+                    }
+                }
 
-	private void collectLiterals() {
+            } else if (code.type == ByteCode.Code.Type.ProgCmd) {
 
-		// よく使う。
-		literals.add(new Integer(0));
-		literals.add(new Double(0.0));
-		literals.add(new String(""));
+                if (code.value == 3 || code.value == 4 || code.value == 6 || code.value == 0x0B || code.value == 0x0C) {
+                    ++i;
+                }
+            } else if (code.type == ByteCode.Code.Type.Label) {
 
-		for (int i = 0; i < ax.codes.length; ++i) {
+                if (ax.labels[code.value] == offset) {
+                    return false;
+                }
+            }
+        }
 
-			final Object o = literalValueOf(ax.codes[i]);
+        return true;
+    }
 
-			if (o != null) {
-				if (literals.indexOf(o) < 0) {
-					literals.add(o);
-				}
-			}
-		}
-	}
+    /**
+     * else/loop/break/continue/foreachCheck
+     *
+     * @param endIndex
+     * @return
+     */
+    private int findBlockEnd(final int startIndex, final int endIndex) {
 
-	private Object literalValueOf(final Code code) {
+        for (int i = startIndex; i < endIndex;) {
 
-		switch (code.type) {
-		case ByteCode.Code.Type.String:
-			return new ByteString(ax.datas, code.value, false).toString();
+            if (ax.codes[i].type == ByteCode.Code.Type.CmpCmd) {
 
-		case ByteCode.Code.Type.DNum:
-			final byte[] b = ax.datas;
-			final int o = code.value;
-			long bits = 0;
-			for (int i = 0; i < 8; ++i) {
-				bits |= (b[o + i] & 0xFFL) << 8 * i;
-			}
-			return new Double(Double.longBitsToDouble(bits));
+                if (ax.codes[i].value == 1) {
+                    // else
+                    return i;
+                } else {
 
-		case ByteCode.Code.Type.INum:
-			return new Integer(code.value);
-		default:
-			return null;
-		}
+                    final int ifEndOffset = ax.codes[i + 2].offset + ax.codes[i + 1].value;
 
-	}
+                    final int ifEnd = findCodeForOffset(i, endIndex, ifEndOffset);
 
-	private void createFields() {
+                    if (ifEnd < 0) {
+                        return i;
+                    }
 
-		cw.visitField(ACC_PRIVATE | ACC_FINAL, "context", contextDesc, null, null);
+                    final int ifEnd2 = findBlockEnd(i + 2, ifEnd);
 
-		// 使用する変数を用意する。
-		for (int i = 0; i < ax.header.variableCount; ++i) {
+                    if (ifEnd2 == ifEnd) {
+                        // if の最後までいけた
 
-			cw.visitField(ACC_PRIVATE | ACC_FINAL, "v" + i, varDesc, null, null);
-		}
+                        i = ifEnd;
+                    } else if (ifEnd2 == ifEnd - 2 && ax.codes[ifEnd - 1].type == Code.Type.JumpOffset) {
+                        // else まで行けた
 
-		// 使用する引数を用意する。
-		for (int i = 0; i < ax.parameters.length; ++i) {
+                        final int elseEndOffset = ax.codes[ifEnd].offset + ax.codes[ifEnd - 1].value;
 
-			cw.visitField(ACC_PRIVATE | ACC_FINAL, "p" + i, opeDesc, null, null);
-		}
+                        final int elseEnd = findCodeForOffset(ifEnd, endIndex, elseEndOffset);
 
-		// 定数を用意する、毎回作っていたら遅い。
-		for (int i = 0; i < literals.size(); ++i) {
-			cw.visitField(ACC_PRIVATE | ACC_FINAL, "c" + i, literalDesc, null, null);
-		}
+                        if (elseEnd < 0) {
+                            return i;
+                        }
+
+                        final int elseEnd2 = findBlockEnd(ifEnd, elseEnd);
+
+                        if (elseEnd2 == elseEnd) {
+                            i = elseEnd;
+                        } else {
+                            return i;
+                        }
+                    } else {
+                        return i;
+                    }
+                }
+            } else if (ax.codes[i].type == ByteCode.Code.Type.ProgCmd) {
 
-		// インスタンスが必要なライブラリを用意する。
-		for (int i = 0; i < instancedLibraries.size(); ++i) {
+                if (ax.codes[i].value == 3 || ax.codes[i].value == 5 || ax.codes[i].value == 6
+                        || ax.codes[i].value == 0x0C) {
+                    // break/loop/continue/foreachCheck
+                    return i;
+                } else if (ax.codes[i].value == 4 || ax.codes[i].value == 0x0B) {
+                    // repeat/foreach
+
+                    final int loopEndOffset = ax.labels[ax.codes[i + 1].value];
 
-			cw.visitField(ACC_PRIVATE | ACC_FINAL, "l" + i, Type.getDescriptor((Class) instancedLibraries.get(i)),
-					null, null);
-		}
-	}
+                    final int loopEnd = findCodeForOffset(i, endIndex, loopEndOffset);
 
-	private void createConstructor() {
+                    if (loopEnd < 0) {
+                        // このループはブロックに入りきらない
+                        return i;
+                    }
 
-		final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(" + contextDesc + ")V", null, new String[0]);
+                    i = loopEnd;
+                } else {
+                    ++i;
+                }
+            } else {
+                ++i;
+            }
 
-		mv.visitVarInsn(ALOAD, thisIndex);
-		mv.visitMethodInsn(INVOKESPECIAL, parentIName, "<init>", "()V");
+        }
 
-		mv.visitVarInsn(ALOAD, thisIndex);
-		mv.visitVarInsn(ALOAD, 1);
-		mv.visitFieldInsn(PUTFIELD, classIName, "context", contextDesc);
+        return endIndex;
+    }
 
-		// 使用する変数を用意する。
-		for (int i = 0; i < ax.header.variableCount; ++i) {
+    private boolean containsOuterRepeatLoop(int startIndex, int endIndex, int blockEnd) {
 
-			mv.visitVarInsn(ALOAD, thisIndex);
-			mv.visitTypeInsn(NEW, varIName);
-			mv.visitInsn(DUP);
-			mv.visitMethodInsn(INVOKESPECIAL, varIName, "<init>", "()V");
-			mv.visitFieldInsn(PUTFIELD, classIName, "v" + i, varDesc);
-		}
+        for (int i = startIndex; i < endIndex; ++i) {
 
-		// 定数を用意する、毎回作っていたら遅い。
-		for (int i = 0; i < literals.size(); ++i) {
+            if (ax.codes[i].type == ByteCode.Code.Type.ProgCmd
+                    && (ax.codes[i].value == 3 || ax.codes[i].value == 4 || ax.codes[i].value == 5
+                    || ax.codes[i].value == 6 || ax.codes[i].value == 0x0B || ax.codes[i].value == 0x0C)) {
+                return true;
+            }
+        }
 
-			final Object value = literals.get(i);
+        return false;
+    }
 
-			mv.visitVarInsn(ALOAD, thisIndex);
-			mv.visitLdcInsn(value);
-			mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "("
-					+ Type.getDescriptor(value instanceof Integer ? Integer.TYPE
-							: value instanceof Double ? Double.TYPE : String.class) + ")" + literalDesc);
+    private int findCodeForOffset(int startIndex, final int endIndex, final int offset) {
 
-			mv.visitFieldInsn(PUTFIELD, classIName, "c" + i, literalDesc);
-		}
+        for (int i = startIndex; i < ax.codes.length && i <= endIndex; ++i) {
 
-		// インスタンス化が必要なライブラリを用意する。
-		for (int i = 0; i < instancedLibraries.size(); ++i) {
+            if (ax.codes[i].offset == offset) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
-			final Class clazz = (Class) instancedLibraries.get(i);
+    private void compileStatement(final MethodVisitor mv) {
 
-			mv.visitVarInsn(ALOAD, thisIndex);
-			try {
-				// Context を受け取るコンストラクタがあるなら。
-				clazz.getConstructor(new Class[] { Context.class });
+        // ステートメントは変数・パラメータへの代入、または命令で始まると決まっている。
 
-				mv.visitTypeInsn(NEW, Type.getInternalName(clazz));
-				mv.visitInsn(DUP);
-				mv.visitVarInsn(ALOAD, 1);
-				mv.visitMethodInsn(INVOKESPECIAL, Type.getInternalName(clazz), "<init>", "(" + contextDesc + ")V");
+        switch (ax.codes[codeIndex].type) {
+            case ByteCode.Code.Type.Var:
+            case ByteCode.Code.Type.Struct:
+                compileAssignment(mv);
+                break;
+            case ByteCode.Code.Type.IntCmd:
+            case ByteCode.Code.Type.ExtCmd:
+                compileCommand(mv);
+                break;
+            case ByteCode.Code.Type.CmpCmd:
+                compileCompareCommand(mv);
+                break;
+            case ByteCode.Code.Type.ModCmd:
+                compileModuleCommand(mv, false);
+                break;
+            case ByteCode.Code.Type.ProgCmd:
+                compileProgramCommand(mv);
+                break;
+            case ByteCode.Code.Type.DllFunc:
+                compileDllCommand(mv);
+                break;
+            case ByteCode.Code.Type.DllCtrl:
+                compileCommand(mv);
+                break;
+            default:
+                throw new RuntimeException("命令コード " + ax.codes[codeIndex].type + " は解釈できません。");
+        }
+    }
+    private static final String[] assignOperators = new String[]{"assignAdd", "assignSub", "assignMul", "assignDiv",
+        "assignMod", "assignAnd", "assignOr", "assignXor", "assign", "assignNe", "assignGt", "assignLt", "assignGtEq", "assignLtEq", "assignSr",
+        "assignSl"};
+    private static final String[] unaryOperators = new String[]{"inc", "dec"};
 
-			} catch (Exception e) {
+    private void compileAssignment(final MethodVisitor mv) {
 
-				try {
-					// デフォルトコンストラクタがあるなら。
-					clazz.getConstructor(new Class[] {});
+        final boolean prevEnableVariableOptimization = enableVariableOptimization;
 
-					mv.visitTypeInsn(NEW, Type.getInternalName(clazz));
-					mv.visitInsn(DUP);
-					mv.visitMethodInsn(INVOKESPECIAL, Type.getInternalName(clazz), "<init>", "()V");
-				} catch (Exception e1) {
+        // 演算子を先読みして最適化を有効にする。
+        // {
+        final int index = codeIndex;
 
-					mv.visitInsn(ACONST_NULL);
-				}
-			}
+        if (ax.codes[codeIndex].type == Code.Type.Var) {
+            compileVariable(new EmptyVisitor());
+        } else {
+            compileParameter(new EmptyVisitor());
+        }
 
-			mv.visitFieldInsn(PUTFIELD, classIName, "l" + i, Type.getDescriptor(clazz));
-		}
+        enableVariableOptimization |= ax.codes[codeIndex].value != 8;
 
-		mv.visitInsn(RETURN);
-		mv.visitMaxs(0, 0);
-		mv.visitEnd();
+        codeIndex = index;
 
-	}
+        // }
 
-	private Map labels;
+        if (ax.codes[codeIndex].type == Code.Type.Var) {
+            compileVariable(mv);
+        } else {
+            compileParameter(mv);
+        }
 
-	private void createRun() {
+        // 代入の右辺は常に最適化が有効
+        enableVariableOptimization = true;
 
-		final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC | ACC_FINAL, "run", "(I)" + opeDesc, null, new String[0]);
+        final Code code = ax.codes[codeIndex++];
 
-		compileLocalVariables(mv);
+        if (codeIndex < ax.codes.length && !ax.codes[codeIndex].newLine) {
 
-		prepareLabels();
+            // 代入演算子
 
-		final Label start_try = new Label();
-		mv.visitLabel(start_try);
+            String name = assignOperators[code.value];
 
-		compileLabelJumpTable(mv);
+            mv.visitVarInsn(ISTORE, assignOffsetIndex);
 
-		compileCodes(mv);
+            do {
 
-		final Label end_try = new Label();
-		mv.visitLabel(end_try);
+                mv.visitInsn(DUP);
 
-		final Label after_try = new Label();
-		mv.visitJumpInsn(GOTO, after_try);
+                mv.visitVarInsn(ILOAD, assignOffsetIndex);
 
-		final Label try_handler = new Label();
-		mv.visitLabel(try_handler);
+                mv.visitIincInsn(assignOffsetIndex, 1);
 
-		mv.visitTryCatchBlock(start_try, end_try, try_handler, Type.getInternalName(GotoException.class));
+                compileExpression(mv);
 
-		mv.visitFieldInsn(GETFIELD, Type.getInternalName(GotoException.class), "label", "I");
+                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(I" + opeDesc + "I)V");
 
-		mv.visitVarInsn(ISTORE, jumpLabelIndex);
-		mv.visitJumpInsn(GOTO, start_try);
+            } while (codeIndex < ax.codes.length && !ax.codes[codeIndex].newLine);
 
-		mv.visitLabel(after_try);
+            mv.visitInsn(POP);
 
-		mv.visitInsn(ACONST_NULL);
-		mv.visitInsn(ARETURN);
-		mv.visitMaxs(0, 0);
-		mv.visitEnd();
+        } else {
 
-	}
+            // 単項演算子
 
-	private void prepareLabels() {
+            String name = unaryOperators[code.value];
 
-		labels = new HashMap();
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(I)V");
 
-		// 先頭のラベル
-		labels.put(new Integer(ax.codes[0].offset), new Label());
+        }
 
-		for (int i = 0; i < ax.labels.length; ++i) {
+        enableVariableOptimization = prevEnableVariableOptimization;
 
-			labels.put(new Integer(ax.labels[i]), new Label());
-		}
+    }
 
-	}
+    private void compileVariable(final MethodVisitor mv) {
 
-	private Label getLabel(final int index) {
+        final Code code = ax.codes[codeIndex++];
 
-		return (Label) labels.get(new Integer(ax.labels[index]));
-	}
+        mv.visitVarInsn(ALOAD, thisIndex);
+        mv.visitFieldInsn(GETFIELD, classIName, "v" + code.value, varDesc);
 
-	/**
-	 * 必要なローカル変数を用意。
-	 * 
-	 * @param mv
-	 */
-	private void compileLocalVariables(final MethodVisitor mv) {
+        if (enableVariableOptimization) {
+            mv.visitFieldInsn(GETFIELD, varIName, "value", opeDesc);
+        }
 
-		mv.visitVarInsn(ALOAD, thisIndex);
-		mv.visitFieldInsn(GETFIELD, classIName, "context", contextDesc);
-		mv.visitVarInsn(ASTORE, contextIndex);
+        compileArrayIndex(mv);
 
-	}
+    }
 
-	private void compileLabelJumpTable(final MethodVisitor mv) {
+    private void compileArrayIndex(final MethodVisitor mv) {
 
-		mv.visitVarInsn(ILOAD, jumpLabelIndex);
-		mv.visitInsn(ICONST_M1);
-		mv.visitVarInsn(ISTORE, jumpLabelIndex);
+        int paramCount = 0;
+        if (codeIndex < ax.codes.length && ax.codes[codeIndex].type == Code.Type.Mark
+                && ax.codes[codeIndex].value == '(') {
 
-		final Label[] labels = new Label[ax.labels.length];
+            ++codeIndex;
 
-		for (int i = 0; i < labels.length; ++i) {
-			labels[i] = getLabel(i);
-		}
+            final int index = codeIndex;
 
-		mv.visitTableSwitchInsn(0, ax.labels.length - 1, (Label) this.labels.get(new Integer(ax.codes[0].offset)),
-				labels);
+            compileExpression(new EmptyVisitor());
 
-	}
+            final boolean moreThan2Dim = (codeIndex < ax.codes.length && !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')'));
 
-	private void compileCodes(final MethodVisitor mv) {
+            codeIndex = index;
 
-		int nextBlock = 1;
+            if (!moreThan2Dim) {
 
-		final Set unusedLabels = new HashSet(labels.values());
+                compileExpression(mv);
+                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
-		while (codeIndex < ax.codes.length) {
+            } else {
+                mv.visitInsn(DUP);
 
-			final Label label = (Label) labels.get(new Integer(ax.codes[codeIndex].offset));
+                // 配列要素アクセス
 
-			if (label != null) {
-				mv.visitLabel(label);
-				unusedLabels.remove(label);
-			}
+                do {
+                    ++paramCount;
 
-			if (codeIndex >= nextBlock) {
-				// Java の制限で長すぎるコードはコンパイルできないことが判明・・・orz
-				// メソッドに切り出せるものは切り出すのが吉。
-				// ラベルを含まない、goto/return を含まない範囲が切り出せる。
-				final int nextLabelIndex = Math.min(codeIndex + 10000, findNextLabelGotoReturn());
+                    compileExpression(mv);
+                    mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
-				if (nextLabelIndex != codeIndex) {
+                } while (codeIndex < ax.codes.length
+                        && !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')'));
 
-					// 終わっていない if/else/repeat/foreach、始まっていない
-					// else/loop/break/continue/foreachCheck は除外しなければいけない。
-					final int blockEnd = findBlockEnd(codeIndex, nextLabelIndex);
-					final int blockSize = blockEnd - codeIndex;
+                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "getIndex", "(" + "IIII".substring(0, paramCount) + ")I");
 
-					if (blockSize >= 20) {
+            }
 
-						submethodStartEnds.add(new int[] { codeIndex, blockEnd });
+            ++codeIndex;
 
-						compileSeparatedMethod(new EmptyVisitor(), blockEnd);
+        } else {
 
-						mv.visitVarInsn(ALOAD, thisIndex);
-						mv.visitMethodInsn(INVOKEVIRTUAL, classIName, "m" + (submethodStartEnds.size() - 1), "()V");
+            // 配列アクセスじゃないときはインデックスは 0 固定。
+            mv.visitInsn(ICONST_0);
+        }
+    }
 
-						continue;
-					} else {
-						nextBlock = blockEnd;
-					}
-				}
-			}
+    private void compileExpression(final MethodVisitor mv) {
 
-			compileStatement(mv);
-		}
+        // 先読みして最適化を有効化、トークンが二つ以上ある（演算される）時は有効。
+        // {
 
-		// 使用されなかったラベルも使ってやらないとエラーになる
-		for (final Iterator i = unusedLabels.iterator(); i.hasNext();) {
-			final Label label = (Label) i.next();
-			mv.visitLabel(label);
-		}
-	}
+        final boolean prevEnableVariableOptimization = enableVariableOptimization;
 
-	private List submethodStartEnds = new ArrayList();
+        final int index = codeIndex;
 
-	private void compileSeparatedMethod(final MethodVisitor mv, final int endIndex) {
+        compileToken(new EmptyVisitor());
 
-		compileLocalVariables(mv);
+        enableVariableOptimization |= (codeIndex < ax.codes.length
+                && !(ax.codes[codeIndex].type == Code.Type.Mark && (ax.codes[codeIndex].value == ')' || ax.codes[codeIndex].value == '?')) && !(ax.codes[codeIndex].newLine | ax.codes[codeIndex].comma));
 
-		while (codeIndex < endIndex) {
+        codeIndex = index;
 
-			final Label label = (Label) labels.get(new Integer(ax.codes[codeIndex].offset));
+        // }
 
-			if (label != null) {
-				mv.visitLabel(label);
-			}
+        do {
 
-			compileStatement(mv);
-		}
+            compileToken(mv);
 
-		if (codeIndex < ax.codes.length) {
-			final Label label = (Label) labels.get(new Integer(ax.codes[codeIndex].offset));
+        } while (codeIndex < ax.codes.length
+                && !(ax.codes[codeIndex].type == Code.Type.Mark && (ax.codes[codeIndex].value == ')' || ax.codes[codeIndex].value == '?'))
+                && !(ax.codes[codeIndex].newLine | ax.codes[codeIndex].comma));
 
-			if (label != null) {
-				mv.visitLabel(label);
-			}
-		}
+        enableVariableOptimization = prevEnableVariableOptimization;
 
-	}
+    }
 
-	private int findNextLabelGotoReturn() {
+    private void compileToken(final MethodVisitor mv) {
 
-		for (int i = codeIndex; i < ax.codes.length; ++i) {
+        // トークンはリテラル・変数・演算子・関数呼び出しと決まっている。
 
-			// ラベル
-			if (i != codeIndex && labels.get(new Integer(ax.codes[i].offset)) != null) {
-				if (!isLoopLabel(ax.codes[i].offset)) {
-					return i;
-				}
-			}
+        switch (ax.codes[codeIndex].type) {
+            case ByteCode.Code.Type.Mark:
+                compileOperator(mv);
+                break;
+            case ByteCode.Code.Type.String:
+            case ByteCode.Code.Type.DNum:
+            case ByteCode.Code.Type.INum:
+                compileLiteral(mv);
+                break;
+            case ByteCode.Code.Type.Struct:
+                compileParameter(mv);
+                break;
+            case ByteCode.Code.Type.Label:
+                compileLabel(mv);
+                break;
+            case ByteCode.Code.Type.Var:
+                compileVariable(mv);
+                break;
+            case ByteCode.Code.Type.ExtSysVar:
+                compileGuiSystmVariable(mv);
+                break;
+            case ByteCode.Code.Type.ModCmd:
+                compileModuleCommand(mv, true);
+                break;
+            case ByteCode.Code.Type.IntFunc:
+                compileFunction(mv);
+                break;
+            case ByteCode.Code.Type.SysVar:
+                compileSystemVariable(mv);
+                break;
+            case ByteCode.Code.Type.ProgCmd:
+                compileProgramCommand(mv);
+                break;
+            case ByteCode.Code.Type.DllFunc:
+                compileDllFunction(mv);
+                break;
+            case ByteCode.Code.Type.DllCtrl:
+                compileDllFunction(mv);
+                break;
 
-			if (ax.codes[i].type == ByteCode.Code.Type.ProgCmd) {
+            default:
+                throw new RuntimeException("命令コード " + ax.codes[codeIndex].type + " は解釈できません。");
+        }
+    }
 
-				// goto か return か exgoto か on
-				if (ax.codes[i].newLine
-						&& (ax.codes[i].value == 0 || ax.codes[i].value == 2 || ax.codes[i].value == 0x18 || ax.codes[i].value == 0x19)) {
-					return i;
-				}
+    private void compileLabel(final MethodVisitor mv) {
 
-			}
-		}
+        final Code code = ax.codes[codeIndex++];
 
-		return ax.codes.length;
-	}
+        mv.visitLdcInsn(new Integer(code.value));
+        mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromLabel", "(I)" + literalDesc);
 
-	private boolean isLoopLabel(int offset) {
+        mv.visitInsn(ICONST_0);
+    }
+    private static final String[] binaryOperators = new String[]{"add", "sub", "mul", "div", "mod", "and", "or",
+        "xor", "eq", "ne", "gt", "lt", "ge", "le", "sr", "sl"};
 
-		for (int i = 0; i < ax.codes.length; ++i) {
-			final Code code = ax.codes[i];
+    private void compileOperator(final MethodVisitor mv) {
 
-			if (code.type == Code.Type.CmpCmd) {
+        final Code code = ax.codes[codeIndex++];
 
-				if (code.value == 0 || code.value == 1) {
-					// if のターゲット?
-					if (ax.codes[i + 1].value + ax.codes[i + 2].offset == offset) {
-						return false;
-					}
-				}
+        final String name = binaryOperators[code.value];
 
-			} else if (code.type == ByteCode.Code.Type.ProgCmd) {
+        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(I" + opeDesc + "I)" + opeDesc);
 
-				if (code.value == 3 || code.value == 4 || code.value == 6 || code.value == 0x0B || code.value == 0x0C) {
-					++i;
-				}
-			} else if (code.type == ByteCode.Code.Type.Label) {
+        mv.visitInsn(ICONST_0);
+    }
 
-				if (ax.labels[code.value] == offset) {
-					return false;
-				}
-			}
-		}
+    private void compileLiteral(final MethodVisitor mv) {
 
-		return true;
-	}
+        final Code code = ax.codes[codeIndex++];
 
-	/**
-	 * else/loop/break/continue/foreachCheck
-	 * 
-	 * @param endIndex
-	 * @return
-	 */
-	private int findBlockEnd(final int startIndex, final int endIndex) {
+        compileLiteral(mv, literalValueOf(code));
+    }
 
-		for (int i = startIndex; i < endIndex;) {
+    private void compileLiteral(final MethodVisitor mv, final Object o) {
 
-			if (ax.codes[i].type == ByteCode.Code.Type.CmpCmd) {
+        mv.visitVarInsn(ALOAD, thisIndex);
 
-				if (ax.codes[i].value == 1) {
-					// else
-					return i;
-				} else {
+        mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(o), literalDesc);
 
-					final int ifEndOffset = ax.codes[i + 2].offset + ax.codes[i + 1].value;
+        mv.visitInsn(ICONST_0);
+    }
 
-					final int ifEnd = findCodeForOffset(i, endIndex, ifEndOffset);
+    private void compileParameter(final MethodVisitor mv) {
 
-					if (ifEnd < 0) {
-						return i;
-					}
+        final Code code = ax.codes[codeIndex++];
 
-					final int ifEnd2 = findBlockEnd(i + 2, ifEnd);
+        mv.visitVarInsn(ALOAD, thisIndex);
 
-					if (ifEnd2 == ifEnd) {
-						// if の最後までいけた
+        mv.visitFieldInsn(GETFIELD, classIName, "p" + code.value, opeDesc);
 
-						i = ifEnd;
-					} else if (ifEnd2 == ifEnd - 2 && ax.codes[ifEnd - 1].type == Code.Type.JumpOffset) {
-						// else まで行けた
+        compileArrayIndex(mv);
 
-						final int elseEndOffset = ax.codes[ifEnd].offset + ax.codes[ifEnd - 1].value;
+    }
 
-						final int elseEnd = findCodeForOffset(ifEnd, endIndex, elseEndOffset);
+    private void compileGuiSystmVariable(final MethodVisitor mv) {
 
-						if (elseEnd < 0) {
-							return i;
-						}
+        compileInvocation(mv, true, true);
+    }
 
-						final int elseEnd2 = findBlockEnd(ifEnd, elseEnd);
+    private void compileInvocation(final MethodVisitor mv, boolean bracket, final boolean hasresult) {
 
-						if (elseEnd2 == elseEnd) {
-							i = elseEnd;
-						} else {
-							return i;
-						}
-					} else {
-						return i;
-					}
-				}
-			} else if (ax.codes[i].type == ByteCode.Code.Type.ProgCmd) {
+        final Code code = ax.codes[codeIndex++];
 
-				if (ax.codes[i].value == 3 || ax.codes[i].value == 5 || ax.codes[i].value == 6
-						|| ax.codes[i].value == 0x0C) {
-					// break/loop/continue/foreachCheck
-					return i;
-				} else if (ax.codes[i].value == 4 || ax.codes[i].value == 0x0B) {
-					// repeat/foreach
+        final Class libraryClass = runtime.getClassFor(ax, code);
+        final Method method = runtime.getMethodFor(ax, code);
+        final String methodDesc = Type.getMethodDescriptor(method);
 
-					final int loopEndOffset = ax.labels[ax.codes[i + 1].value];
+        if (!Modifier.isStatic(method.getModifiers())) {
 
-					final int loopEnd = findCodeForOffset(i, endIndex, loopEndOffset);
+            if (!instancedLibraries.contains(libraryClass)) {
+                instancedLibraries.add(libraryClass);
+            }
 
-					if (loopEnd < 0) {
-						// このループはブロックに入りきらない
-						return i;
-					}
+            mv.visitIntInsn(ALOAD, thisIndex);
+            mv.visitFieldInsn(GETFIELD, classIName, "l" + instancedLibraries.indexOf(libraryClass), Type.getDescriptor(libraryClass));
+        }
 
-					i = loopEnd;
-				} else {
-					++i;
-				}
-			} else {
-				++i;
-			}
+        final boolean noeatparam;
+        if (bracket && !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == '(')) {
+            // パラメータ無しシステム変数
+            noeatparam = true;
+            bracket = false;
+        } else {
+            noeatparam = false;
+        }
 
-		}
+        if (bracket) {
+            ++codeIndex; // ( を読み飛ばす。
+        }
 
-		return endIndex;
-	}
+        compileInvocationParameters(mv, method, noeatparam);
 
-	private boolean containsOuterRepeatLoop(int startIndex, int endIndex, int blockEnd) {
+        if (bracket) {
 
-		for (int i = startIndex; i < endIndex; ++i) {
+            // ')' 見つからず
+            if (!(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')')) {
+                throw new RuntimeException("対応する ) が見つかりません。");
+            }
 
-			if (ax.codes[i].type == ByteCode.Code.Type.ProgCmd
-					&& (ax.codes[i].value == 3 || ax.codes[i].value == 4 || ax.codes[i].value == 5
-							|| ax.codes[i].value == 6 || ax.codes[i].value == 0x0B || ax.codes[i].value == 0x0C)) {
-				return true;
-			}
-		}
+            ++codeIndex; // ) を読み飛ばす。
+        }
 
-		return false;
-	}
+        // 呼び出す。
+        mv.visitMethodInsn(Modifier.isStatic(method.getModifiers()) ? INVOKESTATIC : INVOKEVIRTUAL, Type.getInternalName(libraryClass), method.getName(), methodDesc);
 
-	private int findCodeForOffset(int startIndex, final int endIndex, final int offset) {
+        if (hasresult) {
 
-		for (int i = startIndex; i < ax.codes.length && i <= endIndex; ++i) {
+            // 関数のときは戻り値が必要。
 
-			if (ax.codes[i].offset == offset) {
-				return i;
-			}
-		}
-		return -1;
-	}
+            if (method.getReturnType().equals(Void.TYPE)) {
 
-	private void compileStatement(final MethodVisitor mv) {
+                mv.visitVarInsn(ALOAD, thisIndex);
+                mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Integer(0)), literalDesc);
 
-		// ステートメントは変数・パラメータへの代入、または命令で始まると決まっている。
+            } else if (method.getReturnType().equals(Operand.class)) {
+                // 何もする必要なし
+            } else {
 
-		switch (ax.codes[codeIndex].type) {
-		case ByteCode.Code.Type.Var:
-		case ByteCode.Code.Type.Struct:
-			compileAssignment(mv);
-			break;
-		case ByteCode.Code.Type.IntCmd:
-		case ByteCode.Code.Type.ExtCmd:
-			compileCommand(mv);
-			break;
-		case ByteCode.Code.Type.CmpCmd:
-			compileCompareCommand(mv);
-			break;
-		case ByteCode.Code.Type.ModCmd:
-			compileModuleCommand(mv, false);
-			break;
-		case ByteCode.Code.Type.ProgCmd:
-			compileProgramCommand(mv);
-			break;
-		case ByteCode.Code.Type.DllFunc:
-			compileDllCommand(mv);
-			break;
-		case ByteCode.Code.Type.DllCtrl:
-			compileCommand(mv);
-			break;
-		default:
-			throw new RuntimeException("命令コード " + ax.codes[codeIndex].type + " は解釈できません。");
-		}
-	}
+                mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "("
+                        + Type.getDescriptor(method.getReturnType()) + ")" + literalDesc);
 
-	private static final String[] assignOperators = new String[] { "assignAdd", "assignSub", "assignMul", "assignDiv",
-			"assignMod", "assignAnd", "assignOr", "assignXor", "assign", null, null, null, null, null, "assignSr",
-			"assignSl" };
+            }
 
-	private static final String[] unaryOperators = new String[] { "inc", "dec" };
+            mv.visitInsn(ICONST_0);
 
-	private void compileAssignment(final MethodVisitor mv) {
+        } else {
 
-		final boolean prevEnableVariableOptimization = enableVariableOptimization;
+            // 命令のときは戻り値は stat に代入
 
-		// 演算子を先読みして最適化を有効にする。
-		// {
-		final int index = codeIndex;
+            if (method.getReturnType().equals(Integer.TYPE)) {
 
-		if (ax.codes[codeIndex].type == Code.Type.Var) {
-			compileVariable(new EmptyVisitor());
-		} else {
-			compileParameter(new EmptyVisitor());
-		}
+                mv.visitVarInsn(ALOAD, contextIndex);
+                mv.visitFieldInsn(GETFIELD, contextIName, "stat", Type.getDescriptor(IntScalar.class));
 
-		enableVariableOptimization |= ax.codes[codeIndex].value != 8;
+                mv.visitInsn(SWAP);
 
-		codeIndex = index;
+                mv.visitFieldInsn(PUTFIELD, Type.getInternalName(IntScalar.class), "value", "I");
 
-		// }
+            } else if (!method.getReturnType().equals(Void.TYPE)) {
+                // int 以外は無視
+                mv.visitInsn(POP);
+            }
+        }
 
-		if (ax.codes[codeIndex].type == Code.Type.Var) {
-			compileVariable(mv);
-		} else {
-			compileParameter(mv);
-		}
+    }
 
-		// 代入の右辺は常に最適化が有効
-		enableVariableOptimization = true;
+    private void compileInvocationParameters(final MethodVisitor mv, final Method method, final boolean noeatparam) {
 
-		final Code code = ax.codes[codeIndex++];
+        boolean firstParam = true;
 
-		if (codeIndex < ax.codes.length && !ax.codes[codeIndex].newLine) {
+        for (int paramIndex = 0; paramIndex < method.getParameterTypes().length; ++paramIndex) {
 
-			// 代入演算子
+            final Class type = method.getParameterTypes()[paramIndex];
 
-			String name = assignOperators[code.value];
+            if (type.equals(Context.class)) {
 
-			mv.visitVarInsn(ISTORE, assignOffsetIndex);
+                mv.visitVarInsn(ALOAD, contextIndex);
 
-			do {
+            } else if (type.equals(JumpStatement.class)) {
 
-				mv.visitInsn(DUP);
+                if (!noeatparam && codeIndex < ax.codes.length && !(ax.codes[codeIndex].newLine)
+                        && !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')')
+                        && (ax.codes[codeIndex].type == Code.Type.ProgCmd)) {
 
-				mv.visitVarInsn(ILOAD, assignOffsetIndex);
+                    mv.visitFieldInsn(GETSTATIC, Type.getInternalName(JumpStatement.class),
+                            ax.codes[codeIndex].value == 0 ? "Goto" : "Gosub", Type.getDescriptor(JumpStatement.class));
 
-				mv.visitIincInsn(assignOffsetIndex, 1);
+                    ++codeIndex;
+                } else {
+                    mv.visitInsn(ACONST_NULL);
+                }
 
-				compileExpression(mv);
+            } else {
 
-				mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(I" + opeDesc + "I)V");
+                boolean omitted;
 
-			} while (codeIndex < ax.codes.length && !ax.codes[codeIndex].newLine);
+                final Code code = ax.codes[codeIndex];
 
-			mv.visitInsn(POP);
+                if (!noeatparam && codeIndex < ax.codes.length && !(code.newLine)
+                        && !(code.type == Code.Type.Mark && code.value == ')')) {
 
-		} else {
+                    if (firstParam && code.comma) {
+                        omitted = true;
+                    } else if (code.type == Code.Type.Mark && code.value == '?') {
+                        omitted = true;
+                        ++codeIndex;
+                    } else {
+                        omitted = false;
+                    }
+                } else {
+                    omitted = true;
+                }
 
-			// 単項演算子
+                firstParam = false;
 
-			String name = unaryOperators[code.value];
+                if (!omitted) {
+                    compileExpression(mv);
 
-			mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(I)V");
+                    if (type.equals(Operand.class)) {
 
-		}
+                        ++paramIndex; // 次の int は読み飛ばす
 
-		enableVariableOptimization = prevEnableVariableOptimization;
+                        // 次は必ず int
+                        if (!method.getParameterTypes()[paramIndex].equals(Integer.TYPE)) {
+                            throw new RuntimeException(
+                                    "拡張ライブラリの引数に Operand を受け取ったときはかならずその次の引数で配列インデックスを受け取らなければいけません。");
+                        }
 
-	}
+                    } else if (type.equals(Integer.TYPE)) {
 
-	private void compileVariable(final MethodVisitor mv) {
+                        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
-		final Code code = ax.codes[codeIndex++];
+                    } else if (type.equals(Double.TYPE)) {
 
-		mv.visitVarInsn(ALOAD, thisIndex);
-		mv.visitFieldInsn(GETFIELD, classIName, "v" + code.value, varDesc);
+                        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toDouble", "(I)D");
 
-		if (enableVariableOptimization) {
-			mv.visitFieldInsn(GETFIELD, varIName, "value", opeDesc);
-		}
+                    } else if (type.equals(ByteString.class)) {
 
-		compileArrayIndex(mv);
+                        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toByteString", "(I)" + Type.getDescriptor(type));
 
-	}
+                    } else if (type.equals(String.class)) {
 
-	private void compileArrayIndex(final MethodVisitor mv) {
+                        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toString", "(I)"
+                                + Type.getDescriptor(String.class));
 
-		int paramCount = 0;
-		if (codeIndex < ax.codes.length && ax.codes[codeIndex].type == Code.Type.Mark
-				&& ax.codes[codeIndex].value == '(') {
+                    } else {
+                        throw new UnsupportedOperationException("拡張ライブラリの引数型 " + type + " はサポートされていません。");
+                    }
 
-			++codeIndex;
+                } else {
 
-			final int index = codeIndex;
+                    if (type.equals(Operand.class)) {
 
-			compileExpression(new EmptyVisitor());
+                        mv.visitInsn(ACONST_NULL);
+                        mv.visitInsn(ICONST_0);
 
-			final boolean moreThan2Dim = (codeIndex < ax.codes.length && !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')'));
+                        ++paramIndex; // 次の int は読み飛ばす
 
-			codeIndex = index;
+                        // 次は必ず int
+                        if (!method.getParameterTypes()[paramIndex].equals(Integer.TYPE)) {
+                            throw new RuntimeException(
+                                    "拡張ライブラリの引数に Operand を受け取ったときはかならずその次の引数で配列インデックスを受け取らなければいけません。");
+                        }
 
-			if (!moreThan2Dim) {
+                    } else if (type.equals(Integer.TYPE)) {
 
-				compileExpression(mv);
-				mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+                        mv.visitInsn(ICONST_0);
 
-			} else {
-				mv.visitInsn(DUP);
+                    } else if (type.equals(Double.TYPE)) {
 
-				// 配列要素アクセス
+                        mv.visitInsn(DCONST_0);
 
-				do {
-					++paramCount;
+                    } else {
 
-					compileExpression(mv);
-					mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+                        mv.visitInsn(ACONST_NULL);
 
-				} while (codeIndex < ax.codes.length
-						&& !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')'));
+                    }
+                }
+            }
 
-				mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "getIndex", "(" + "IIII".substring(0, paramCount) + ")I");
+        }
 
-			}
+        // いらない引数は読み飛ばす。
+        while (!noeatparam && codeIndex < ax.codes.length && !(ax.codes[codeIndex].newLine)
+                && !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')')) {
 
-			++codeIndex;
+            compileExpression(new EmptyVisitor());
 
-		} else {
+        }
+    }
 
-			// 配列アクセスじゃないときはインデックスは 0 固定。
-			mv.visitInsn(ICONST_0);
-		}
-	}
+    private void compileModuleCommand(final MethodVisitor mv, final boolean hasresult) {
 
-	private void compileExpression(final MethodVisitor mv) {
+        final Code code = ax.codes[codeIndex++];
+        final Method method = runtime.getMethodFor(ax, code);
+        final String methodDesc = Type.getMethodDescriptor(method);
 
-		// 先読みして最適化を有効化、トークンが二つ以上ある（演算される）時は有効。
-		// {
+        final ByteCode.Function function = ax.functions[code.value];
 
-		final boolean prevEnableVariableOptimization = enableVariableOptimization;
+        // '(' を読み飛ばす
+        if (function.isFunction()) {
+            ++codeIndex;
+        }
 
-		final int index = codeIndex;
+        compileModuleParameters(mv, function);
 
-		compileToken(new EmptyVisitor());
+        // ')' を読み飛ばす。
+        if (function.isFunction()) {
+            ++codeIndex;
+        }
 
-		enableVariableOptimization |= (codeIndex < ax.codes.length
-				&& !(ax.codes[codeIndex].type == Code.Type.Mark && (ax.codes[codeIndex].value == ')' || ax.codes[codeIndex].value == '?')) && !(ax.codes[codeIndex].newLine | ax.codes[codeIndex].comma));
+        mv.visitVarInsn(ALOAD, contextIndex);
 
-		codeIndex = index;
+        mv.visitLdcInsn(new Integer(ax.functions[code.value].otindex));
 
-		// }
+        mv.visitMethodInsn(INVOKESTATIC, Type.getInternalName(method.getDeclaringClass()), method.getName(),
+                methodDesc);
 
-		do {
+        if (hasresult) {
 
-			compileToken(mv);
+            // 関数のときは戻り値が必要。
 
-		} while (codeIndex < ax.codes.length
-				&& !(ax.codes[codeIndex].type == Code.Type.Mark && (ax.codes[codeIndex].value == ')' || ax.codes[codeIndex].value == '?'))
-				&& !(ax.codes[codeIndex].newLine | ax.codes[codeIndex].comma));
+            if (!function.isFunction()) {
 
-		enableVariableOptimization = prevEnableVariableOptimization;
+                mv.visitVarInsn(ALOAD, thisIndex);
+                mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Integer(0)), literalDesc);
 
-	}
+            } else {
 
-	private void compileToken(final MethodVisitor mv) {
+                mv.visitInsn(ICONST_0);
 
-		// トークンはリテラル・変数・演算子・関数呼び出しと決まっている。
+            }
 
-		switch (ax.codes[codeIndex].type) {
-		case ByteCode.Code.Type.Mark:
-			compileOperator(mv);
-			break;
-		case ByteCode.Code.Type.String:
-		case ByteCode.Code.Type.DNum:
-		case ByteCode.Code.Type.INum:
-			compileLiteral(mv);
-			break;
-		case ByteCode.Code.Type.Struct:
-			compileParameter(mv);
-			break;
-		case ByteCode.Code.Type.Label:
-			compileLabel(mv);
-			break;
-		case ByteCode.Code.Type.Var:
-			compileVariable(mv);
-			break;
-		case ByteCode.Code.Type.ExtSysVar:
-			compileGuiSystmVariable(mv);
-			break;
-		case ByteCode.Code.Type.ModCmd:
-			compileModuleCommand(mv, true);
-			break;
-		case ByteCode.Code.Type.IntFunc:
-			compileFunction(mv);
-			break;
-		case ByteCode.Code.Type.SysVar:
-			compileSystemVariable(mv);
-			break;
-		case ByteCode.Code.Type.ProgCmd:
-			compileProgramCommand(mv);
-			break;
-		case ByteCode.Code.Type.DllFunc:
-			compileDllFunction(mv);
-			break;
-		default:
-			throw new RuntimeException("命令コード " + ax.codes[codeIndex].type + " は解釈できません。");
-		}
-	}
+        } else {
 
-	private void compileLabel(final MethodVisitor mv) {
+            // 命令のときは戻り値は stat に代入
 
-		final Code code = ax.codes[codeIndex++];
+            mv.visitInsn(DUP);
 
-		mv.visitLdcInsn(new Integer(code.value));
-		mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromLabel", "(I)" + literalDesc);
+            final Label noassign = new Label();
+            mv.visitJumpInsn(IFNULL, noassign);
 
-		mv.visitInsn(ICONST_0);
-	}
+            mv.visitVarInsn(ALOAD, contextIndex);
+            mv.visitFieldInsn(GETFIELD, contextIName, "stat", Type.getDescriptor(IntScalar.class));
 
-	private static final String[] binaryOperators = new String[] { "add", "sub", "mul", "div", "mod", "and", "or",
-			"xor", "eq", "ne", "gt", "lt", "ge", "le", "sr", "sl" };
+            mv.visitInsn(SWAP);
 
-	private void compileOperator(final MethodVisitor mv) {
+            mv.visitInsn(ICONST_0);
 
-		final Code code = ax.codes[codeIndex++];
+            mv.visitInsn(SWAP);
 
-		final String name = binaryOperators[code.value];
+            mv.visitInsn(ICONST_0);
 
-		mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(I" + opeDesc + "I)" + opeDesc);
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "assign", "(I" + opeDesc + "I)V");
 
-		mv.visitInsn(ICONST_0);
-	}
+            final Label end = new Label();
+            mv.visitJumpInsn(GOTO, end);
+            mv.visitLabel(noassign);
+            mv.visitInsn(POP);
+            mv.visitLabel(end);
+        }
 
-	private void compileLiteral(final MethodVisitor mv) {
+    }
 
-		final Code code = ax.codes[codeIndex++];
+    private void compileModuleParameters(final MethodVisitor mv, final Function function) {
 
-		compileLiteral(mv, literalValueOf(code));
-	}
+        boolean firstParam = true;
 
-	private void compileLiteral(final MethodVisitor mv, final Object o) {
+        for (int paramIndex = 0; paramIndex < function.prmmax; ++paramIndex) {
 
-		mv.visitVarInsn(ALOAD, thisIndex);
+            final ByteCode.Parameter param = ax.parameters[function.prmindex + paramIndex];
+            final int type = param.mptype;
 
-		mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(o), literalDesc);
+            mv.visitVarInsn(ALOAD, thisIndex);
 
-		mv.visitInsn(ICONST_0);
-	}
+            boolean omitted;
 
-	private void compileParameter(final MethodVisitor mv) {
+            final Code code = ax.codes[codeIndex];
 
-		final Code code = ax.codes[codeIndex++];
+            if (codeIndex < ax.codes.length && !(code.newLine) && !(code.type == Code.Type.Mark && code.value == ')')) {
 
-		mv.visitVarInsn(ALOAD, thisIndex);
+                if (firstParam && code.comma) {
+                    omitted = true;
+                } else if (code.type == Code.Type.Mark && code.value == '?') {
+                    omitted = true;
+                    ++codeIndex;
+                } else {
+                    omitted = false;
+                }
+            } else {
+                omitted = true;
+            }
 
-		mv.visitFieldInsn(GETFIELD, classIName, "p" + code.value, opeDesc);
+            firstParam = false;
 
-		compileArrayIndex(mv);
+            if (!omitted) {
 
-	}
+                compileExpression(mv);
 
-	private void compileGuiSystmVariable(final MethodVisitor mv) {
+                switch (type) {
+                    case 1: // var
+                    case -1: // local variable
+                    case -3: // single variable
+                    {
+                        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "ref", "(I)" + opeDesc);
+                    }
+                    break;
+                    case -2: // array variable
+                    {
+                        mv.visitInsn(POP);
+                        mv.visitInsn(ICONST_0);
+                        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "ref", "(I)" + opeDesc);
+                    }
+                    break;
+                    case -6: // local string
+                    case 2: // string
+                    {
 
-		compileInvocation(mv, true, true);
-	}
+                        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toByteString", "(I)"
+                                + Type.getDescriptor(ByteString.class));
 
-	private void compileInvocation(final MethodVisitor mv, boolean bracket, final boolean hasresult) {
+                        mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "("
+                                + Type.getDescriptor(ByteString.class) + ")" + literalDesc);
+                    }
+                    break;
+                    case 3: // dnum
+                    {
+                        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toDouble", "(I)D");
 
-		final Code code = ax.codes[codeIndex++];
+                        mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "(D)" + literalDesc);
+                    }
+                    break;
+                    case 4: // inum
+                    {
+                        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
-		final Class libraryClass = runtime.getClassFor(ax, code);
-		final Method method = runtime.getMethodFor(ax, code);
-		final String methodDesc = Type.getMethodDescriptor(method);
+                        mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "(I)" + literalDesc);
 
-		if (!Modifier.isStatic(method.getModifiers())) {
+                    }
+                    break;
+                    case 5: // struct
+                        throw new UnsupportedOperationException("ユーザ定義命令の引数型 struct はサポートされていません。");
+                    case 6: // label
+                        throw new UnsupportedOperationException("ユーザ定義命令の引数型 label はサポートされていません。");
+                    default:
+                        throw new UnsupportedOperationException("ユーザ定義命令の引数型 " + type + " はサポートされていません。");
+                }
 
-			if (!instancedLibraries.contains(libraryClass)) {
-				instancedLibraries.add(libraryClass);
-			}
+            } else {
 
-			mv.visitIntInsn(ALOAD, thisIndex);
-			mv.visitFieldInsn(GETFIELD, classIName, "l" + instancedLibraries.indexOf(libraryClass), Type
-					.getDescriptor(libraryClass));
-		}
+                switch (type) {
+                    case 1: // var
+                    case -1: // local variable
+                    case -2: // array variable
+                    case -3: // single variable
+                        throw new RuntimeException("ユーザ定義命令の引数の変数は省略できません。");
+                    case -6: // local string
+                    case 2: // string
+                    {
+                        mv.visitVarInsn(ALOAD, thisIndex);
+                        mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(""), literalDesc);
 
-		final boolean noeatparam;
-		if (bracket && !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == '(')) {
-			// パラメータ無しシステム変数
-			noeatparam = true;
-			bracket = false;
-		} else {
-			noeatparam = false;
-		}
+                    }
+                    break;
+                    case 3: // dnum
+                    {
+                        mv.visitVarInsn(ALOAD, thisIndex);
+                        mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Double(0.0)), literalDesc);
 
-		if (bracket) {
-			++codeIndex; // ( を読み飛ばす。
-		}
+                    }
+                    break;
+                    case 4: // inum
+                    {
+                        mv.visitVarInsn(ALOAD, thisIndex);
+                        mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Integer(0)), literalDesc);
+                    }
+                    break;
+                    case 5: // struct
+                        throw new UnsupportedOperationException("ユーザ定義命令の引数型 struct はサポートされていません。");
+                    case 6: // label
+                        throw new UnsupportedOperationException("ユーザ定義命令の引数型 label はサポートされていません。");
+                    default:
+                        throw new UnsupportedOperationException("ユーザ定義命令の引数型 " + type + " はサポートされていません。");
+                }
+            }
 
-		compileInvocationParameters(mv, method, noeatparam);
+            mv.visitFieldInsn(PUTFIELD, classIName, "p" + (function.prmindex + paramIndex), opeDesc);
 
-		if (bracket) {
+        }
 
-			// ')' 見つからず
-			if (!(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')')) {
-				throw new RuntimeException("対応する ) が見つかりません。");
-			}
+        // いらない引数は読み飛ばす。
+        while (codeIndex < ax.codes.length && !(ax.codes[codeIndex].newLine)
+                && !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')')) {
 
-			++codeIndex; // ) を読み飛ばす。
-		}
+            compileExpression(new EmptyVisitor());
 
-		// 呼び出す。
-		mv.visitMethodInsn(Modifier.isStatic(method.getModifiers()) ? INVOKESTATIC : INVOKEVIRTUAL, Type
-				.getInternalName(libraryClass), method.getName(), methodDesc);
+        }
+    }
 
-		if (hasresult) {
+    private void compileFunction(final MethodVisitor mv) {
 
-			// 関数のときは戻り値が必要。
+        compileInvocation(mv, true, true);
+    }
+    private static final String[] systemVariables = new String[]{"system", "hspstat", "hspver", "stat", "cnt", "err",
+        "strsize", "looplev", "sublev", "iparam", "wparam", "lparam", "refstr", "refdval"};
 
-			if (method.getReturnType().equals(Void.TYPE)) {
+    private void compileSystemVariable(final MethodVisitor mv) {
 
-				mv.visitVarInsn(ALOAD, thisIndex);
-				mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Integer(0)), literalDesc);
+        final Code code = ax.codes[codeIndex++];
 
-			} else if (method.getReturnType().equals(Operand.class)) {
+        // context をプッシュしておく。
+        mv.visitVarInsn(ALOAD, contextIndex);
 
-				// 何もする必要なし
+        final Field field;
+        try {
+            field = Context.class.getField(systemVariables[code.value]);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-			} else {
+        mv.visitFieldInsn(GETFIELD, contextIName, field.getName(), Type.getDescriptor(field.getType()));
 
-				mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "("
-						+ Type.getDescriptor(method.getReturnType()) + ")" + literalDesc);
+        mv.visitInsn(ICONST_0);
+    }
 
-			}
+    private void compileProgramCommand(final MethodVisitor mv) {
 
-			mv.visitInsn(ICONST_0);
+        switch (ax.codes[codeIndex].value) {
+            case 0x00: // goto
+                compileGoto(mv);
+                break;
+            case 0x02: // return
+                compileReturn(mv);
+                break;
+            case 0x03: // break
+                compileBreak(mv);
+                break;
+            case 0x04: // repeat
+                compileRepeat(mv);
+                break;
+            case 0x05: // loop
+                compileLoop(mv);
+                break;
+            case 0x06: // continue
+                compileContinue(mv);
+                break;
+            case 0x0B: // foreach
+                compileForeach(mv);
+                break;
+            case 0x0C: // foreachcheck
+                compileForeachcheck(mv);
+                break;
+            case 0x18: // exgoto
+                compileExgoto(mv);
+                break;
+            case 0x19: // on
+                compileOn(mv);
+                break;
+            case 0x01: // gosub
+            case 0x07: // wait
+            case 0x08: // await
+            case 0x09: // dim
+            case 0x0A: // sdim
+            case 0x0D: // dimtype
+            case 0x0E: // dup
+            case 0x0F: // dupptr
+            case 0x10: // end
+            case 0x11: // stop
+            case 0x12: // newmod
+            case 0x13: // setmod
+            case 0x14: // delmod
+            case 0x15: // alloc
+            case 0x16: // mref
+            case 0x17: // run
+            case 0x1A: // mcall
+            case 0x1B: // assert
+            case 0x1C: // logmes
+                compileCommand(mv);
+                break;
+            default:
+                throw new UnsupportedOperationException("プログラム制御命令 " + ax.codes[codeIndex].value + " はサポートされていません。");
+        }
+    }
 
-		} else {
+    private void compileGoto(final MethodVisitor mv) {
 
-			// 命令のときは戻り値は stat に代入
+        //@SuppressWarnings("unused")
+        final Code code = ax.codes[codeIndex++];
+        final Code label = ax.codes[codeIndex++];
 
-			if (method.getReturnType().equals(Integer.TYPE)) {
+        mv.visitJumpInsn(GOTO, getLabel(label.value));
 
-				mv.visitVarInsn(ALOAD, contextIndex);
-				mv.visitFieldInsn(GETFIELD, contextIName, "stat", Type.getDescriptor(IntScalar.class));
-				
-				mv.visitInsn(SWAP);
-				
-				mv.visitFieldInsn(PUTFIELD, Type.getInternalName(IntScalar.class), "value", "I");
+    }
 
-			} else if (!method.getReturnType().equals(Void.TYPE)) {
-				// int 以外は無視
-				mv.visitInsn(POP);
-			}
-		}
+    private void compileReturn(final MethodVisitor mv) {
 
-	}
+        //@SuppressWarnings("unused")
+        final Code code = ax.codes[codeIndex++];
 
-	private void compileInvocationParameters(final MethodVisitor mv, final Method method, final boolean noeatparam) {
+        if (codeIndex < ax.codes.length && !ax.codes[codeIndex].newLine) {
 
-		boolean firstParam = true;
+            compileExpression(mv);
 
-		for (int paramIndex = 0; paramIndex < method.getParameterTypes().length; ++paramIndex) {
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "dup", "(I)" + opeDesc);
 
-			final Class type = method.getParameterTypes()[paramIndex];
+        } else {
 
-			if (type.equals(Context.class)) {
+            mv.visitInsn(ACONST_NULL);
 
-				mv.visitVarInsn(ALOAD, contextIndex);
+        }
 
-			} else if (type.equals(JumpStatement.class)) {
+        mv.visitInsn(ARETURN);
 
-				if (!noeatparam && codeIndex < ax.codes.length && !(ax.codes[codeIndex].newLine)
-						&& !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')')
-						&& (ax.codes[codeIndex].type == Code.Type.ProgCmd)) {
+    }
 
-					mv.visitFieldInsn(GETSTATIC, Type.getInternalName(JumpStatement.class),
-							ax.codes[codeIndex].value == 0 ? "Goto" : "Gosub", Type.getDescriptor(JumpStatement.class));
+    private void compileRepeat(final MethodVisitor mv) {
 
-					++codeIndex;
-				} else {
-					mv.visitInsn(ACONST_NULL);
-				}
+        //@SuppressWarnings("unused")
+        final Code code = ax.codes[codeIndex++];
+        final Code label = ax.codes[codeIndex++];
 
-			} else {
+        mv.visitVarInsn(ALOAD, contextIndex);
 
-				boolean omitted;
+        // loop count
+        if (codeIndex < ax.codes.length && !ax.codes[codeIndex].newLine) {
 
-				final Code code = ax.codes[codeIndex];
+            compileExpression(mv);
 
-				if (!noeatparam && codeIndex < ax.codes.length && !(code.newLine)
-						&& !(code.type == Code.Type.Mark && code.value == ')')) {
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
-					if (firstParam && code.comma) {
-						omitted = true;
-					} else if (code.type == Code.Type.Mark && code.value == '?') {
-						omitted = true;
-						++codeIndex;
-					} else {
-						omitted = false;
-					}
-				} else {
-					omitted = true;
-				}
+        } else {
 
-				firstParam = false;
+            mv.visitInsn(ICONST_M1);
+        }
 
-				if (!omitted) {
-					compileExpression(mv);
+        // initial cnt
+        if (codeIndex < ax.codes.length && !ax.codes[codeIndex].newLine) {
 
-					if (type.equals(Operand.class)) {
+            compileExpression(mv);
 
-						++paramIndex; // 次の int は読み飛ばす
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
-						// 次は必ず int
-						if (!method.getParameterTypes()[paramIndex].equals(Integer.TYPE)) {
-							throw new RuntimeException();
-						}
+        } else {
+            mv.visitInsn(ICONST_0);
+        }
 
-					} else if (type.equals(Integer.TYPE)) {
+        mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "startLoop", "(II)Z");
 
-						mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+        mv.visitJumpInsn(IFEQ, getLabel(label.value));
 
-					} else if (type.equals(Double.TYPE)) {
+        final Label startLabel = new Label();
 
-						mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toDouble", "(I)D");
+        mv.visitLabel(startLabel);
 
-					} else if (type.equals(ByteString.class)) {
+        loopStarts.add(startLabel);
 
-						mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toByteString", "(I)" + Type.getDescriptor(type));
+    }
 
-					} else if (type.equals(String.class)) {
+    private void compileBreak(final MethodVisitor mv) {
 
-						mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toString", "(I)"
-								+ Type.getDescriptor(String.class));
+        //@SuppressWarnings("unused")
+        final Code code = ax.codes[codeIndex++];
+        final Code label = ax.codes[codeIndex++];
 
-					} else {
-						throw new UnsupportedOperationException("拡張ライブラリの引数型 " + type + " はサポートされていません。");
-					}
+        mv.visitVarInsn(ALOAD, contextIndex);
+        mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "endLoop", "()V");
 
-				} else {
+        mv.visitJumpInsn(GOTO, getLabel(label.value));
 
-					if (type.equals(Operand.class)) {
+    }
 
-						mv.visitInsn(ACONST_NULL);
-						mv.visitInsn(ICONST_0);
+    private void compileLoop(final MethodVisitor mv) {
 
-						++paramIndex; // 次の int は読み飛ばす
+        //@SuppressWarnings("unused")
+        final Code code = ax.codes[codeIndex++];
 
-						// 次は必ず int
-						if (!method.getParameterTypes()[paramIndex].equals(Integer.TYPE)) {
-							throw new RuntimeException(
-									"拡張ライブラリの引数に Operand を受け取ったときはかならずその次の引数で配列インデックスを受け取らなければいけません。");
-						}
+        mv.visitVarInsn(ALOAD, contextIndex);
+        mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "nextLoop", "()Z");
 
-					} else if (type.equals(Integer.TYPE)) {
+        mv.visitJumpInsn(IFNE, (Label) loopStarts.pop());
 
-						mv.visitInsn(ICONST_0);
+    }
 
-					} else if (type.equals(Double.TYPE)) {
+    private void compileContinue(final MethodVisitor mv) {
 
-						mv.visitInsn(DCONST_0);
+        //@SuppressWarnings("unused")
+        final Code code = ax.codes[codeIndex++];
+        final Code label = ax.codes[codeIndex++];
 
-					} else {
+        mv.visitVarInsn(ALOAD, contextIndex);
 
-						mv.visitInsn(ACONST_NULL);
+        // next cnt
+        if (codeIndex < ax.codes.length && !ax.codes[codeIndex].newLine) {
 
-					}
-				}
-			}
+            compileExpression(mv);
 
-		}
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
-		// いらない引数は読み飛ばす。
-		while (!noeatparam && codeIndex < ax.codes.length && !(ax.codes[codeIndex].newLine)
-				&& !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')')) {
+            mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "nextLoop", "(I)Z");
 
-			compileExpression(new EmptyVisitor());
+        } else {
 
-		}
-	}
+            mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "nextLoop", "()Z");
 
-	private void compileModuleCommand(final MethodVisitor mv, final boolean hasresult) {
+        }
 
-		final Code code = ax.codes[codeIndex++];
-		final Method method = runtime.getMethodFor(ax, code);
-		final String methodDesc = Type.getMethodDescriptor(method);
+        mv.visitJumpInsn(IFNE, (Label) loopStarts.peek());
 
-		final ByteCode.Function function = ax.functions[code.value];
+        mv.visitJumpInsn(GOTO, getLabel(label.value));
 
-		// '(' を読み飛ばす
-		if (function.isFunction()) {
-			++codeIndex;
-		}
+    }
 
-		compileModuleParameters(mv, function);
+    private void compileForeach(final MethodVisitor mv) {
 
-		// ')' を読み飛ばす。
-		if (function.isFunction()) {
-			++codeIndex;
-		}
+        //@SuppressWarnings("unused")
+        final Code code = ax.codes[codeIndex++];
+        final Code label = ax.codes[codeIndex++];
 
-		mv.visitVarInsn(ALOAD, contextIndex);
+        // 初期値0,回数無制限の repeat と同じ扱いとする。
 
-		mv.visitLdcInsn(new Integer(ax.functions[code.value].otindex));
+        mv.visitVarInsn(ALOAD, contextIndex);
 
-		mv
-				.visitMethodInsn(INVOKESTATIC, Type.getInternalName(method.getDeclaringClass()), method.getName(),
-						methodDesc);
+        mv.visitInsn(ICONST_M1);
+        mv.visitInsn(ICONST_0);
 
-		if (hasresult) {
+        mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "startLoop", "(II)Z");
 
-			// 関数のときは戻り値が必要。
+        mv.visitJumpInsn(IFEQ, getLabel(label.value));
 
-			if (!function.isFunction()) {
+        final Label startLabel = new Label();
 
-				mv.visitVarInsn(ALOAD, thisIndex);
-				mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Integer(0)), literalDesc);
+        mv.visitLabel(startLabel);
 
-			} else {
+        loopStarts.add(startLabel);
+    }
 
-				mv.visitInsn(ICONST_0);
+    private void compileForeachcheck(final MethodVisitor mv) {
 
-			}
+        //@SuppressWarnings("unused")
+        final Code code = ax.codes[codeIndex++];
+        final Code label = ax.codes[codeIndex++];
 
-		} else {
+        // cnt が範囲を超えていたら抜ける。
 
-			// 命令のときは戻り値は stat に代入
+        mv.visitVarInsn(ALOAD, contextIndex);
 
-			mv.visitInsn(DUP);
+        compileExpression(mv);
 
-			final Label noassign = new Label();
-			mv.visitJumpInsn(IFNULL, noassign);
+        // 配列要素は無視
+        mv.visitInsn(POP);
 
-			mv.visitVarInsn(ALOAD, contextIndex);
-			mv.visitFieldInsn(GETFIELD, contextIName, "stat", Type.getDescriptor(IntScalar.class));
+        mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "checkForeach", "(" + opeDesc + ")Z");
 
-			mv.visitInsn(SWAP);
+        mv.visitJumpInsn(IFEQ, getLabel(label.value));
 
-			mv.visitInsn(ICONST_0);
+    }
 
-			mv.visitInsn(SWAP);
+    private void compileExgoto(final MethodVisitor mv) {
 
-			mv.visitInsn(ICONST_0);
+        //@SuppressWarnings("unused")
+        final Code code = ax.codes[codeIndex++];
 
-			mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "assign", "(I" + opeDesc + "I)V");
+        // 変数の値
+        compileExpression(mv);
+        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
-			final Label end = new Label();
-			mv.visitJumpInsn(GOTO, end);
-			mv.visitLabel(noassign);
-			mv.visitInsn(POP);
-			mv.visitLabel(end);
-		}
+        // モード
+        compileExpression(mv);
+        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
-	}
+        // 基準値
+        compileExpression(mv);
+        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
-	private void compileModuleParameters(final MethodVisitor mv, final Function function) {
+        mv.visitInsn(SWAP);
 
-		boolean firstParam = true;
+        final Code label = ax.codes[codeIndex++];
 
-		for (int paramIndex = 0; paramIndex < function.prmmax; ++paramIndex) {
+        final Label negative = new Label();
+        mv.visitJumpInsn(IFLE, negative);
 
-			final ByteCode.Parameter param = ax.parameters[function.prmindex + paramIndex];
-			final int type = param.mptype;
+        final Label nojump = new Label();
 
-			mv.visitVarInsn(ALOAD, thisIndex);
+        mv.visitJumpInsn(IF_ICMPGE, getLabel(label.value));
 
-			boolean omitted;
+        mv.visitJumpInsn(GOTO, nojump);
 
-			final Code code = ax.codes[codeIndex];
+        mv.visitLabel(negative);
 
-			if (codeIndex < ax.codes.length && !(code.newLine) && !(code.type == Code.Type.Mark && code.value == ')')) {
+        mv.visitJumpInsn(IF_ICMPLE, getLabel(label.value));
 
-				if (firstParam && code.comma) {
-					omitted = true;
-				} else if (code.type == Code.Type.Mark && code.value == '?') {
-					omitted = true;
-					++codeIndex;
-				} else {
-					omitted = false;
-				}
-			} else {
-				omitted = true;
-			}
+        mv.visitLabel(nojump);
+    }
 
-			firstParam = false;
+    private void compileOn(MethodVisitor mv) {
 
-			if (!omitted) {
+        //@SuppressWarnings("unused")
+        final Code code = ax.codes[codeIndex++];
 
-				compileExpression(mv);
+        // 変数の値
+        compileExpression(mv);
+        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
-				switch (type) {
-				case 1: // var
-				case -1: // local variable
-				case -3: // single variable
-				{
-					mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "ref", "(I)" + opeDesc);
-				}
-					break;
-				case -2: // array variable
-				{
-					mv.visitInsn(POP);
-					mv.visitInsn(ICONST_0);
-					mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "ref", "(I)" + opeDesc);
-				}
-					break;
-				case -6: // local string
-				case 2: // string
-				{
+        final Code statement = ax.codes[codeIndex++];
 
-					mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toByteString", "(I)"
-							+ Type.getDescriptor(ByteString.class));
+        final List<Label> labels = new ArrayList<Label>();
+        final List<Integer> labelIndexs = new ArrayList<Integer>();
 
-					mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "("
-							+ Type.getDescriptor(ByteString.class) + ")" + literalDesc);
-				}
-					break;
-				case 3: // dnum
-				{
-					mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toDouble", "(I)D");
+        while (codeIndex < ax.codes.length && !ax.codes[codeIndex].newLine) {
 
-					mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "(D)" + literalDesc);
-				}
-					break;
-				case 4: // inum
-				{
-					mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+            final Code label = ax.codes[codeIndex++];
 
-					mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "(I)" + literalDesc);
+            labels.add(getLabel(label.value));
+            labelIndexs.add(new Integer(label.value));
 
-				}
-					break;
-				case 5: // struct
-					throw new UnsupportedOperationException("ユーザ定義命令の引数型 struct はサポートされていません。");
-				case 6: // label
-					throw new UnsupportedOperationException("ユーザ定義命令の引数型 label はサポートされていません。");
-				default:
-					throw new UnsupportedOperationException("ユーザ定義命令の引数型 " + type + " はサポートされていません。");
-				}
+        }
 
-			} else {
+        if (statement.value == 0) {
+            // goto
 
-				switch (type) {
-				case 1: // var
-				case -1: // local variable
-				case -2: // array variable
-				case -3: // single variable
-					throw new RuntimeException("ユーザ定義命令の引数の変数は省略できません。");
-				case -6: // local string
-				case 2: // string
-				{
-					mv.visitVarInsn(ALOAD, thisIndex);
-					mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(""), literalDesc);
+            final Label nojump = new Label();
+            mv.visitTableSwitchInsn(0, labels.size() - 1, nojump, (Label[]) labels.toArray(new Label[0]));
 
-				}
-					break;
-				case 3: // dnum
-				{
-					mv.visitVarInsn(ALOAD, thisIndex);
-					mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Double(0.0)), literalDesc);
+            mv.visitLabel(nojump);
 
-				}
-					break;
-				case 4: // inum
-				{
-					mv.visitVarInsn(ALOAD, thisIndex);
-					mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Integer(0)), literalDesc);
-				}
-					break;
-				case 5: // struct
-					throw new UnsupportedOperationException("ユーザ定義命令の引数型 struct はサポートされていません。");
-				case 6: // label
-					throw new UnsupportedOperationException("ユーザ定義命令の引数型 label はサポートされていません。");
-				default:
-					throw new UnsupportedOperationException("ユーザ定義命令の引数型 " + type + " はサポートされていません。");
-				}
-			}
+        } else {
 
-			mv.visitFieldInsn(PUTFIELD, classIName, "p" + (function.prmindex + paramIndex), opeDesc);
+            final Method method = runtime.getMethodFor(ax, statement);
+            final String methodDesc = Type.getMethodDescriptor(method);
 
-		}
+            final Label[] pushLabels = new Label[labels.size()];
+            for (int i = 0; i < pushLabels.length; ++i) {
+                pushLabels[i] = new Label();
+            }
 
-		// いらない引数は読み飛ばす。
-		while (codeIndex < ax.codes.length && !(ax.codes[codeIndex].newLine)
-				&& !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')')) {
+            final Label endSwitch = new Label();
+            final Label nojump = new Label();
 
-			compileExpression(new EmptyVisitor());
+            mv.visitTableSwitchInsn(0, labels.size() - 1, nojump, pushLabels);
 
-		}
-	}
+            for (int i = 0; i < pushLabels.length; ++i) {
+                final Label label = pushLabels[i];
 
-	private void compileFunction(final MethodVisitor mv) {
+                mv.visitLabel(label);
+                mv.visitLdcInsn(labelIndexs.get(i));
+                mv.visitJumpInsn(GOTO, endSwitch);
+            }
+            mv.visitLabel(endSwitch);
 
-		compileInvocation(mv, true, true);
-	}
+            mv.visitVarInsn(ALOAD, contextIndex);
 
-	private static final String[] systemVariables = new String[] { "system", "hspstat", "hspver", "stat", "cnt", "err",
-			"strsize", "looplev", "sublev", "iparam", "wparam", "lparam", "refstr", "refdval" };
+            mv.visitInsn(SWAP);
 
-	private void compileSystemVariable(final MethodVisitor mv) {
+            mv.visitMethodInsn(INVOKESTATIC, Type.getInternalName(method.getDeclaringClass()), method.getName(),
+                    methodDesc);
 
-		final Code code = ax.codes[codeIndex++];
+            if (!method.getReturnType().equals(Void.TYPE)) {
+                mv.visitInsn(POP);
+            }
 
-		// context をプッシュしておく。
-		mv.visitVarInsn(ALOAD, contextIndex);
+            mv.visitLabel(nojump);
+        }
+    }
 
-		final Field field;
-		try {
-			field = Context.class.getField(systemVariables[code.value]);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+    private void compileCommand(final MethodVisitor mv) {
 
-		mv.visitFieldInsn(GETFIELD, contextIName, field.getName(), Type.getDescriptor(field.getType()));
+        compileInvocation(mv, false, false);
 
-		mv.visitInsn(ICONST_0);
-	}
+    }
 
-	private void compileProgramCommand(final MethodVisitor mv) {
+    private void compileDllFunction(final MethodVisitor mv) {
 
-		switch (ax.codes[codeIndex].value) {
-		case 0x00: // goto
-			compileGoto(mv);
-			break;
-		case 0x02: // return
-			compileReturn(mv);
-			break;
-		case 0x03: // break
-			compileBreak(mv);
-			break;
-		case 0x04: // repeat
-			compileRepeat(mv);
-			break;
-		case 0x05: // loop
-			compileLoop(mv);
-			break;
-		case 0x06: // continue
-			compileContinue(mv);
-			break;
-		case 0x0B: // foreach
-			compileForeach(mv);
-			break;
-		case 0x0C: // foreachcheck
-			compileForeachcheck(mv);
-			break;
-		case 0x18: // exgoto
-			compileExgoto(mv);
-			break;
-		case 0x19: // on
-			compileOn(mv);
-			break;
-		case 0x01: // gosub
-		case 0x07: // wait
-		case 0x08: // await
-		case 0x09: // dim
-		case 0x0A: // sdim
-		case 0x0D: // dimtype
-		case 0x0E: // dup
-		case 0x0F: // dupptr
-		case 0x10: // end
-		case 0x11: // stop
-		case 0x12: // newmod
-		case 0x13: // setmod
-		case 0x14: // delmod
-		case 0x15: // alloc
-		case 0x16: // mref
-		case 0x17: // run
-		case 0x1A: // mcall
-		case 0x1B: // assert
-		case 0x1C: // logmes
-			compileCommand(mv);
-			break;
-		default:
-			throw new UnsupportedOperationException("プログラム制御命令 " + ax.codes[codeIndex].value + " はサポートされていません。");
-		}
-	}
+        compileInvocation(mv, true, true);
 
-	private void compileGoto(final MethodVisitor mv) {
+    }
 
-		//@SuppressWarnings("unused")
-		final Code code = ax.codes[codeIndex++];
-		final Code label = ax.codes[codeIndex++];
+    private void compileDllCommand(final MethodVisitor mv) {
 
-		mv.visitJumpInsn(GOTO, getLabel(label.value));
+        mv.visitVarInsn(ALOAD, contextIndex);
+        mv.visitFieldInsn(GETFIELD, contextIName, "stat", Type.getDescriptor(IntScalar.class));
 
-	}
+        mv.visitInsn(ICONST_0);
 
-	private void compileReturn(final MethodVisitor mv) {
+        compileInvocation(mv, false, true);
 
-		//@SuppressWarnings("unused")
-		final Code code = ax.codes[codeIndex++];
+        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "assign", "(I" + opeDesc + "I)V");
 
-		if (codeIndex < ax.codes.length && !ax.codes[codeIndex].newLine) {
+    }
 
-			compileExpression(mv);
+    private void compileCompareCommand(final MethodVisitor mv) {
 
-			mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "dup", "(I)" + opeDesc);
+        switch (ax.codes[codeIndex].value) {
+            case 0: // if
+                compileIf(mv);
+                break;
+            case 1: // else
+                compileElse(mv);
+                break;
+            default:
+                throw new UnsupportedOperationException("条件分岐命令 " + ax.codes[codeIndex].value + " はサポートされていません。");
+        }
 
-		} else {
+    }
 
-			mv.visitInsn(ACONST_NULL);
+    private void compileIf(final MethodVisitor mv) {
 
-		}
+        //@SuppressWarnings("unused")
+        final Code code = ax.codes[codeIndex++];
 
-		mv.visitInsn(ARETURN);
+        // offset は、条件式の先頭からの移動量
+        final int offset = ax.codes[codeIndex++].value;
+        final int base = ax.codes[codeIndex].offset;
 
-	}
+        compileExpression(mv);
 
-	private void compileRepeat(final MethodVisitor mv) {
+        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
-		//@SuppressWarnings("unused")
-		final Code code = ax.codes[codeIndex++];
-		final Code label = ax.codes[codeIndex++];
+        final Label existingLabel = (Label) labels.get(new Integer(base + offset));
+        if (existingLabel != null) {
+            mv.visitJumpInsn(IFEQ, existingLabel);
+        } else {
+            final Label label = new Label();
+            labels.put(new Integer(base + offset), label);
 
-		mv.visitVarInsn(ALOAD, contextIndex);
+            mv.visitJumpInsn(IFEQ, label);
 
-		// loop count
-		if (codeIndex < ax.codes.length && !ax.codes[codeIndex].newLine) {
+        }
 
-			compileExpression(mv);
+    }
 
-			mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+    private void compileElse(final MethodVisitor mv) {
 
-		} else {
+        //@SuppressWarnings("unused")
+        final Code code = ax.codes[codeIndex++];
 
-			mv.visitInsn(ICONST_M1);
-		}
+        // offset は、次の命令からの移動量
+        final int offset = ax.codes[codeIndex++].value;
+        final int base = ax.codes[codeIndex].offset;
 
-		// initial cnt
-		if (codeIndex < ax.codes.length && !ax.codes[codeIndex].newLine) {
+        final Label existingLabel = (Label) labels.get(new Integer(base + offset));
+        if (existingLabel != null) {
+            mv.visitJumpInsn(GOTO, existingLabel);
+        } else {
+            final Label label = new Label();
+            labels.put(new Integer(base + offset), label);
+            mv.visitJumpInsn(GOTO, label);
 
-			compileExpression(mv);
+        }
 
-			mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+    }
 
-		} else {
-			mv.visitInsn(ICONST_0);
-		}
+    private void createSubMethods() {
 
-		mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "startLoop", "(II)Z");
+        int totalSize = 0;
 
-		mv.visitJumpInsn(IFEQ, getLabel(label.value));
+        for (int i = 0; i < submethodStartEnds.size(); ++i) {
 
-		final Label startLabel = new Label();
+            totalSize += ((int[]) submethodStartEnds.get(i))[1] - ((int[]) submethodStartEnds.get(i))[0];
 
-		mv.visitLabel(startLabel);
+            prepareLabels();
 
-		loopStarts.add(startLabel);
+            codeIndex = ((int[]) submethodStartEnds.get(i))[0];
 
-	}
+            final MethodVisitor mv = cw.visitMethod(ACC_PRIVATE, "m" + i, "()V", null, new String[0]);
 
-	private void compileBreak(final MethodVisitor mv) {
+            compileSeparatedMethod(mv, ((int[]) submethodStartEnds.get(i))[1]);
 
-		//@SuppressWarnings("unused")
-		final Code code = ax.codes[codeIndex++];
-		final Code label = ax.codes[codeIndex++];
+            mv.visitInsn(RETURN);
+            mv.visitMaxs(0, 0);
+            mv.visitEnd();
+        }
 
-		mv.visitVarInsn(ALOAD, contextIndex);
-		mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "endLoop", "()V");
-
-		mv.visitJumpInsn(GOTO, getLabel(label.value));
-
-	}
-
-	private void compileLoop(final MethodVisitor mv) {
-
-		//@SuppressWarnings("unused")
-		final Code code = ax.codes[codeIndex++];
-
-		mv.visitVarInsn(ALOAD, contextIndex);
-		mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "nextLoop", "()Z");
-
-		mv.visitJumpInsn(IFNE, (Label) loopStarts.pop());
-
-	}
-
-	private void compileContinue(final MethodVisitor mv) {
-
-		//@SuppressWarnings("unused")
-		final Code code = ax.codes[codeIndex++];
-		final Code label = ax.codes[codeIndex++];
-
-		mv.visitVarInsn(ALOAD, contextIndex);
-
-		// next cnt
-		if (codeIndex < ax.codes.length && !ax.codes[codeIndex].newLine) {
-
-			compileExpression(mv);
-
-			mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
-
-			mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "nextLoop", "(I)Z");
-
-		} else {
-
-			mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "nextLoop", "()Z");
-
-		}
-
-		mv.visitJumpInsn(IFNE, (Label) loopStarts.peek());
-
-		mv.visitJumpInsn(GOTO, getLabel(label.value));
-
-	}
-
-	private void compileForeach(final MethodVisitor mv) {
-
-		//@SuppressWarnings("unused")
-		final Code code = ax.codes[codeIndex++];
-		final Code label = ax.codes[codeIndex++];
-
-		// 初期値0,回数無制限の repeat と同じ扱いとする。
-
-		mv.visitVarInsn(ALOAD, contextIndex);
-
-		mv.visitInsn(ICONST_M1);
-		mv.visitInsn(ICONST_0);
-
-		mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "startLoop", "(II)Z");
-
-		mv.visitJumpInsn(IFEQ, getLabel(label.value));
-
-		final Label startLabel = new Label();
-
-		mv.visitLabel(startLabel);
-
-		loopStarts.add(startLabel);
-	}
-
-	private void compileForeachcheck(final MethodVisitor mv) {
-
-		//@SuppressWarnings("unused")
-		final Code code = ax.codes[codeIndex++];
-		final Code label = ax.codes[codeIndex++];
-
-		// cnt が範囲を超えていたら抜ける。
-
-		mv.visitVarInsn(ALOAD, contextIndex);
-
-		compileExpression(mv);
-
-		// 配列要素は無視
-		mv.visitInsn(POP);
-
-		mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "checkForeach", "(" + opeDesc + ")Z");
-
-		mv.visitJumpInsn(IFEQ, getLabel(label.value));
-
-	}
-
-	private void compileExgoto(final MethodVisitor mv) {
-
-		//@SuppressWarnings("unused")
-		final Code code = ax.codes[codeIndex++];
-
-		// 変数の値
-		compileExpression(mv);
-		mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
-
-		// モード
-		compileExpression(mv);
-		mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
-
-		// 基準値
-		compileExpression(mv);
-		mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
-
-		mv.visitInsn(SWAP);
-
-		final Code label = ax.codes[codeIndex++];
-
-		final Label negative = new Label();
-		mv.visitJumpInsn(IFLE, negative);
-
-		final Label nojump = new Label();
-
-		mv.visitJumpInsn(IF_ICMPGE, getLabel(label.value));
-
-		mv.visitJumpInsn(GOTO, nojump);
-
-		mv.visitLabel(negative);
-
-		mv.visitJumpInsn(IF_ICMPLE, getLabel(label.value));
-
-		mv.visitLabel(nojump);
-	}
-
-	private void compileOn(MethodVisitor mv) {
-
-		//@SuppressWarnings("unused")
-		final Code code = ax.codes[codeIndex++];
-
-		// 変数の値
-		compileExpression(mv);
-		mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
-
-		final Code statement = ax.codes[codeIndex++];
-
-		final List labels = new ArrayList();
-		final List labelIndexs = new ArrayList();
-
-		while (codeIndex < ax.codes.length && !ax.codes[codeIndex].newLine) {
-
-			final Code label = ax.codes[codeIndex++];
-
-			labels.add(getLabel(label.value));
-			labelIndexs.add(new Integer(label.value));
-
-		}
-
-		if (statement.value == 0) {
-			// goto
-
-			final Label nojump = new Label();
-			mv.visitTableSwitchInsn(0, labels.size() - 1, nojump, (Label[]) labels.toArray(new Label[0]));
-
-			mv.visitLabel(nojump);
-
-		} else {
-
-			final Method method = runtime.getMethodFor(ax, statement);
-			final String methodDesc = Type.getMethodDescriptor(method);
-
-			final Label[] pushLabels = new Label[labels.size()];
-			for (int i = 0; i < pushLabels.length; ++i) {
-				pushLabels[i] = new Label();
-			}
-
-			final Label endSwitch = new Label();
-			final Label nojump = new Label();
-
-			mv.visitTableSwitchInsn(0, labels.size() - 1, nojump, pushLabels);
-
-			for (int i = 0; i < pushLabels.length; ++i) {
-				final Label label = pushLabels[i];
-
-				mv.visitLabel(label);
-				mv.visitLdcInsn(labelIndexs.get(i));
-				mv.visitJumpInsn(GOTO, endSwitch);
-			}
-			mv.visitLabel(endSwitch);
-
-			mv.visitVarInsn(ALOAD, contextIndex);
-
-			mv.visitInsn(SWAP);
-
-			mv.visitMethodInsn(INVOKESTATIC, Type.getInternalName(method.getDeclaringClass()), method.getName(),
-					methodDesc);
-
-			if (!method.getReturnType().equals(Void.TYPE)) {
-				mv.visitInsn(POP);
-			}
-
-			mv.visitLabel(nojump);
-		}
-	}
-
-	private void compileCommand(final MethodVisitor mv) {
-
-		compileInvocation(mv, false, false);
-
-	}
-
-	private void compileDllFunction(final MethodVisitor mv) {
-
-		compileInvocation(mv, true, true);
-
-	}
-
-	private void compileDllCommand(final MethodVisitor mv) {
-
-		mv.visitVarInsn(ALOAD, contextIndex);
-		mv.visitFieldInsn(GETFIELD, contextIName, "stat", Type.getDescriptor(IntScalar.class));
-
-		mv.visitInsn(ICONST_0);
-
-		compileInvocation(mv, false, true);
-
-		mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "assign", "(I" + opeDesc + "I)V");
-
-	}
-
-	private void compileCompareCommand(final MethodVisitor mv) {
-
-		switch (ax.codes[codeIndex].value) {
-		case 0: // if
-			compileIf(mv);
-			break;
-		case 1: // else
-			compileElse(mv);
-			break;
-		default:
-			throw new UnsupportedOperationException("条件分岐命令 " + ax.codes[codeIndex].value + " はサポートされていません。");
-		}
-
-	}
-
-	private void compileIf(final MethodVisitor mv) {
-
-		//@SuppressWarnings("unused")
-		final Code code = ax.codes[codeIndex++];
-
-		// offset は、条件式の先頭からの移動量
-		final int offset = ax.codes[codeIndex++].value;
-		final int base = ax.codes[codeIndex].offset;
-
-		compileExpression(mv);
-
-		mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
-
-		final Label existingLabel = (Label) labels.get(new Integer(base + offset));
-		if (existingLabel != null) {
-			mv.visitJumpInsn(IFEQ, existingLabel);
-		} else {
-			final Label label = new Label();
-			labels.put(new Integer(base + offset), label);
-
-			mv.visitJumpInsn(IFEQ, label);
-
-		}
-
-	}
-
-	private void compileElse(final MethodVisitor mv) {
-
-		//@SuppressWarnings("unused")
-		final Code code = ax.codes[codeIndex++];
-
-		// offset は、次の命令からの移動量
-		final int offset = ax.codes[codeIndex++].value;
-		final int base = ax.codes[codeIndex].offset;
-
-		final Label existingLabel = (Label) labels.get(new Integer(base + offset));
-		if (existingLabel != null) {
-			mv.visitJumpInsn(GOTO, existingLabel);
-		} else {
-			final Label label = new Label();
-			labels.put(new Integer(base + offset), label);
-			mv.visitJumpInsn(GOTO, label);
-
-		}
-
-	}
-
-	private void createSubMethods() {
-
-		int totalSize = 0;
-
-		for (int i = 0; i < submethodStartEnds.size(); ++i) {
-
-			totalSize += ((int[]) submethodStartEnds.get(i))[1] - ((int[]) submethodStartEnds.get(i))[0];
-
-			prepareLabels();
-
-			codeIndex = ((int[]) submethodStartEnds.get(i))[0];
-
-			final MethodVisitor mv = cw.visitMethod(ACC_PRIVATE, "m" + i, "()V", null, new String[0]);
-
-			compileSeparatedMethod(mv, ((int[]) submethodStartEnds.get(i))[1]);
-
-			mv.visitInsn(RETURN);
-			mv.visitMaxs(0, 0);
-			mv.visitEnd();
-		}
-
-		if (DEBUG_ENABLED) {
-			System.out.println("" + totalSize + "/" + ax.codes.length);
-		}
-	}
-
+        if (DEBUG_ENABLED) {
+            System.out.println("" + totalSize + "/" + ax.codes.length);
+        }
+    }
 }

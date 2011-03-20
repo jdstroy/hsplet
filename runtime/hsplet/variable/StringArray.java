@@ -298,4 +298,29 @@ public final class StringArray extends Array {
 
 		values[index].set(offset, value);
 	}
+
+    @Override
+    public void assignNe(int index, Operand rhs, int rhi) {
+        throw unsupportedOperator("= !=");
+    }
+
+    @Override
+    public void assignGt(int index, Operand rhs, int rhi) {
+        throw unsupportedOperator("= >");
+    }
+
+    @Override
+    public void assignLt(int index, Operand rhs, int rhi) {
+        throw unsupportedOperator("= <");
+    }
+
+    @Override
+    public void assignGtEq(int index, Operand rhs, int rhi) {
+        throw unsupportedOperator("= >=");
+    }
+
+    @Override
+    public void assignLtEq(int index, Operand rhs, int rhi) {
+        throw unsupportedOperator("= <=");
+    }
 }

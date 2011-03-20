@@ -49,7 +49,7 @@ public class HttpSession implements Runnable {
 	public void run() {
 		try {
 
-			Set addressSet = new HashSet();
+			Set<InetAddress> addressSet = new HashSet<InetAddress>();
 			addressSet.addAll(Arrays.asList(InetAddress.getAllByName(null)));
 			addressSet.add(InetAddress.getLocalHost());
 

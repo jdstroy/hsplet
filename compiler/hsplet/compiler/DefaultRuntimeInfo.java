@@ -116,6 +116,13 @@ public class DefaultRuntimeInfo implements RuntimeInfo {
 			}
 
 		}
+                    case ByteCode.Code.Type.DllCtrl:
+                        try {
+				return extLibLoader.loadClass("DllCtrlClass");
+			} catch (ClassNotFoundException e) {
+				throw new RuntimeException(e);
+			}
+                        
 		default:
 			throw new RuntimeException("命令タイプ " + code.type
 					+ " はクラスと関連付けられません。");
@@ -185,6 +192,9 @@ public class DefaultRuntimeInfo implements RuntimeInfo {
 			}
 		}
 			break;
+                    case ByteCode.Code.Type.DllCtrl:
+                        name = DllCtrlClassStub.getMethodNameBySubTypeId(code.value);
+                        break;
 		default:
 			throw new RuntimeException("命令タイプ " + code.type
 					+ " はメソッドと関連付けられません。");

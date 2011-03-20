@@ -72,7 +72,7 @@ public class GuiFrontEnd extends JFrame {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+/*
 		try {
 			PrintStream s = new PrintStream(new FileOutputStream("compiler.log"));
 			System.setOut(s);
@@ -80,7 +80,7 @@ public class GuiFrontEnd extends JFrame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+*/
 		BufferedImage logo = null;
 
 		try {
@@ -120,7 +120,7 @@ public class GuiFrontEnd extends JFrame {
 	private JPanel getJarPanel() {
 		if (jarPanel == null) {
 			jarLabel = new JLabel();
-			jarLabel.setText("出力 JAR :");
+			jarLabel.setText("Output JAR :");
 			jarPanel = new JPanel();
 			jarPanel.setLayout(new BorderLayout());
 			jarPanel.setPreferredSize(new java.awt.Dimension(100, 20));
@@ -139,7 +139,7 @@ public class GuiFrontEnd extends JFrame {
 	private JButton getJarButton() {
 		if (jarButton == null) {
 			jarButton = new JButton();
-			jarButton.setText("参照...");
+			jarButton.setText("Browse...");
 			jarButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					referJar();
@@ -157,7 +157,7 @@ public class GuiFrontEnd extends JFrame {
 	private JPanel getHtmlPanel() {
 		if (htmlPanel == null) {
 			htmlLabel = new JLabel();
-			htmlLabel.setText("出力HTML:");
+			htmlLabel.setText("HTML Output:");
 			htmlPanel = new JPanel();
 			htmlPanel.setLayout(new BorderLayout());
 			htmlPanel.setPreferredSize(new java.awt.Dimension(100, 20));
@@ -193,7 +193,7 @@ public class GuiFrontEnd extends JFrame {
 	private JButton getHtmlButton() {
 		if (htmlButton == null) {
 			htmlButton = new JButton();
-			htmlButton.setText("参照...");
+			htmlButton.setText("Browse...");
 			htmlButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					referHtml();
@@ -211,7 +211,7 @@ public class GuiFrontEnd extends JFrame {
 	private JPanel getTemplatePanel() {
 		if (templatePanel == null) {
 			templateLabel = new JLabel();
-			templateLabel.setText("テンプレート:");
+			templateLabel.setText("Template:");
 			templatePanel = new JPanel();
 			templatePanel.setLayout(new BorderLayout());
 			templatePanel.setPreferredSize(new java.awt.Dimension(100, 20));
@@ -247,7 +247,7 @@ public class GuiFrontEnd extends JFrame {
 	private JButton getTemplateButton() {
 		if (templateButton == null) {
 			templateButton = new JButton();
-			templateButton.setText("参照...");
+			templateButton.setText("Browse...");
 			templateButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					referTemplate();
@@ -278,7 +278,7 @@ public class GuiFrontEnd extends JFrame {
 	private JMenu getFileMenu() {
 		if (fileMenu == null) {
 			fileMenu = new JMenu();
-			fileMenu.setText("ファイル(F)");
+			fileMenu.setText("File");
 			fileMenu.setMnemonic(java.awt.event.KeyEvent.VK_F);
 			fileMenu.add(getFileMenu_new());
 			fileMenu.add(getFileMenu_open());
@@ -298,7 +298,7 @@ public class GuiFrontEnd extends JFrame {
 	private JMenuItem getFileMenu_new() {
 		if (fileMenu_new == null) {
 			fileMenu_new = new JMenuItem();
-			fileMenu_new.setText("新規作成(N)");
+			fileMenu_new.setText("New");
 			fileMenu_new.setMnemonic(java.awt.event.KeyEvent.VK_N);
 			fileMenu_new.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -317,7 +317,7 @@ public class GuiFrontEnd extends JFrame {
 	private JMenuItem getFileMenu_open() {
 		if (fileMenu_open == null) {
 			fileMenu_open = new JMenuItem();
-			fileMenu_open.setText("開く(O)");
+			fileMenu_open.setText("Open");
 			fileMenu_open.setMnemonic(java.awt.event.KeyEvent.VK_O);
 			fileMenu_open.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -336,7 +336,7 @@ public class GuiFrontEnd extends JFrame {
 	private JMenuItem getFileMenu_save() {
 		if (fileMenu_save == null) {
 			fileMenu_save = new JMenuItem();
-			fileMenu_save.setText("上書き保存(S)");
+			fileMenu_save.setText("Save");
 			fileMenu_save.setMnemonic(java.awt.event.KeyEvent.VK_S);
 			fileMenu_save.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -355,7 +355,7 @@ public class GuiFrontEnd extends JFrame {
 	private JMenuItem getFileMenu_saveAs() {
 		if (fileMenu_saveAs == null) {
 			fileMenu_saveAs = new JMenuItem();
-			fileMenu_saveAs.setText("名前をつけて保存(A)...");
+			fileMenu_saveAs.setText("Save As...");
 			fileMenu_saveAs.setMnemonic(java.awt.event.KeyEvent.VK_A);
 			fileMenu_saveAs.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -386,7 +386,7 @@ public class GuiFrontEnd extends JFrame {
 	private JMenuItem getFileMenu_exit() {
 		if (fileMenu_exit == null) {
 			fileMenu_exit = new JMenuItem();
-			fileMenu_exit.setText("終了(X)");
+			fileMenu_exit.setText("Exit");
 			fileMenu_exit.setMnemonic(java.awt.event.KeyEvent.VK_X);
 			fileMenu_exit.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -505,7 +505,7 @@ public class GuiFrontEnd extends JFrame {
 	private JPanel getStartClassPanel() {
 		if (startClassPanel == null) {
 			startClassLabel = new JLabel();
-			startClassLabel.setText("開始ファイル:");
+			startClassLabel.setText("Startup file:");
 			startClassPanel = new JPanel();
 			startClassPanel.setLayout(new BorderLayout());
 			startClassPanel.add(startClassLabel, java.awt.BorderLayout.WEST);
@@ -554,7 +554,7 @@ public class GuiFrontEnd extends JFrame {
 
 		//@Override
 		public Object getElementAt(int index) {
-			return ((File) get(index)).getName();
+			return (new File(get(index).toString())).getName();
 		}
 	}
 
@@ -644,11 +644,11 @@ public class GuiFrontEnd extends JFrame {
 			flowLayout1.setAlignment(java.awt.FlowLayout.LEFT);
 			basicOptionPanel = new JPanel();
 			titleLabel = new JLabel();
-			titleLabel.setText("タイトル:");
+			titleLabel.setText("Title:");
 			heightLabel = new JLabel();
-			heightLabel.setText("高さ:");
+			heightLabel.setText("Height:");
 			widthLabel = new JLabel();
-			widthLabel.setText("横幅:");
+			widthLabel.setText("Width:");
 			basicOptionPanel.setLayout(flowLayout1);
 			basicOptionPanel.add(titleLabel, null);
 			basicOptionPanel.add(getTitleText(), null);
@@ -686,7 +686,7 @@ public class GuiFrontEnd extends JFrame {
 	private JPanel getPackPanel() {
 		if (packPanel == null) {
 			packLabel = new JLabel();
-			packLabel.setText("パックファイル:");
+			packLabel.setText("Packed file:");
 			packPanel = new JPanel();
 			packPanel.setLayout(new BorderLayout());
 			packPanel.add(packLabel, java.awt.BorderLayout.NORTH);
@@ -733,7 +733,7 @@ public class GuiFrontEnd extends JFrame {
 	private JButton getPackReferButton() {
 		if (packReferButton == null) {
 			packReferButton = new JButton();
-			packReferButton.setText("追加...");
+			packReferButton.setText("Add...");
 			packReferButton.addActionListener(new java.awt.event.ActionListener() {
 
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -767,7 +767,7 @@ public class GuiFrontEnd extends JFrame {
 	private JPanel getJPanel() {
 		if (extLibPanel == null) {
 			extLibLabel = new JLabel();
-			extLibLabel.setText("拡張ライブラリ:");
+			extLibLabel.setText("Additional libraries:");
 			extLibPanel = new JPanel();
 			extLibPanel.setLayout(new BorderLayout());
 			extLibPanel.add(extLibLabel, java.awt.BorderLayout.NORTH);
@@ -810,7 +810,7 @@ public class GuiFrontEnd extends JFrame {
 	private JButton getRemovePackButton() {
 		if (removePackButton == null) {
 			removePackButton = new JButton();
-			removePackButton.setText("削除");
+			removePackButton.setText("Remove");
 			removePackButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					removePack();
@@ -856,7 +856,7 @@ public class GuiFrontEnd extends JFrame {
 
 	JTextField heightText = null;
 
-	Map libChecks = new HashMap();
+	Map<String, JCheckBox> libChecks = new HashMap<String, JCheckBox>();
 
 	private JLabel titleLabel = null;
 

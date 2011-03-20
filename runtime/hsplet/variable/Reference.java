@@ -314,4 +314,29 @@ public final class Reference extends Operand {
 			return new Reference(value, base + index);
 		}
 	}
+
+    @Override
+    public void assignNe(int index, Operand rhs, int rhi) {
+        value.assignNe(index, rhs, rhi);
+    }
+
+    @Override
+    public void assignGt(int index, Operand rhs, int rhi) {
+        value.assignGt(index, rhs, rhi);
+    }
+
+    @Override
+    public void assignLt(int index, Operand rhs, int rhi) {
+        value.assignLt(index, rhs, rhi);
+    }
+
+    @Override
+    public void assignGtEq(int index, Operand rhs, int rhi) {
+        value.assignGtEq(index, rhs, rhi);
+    }
+
+    @Override
+    public void assignLtEq(int index, Operand rhs, int rhi) {
+        value.assignLtEq(index, rhs, rhi);
+    }
 }

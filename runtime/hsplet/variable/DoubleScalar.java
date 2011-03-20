@@ -256,4 +256,29 @@ public final class DoubleScalar extends Scalar {
 
 		this.value = Double.longBitsToDouble(bits);
 	}
+
+    @Override
+    public void assignNe(int index, Operand rhs, int rhi) {
+        value = (value != rhs.toDouble(rhi)) ? 1.0 : 0.0;
+    }
+
+    @Override
+    public void assignGt(int index, Operand rhs, int rhi) {
+        value = (value > rhs.toDouble(rhi)) ? 1.0 : 0.0;
+    }
+
+    @Override
+    public void assignLt(int index, Operand rhs, int rhi) {
+        value = (value < rhs.toDouble(rhi)) ? 1.0 : 0.0;
+    }
+
+    @Override
+    public void assignGtEq(int index, Operand rhs, int rhi) {
+        value = (value >= rhs.toDouble(rhi)) ? 1.0 : 0.0;
+    }
+
+    @Override
+    public void assignLtEq(int index, Operand rhs, int rhi) {
+        value = (value <= rhs.toDouble(rhi)) ? 1.0 : 0.0;
+    }
 }
