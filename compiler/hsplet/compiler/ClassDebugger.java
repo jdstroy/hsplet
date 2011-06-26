@@ -59,6 +59,6 @@ public class ClassDebugger extends ClassAdapter implements Serializable {
 			String signature, String[] exceptions) {
 
 		MethodDebugger dbg = new MethodDebugger(cv, access, name, desc, signature, exceptions);
-                return new MethodCallInliner(access, desc, dbg, new MethodNode(access, name, desc, signature, exceptions), desc, desc);
+                return dbg;
 	}
 }

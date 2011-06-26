@@ -3,6 +3,7 @@
  */
 package hsplet.compiler;
 
+import com.thoughtworks.xstream.XStream;
 import hsplet.Context;
 import hsplet.RunnableCode;
 import hsplet.compiler.ByteCode.Code;
@@ -21,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -39,6 +41,7 @@ import java.util.jar.JarOutputStream;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -50,6 +53,7 @@ import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.util.ASMifierClassVisitor;
 
 /**
  * axファイルをコンパイルするクラス。
@@ -75,8 +79,8 @@ public class Compiler implements Opcodes, Serializable {
     /** 直列化復元時に、データの互換性を確認するためのバージョン番号。 */
     private static final long serialVersionUID = 8668239863505235428L;
     /** デバッグ出力をするかどうか。 */
-    private static final boolean DEBUG_ENABLED = true;
-    private static final boolean TRACE_MOVE_ENABLED = false;
+    private static final boolean DEBUG_ENABLED = false;
+    private static final boolean STORE_ENABLED = true;
 
     /**
      * ax ファイルをコンパイルする。
@@ -295,7 +299,7 @@ public class Compiler implements Opcodes, Serializable {
     private static final int jumpLabelIndex = 1; // int
     private static final int contextIndex = 2; // contextType
     private static final int assignOffsetIndex = 3; // int
-    private ClassVisitor cw;
+    private ClassVisitor cw, superClassWriter;
     private String inputName;
     private String className;
     private String classIName;
@@ -306,6 +310,7 @@ public class Compiler implements Opcodes, Serializable {
     private boolean enableVariableOptimization;
     private RuntimeInfo runtime;
     private List<Class> instancedLibraries;
+    private boolean useSuperClassConstants = true;
 
     /**
      * 入力バイトコードを指定してオブジェクトを構築する。
@@ -340,23 +345,25 @@ public class Compiler implements Opcodes, Serializable {
         this.className = className;
         this.classIName = className.replace('.', '/');
 
+        ClassVisitor output;
+
         //final ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
         final ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        output = writer;
+
+        ClassWriter superWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         //final ClassWriter writer = new ClassWriter(true);
-        ClassNode cn = new ClassNode();
+        ClassNode bufferClassNode = new ClassNode();
+
+        if (STORE_ENABLED) {
+            output = bufferClassNode;
+        }
 
         // フィールドの初期化。
         if (DEBUG_ENABLED) {
-            cw = new ClassDebugger(writer);
+            cw = new ClassDebugger(output);
         } else {
-            cw = writer;
-        }
-
-        if (TRACE_MOVE_ENABLED) {
-            cw = cn;
-            if (DEBUG_ENABLED) {
-                cw = new ClassDebugger(cw);
-            }
+            cw = output;
         }
 
         literals = new ArrayList();
@@ -366,98 +373,53 @@ public class Compiler implements Opcodes, Serializable {
         codeIndex = 0;
         enableVariableOptimization = true;
 
+        // we will need to change parentIName to classIName + "Super"
         // クラス生成
-        cw.visit(V1_4, ACC_PUBLIC, classIName, null, parentIName, new String[0]);
+
+        cw.visit(V1_4, ACC_PUBLIC, classIName, null, useSuperClassConstants ? classIName + "Super" : parentIName, new String[0]);
 
         collectLiterals();
+
+        // Contains the superclass of the one that we'll be creating
+        ClassNode superClassNode = createSuperClassVisitor();
+
+        superClassWriter = superClassNode;
+        superClassWriter.visit(V1_4, ACC_ABSTRACT | ACC_PUBLIC, classIName + "Super", null, parentIName, new String[0]);
+
+        //literals.clear();
+        XStream xs = new XStream();
+        FileOutputStream outS = new FileOutputStream("J:\\Elona.literals.debug.xml");
+        xs.toXML(literals, outS);
+        outS.close();
 
         createRun();
 
         createSubMethods();
 
         createConstructor();
+        createSuperClassCtor();
+
+        createArrayFieldInSuperClass();
 
         createFields();
 
         cw.visitEnd();
 
+        superClassWriter.visitEnd();
+        if (STORE_ENABLED) {
+            //ASMifierClassVisitor asmifier = new ASMifierClassVisitor(new PrintWriter("J:\\HSPletDebug.java"));
+            //bufferClassNode.accept(asmifier);
+            bufferClassNode.accept(writer);
+        }
+
+        superClassNode.accept(superWriter);
+
+        FileOutputStream sout = new FileOutputStream("J:\\startSuper.class");
+        sout.write(superWriter.toByteArray());
+        sout.close();
         // 出力
         out.write(writer.toByteArray());
 
-        if (TRACE_MOVE_ENABLED) {
-
-            List<MethodNode> mnList = (List<MethodNode>) cn.methods;
-            for (MethodNode node : mnList) {
-                System.out.print(node.name);
-                System.out.println(':');
-
-                if (isExportable(node)) {
-                    System.out.println("Exportable");
-                }
-
-                System.out.println(getExportDegree(node));
-            }
-        }
-
-    }
-
-    public static int getExportDegree(MethodNode node) {
-        int count = 0;
-        InsnList list = node.instructions;
-
-        Iterator<AbstractInsnNode> insnIter = list.iterator();
-
-        while (insnIter.hasNext()) {
-            AbstractInsnNode instr = insnIter.next();
-            int opcode = instr.getOpcode();
-            switch (opcode) {
-                case Opcodes.ALOAD:
-                    // Load "this"
-                    if (((VarInsnNode) instr).var != 0) {
-                        continue;
-                    }
-                case Opcodes.INVOKEINTERFACE:
-                case Opcodes.INVOKESPECIAL:
-                case Opcodes.INVOKEVIRTUAL:
-                    count ++;
-                default:
-            }
-        }
-        return count;
-    }
-
-    public static boolean isExportable(MethodNode node) {
-        if ((node.access & Opcodes.ACC_STATIC) != 0) {
-            return true;
-        }
-
-        InsnList list = node.instructions;
-
-        Iterator<AbstractInsnNode> insnIter = list.iterator();
-
-        while (insnIter.hasNext()) {
-            AbstractInsnNode instr = insnIter.next();
-            int opcode = instr.getOpcode();
-            switch (opcode) {
-                case Opcodes.ALOAD:
-                    // Load "this"
-                    if (((IntInsnNode) instr).operand == 0) {
-                        return false;
-                    }
-                    if (((VarInsnNode) instr).var == 0) {
-                        return false;
-                    } else {
-                        continue;
-                    }
-                case Opcodes.INVOKEINTERFACE:
-                case Opcodes.INVOKESPECIAL:
-                case Opcodes.INVOKEVIRTUAL:
-                    return false;
-                default:
-                    continue;
-            }
-        }
-        return true;
     }
 
     private void collectLiterals() {
@@ -520,7 +482,16 @@ public class Compiler implements Opcodes, Serializable {
 
         // 定数を用意する、毎回作っていたら遅い。
         for (int i = 0; i < literals.size(); ++i) {
-            cw.visitField(ACC_PRIVATE | ACC_FINAL, "c" + i, literalDesc, null, null);
+            if (!useSuperClassConstants) {
+                cw.visitField(ACC_PRIVATE | ACC_FINAL, "c" + i, literalDesc, null, null);
+            } else {
+                //superClassWriter.visitField(ACC_PROTECTED | ACC_FINAL, "c" + i, literalDesc, null, null);
+            }
+        }
+        if (useSuperClassConstants) {
+            for (int i = 0; i < 3; i++) {
+                cw.visitField(ACC_PRIVATE | ACC_FINAL, "c" + i, literalDesc, null, null);
+            }
         }
 
         // インスタンスが必要なライブラリを用意する。
@@ -557,14 +528,41 @@ public class Compiler implements Opcodes, Serializable {
 
             final Object value = literals.get(i);
 
-            mv.visitVarInsn(ALOAD, thisIndex);
-            mv.visitLdcInsn(value);
-            mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "("
-                    + Type.getDescriptor(value instanceof Integer ? Integer.TYPE
-                    : value instanceof Double ? Double.TYPE : String.class) + ")" + literalDesc);
+            if (!useSuperClassConstants) {
+                mv.visitVarInsn(ALOAD, thisIndex);
 
-            mv.visitFieldInsn(PUTFIELD, classIName, "c" + i, literalDesc);
+                mv.visitLdcInsn(value);
+
+                mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "("
+                        + Type.getDescriptor(value instanceof Integer ? Integer.TYPE
+                        : value instanceof Double ? Double.TYPE : String.class) + ")" + literalDesc);
+
+                mv.visitFieldInsn(PUTFIELD, classIName, "c" + i, literalDesc);
+            }
         }
+
+        // Get the 3 magic constants, 0, 0.0, and ""
+        if (useSuperClassConstants) {
+            for (int i = 0; i < 3; ++i) {
+
+                final Object value = literals.get(i);
+
+                if (!useSuperClassConstants) {
+                    mv.visitVarInsn(ALOAD, thisIndex);
+
+                    mv.visitLdcInsn(value);
+
+                    mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "("
+                            + Type.getDescriptor(value instanceof Integer ? Integer.TYPE
+                            : value instanceof Double ? Double.TYPE : String.class) + ")" + literalDesc);
+
+                    mv.visitFieldInsn(PUTFIELD, classIName, "c" + i, literalDesc);
+                }
+            }
+
+        }
+
+
 
         // インスタンス化が必要なライブラリを用意する。
         for (int i = 0; i < instancedLibraries.size(); ++i) {
@@ -1219,9 +1217,55 @@ public class Compiler implements Opcodes, Serializable {
 
     private void compileLiteral(final MethodVisitor mv, final Object o) {
 
-        mv.visitVarInsn(ALOAD, thisIndex);
+        int index = literals.indexOf(o);
 
-        mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(o), literalDesc);
+        if (useSuperClassConstants) {
+            // Type of Scalar[]
+            final String typeArrayOfScalar = "[L" + literalIName + ";";
+
+            // this.
+            mv.visitVarInsn(ALOAD, thisIndex);
+            // this.array[i]
+            mv.visitFieldInsn(GETFIELD, classIName, "cLiterals", typeArrayOfScalar);
+            // push the array's index on the stack
+            switch (index) {
+                case 0:
+                    mv.visitInsn(ICONST_0);
+                    break;
+                case 1:
+                    mv.visitInsn(ICONST_1);
+                    break;
+                case 2:
+                    mv.visitInsn(ICONST_2);
+                    break;
+                case 3:
+                    mv.visitInsn(ICONST_3);
+                    break;
+                case 4:
+                    mv.visitInsn(ICONST_4);
+                    break;
+                case 5:
+                    mv.visitInsn(ICONST_5);
+                    break;
+                default:
+                    if (index < 128) {
+                        mv.visitIntInsn(BIPUSH, index);
+                    } else if (index < 32768) {
+                        mv.visitIntInsn(SIPUSH, index);
+                    } else {
+                        mv.visitIntInsn(SIPUSH, 32767);
+                        mv.visitIntInsn(SIPUSH, index - 32767);
+                        mv.visitInsn(IADD);
+                    }
+            }
+            mv.visitInsn(AALOAD);
+
+        } else {
+            mv.visitVarInsn(ALOAD, thisIndex);
+
+            mv.visitFieldInsn(GETFIELD, classIName, "c" + index, literalDesc);
+
+        }
 
         mv.visitInsn(ICONST_0);
     }
@@ -2139,5 +2183,130 @@ public class Compiler implements Opcodes, Serializable {
         if (DEBUG_ENABLED) {
             System.out.println("" + totalSize + "/" + ax.codes.length);
         }
+    }
+
+    /* */
+    private ClassNode createSuperClassVisitor() {
+        ClassNode node = new ClassNode();
+        return node;
+    }
+
+    private void createArrayFieldInSuperClass() {
+
+        // Type of Scalar[]
+        final String typeArrayOfScalar = "[L" + literalIName + ";";
+        // Create constant literals field
+        FieldVisitor fv = superClassWriter.visitField(ACC_PUBLIC, "cLiterals", typeArrayOfScalar, null, null);
+        fv.visitEnd();
+
+    }
+
+    private void createSuperClassCtor() {
+
+        // Type of Scalar[]
+        final String typeArrayOfScalar = "[L" + literalIName + ";";
+
+        final MethodVisitor mv = superClassWriter.visitMethod(ACC_PUBLIC, "<init>", "(" + contextDesc + ")V", null, null);
+
+        // Call super()
+        mv.visitVarInsn(ALOAD, thisIndex);
+        mv.visitMethodInsn(INVOKESPECIAL, parentIName, "<init>", "()V");
+
+        // Create array of literal Scalars by:
+
+        // get this
+        mv.visitVarInsn(ALOAD, thisIndex);
+        // push the size
+        mv.visitIntInsn(SIPUSH, literals.size());
+
+        // make the array of type Scalar, popping size
+        mv.visitTypeInsn(ANEWARRAY, literalIName);
+
+        // Store this field in this class
+        mv.visitFieldInsn(PUTFIELD, classIName, "cLiterals", typeArrayOfScalar);
+
+        // Populate the array
+        for (int i = 0; i < literals.size(); ++i) {
+
+            final Object value = literals.get(i);
+
+            // push this on the stack
+            mv.visitVarInsn(ALOAD, thisIndex);
+
+            // pop this, push the array
+            mv.visitFieldInsn(GETFIELD, classIName, "cLiterals", typeArrayOfScalar);
+
+            // push the array's index on the stack
+            switch (i) {
+                case 0:
+                    mv.visitInsn(ICONST_0);
+                    break;
+                case 1:
+                    mv.visitInsn(ICONST_1);
+                    break;
+                case 2:
+                    mv.visitInsn(ICONST_2);
+                    break;
+                case 3:
+                    mv.visitInsn(ICONST_3);
+                    break;
+                case 4:
+                    mv.visitInsn(ICONST_4);
+                    break;
+                case 5:
+                    mv.visitInsn(ICONST_5);
+                    break;
+                default:
+                    if (i < 128) {
+                        mv.visitIntInsn(BIPUSH, i);
+                    } else if (i < 32768) {
+                        mv.visitIntInsn(SIPUSH, i);
+                    } else {
+                        mv.visitIntInsn(SIPUSH, 32767);
+                        mv.visitIntInsn(SIPUSH, i - 32767);
+                        mv.visitInsn(IADD);
+                    }
+            }
+
+
+            // push the load-constant instruction on the stack
+            mv.visitLdcInsn(value);
+
+            // call Scalar.fromValue on the constant to get a Scalar
+            // pop the constant off, but push a Scalar on
+            mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "("
+                    + Type.getDescriptor(value instanceof Integer ? Integer.TYPE
+                    : value instanceof Double ? Double.TYPE : String.class) + ")" + literalDesc);
+
+            // put the Scalar onto array[i]
+            // pop off the Scalar, the index, the array.
+
+            mv.visitInsn(AASTORE);
+
+        }
+        /*
+        
+        // Create literals
+        // 定数を用意する、毎回作っていたら遅い。
+        for (int i = 0; i < literals.size(); ++i) {
+        
+        final Object value = literals.get(i);
+        
+        mv.visitVarInsn(ALOAD, thisIndex);
+        
+        mv.visitLdcInsn(value);
+        
+        mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "("
+        + Type.getDescriptor(value instanceof Integer ? Integer.TYPE
+        : value instanceof Double ? Double.TYPE : String.class) + ")" + literalDesc);
+        
+        mv.visitFieldInsn(PUTFIELD, classIName, "c" + i, literalDesc);
+        }
+        
+         */
+
+        mv.visitInsn(RETURN);
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
     }
 }
