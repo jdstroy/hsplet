@@ -720,8 +720,8 @@ public class Compiler implements Opcodes, Serializable {
                     // else/loop/break/continue/foreachCheck ‚ÍœŠO‚µ‚È‚¯‚ê‚Î‚¢‚¯‚È‚¢B
                     final int blockEnd = findBlockEnd(codeIndex, nextLabelIndex);
                     final int blockSize = blockEnd - codeIndex;
-
-                    if (blockSize >= 20) {
+                    // The following appears to affect the number of submethods compiled.  Smaller numbers appear to reduce the number of methods.
+                    if (blockSize >= 1) {
 
                         submethodStartEnds.add(new int[]{codeIndex, blockEnd});
 
