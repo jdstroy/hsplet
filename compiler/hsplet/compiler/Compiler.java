@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.TreeMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
@@ -295,10 +296,13 @@ public class Compiler implements Opcodes, Serializable {
     private static final String literalIName = Type.getInternalName(Scalar.class);
     private static final String parentDesc = Type.getDescriptor(RunnableCode.class);
     private static final String parentIName = Type.getInternalName(RunnableCode.class);
+    private static final String typeArrayOfScalar = "[L" + literalIName + ";";
     private static final int thisIndex = 0;
     private static final int jumpLabelIndex = 1; // int
     private static final int contextIndex = 2; // contextType
     private static final int assignOffsetIndex = 3; // int
+    private static final int literalsIndex = 4; // Scalar[]
+    private static final int zeroIndex = 5; // Scalar
     private ClassVisitor cw, superClassWriter;
     private String inputName;
     private String className;
@@ -311,6 +315,7 @@ public class Compiler implements Opcodes, Serializable {
     private RuntimeInfo runtime;
     private List<Class> instancedLibraries;
     private boolean useSuperClassConstants = true;
+    private static final boolean useLocalVariableForLiterals = true;
 
     /**
      * 入力バイトコードを指定してオブジェクトを構築する。
@@ -385,12 +390,6 @@ public class Compiler implements Opcodes, Serializable {
 
         superClassWriter = superClassNode;
         superClassWriter.visit(V1_4, ACC_ABSTRACT | ACC_PUBLIC, classIName + "Super", null, parentIName, new String[0]);
-
-        //literals.clear();
-        XStream xs = new XStream();
-        FileOutputStream outS = new FileOutputStream("J:\\Elona.literals.debug.xml");
-        xs.toXML(literals, outS);
-        outS.close();
 
         createRun();
 
@@ -673,6 +672,18 @@ public class Compiler implements Opcodes, Serializable {
         mv.visitVarInsn(ALOAD, thisIndex);
         mv.visitFieldInsn(GETFIELD, classIName, "context", contextDesc);
         mv.visitVarInsn(ASTORE, contextIndex);
+        if (useLocalVariableForLiterals) {
+            // cLiterals in locals[literalsIndex]
+            mv.visitVarInsn(ALOAD, thisIndex);
+            mv.visitFieldInsn(GETFIELD, classIName, "cLiterals", typeArrayOfScalar);
+            mv.visitVarInsn(ASTORE, literalsIndex);
+
+            // 0 in locals[zeroLiteralIndex]
+            mv.visitVarInsn(ALOAD, thisIndex);
+            mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Integer(0)), literalDesc);
+            mv.visitVarInsn(ASTORE, zeroIndex);
+
+        }
 
     }
 
@@ -693,21 +704,93 @@ public class Compiler implements Opcodes, Serializable {
 
     }
 
+    class MangledMethodSignature {
+
+        public MangledMethodSignature(String name) {
+            this(name, "()V");
+        }
+
+        public MangledMethodSignature(String name, String signature) {
+            this.name = name;
+            this.signature = signature;
+        }
+        private String name, signature;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getSignature() {
+            return signature;
+        }
+
+        public void setSignature(String signature) {
+            this.signature = signature;
+        }
+    }
+    private int mergedMethodCount = 0;
+    /* Two or more consecutive calls are merged with this method visitor. */
+    private Map<Integer, List<MangledMethodSignature>> map = new TreeMap<Integer, List<MangledMethodSignature>>();
+
+    private void mergeMethodCalls(final MethodVisitor mv, List<MangledMethodSignature> methods) {
+        // Call this.mm####
+        mv.visitVarInsn(ALOAD, thisIndex);
+        mv.visitMethodInsn(INVOKEVIRTUAL, classIName, "mm" + mergedMethodCount, "()V");
+
+        map.put(new Integer(mergedMethodCount), methods);
+
+        mergedMethodCount++;
+    }
+
+    private void createMergedMethodCalls(ClassVisitor cv) {
+        for (Integer index : map.keySet()) {
+            MethodVisitor subroutine = cv.visitMethod(ACC_PUBLIC, "mm" + index.toString(), "()V", null, null);
+
+            List<MangledMethodSignature> methods = map.get(index);
+
+            // And each of these methods will be called in series:
+            for (MangledMethodSignature method : methods) {
+                subroutine.visitVarInsn(ALOAD, thisIndex);
+                subroutine.visitMethodInsn(INVOKEVIRTUAL, classIName, method.getName(), method.getSignature());
+            }
+
+            subroutine.visitInsn(RETURN);
+            subroutine.visitMaxs(0, 0);
+            subroutine.visitEnd();
+        }
+    }
+    private ArrayList<String> methodNames = new ArrayList<String>();
+
     private void compileCodes(final MethodVisitor mv) {
 
         int nextBlock = 1;
 
         final Set<Label> unusedLabels = new HashSet<Label>(labels.values());
 
+        boolean lastLabelUsed = true;
+
+        methodNames.clear();
+
         while (codeIndex < ax.codes.length) {
 
-            final Label label = (Label) labels.get(new Integer(ax.codes[codeIndex].offset));
+            final Label label = labels.get(new Integer(ax.codes[codeIndex].offset));
 
-            if (label != null) {
+            boolean labelUsed = label != null;
+
+            if (labelUsed) {
                 mv.visitLabel(label);
                 unusedLabels.remove(label);
+                //XStream xs = new XStream();
+                //xs.toXML(methodNames, System.out);
+                methodNames.clear();
             }
 
+            // If we're at a location which is within a block, then we may
+            // compile it into a method.
             if (codeIndex >= nextBlock) {
                 // Java の制限で長すぎるコードはコンパイルできないことが判明・・・orz
                 // メソッドに切り出せるものは切り出すのが吉。
@@ -721,7 +804,7 @@ public class Compiler implements Opcodes, Serializable {
                     final int blockEnd = findBlockEnd(codeIndex, nextLabelIndex);
                     final int blockSize = blockEnd - codeIndex;
                     // The following appears to affect the number of submethods compiled.  Smaller numbers appear to reduce the number of methods.
-                    if (blockSize >= 1) {
+                    if (blockSize >= 10) {
 
                         submethodStartEnds.add(new int[]{codeIndex, blockEnd});
 
@@ -729,6 +812,10 @@ public class Compiler implements Opcodes, Serializable {
 
                         mv.visitVarInsn(ALOAD, thisIndex);
                         mv.visitMethodInsn(INVOKEVIRTUAL, classIName, "m" + (submethodStartEnds.size() - 1), "()V");
+
+                        if (!lastLabelUsed) {
+                            methodNames.add("m" + (submethodStartEnds.size() - 1));
+                        }
 
                         continue;
                     } else {
@@ -738,6 +825,7 @@ public class Compiler implements Opcodes, Serializable {
             }
 
             compileStatement(mv);
+            lastLabelUsed = labelUsed;
         }
 
         // 使用されなかったラベルも使ってやらないとエラーになる
@@ -1223,11 +1311,23 @@ public class Compiler implements Opcodes, Serializable {
             // Type of Scalar[]
             final String typeArrayOfScalar = "[L" + literalIName + ";";
 
-            // this.
-            mv.visitVarInsn(ALOAD, thisIndex);
-            // this.array[i]
-            mv.visitFieldInsn(GETFIELD, classIName, "cLiterals", typeArrayOfScalar);
-            // push the array's index on the stack
+            if (useLocalVariableForLiterals) {
+                if (new Integer(0).equals(o)) {
+                    mv.visitVarInsn(ALOAD, zeroIndex);
+                    mv.visitInsn(ICONST_0);
+                    return;
+                } else {
+                    // locals[literalsIndex] = this.cLiterals
+                    // cLiterals[
+                    mv.visitVarInsn(ALOAD, literalsIndex);
+                }
+            } else {
+                // this.
+                mv.visitVarInsn(ALOAD, thisIndex);
+                // this.array[i]
+                mv.visitFieldInsn(GETFIELD, classIName, "cLiterals", typeArrayOfScalar);
+                // push the array's index on the stack
+            }
             switch (index) {
                 case 0:
                     mv.visitInsn(ICONST_0);
@@ -1339,9 +1439,12 @@ public class Compiler implements Opcodes, Serializable {
 
             if (method.getReturnType().equals(Void.TYPE)) {
 
-                mv.visitVarInsn(ALOAD, thisIndex);
-                mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Integer(0)), literalDesc);
-
+                if (useLocalVariableForLiterals) {
+                    mv.visitVarInsn(ALOAD, zeroIndex);
+                } else {
+                    mv.visitVarInsn(ALOAD, thisIndex);
+                    mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Integer(0)), literalDesc);
+                }
             } else if (method.getReturnType().equals(Operand.class)) {
                 // 何もする必要なし
             } else {
@@ -1532,8 +1635,12 @@ public class Compiler implements Opcodes, Serializable {
 
             if (!function.isFunction()) {
 
-                mv.visitVarInsn(ALOAD, thisIndex);
-                mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Integer(0)), literalDesc);
+                if (useLocalVariableForLiterals) {
+                    mv.visitVarInsn(ALOAD, zeroIndex);
+                } else {
+                    mv.visitVarInsn(ALOAD, thisIndex);
+                    mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Integer(0)), literalDesc);
+                }
 
             } else {
 
@@ -1681,8 +1788,12 @@ public class Compiler implements Opcodes, Serializable {
                     break;
                     case 4: // inum
                     {
-                        mv.visitVarInsn(ALOAD, thisIndex);
-                        mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Integer(0)), literalDesc);
+                        if (useLocalVariableForLiterals) {
+                            mv.visitVarInsn(ALOAD, zeroIndex);
+                        } else {
+                            mv.visitVarInsn(ALOAD, thisIndex);
+                            mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Integer(0)), literalDesc);
+                        }
                     }
                     break;
                     case 5: // struct
@@ -2204,7 +2315,7 @@ public class Compiler implements Opcodes, Serializable {
     private void createSuperClassCtor() {
 
         // Type of Scalar[]
-        final String typeArrayOfScalar = "[L" + literalIName + ";";
+
 
         final MethodVisitor mv = superClassWriter.visitMethod(ACC_PUBLIC, "<init>", "(" + contextDesc + ")V", null, null);
 
