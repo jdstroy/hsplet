@@ -277,12 +277,7 @@ public class Compiler implements Opcodes, Serializable {
 
     private static void connectStream(final InputStream in, final OutputStream out) throws IOException {
         final byte[] buffer = new byte[1024];
-        for (;;) {
-
-            final int length = in.read(buffer);
-            if (length < 0) {
-                break;
-            }
+        for (int length = in.read(buffer); length >= 0; length = in.read(buffer)) {
             out.write(buffer, 0, length);
         }
     }
