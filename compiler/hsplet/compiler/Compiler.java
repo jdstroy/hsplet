@@ -298,6 +298,11 @@ public class Compiler implements Opcodes, Serializable {
     private static final int assignOffsetIndex = 3; // int
     private static final int literalsIndex = 4; // Scalar[]
     private static final int zeroIndex = 5; // Scalar
+    private static final int zeroLengthStringIndex = 6; // literals[3]    
+    private static final int localsStart = 7;
+    
+    private List<CommonObjectContainer> commonObjectsList = new ArrayList<CommonObjectContainer>();
+    
     private ClassVisitor cw, superClassWriter;
     private String inputName;
     private String className;
@@ -311,6 +316,7 @@ public class Compiler implements Opcodes, Serializable {
     private List<Class> instancedLibraries;
     private boolean useSuperClassConstants = true;
     private static final boolean useLocalVariableForLiterals = true;
+    private static final boolean optimizeWithLocalVariables = true;
 
     /**
      * 入力バイトコードを指定してオブジェクトを構築する。
@@ -414,7 +420,15 @@ public class Compiler implements Opcodes, Serializable {
         // 出力
         out.write(writer.toByteArray());
 
+        if (collectStats) {
+            for (int i = 0; i < literalsStats.length; i++) {
+                System.err.format("%d\t%d\t%d\t%s\n", i, literalsStats[i], literalsStatsAaLoad[i], literals.get(i).toString());
+            }
+        }
     }
+    private int[] literalsStats;
+    private int[] literalsStatsAaLoad;
+    private boolean collectStats = true;
 
     private void collectLiterals() {
 
@@ -422,7 +436,24 @@ public class Compiler implements Opcodes, Serializable {
         literals.add(new Integer(0));
         literals.add(new Double(0.0));
         literals.add(new String(""));
-
+        
+        int idx = localsStart;
+        commonObjectsList.add(new CommonObjectContainer(new Integer(1), idx++));
+        commonObjectsList.add(new CommonObjectContainer(new Integer(2), idx++));
+        commonObjectsList.add(new CommonObjectContainer(new Integer(3), idx++));
+        commonObjectsList.add(new CommonObjectContainer(new Integer(7), idx++));
+        commonObjectsList.add(new CommonObjectContainer(new Integer(255), idx++));
+        commonObjectsList.add(new CommonObjectContainer(new Integer(38), idx++));
+        commonObjectsList.add(new CommonObjectContainer(new Integer(8), idx++));
+        commonObjectsList.add(new CommonObjectContainer(new Integer(10), idx++));
+        commonObjectsList.add(new CommonObjectContainer(new Integer(4), idx++));
+        commonObjectsList.add(new CommonObjectContainer(new Integer(20), idx++));
+        commonObjectsList.add(new CommonObjectContainer(new Integer(9), idx++));
+        commonObjectsList.add(new CommonObjectContainer(new Integer(-1), idx++));
+        commonObjectsList.add(new CommonObjectContainer(new Integer(5), idx++));
+        
+        commonObjectsList.add(new CommonObjectContainer(new Integer(100), idx++));
+        
         for (int i = 0; i < ax.codes.length; ++i) {
 
             final Object o = literalValueOf(ax.codes[i]);
@@ -432,6 +463,11 @@ public class Compiler implements Opcodes, Serializable {
                     literals.add(o);
                 }
             }
+        }
+
+        if (collectStats) {
+            literalsStats = new int[literals.size()];
+            literalsStatsAaLoad = new int[literals.size()];
         }
     }
 
@@ -678,6 +714,16 @@ public class Compiler implements Opcodes, Serializable {
             mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Integer(0)), literalDesc);
             mv.visitVarInsn(ASTORE, zeroIndex);
 
+            mv.visitVarInsn(ALOAD, literalsIndex);
+            mv.visitInsn(ICONST_3);
+            mv.visitInsn(AALOAD);
+            mv.visitVarInsn(ASTORE, zeroLengthStringIndex);
+            
+            for (CommonObjectContainer obj : commonObjectsList) {
+                mv.visitVarInsn(ALOAD, thisIndex);
+                mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(obj.o), literalDesc);
+                mv.visitVarInsn(ASTORE, obj.localIndex);
+            }
         }
 
     }
@@ -799,7 +845,7 @@ public class Compiler implements Opcodes, Serializable {
                     final int blockEnd = findBlockEnd(codeIndex, nextLabelIndex);
                     final int blockSize = blockEnd - codeIndex;
                     // The following appears to affect the number of submethods compiled.  Smaller numbers appear to reduce the number of methods.
-                    if (blockSize >= 10) {
+                    if (blockSize >= 1) {
 
                         submethodStartEnds.add(new int[]{codeIndex, blockEnd});
 
@@ -1297,18 +1343,31 @@ public class Compiler implements Opcodes, Serializable {
 
         compileLiteral(mv, literalValueOf(code));
     }
-
+    private final Integer zero = new Integer(0);
+    
     private void compileLiteral(final MethodVisitor mv, final Object o) {
 
         int index = literals.indexOf(o);
 
+        if (collectStats) {
+            literalsStats[index] += 1;
+        }
         if (useSuperClassConstants) {
             // Type of Scalar[]
-            final String typeArrayOfScalar = "[L" + literalIName + ";";
-
             if (useLocalVariableForLiterals) {
-                if (new Integer(0).equals(o)) {
+                for (CommonObjectContainer obj : commonObjectsList) {
+                    if (obj.o.equals(o)) {
+                        mv.visitVarInsn(ALOAD, obj.localIndex);
+                        mv.visitInsn(ICONST_0);
+                        return;
+                    }
+                }
+                if (zero.equals(o)) {
                     mv.visitVarInsn(ALOAD, zeroIndex);
+                    mv.visitInsn(ICONST_0);
+                    return;
+                } else if ("".equals(o)) { // 3rd index in cLiterals is cached as locals[literal3index]
+                    mv.visitVarInsn(ALOAD, zeroLengthStringIndex);
                     mv.visitInsn(ICONST_0);
                     return;
                 } else {
@@ -1323,6 +1382,11 @@ public class Compiler implements Opcodes, Serializable {
                 mv.visitFieldInsn(GETFIELD, classIName, "cLiterals", typeArrayOfScalar);
                 // push the array's index on the stack
             }
+
+            if (collectStats) {
+                literalsStatsAaLoad[index] += 1;
+            }
+            
             switch (index) {
                 case 0:
                     mv.visitInsn(ICONST_0);
@@ -1769,8 +1833,12 @@ public class Compiler implements Opcodes, Serializable {
                     case -6: // local string
                     case 2: // string
                     {
-                        mv.visitVarInsn(ALOAD, thisIndex);
-                        mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(""), literalDesc);
+                        if (useLocalVariableForLiterals) {
+                            mv.visitVarInsn(ALOAD, zeroLengthStringIndex);
+                        } else {
+                            mv.visitVarInsn(ALOAD, thisIndex);
+                            mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(""), literalDesc);
+                        }
 
                     }
                     break;
@@ -2415,4 +2483,15 @@ public class Compiler implements Opcodes, Serializable {
         mv.visitMaxs(0, 0);
         mv.visitEnd();
     }
+}
+
+class CommonObjectContainer {
+    public Object o;
+    public int localIndex;
+
+    public CommonObjectContainer(Object o, int localIndex) {
+        this.o = o;
+        this.localIndex = localIndex;
+    }
+    
 }
