@@ -392,8 +392,13 @@ public class Compiler implements Opcodes, Serializable {
         superClassWriter = superClassNode;
         superClassWriter.visit(V1_4, ACC_ABSTRACT | ACC_PUBLIC, classIName + "Super", null, parentIName, new String[0]);
 
+        final int[] runStats;
+        
         createRun();
-
+        if (collectStats) {
+            runStats = new int[literalsStats.length];
+            System.arraycopy(literalsStats, 0, runStats, 0, literalsStats.length);
+        }
         createSubMethods();
 
         createConstructor();
@@ -421,14 +426,15 @@ public class Compiler implements Opcodes, Serializable {
         out.write(writer.toByteArray());
 
         if (collectStats) {
+            System.err.println("index\ttotal\tarray_load\trun\ttoString\n");
             for (int i = 0; i < literalsStats.length; i++) {
-                System.err.format("%d\t%d\t%d\t%s\n", i, literalsStats[i], literalsStatsAaLoad[i], literals.get(i).toString());
+                System.err.format("%d\t%d\t%d\t%d\t%s\n", i, literalsStats[i], literalsStatsAaLoad[i], literals.get(i).toString());
             }
         }
     }
     private int[] literalsStats;
     private int[] literalsStatsAaLoad;
-    private boolean collectStats = true;
+    private final boolean collectStats = true;
 
     private void collectLiterals() {
 
