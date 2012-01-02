@@ -575,7 +575,7 @@ public class Compiler implements Opcodes, Serializable {
         final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(" + contextDesc + ")V", null, new String[0]);
 
         mv.visitVarInsn(ALOAD, thisIndex);
-        mv.visitMethodInsn(INVOKESPECIAL, parentIName, "<init>", "()V");
+        mv.visitMethodInsn(INVOKESPECIAL, useSuperClassConstants ? superClassIName : parentIName, "<init>", "()V");
 
         mv.visitVarInsn(ALOAD, thisIndex);
         mv.visitVarInsn(ALOAD, 1);
