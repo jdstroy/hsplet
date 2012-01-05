@@ -489,6 +489,10 @@ public class Compiler implements Opcodes, Serializable {
         commonObjectsList.add(new CommonObjectContainer(new Integer(13), idx++));
         commonObjectsList.add(new CommonObjectContainer(new Integer(100), idx++));
         
+        for (CommonObjectContainer o : commonObjectsList) {
+            literals.add(o.o);
+        }
+        
         for (int i = 0; i < ax.codes.length; ++i) {
 
             final Object o = literalValueOf(ax.codes[i]);
@@ -2562,6 +2566,13 @@ public class Compiler implements Opcodes, Serializable {
             mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "("
                     + Type.getDescriptor(value instanceof Integer ? Integer.TYPE
                     : value instanceof Double ? Double.TYPE : String.class) + ")" + literalDesc);
+            
+            // populate the c# fields for constants
+            mv.visitInsn(DUP);
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitInsn(SWAP);
+            mv.visitFieldInsn(PUTFIELD, superClassIName, "c" + i, literalDesc);
+            
 
             // put the Scalar onto array[i]
             // pop off the Scalar, the index, the array.
