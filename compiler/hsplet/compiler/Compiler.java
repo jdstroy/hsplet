@@ -318,7 +318,7 @@ public class Compiler implements Opcodes, Serializable {
     private RuntimeInfo runtime;
     private List<Class> instancedLibraries;
     private boolean useSuperClassConstants = true;
-    private static final boolean useLocalVariableForLiterals = true;
+    private static final boolean useLocalVariableForLiterals = false;
     private static final boolean optimizeWithLocalVariables = true;
     private int[] varsStats;
     private int[] paramsStats;
@@ -385,7 +385,7 @@ public class Compiler implements Opcodes, Serializable {
         submethodStartEnds = new ArrayList();
         instancedLibraries = new ArrayList<Class>();
         codeIndex = 0;
-        enableVariableOptimization = true;
+        enableVariableOptimization = false;
 
         // we will need to change parentIName to classIName + "Super"
         // クラス生成
@@ -433,11 +433,14 @@ public class Compiler implements Opcodes, Serializable {
 
         superClassNode.accept(superWriter);
 
-        FileOutputStream sout = new FileOutputStream("J:\\startSuper.class");
-        sout.write(superWriter.toByteArray());
-        sout.close();
         // 出力
         out.write(writer.toByteArray());
+	((JarOutputStream) out).putNextEntry(new JarEntry(classIName + "Super.class"));
+        out.write(superWriter.toByteArray());
+
+        FileOutputStream sout = new FileOutputStream("R:\\out\\StartSuper.class");
+        sout.write(superWriter.toByteArray());
+        sout.close();
 
         if (collectStats) {
             System.err.println("literals:");
@@ -466,10 +469,11 @@ public class Compiler implements Opcodes, Serializable {
     private void collectLiterals() {
 
         // よく使う。
+        
         literals.add(new Integer(0));
         literals.add(new Double(0.0));
         literals.add(new String(""));
-        
+
         int idx = localsStart;
         commonObjectsList.add(new CommonObjectContainer(new Integer(1), idx++));
         commonObjectsList.add(new CommonObjectContainer(new Integer(2), idx++));
@@ -537,7 +541,6 @@ public class Compiler implements Opcodes, Serializable {
     }
 
     private void createFields() {
-
         cw.visitField(ACC_PRIVATE | ACC_FINAL, "context", contextDesc, null, null);
 
         // 使用する変数を用意する。
@@ -557,7 +560,7 @@ public class Compiler implements Opcodes, Serializable {
             if (!useSuperClassConstants) {
                 cw.visitField(ACC_PRIVATE | ACC_FINAL, "c" + i, literalDesc, null, null);
             } else {
-                //superClassWriter.visitField(ACC_PROTECTED | ACC_FINAL, "c" + i, literalDesc, null, null);
+                superClassWriter.visitField(ACC_PROTECTED | ACC_FINAL, "c" + i, literalDesc, null, null);
             }
         }
         if (useSuperClassConstants) {
@@ -1534,7 +1537,6 @@ public class Compiler implements Opcodes, Serializable {
             mv.visitVarInsn(ALOAD, thisIndex);
 
             mv.visitFieldInsn(GETFIELD, classIName, "c" + index, literalDesc);
-
         }
 
         mv.visitInsn(ICONST_0);
@@ -1961,7 +1963,6 @@ public class Compiler implements Opcodes, Serializable {
                     {
                         mv.visitVarInsn(ALOAD, thisIndex);
                         mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Double(0.0)), literalDesc);
-
                     }
                     break;
                     case 4: // inum
@@ -2495,7 +2496,7 @@ public class Compiler implements Opcodes, Serializable {
         // Type of Scalar[]
 
 
-        final MethodVisitor mv = superClassWriter.visitMethod(ACC_PUBLIC, "<init>", "(" + contextDesc + ")V", null, null);
+        final MethodVisitor mv = superClassWriter.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
 
         // Call super()
         mv.visitVarInsn(ALOAD, thisIndex);
@@ -2577,8 +2578,11 @@ public class Compiler implements Opcodes, Serializable {
             // put the Scalar onto array[i]
             // pop off the Scalar, the index, the array.
 
+            mv.visitInsn(DUP);
+	    mv.visitVarInsn(ALOAD, thisIndex);
+	    mv.visitInsn(SWAP);
+	    mv.visitFieldInsn(PUTFIELD, superClassIName, "c" + i, literalDesc);
             mv.visitInsn(AASTORE);
-
         }
         /*
         
