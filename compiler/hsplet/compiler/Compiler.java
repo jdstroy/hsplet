@@ -382,7 +382,7 @@ public class Compiler implements Opcodes, Serializable {
         submethodStartEnds = new ArrayList();
         instancedLibraries = new ArrayList<Class>();
         codeIndex = 0;
-        enableVariableOptimization = true;
+        enableVariableOptimization = false;
 
         // we will need to change parentIName to classIName + "Super"
         // ÉNÉâÉXê∂ê¨
@@ -430,11 +430,10 @@ public class Compiler implements Opcodes, Serializable {
 
         superClassNode.accept(superWriter);
 
-        FileOutputStream sout = new FileOutputStream("J:\\startSuper.class");
-        sout.write(superWriter.toByteArray());
-        sout.close();
         // èoóÕ
         out.write(writer.toByteArray());
+	((JarOutputStream) out).putNextEntry(new JarEntry(classIName + "Super.class"));
+        out.write(superWriter.toByteArray());
 
         if (collectStats) {
             System.err.println("literals:");
@@ -554,7 +553,7 @@ public class Compiler implements Opcodes, Serializable {
             if (!useSuperClassConstants) {
                 cw.visitField(ACC_PRIVATE | ACC_FINAL, "c" + i, literalDesc, null, null);
             } else {
-                //superClassWriter.visitField(ACC_PROTECTED | ACC_FINAL, "c" + i, literalDesc, null, null);
+                superClassWriter.visitField(ACC_PROTECTED | ACC_FINAL, "c" + i, literalDesc, null, null);
             }
         }
         if (useSuperClassConstants) {
@@ -1529,7 +1528,6 @@ public class Compiler implements Opcodes, Serializable {
             mv.visitVarInsn(ALOAD, thisIndex);
 
             mv.visitFieldInsn(GETFIELD, classIName, "c" + index, literalDesc);
-
         }
 
         mv.visitInsn(ICONST_0);
@@ -1956,7 +1954,6 @@ public class Compiler implements Opcodes, Serializable {
                     {
                         mv.visitVarInsn(ALOAD, thisIndex);
                         mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Double(0.0)), literalDesc);
-
                     }
                     break;
                     case 4: // inum
@@ -2490,7 +2487,7 @@ public class Compiler implements Opcodes, Serializable {
         // Type of Scalar[]
 
 
-        final MethodVisitor mv = superClassWriter.visitMethod(ACC_PUBLIC, "<init>", "(" + contextDesc + ")V", null, null);
+        final MethodVisitor mv = superClassWriter.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
 
         // Call super()
         mv.visitVarInsn(ALOAD, thisIndex);
@@ -2572,8 +2569,11 @@ public class Compiler implements Opcodes, Serializable {
             // put the Scalar onto array[i]
             // pop off the Scalar, the index, the array.
 
+            mv.visitInsn(DUP);
+	    mv.visitVarInsn(ALOAD, thisIndex);
+	    mv.visitInsn(SWAP);
+	    mv.visitFieldInsn(PUTFIELD, superClassIName, "c" + i, literalDesc);
             mv.visitInsn(AASTORE);
-
         }
         /*
         
