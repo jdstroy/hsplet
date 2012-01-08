@@ -83,8 +83,9 @@ public class Compiler implements Opcodes, Serializable {
     private static final boolean DEBUG_ENABLED = false;
     /** Stores the results in an ASM tree.  This is slow and memory hungry;
      * you should use this only if you're debugging/poking around.  This 
-     * shouldn't be used in production */
-    private static final boolean STORE_ENABLED = true;
+     * shouldn't be used in production, but it is useful to find out 
+     * how much of the constant pool is used.*/
+    private static final boolean STORE_ENABLED = false;
 
     /**
      * ax ファイルをコンパイルする。
@@ -476,7 +477,7 @@ public class Compiler implements Opcodes, Serializable {
 
         int idx = localsStart;
         commonLiteralsList.add(new CommonObjectContainer(new Integer(0), idx++));
-        commonLiteralsList.add(new CommonObjectContainer(new Integer(""), idx++));
+        commonLiteralsList.add(new CommonObjectContainer("", idx++));
         commonLiteralsList.add(new CommonObjectContainer(new Double(0.0), idx++));
         
         commonLiteralsList.add(new CommonObjectContainer(new Integer(1), idx++));
