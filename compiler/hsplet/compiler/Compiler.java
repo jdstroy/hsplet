@@ -81,6 +81,9 @@ public class Compiler implements Opcodes, Serializable {
     private static final long serialVersionUID = 8668239863505235428L;
     /** デバッグ出力をするかどうか。 */
     private static final boolean DEBUG_ENABLED = false;
+    /** Stores the results in an ASM tree.  This is slow and memory hungry;
+     * you should use this only if you're debugging/poking around.  This 
+     * shouldn't be used in production */
     private static final boolean STORE_ENABLED = true;
 
     /**
@@ -297,10 +300,8 @@ public class Compiler implements Opcodes, Serializable {
     private static final int contextIndex = 2; // contextType
     private static final int assignOffsetIndex = 3; // int
     private static final int literalsIndex = 4; // Scalar[]
-    private static final int zeroIndex = 5; // Scalar
-    private static final int zeroLengthStringIndex = 6; // literals[3]    
-    private static final int localsStart = 7;
-    private List<CommonObjectContainer> commonObjectsList = new ArrayList<CommonObjectContainer>();
+    private static final int localsStart = 5;
+    private List<CommonObjectContainer> commonLiteralsList = new ArrayList<CommonObjectContainer>();
     private ClassVisitor cw, superClassWriter;
     private String inputName;
     private String className;
@@ -320,6 +321,10 @@ public class Compiler implements Opcodes, Serializable {
     private int[] varsStats;
     private int[] paramsStats;
     private static final boolean commonVarsInLocals = true;
+    /* The work for this isn't complete yet. This should be allow us to take pretty much the same code path as the original HSPlet.
+     * Leave this set to true for now.
+     */
+    private static final boolean useLiteralsInArray = true;
 
     /**
      * 入力バイトコードを指定してオブジェクトを構築する。
@@ -382,7 +387,9 @@ public class Compiler implements Opcodes, Serializable {
         submethodStartEnds = new ArrayList();
         instancedLibraries = new ArrayList<Class>();
         codeIndex = 0;
-        enableVariableOptimization = true;
+
+        // Original must be = false.  Whoops.
+        enableVariableOptimization = false;
 
         // we will need to change parentIName to classIName + "Super"
         // クラス生成
@@ -468,26 +475,32 @@ public class Compiler implements Opcodes, Serializable {
         literals.add(new String(""));
 
         int idx = localsStart;
-        commonObjectsList.add(new CommonObjectContainer(new Integer(1), idx++));
-        commonObjectsList.add(new CommonObjectContainer(new Integer(2), idx++));
-        commonObjectsList.add(new CommonObjectContainer(new Integer(3), idx++));
-        commonObjectsList.add(new CommonObjectContainer(new Integer(7), idx++));
-        commonObjectsList.add(new CommonObjectContainer(new Integer(255), idx++));
-        commonObjectsList.add(new CommonObjectContainer(new Integer(38), idx++));
-        commonObjectsList.add(new CommonObjectContainer(new Integer(8), idx++));
-        commonObjectsList.add(new CommonObjectContainer(new Integer(10), idx++));
-        commonObjectsList.add(new CommonObjectContainer(new Integer(4), idx++));
-        commonObjectsList.add(new CommonObjectContainer(new Integer(20), idx++));
-        commonObjectsList.add(new CommonObjectContainer(new Integer(9), idx++));
-        commonObjectsList.add(new CommonObjectContainer(new Integer(-1), idx++));
-        commonObjectsList.add(new CommonObjectContainer(new Integer(5), idx++));
-        commonObjectsList.add(new CommonObjectContainer(new Integer(29), idx++));
-        commonObjectsList.add(new CommonObjectContainer(new Integer(6), idx++));
-        commonObjectsList.add(new CommonObjectContainer(new Integer(13), idx++));
-        commonObjectsList.add(new CommonObjectContainer(new Integer(100), idx++));
+        commonLiteralsList.add(new CommonObjectContainer(new Integer(0), idx++));
+        commonLiteralsList.add(new CommonObjectContainer(new Integer(""), idx++));
+        commonLiteralsList.add(new CommonObjectContainer(new Double(0.0), idx++));
+        
+        commonLiteralsList.add(new CommonObjectContainer(new Integer(1), idx++));
+        commonLiteralsList.add(new CommonObjectContainer(new Integer(2), idx++));
+        commonLiteralsList.add(new CommonObjectContainer(new Integer(3), idx++));
+        commonLiteralsList.add(new CommonObjectContainer(new Integer(7), idx++));
+        commonLiteralsList.add(new CommonObjectContainer(new Integer(255), idx++));
+        commonLiteralsList.add(new CommonObjectContainer(new Integer(38), idx++));
+        commonLiteralsList.add(new CommonObjectContainer(new Integer(8), idx++));
+        commonLiteralsList.add(new CommonObjectContainer(new Integer(10), idx++));
+        commonLiteralsList.add(new CommonObjectContainer(new Integer(4), idx++));
+        commonLiteralsList.add(new CommonObjectContainer(new Integer(20), idx++));
+        commonLiteralsList.add(new CommonObjectContainer(new Integer(9), idx++));
+        commonLiteralsList.add(new CommonObjectContainer(new Integer(-1), idx++));
+        commonLiteralsList.add(new CommonObjectContainer(new Integer(5), idx++));
+        commonLiteralsList.add(new CommonObjectContainer(new Integer(29), idx++));
+        commonLiteralsList.add(new CommonObjectContainer(new Integer(6), idx++));
+        commonLiteralsList.add(new CommonObjectContainer(new Integer(13), idx++));
+        commonLiteralsList.add(new CommonObjectContainer(new Integer(100), idx++));
 
-        for (CommonObjectContainer o : commonObjectsList) {
-            literals.add(o.o);
+        for (CommonObjectContainer o : commonLiteralsList) {
+            if (!literals.contains(o.o)) {
+                literals.add(o.o);
+            }
         }
 
         for (int i = 0; i < ax.codes.length; ++i) {
@@ -589,12 +602,6 @@ public class Compiler implements Opcodes, Serializable {
             mv.visitTypeInsn(NEW, varIName);
             mv.visitInsn(DUP);
             mv.visitMethodInsn(INVOKESPECIAL, varIName, "<init>", "()V");
-            if (commonVarsInLocals) {
-                if (commonVariable(i)) {
-                    mv.visitInsn(DUP);
-                    mv.visitVarInsn(ASTORE, getVariableLocalIndex(i));
-                }
-            }
             mv.visitFieldInsn(PUTFIELD, classIName, "v" + i, varDesc);
         }
 
@@ -736,6 +743,73 @@ public class Compiler implements Opcodes, Serializable {
         return labels.get(new Integer(ax.labels[index]));
     }
 
+    private void getLiteralByIndex(final MethodVisitor mv, final int index) {
+        getLiteralByIndex(mv, index, true);
+    }
+
+    private int getCommonLiteralLocalVariableIndexByIndex(int index) {
+        Object target = literals.get(index);
+        for (CommonObjectContainer container : commonLiteralsList) {
+            if (container.o.equals(target)) {
+                return container.localIndex;
+            }
+        }
+        return -1;
+    }
+
+    private void getLiteralByIndex(final MethodVisitor mv, final int index, final boolean useLocals) {
+        final int lvIndex = (useLocals && useLocalVariableForLiterals) ? getCommonLiteralLocalVariableIndexByIndex(index) : -1;
+        if (lvIndex > -1) {
+            mv.visitVarInsn(ALOAD, lvIndex);
+        } else {
+            if (useLiteralsInArray) {
+                if (useLocalVariableForLiterals) {
+                    mv.visitVarInsn(ALOAD, literalsIndex);
+                } else {
+                    mv.visitVarInsn(ALOAD, thisIndex);
+                    mv.visitFieldInsn(GETFIELD, useSuperClassConstants ? superClassIName : classIName, "cLiterals", typeArrayOfScalar);
+                }
+
+                switch (index) {
+                    case 0:
+                        mv.visitInsn(ICONST_0);
+                        break;
+                    case 1:
+                        mv.visitInsn(ICONST_1);
+                        break;
+                    case 2:
+                        mv.visitInsn(ICONST_2);
+                        break;
+                    case 3:
+                        mv.visitInsn(ICONST_3);
+                        break;
+                    case 4:
+                        mv.visitInsn(ICONST_4);
+                        break;
+                    case 5:
+                        mv.visitInsn(ICONST_5);
+                        break;
+                    default:
+                        if (index < 128) {
+                            mv.visitIntInsn(BIPUSH, index);
+                        } else if (index < 32768) {
+                            mv.visitIntInsn(SIPUSH, index);
+                        } else {
+                            mv.visitIntInsn(SIPUSH, 32767);
+                            mv.visitIntInsn(SIPUSH, index - 32767);
+                            mv.visitInsn(IADD);
+                        }
+                }
+                literalsStatsAaLoad[index] += 1;
+
+                mv.visitInsn(AALOAD);
+            } else {
+                mv.visitVarInsn(ALOAD, thisIndex);
+                mv.visitFieldInsn(GETFIELD, useSuperClassConstants ? superClassIName : classIName, "c" + index, typeArrayOfScalar);
+            }
+        }
+    }
+
     /**
      * 必要なローカル変数を用意。
      *
@@ -752,21 +826,19 @@ public class Compiler implements Opcodes, Serializable {
             mv.visitFieldInsn(GETFIELD, superClassIName, "cLiterals", typeArrayOfScalar);
             mv.visitVarInsn(ASTORE, literalsIndex);
 
-            // 0 in locals[zeroLiteralIndex]
-            mv.visitVarInsn(ALOAD, thisIndex);
-            mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Integer(0)), literalDesc);
-            mv.visitVarInsn(ASTORE, zeroIndex);
-
-            mv.visitVarInsn(ALOAD, literalsIndex);
-            mv.visitInsn(ICONST_3);
-            mv.visitInsn(AALOAD);
-            mv.visitVarInsn(ASTORE, zeroLengthStringIndex);
-
-            for (CommonObjectContainer obj : commonObjectsList) {
-                mv.visitVarInsn(ALOAD, thisIndex);
-                mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(obj.o), literalDesc);
+            for (CommonObjectContainer obj : commonLiteralsList) {
+                getLiteralByIndex(mv, literals.indexOf(obj.o), false);
                 mv.visitVarInsn(ASTORE, obj.localIndex);
             }
+
+            for (int i = 0; i < ax.header.variableCount; ++i) {
+                if (commonVarsInLocals && commonVariable(i)) {
+                    mv.visitVarInsn(ALOAD, thisIndex);
+                    mv.visitFieldInsn(GETFIELD, classIName, "v" + i, varDesc);
+                    mv.visitVarInsn(ASTORE, getVariableLocalIndex(i));
+                }
+            }
+
         }
 
     }
@@ -1458,79 +1530,7 @@ public class Compiler implements Opcodes, Serializable {
         if (collectStats) {
             literalsStats[index] += 1;
         }
-        if (useSuperClassConstants) {
-            // Type of Scalar[]
-            if (useLocalVariableForLiterals) {
-                for (CommonObjectContainer obj : commonObjectsList) {
-                    if (obj.o.equals(o)) {
-                        mv.visitVarInsn(ALOAD, obj.localIndex);
-                        mv.visitInsn(ICONST_0);
-                        return;
-                    }
-                }
-                if (zero.equals(o)) {
-                    mv.visitVarInsn(ALOAD, zeroIndex);
-                    mv.visitInsn(ICONST_0);
-                    return;
-                } else if ("".equals(o)) { // 3rd index in cLiterals is cached as locals[literal3index]
-                    mv.visitVarInsn(ALOAD, zeroLengthStringIndex);
-                    mv.visitInsn(ICONST_0);
-                    return;
-                } else {
-                    // locals[literalsIndex] = this.cLiterals
-                    // cLiterals[
-                    mv.visitVarInsn(ALOAD, literalsIndex);
-                }
-            } else {
-                // this.
-                mv.visitVarInsn(ALOAD, thisIndex);
-                // this.array[i]
-                mv.visitFieldInsn(GETFIELD, superClassIName, "cLiterals", typeArrayOfScalar);
-                // push the array's index on the stack
-            }
-
-            if (collectStats) {
-                literalsStatsAaLoad[index] += 1;
-            }
-
-            switch (index) {
-                case 0:
-                    mv.visitInsn(ICONST_0);
-                    break;
-                case 1:
-                    mv.visitInsn(ICONST_1);
-                    break;
-                case 2:
-                    mv.visitInsn(ICONST_2);
-                    break;
-                case 3:
-                    mv.visitInsn(ICONST_3);
-                    break;
-                case 4:
-                    mv.visitInsn(ICONST_4);
-                    break;
-                case 5:
-                    mv.visitInsn(ICONST_5);
-                    break;
-                default:
-                    if (index < 128) {
-                        mv.visitIntInsn(BIPUSH, index);
-                    } else if (index < 32768) {
-                        mv.visitIntInsn(SIPUSH, index);
-                    } else {
-                        mv.visitIntInsn(SIPUSH, 32767);
-                        mv.visitIntInsn(SIPUSH, index - 32767);
-                        mv.visitInsn(IADD);
-                    }
-            }
-            mv.visitInsn(AALOAD);
-
-        } else {
-            mv.visitVarInsn(ALOAD, thisIndex);
-
-            mv.visitFieldInsn(GETFIELD, classIName, "c" + index, literalDesc);
-
-        }
+        getLiteralByIndex(mv, index);
 
         mv.visitInsn(ICONST_0);
     }
@@ -1607,13 +1607,7 @@ public class Compiler implements Opcodes, Serializable {
             // 関数のときは戻り値が必要。
 
             if (method.getReturnType().equals(Void.TYPE)) {
-
-                if (useLocalVariableForLiterals) {
-                    mv.visitVarInsn(ALOAD, zeroIndex);
-                } else {
-                    mv.visitVarInsn(ALOAD, thisIndex);
-                    mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Integer(0)), literalDesc);
-                }
+                getLiteralByIndex(mv, literals.indexOf(new Integer(0)));
             } else if (method.getReturnType().equals(Operand.class)) {
                 // 何もする必要なし
             } else {
@@ -1804,12 +1798,7 @@ public class Compiler implements Opcodes, Serializable {
 
             if (!function.isFunction()) {
 
-                if (useLocalVariableForLiterals) {
-                    mv.visitVarInsn(ALOAD, zeroIndex);
-                } else {
-                    mv.visitVarInsn(ALOAD, thisIndex);
-                    mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Integer(0)), literalDesc);
-                }
+                getLiteralByIndex(mv, literals.indexOf(new Integer(0)));
 
             } else {
 
@@ -1943,30 +1932,17 @@ public class Compiler implements Opcodes, Serializable {
                     case -6: // local string
                     case 2: // string
                     {
-                        if (useLocalVariableForLiterals) {
-                            mv.visitVarInsn(ALOAD, zeroLengthStringIndex);
-                        } else {
-                            mv.visitVarInsn(ALOAD, thisIndex);
-                            mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(""), literalDesc);
-                        }
-
+                        getLiteralByIndex(mv, literals.indexOf(""));
                     }
                     break;
                     case 3: // dnum
                     {
-                        mv.visitVarInsn(ALOAD, thisIndex);
-                        mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Double(0.0)), literalDesc);
-
+                        getLiteralByIndex(mv, literals.indexOf(new Double(0.0)));
                     }
                     break;
                     case 4: // inum
                     {
-                        if (useLocalVariableForLiterals) {
-                            mv.visitVarInsn(ALOAD, zeroIndex);
-                        } else {
-                            mv.visitVarInsn(ALOAD, thisIndex);
-                            mv.visitFieldInsn(GETFIELD, classIName, "c" + literals.indexOf(new Integer(0)), literalDesc);
-                        }
+                        getLiteralByIndex(mv, literals.indexOf(new Integer(0)));
                     }
                     break;
                     case 5: // struct
@@ -2476,9 +2452,6 @@ public class Compiler implements Opcodes, Serializable {
     }
 
     private void createArrayFieldInSuperClass() {
-
-        // Type of Scalar[]
-        final String typeArrayOfScalar = "[L" + literalIName + ";";
         // Create constant literals field
         FieldVisitor fv = superClassWriter.visitField(ACC_PUBLIC, "cLiterals", typeArrayOfScalar, null, null);
         fv.visitEnd();
@@ -2552,8 +2525,11 @@ public class Compiler implements Opcodes, Serializable {
                     }
             }
 
-
-            // push the load-constant instruction on the stack
+            if (useLiteralsInArray) {
+                // Get "this" (for PUTFIELD below)
+                mv.visitVarInsn(ALOAD, 0);
+            }
+            // push the constant on the stack
             mv.visitLdcInsn(value);
 
             // call Scalar.fromValue on the constant to get a Scalar
@@ -2562,39 +2538,20 @@ public class Compiler implements Opcodes, Serializable {
                     + Type.getDescriptor(value instanceof Integer ? Integer.TYPE
                     : value instanceof Double ? Double.TYPE : String.class) + ")" + literalDesc);
 
+            if (useLiteralsInArray) {
+                mv.visitInsn(DUP); // keep a copy for AASTORE below
+            }
+
             // populate the c# fields for constants
-            mv.visitInsn(DUP);
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitInsn(SWAP);
             mv.visitFieldInsn(PUTFIELD, superClassIName, "c" + i, literalDesc);
 
-
-            // put the Scalar onto array[i]
-            // pop off the Scalar, the index, the array.
-
-            mv.visitInsn(AASTORE);
+            if (useLiteralsInArray) {
+                // put the Scalar onto array[i]
+                // pop off the Scalar, the index, the array.
+                mv.visitInsn(AASTORE);
+            }
 
         }
-        /*
-        
-        // Create literals
-        // 定数を用意する、毎回作っていたら遅い。
-        for (int i = 0; i < literals.size(); ++i) {
-        
-        final Object value = literals.get(i);
-        
-        mv.visitVarInsn(ALOAD, thisIndex);
-        
-        mv.visitLdcInsn(value);
-        
-        mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "("
-        + Type.getDescriptor(value instanceof Integer ? Integer.TYPE
-        : value instanceof Double ? Double.TYPE : String.class) + ")" + literalDesc);
-        
-        mv.visitFieldInsn(PUTFIELD, classIName, "c" + i, literalDesc);
-        }
-        
-         */
 
         mv.visitInsn(RETURN);
         mv.visitMaxs(0, 0);
