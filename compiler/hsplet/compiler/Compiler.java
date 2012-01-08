@@ -316,16 +316,16 @@ public class Compiler implements Opcodes, Serializable {
     private boolean enableVariableOptimization;
     private RuntimeInfo runtime;
     private List<Class> instancedLibraries;
-    private boolean useSuperClassConstants = true;
-    private static final boolean useLocalVariableForLiterals = true;
+    private final boolean useSuperClassConstants = true;
+    private final boolean useLocalVariableForLiterals = true;
     private static final boolean optimizeWithLocalVariables = true;
     private int[] varsStats;
     private int[] paramsStats;
-    private static final boolean commonVarsInLocals = true;
+    private final boolean commonVarsInLocals = true;
     /* The work for this isn't complete yet. This should be allow us to take pretty much the same code path as the original HSPlet.
      * Leave this set to true for now.
      */
-    private static final boolean useLiteralsInArray = true;
+    private final boolean useLiteralsInArray = true;
 
     /**
      * 入力バイトコードを指定してオブジェクトを構築する。
@@ -479,7 +479,7 @@ public class Compiler implements Opcodes, Serializable {
         commonLiteralsList.add(new CommonObjectContainer(new Integer(0), idx++));
         commonLiteralsList.add(new CommonObjectContainer("", idx++));
         commonLiteralsList.add(new CommonObjectContainer(new Double(0.0), idx++));
-        
+
         commonLiteralsList.add(new CommonObjectContainer(new Integer(1), idx++));
         commonLiteralsList.add(new CommonObjectContainer(new Integer(2), idx++));
         commonLiteralsList.add(new CommonObjectContainer(new Integer(3), idx++));
@@ -565,14 +565,7 @@ public class Compiler implements Opcodes, Serializable {
 
         // 定数を用意する、毎回作っていたら遅い。
         for (int i = 0; i < literals.size(); ++i) {
-            if (!useSuperClassConstants) {
-                cw.visitField(ACC_PRIVATE | ACC_FINAL, "c" + i, literalDesc, null, null);
-            } else {
-                //superClassWriter.visitField(ACC_PROTECTED | ACC_FINAL, "c" + i, literalDesc, null, null);
-            }
-        }
-        if (useSuperClassConstants) {
-            for (int i = 0; i < 3; i++) {
+            if (!useSuperClassConstants && !useLiteralsInArray) {
                 cw.visitField(ACC_PRIVATE | ACC_FINAL, "c" + i, literalDesc, null, null);
             }
         }
@@ -623,27 +616,6 @@ public class Compiler implements Opcodes, Serializable {
                 mv.visitFieldInsn(PUTFIELD, classIName, "c" + i, literalDesc);
             }
         }
-
-        // Get the 3 magic constants, 0, 0.0, and ""
-        if (useSuperClassConstants) {
-            for (int i = 0; i < 3; ++i) {
-
-                final Object value = literals.get(i);
-
-                mv.visitVarInsn(ALOAD, thisIndex);
-
-                mv.visitLdcInsn(value);
-
-                mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "("
-                        + Type.getDescriptor(value instanceof Integer ? Integer.TYPE
-                        : value instanceof Double ? Double.TYPE : String.class) + ")" + literalDesc);
-
-                mv.visitFieldInsn(PUTFIELD, classIName, "c" + i, literalDesc);
-            }
-
-        }
-
-
 
         // インスタンス化が必要なライブラリを用意する。
         for (int i = 0; i < instancedLibraries.size(); ++i) {
@@ -2458,35 +2430,24 @@ public class Compiler implements Opcodes, Serializable {
         fv.visitEnd();
 
     }
+    
+    private void initializeConstants(final MethodVisitor mv, final int start, final int stop) {
+        
+        if (useLiteralsInArray) {
 
-    private void createSuperClassCtor() {
+            // Create array of literal Scalars by:
 
-        // Type of Scalar[]
+            // get this
+            mv.visitVarInsn(ALOAD, thisIndex);
+            // push the size
+            mv.visitIntInsn(SIPUSH, literals.size());
 
+            // make the array of type Scalar, popping size
+            mv.visitTypeInsn(ANEWARRAY, literalIName);
 
-        final MethodVisitor mv = superClassWriter.visitMethod(ACC_PUBLIC, "<init>", "(" + contextDesc + ")V", null, null);
+            // Store this field in this class
+            mv.visitFieldInsn(PUTFIELD, superClassIName, "cLiterals", typeArrayOfScalar);
 
-        // Call super()
-        mv.visitVarInsn(ALOAD, thisIndex);
-        mv.visitMethodInsn(INVOKESPECIAL, parentIName, "<init>", "()V");
-
-        // Create array of literal Scalars by:
-
-        // get this
-        mv.visitVarInsn(ALOAD, thisIndex);
-        // push the size
-        mv.visitIntInsn(SIPUSH, literals.size());
-
-        // make the array of type Scalar, popping size
-        mv.visitTypeInsn(ANEWARRAY, literalIName);
-
-        // Store this field in this class
-        mv.visitFieldInsn(PUTFIELD, superClassIName, "cLiterals", typeArrayOfScalar);
-
-        // Populate the array
-        for (int i = 0; i < literals.size(); ++i) {
-
-            final Object value = literals.get(i);
 
             // push this on the stack
             mv.visitVarInsn(ALOAD, thisIndex);
@@ -2494,69 +2455,123 @@ public class Compiler implements Opcodes, Serializable {
             // pop this, push the array
             mv.visitFieldInsn(GETFIELD, superClassIName, "cLiterals", typeArrayOfScalar);
 
-            // push the array's index on the stack
-            switch (i) {
-                case 0:
-                    mv.visitInsn(ICONST_0);
-                    break;
-                case 1:
-                    mv.visitInsn(ICONST_1);
-                    break;
-                case 2:
-                    mv.visitInsn(ICONST_2);
-                    break;
-                case 3:
-                    mv.visitInsn(ICONST_3);
-                    break;
-                case 4:
-                    mv.visitInsn(ICONST_4);
-                    break;
-                case 5:
-                    mv.visitInsn(ICONST_5);
-                    break;
-                default:
-                    if (i < 128) {
-                        mv.visitIntInsn(BIPUSH, i);
-                    } else if (i < 32768) {
-                        mv.visitIntInsn(SIPUSH, i);
-                    } else {
-                        mv.visitIntInsn(SIPUSH, 32767);
-                        mv.visitIntInsn(SIPUSH, i - 32767);
-                        mv.visitInsn(IADD);
-                    }
-            }
+            mv.visitVarInsn(ASTORE, literalsIndex);
 
-            if (useLiteralsInArray) {
-                // Get "this" (for PUTFIELD below)
-                mv.visitVarInsn(ALOAD, 0);
-            }
-            // push the constant on the stack
-            mv.visitLdcInsn(value);
+            // Populate the array
+            for (int i = start; i < stop; ++i) {
 
-            // call Scalar.fromValue on the constant to get a Scalar
-            // pop the constant off, but push a Scalar on
-            mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "("
-                    + Type.getDescriptor(value instanceof Integer ? Integer.TYPE
-                    : value instanceof Double ? Double.TYPE : String.class) + ")" + literalDesc);
+                mv.visitVarInsn(ALOAD, literalsIndex);
+                final Object value = literals.get(i);
 
-            if (useLiteralsInArray) {
-                mv.visitInsn(DUP); // keep a copy for AASTORE below
-            }
+                // push the array's index on the stack
+                switch (i) {
+                    case 0:
+                        mv.visitInsn(ICONST_0);
+                        break;
+                    case 1:
+                        mv.visitInsn(ICONST_1);
+                        break;
+                    case 2:
+                        mv.visitInsn(ICONST_2);
+                        break;
+                    case 3:
+                        mv.visitInsn(ICONST_3);
+                        break;
+                    case 4:
+                        mv.visitInsn(ICONST_4);
+                        break;
+                    case 5:
+                        mv.visitInsn(ICONST_5);
+                        break;
+                    default:
+                        if (i < 128) {
+                            mv.visitIntInsn(BIPUSH, i);
+                        } else if (i < 32768) {
+                            mv.visitIntInsn(SIPUSH, i);
+                        } else {
+                            mv.visitIntInsn(SIPUSH, 32767);
+                            mv.visitIntInsn(SIPUSH, i - 32767);
+                            mv.visitInsn(IADD);
+                        }
+                }
 
-            // populate the c# fields for constants
-            mv.visitFieldInsn(PUTFIELD, superClassIName, "c" + i, literalDesc);
+                // push the constant on the stack
+                mv.visitLdcInsn(value);
 
-            if (useLiteralsInArray) {
+                // call Scalar.fromValue on the constant to get a Scalar
+                // pop the constant off, but push a Scalar on
+                mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "("
+                        + Type.getDescriptor(value instanceof Integer ? Integer.TYPE
+                        : value instanceof Double ? Double.TYPE : String.class) + ")" + literalDesc);
+
+
                 // put the Scalar onto array[i]
                 // pop off the Scalar, the index, the array.
                 mv.visitInsn(AASTORE);
             }
 
+        } else {
+            for (int i = start; i < stop; ++i) {
+
+                final Object value = literals.get(i);
+
+                // push the constant on the stack
+                mv.visitLdcInsn(value);
+
+                // call Scalar.fromValue on the constant to get a Scalar
+                // pop the constant off, but push a Scalar on
+                mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "("
+                        + Type.getDescriptor(value instanceof Integer ? Integer.TYPE
+                        : value instanceof Double ? Double.TYPE : String.class) + ")" + literalDesc);
+
+                // Get "this"
+                mv.visitVarInsn(ALOAD, 0);
+                // populate the c# fields for constants
+                mv.visitFieldInsn(PUTFIELD, superClassIName, "c" + i, literalDesc);
+            }
+
+        }
+    }
+
+    private void createSuperClassCtor() {
+
+        int subMethods = createSuperClassCtorSubMethods();
+        // Type of Scalar[]
+
+
+        final MethodVisitor mv = superClassWriter.visitMethod(ACC_PUBLIC, "<init>", "(" + contextDesc + ")V", null, null);
+
+        
+        // Call super()
+        mv.visitVarInsn(ALOAD, thisIndex);
+        mv.visitMethodInsn(INVOKESPECIAL, parentIName, "<init>", "()V");
+        
+        // Call ctor+i
+        for (int i = 0; i < subMethods; i++) {
+            mv.visitVarInsn(ALOAD, thisIndex);
+            mv.visitMethodInsn(INVOKESPECIAL, superClassIName, "ctor" + i, "()V");
         }
 
         mv.visitInsn(RETURN);
         mv.visitMaxs(0, 0);
         mv.visitEnd();
+    }
+    
+    private int createSuperClassCtorSubMethods() {
+        // Number of methods created
+        int count = 0;
+        
+        // Number of constants per method
+        int size = 1000;
+        
+        for (int start = 0, stop = size; stop < literals.size(); start = stop, stop += ((stop + size) < literals.size()) ? size : literals.size() % size, count++) {
+            final MethodVisitor mv = superClassWriter.visitMethod(ACC_PRIVATE, "ctor" + count, "()V", null, null);
+            initializeConstants(mv, start, stop);
+            mv.visitInsn(RETURN);
+            mv.visitMaxs(0, 0);
+            mv.visitEnd();
+        }
+        return count;
     }
 }
 
