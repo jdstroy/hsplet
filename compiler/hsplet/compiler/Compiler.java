@@ -319,7 +319,7 @@ public class Compiler implements Opcodes, Serializable {
     private static final boolean optimizeWithLocalVariables = true;
     private int[] varsStats;
     private int[] paramsStats;
-    private static final boolean commonVarsInLocals = true;
+    private static final boolean commonVarsInLocals = false;
 
     /**
      * 入力バイトコードを指定してオブジェクトを構築する。
