@@ -3,7 +3,6 @@
  */
 package hsplet.compiler;
 
-import com.thoughtworks.xstream.XStream;
 import hsplet.Context;
 import hsplet.RunnableCode;
 import hsplet.compiler.ByteCode.Code;
@@ -22,7 +21,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -47,14 +45,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.LocalVariablesSorter;
-import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.VarInsnNode;
-import org.objectweb.asm.util.ASMifierClassVisitor;
 
 /**
  * axファイルをコンパイルするクラス。
@@ -406,7 +397,7 @@ public class Compiler implements Opcodes, Serializable {
         superClassWriter.visit(V1_4, ACC_ABSTRACT | ACC_PUBLIC, classIName + "Super", null, parentIName, new String[0]);
 
         final int[] runLiteralStats, runParamStats, runVarStats;
-
+        
         createRun();
         if (collectStats) {
             runLiteralStats = new int[literalsStats.length];
@@ -659,7 +650,9 @@ public class Compiler implements Opcodes, Serializable {
 
     private void createRun() {
 
-        final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC | ACC_FINAL, "run", "(I)" + opeDesc, null, new String[0]);
+        final MethodVisitor originalVisitor = cw.visitMethod(ACC_PUBLIC | ACC_FINAL, "run", "(I)" + opeDesc, null, new String[0]);
+        final CodeOpcodeCounter statsVisitor = new CodeOpcodeCounter(originalVisitor);
+        final MethodVisitor mv = statsVisitor;
 
         compileLocalVariables(mv);
 
@@ -694,7 +687,9 @@ public class Compiler implements Opcodes, Serializable {
         mv.visitInsn(ARETURN);
         mv.visitMaxs(0, 0);
         mv.visitEnd();
-
+        
+        System.out.format("run#statsVisitor.getCount():%d\n", statsVisitor.getCount());
+        
     }
 
     private void prepareLabels() {
@@ -2562,7 +2557,7 @@ public class Compiler implements Opcodes, Serializable {
         int count = 0;
         
         // Number of constants per method
-        int size = 1000;
+        int size = 5000;
         
         for (int start = 0, stop = size; stop < literals.size(); start = stop, stop += ((stop + size) < literals.size()) ? size : literals.size() % size, count++) {
             final MethodVisitor mv = superClassWriter.visitMethod(ACC_PRIVATE, "ctor" + count, "()V", null, null);
