@@ -309,7 +309,6 @@ public class Compiler implements Opcodes, Serializable {
     private List<Class> instancedLibraries;
     private final boolean useSuperClassConstants = true;
     private final boolean useLocalVariableForLiterals = true;
-    private static final boolean optimizeWithLocalVariables = true;
     private int[] varsStats;
     private int[] paramsStats;
     private final boolean commonVarsInLocals = true;
@@ -466,11 +465,10 @@ public class Compiler implements Opcodes, Serializable {
         literals.add(new Double(0.0));
         literals.add(new String(""));
 
+        // These are given local variables in all methods.
         int idx = localsStart;
         commonLiteralsList.add(new CommonObjectContainer(new Integer(0), idx++));
         commonLiteralsList.add(new CommonObjectContainer("", idx++));
-        commonLiteralsList.add(new CommonObjectContainer(new Double(0.0), idx++));
-
         commonLiteralsList.add(new CommonObjectContainer(new Integer(1), idx++));
         commonLiteralsList.add(new CommonObjectContainer(new Integer(2), idx++));
         commonLiteralsList.add(new CommonObjectContainer(new Integer(3), idx++));
