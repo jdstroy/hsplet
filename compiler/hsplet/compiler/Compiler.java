@@ -315,7 +315,7 @@ public class Compiler implements Opcodes, Serializable {
     /* The work for this isn't complete yet. This should be allow us to take pretty much the same code path as the original HSPlet.
      * Leave this set to true for now.
      */
-    private final boolean useLiteralsInArray = true;
+    private final boolean useLiteralsInArray = false;
 
     /**
      * 入力バイトコードを指定してオブジェクトを構築する。
@@ -428,11 +428,10 @@ public class Compiler implements Opcodes, Serializable {
 
         superClassNode.accept(superWriter);
 
-        FileOutputStream sout = new FileOutputStream("J:\\startSuper.class");
-        sout.write(superWriter.toByteArray());
-        sout.close();
         // 出力
         out.write(writer.toByteArray());
+	((JarOutputStream) out).putNextEntry(new JarEntry(classIName + "Super.class"));
+        out.write(superWriter.toByteArray());
 
         if (collectStats) {
             System.err.println("literals:");
@@ -2532,7 +2531,7 @@ public class Compiler implements Opcodes, Serializable {
         // Type of Scalar[]
 
 
-        final MethodVisitor mv = superClassWriter.visitMethod(ACC_PUBLIC, "<init>", "(" + contextDesc + ")V", null, null);
+        final MethodVisitor mv = superClassWriter.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
 
         
         // Call super()
