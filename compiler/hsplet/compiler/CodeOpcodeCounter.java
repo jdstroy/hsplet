@@ -11,6 +11,8 @@ import org.objectweb.asm.MethodVisitor;
 /**
  *
  * @author jdstroy
+ * Estimates the number of opcodes in each method by intercepting all visit 
+ * methods for opcode generation.
  */
 public class CodeOpcodeCounter extends MethodAdapter {
     private int count = 0;

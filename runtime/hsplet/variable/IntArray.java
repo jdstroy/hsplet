@@ -44,54 +44,54 @@ public final class IntArray extends Array {
         values = new int[l0 * l1 * l2 * l3];
     }
 
-    //@Override
+    @Override
     public int getType() {
 
         return Type.INTEGER;
     }
 
-    //@Override
+    @Override
     public String toString(final int index) {
 
         return Integer.toString(values[index]);
     }
 
-    //@Override
+    @Override
     public ByteString toByteString(final int index) {
 
         return new ByteString(Integer.toString(values[index]));
     }
 
-    //@Override
+    @Override
     public int toInt(final int index) {
 
         return values[index];
     }
 
-    //@Override
+    @Override
     public double toDouble(final int index) {
 
         return values[index];
     }
 
-    //@Override
+    @Override
     public Operand dup(int index) {
         return Scalar.fromValue(values[index]);
     }
 
-    //@Override
+    @Override
     public void inc(final int index) {
 
         ++values[index];
     }
 
-    //@Override
+    @Override
     public void dec(final int index) {
 
         --values[index];
     }
 
-    //@Override
+    @Override
     public void assign(final int index, final Operand rhs, final int rhi) {
 
         if (index >= values.length) {
@@ -100,7 +100,7 @@ public final class IntArray extends Array {
         values[index] = rhs.toInt(rhi);
     }
 
-    //@Override
+    @Override
     public void assignAdd(final int index, final Operand rhs, final int rhi) {
 
         if (index >= values.length) {
@@ -109,7 +109,7 @@ public final class IntArray extends Array {
         values[index] += rhs.toInt(rhi);
     }
 
-    //@Override
+    @Override
     public void assignSub(final int index, final Operand rhs, final int rhi) {
 
         if (index >= values.length) {
@@ -118,7 +118,7 @@ public final class IntArray extends Array {
         values[index] -= rhs.toInt(rhi);
     }
 
-    //@Override
+    @Override
     public void assignMul(final int index, final Operand rhs, final int rhi) {
 
         if (index >= values.length) {
@@ -127,7 +127,7 @@ public final class IntArray extends Array {
         values[index] *= rhs.toInt(rhi);
     }
 
-    //@Override
+    @Override
     public void assignDiv(final int index, final Operand rhs, final int rhi) {
 
         if (index >= values.length) {
@@ -136,7 +136,7 @@ public final class IntArray extends Array {
         values[index] /= rhs.toInt(rhi);
     }
 
-    //@Override
+    @Override
     public void assignMod(final int index, final Operand rhs, final int rhi) {
 
         if (index >= values.length) {
@@ -145,7 +145,7 @@ public final class IntArray extends Array {
         values[index] %= rhs.toInt(rhi);
     }
 
-    //@Override
+    @Override
     public void assignAnd(final int index, final Operand rhs, final int rhi) {
 
         if (index >= values.length) {
@@ -154,7 +154,7 @@ public final class IntArray extends Array {
         values[index] &= rhs.toInt(rhi);
     }
 
-    //@Override
+    @Override
     public void assignOr(final int index, final Operand rhs, final int rhi) {
 
         if (index >= values.length) {
@@ -163,7 +163,7 @@ public final class IntArray extends Array {
         values[index] |= rhs.toInt(rhi);
     }
 
-    //@Override
+    @Override
     public void assignXor(final int index, final Operand rhs, final int rhi) {
 
         if (index >= values.length) {
@@ -172,7 +172,7 @@ public final class IntArray extends Array {
         values[index] ^= rhs.toInt(rhi);
     }
 
-    //@Override
+    @Override
     public void assignSr(final int index, final Operand rhs, final int rhi) {
 
         if (index >= values.length) {
@@ -181,7 +181,7 @@ public final class IntArray extends Array {
         values[index] >>= rhs.toInt(rhi);
     }
 
-    //@Override
+    @Override
     public void assignSl(final int index, final Operand rhs, final int rhi) {
 
         if (index >= values.length) {
@@ -191,7 +191,7 @@ public final class IntArray extends Array {
         values[index] <<= rhs.toInt(rhi);
     }
 
-    //@Override
+    @Override
     public void expand(final int index) {
 
         super.expand(index);
@@ -204,109 +204,109 @@ public final class IntArray extends Array {
 
     }
 
-    //@Override
+    @Override
     public Operand add(final int index, final Operand rhs, final int rhi) {
 
         return Scalar.fromValue(values[index] + rhs.toInt(rhi));
     }
 
-    //@Override
+    @Override
     public Operand eq(final int index, final Operand rhs, final int rhi) {
 
         return Scalar.fromValue((values[index] == rhs.toInt(rhi)) ? 1 : 0);
     }
 
-    //@Override
+    @Override
     public Operand ne(final int index, final Operand rhs, final int rhi) {
 
         return Scalar.fromValue((values[index] != rhs.toInt(rhi)) ? 1 : 0);
     }
 
-    //@Override
+    @Override
     public Operand gt(final int index, final Operand rhs, final int rhi) {
 
         return Scalar.fromValue((values[index] > rhs.toInt(rhi)) ? 1 : 0);
     }
 
-    //@Override
+    @Override
     public Operand lt(final int index, final Operand rhs, final int rhi) {
 
         return Scalar.fromValue((values[index] < rhs.toInt(rhi)) ? 1 : 0);
     }
 
-    //@Override
+    @Override
     public Operand ge(final int index, final Operand rhs, final int rhi) {
 
         return Scalar.fromValue((values[index] >= rhs.toInt(rhi)) ? 1 : 0);
     }
 
-    //@Override
+    @Override
     public Operand le(final int index, final Operand rhs, final int rhi) {
 
         return Scalar.fromValue((values[index] <= rhs.toInt(rhi)) ? 1 : 0);
     }
 
-    //@Override
+    @Override
     public Operand sub(final int index, final Operand rhs, final int rhi) {
 
         return Scalar.fromValue(values[index] - rhs.toInt(rhi));
     }
 
-    //@Override
+    @Override
     public Operand mul(final int index, final Operand rhs, final int rhi) {
 
         return Scalar.fromValue(values[index] * rhs.toInt(rhi));
     }
 
-    //@Override
+    @Override
     public Operand div(final int index, final Operand rhs, final int rhi) {
 
         return Scalar.fromValue(values[index] / rhs.toInt(rhi));
     }
 
-    //@Override
+    @Override
     public Operand mod(final int index, final Operand rhs, final int rhi) {
 
         return Scalar.fromValue(values[index] % rhs.toInt(rhi));
     }
 
-    //@Override
+    @Override
     public Operand and(final int index, final Operand rhs, final int rhi) {
 
         return Scalar.fromValue(values[index] & rhs.toInt(rhi));
     }
 
-    //@Override
+    @Override
     public Operand or(final int index, final Operand rhs, final int rhi) {
 
         return Scalar.fromValue(values[index] | rhs.toInt(rhi));
     }
 
-    //@Override
+    @Override
     public Operand xor(final int index, final Operand rhs, final int rhi) {
 
         return Scalar.fromValue(values[index] ^ rhs.toInt(rhi));
     }
 
-    //@Override
+    @Override
     public Operand sl(final int index, final Operand rhs, final int rhi) {
 
         return Scalar.fromValue(values[index] << rhs.toInt(rhi));
     }
 
-    //@Override
+    @Override
     public Operand sr(final int index, final Operand rhs, final int rhi) {
 
         return Scalar.fromValue(values[index] >> rhs.toInt(rhi));
     }
 
-    //@Override
+    @Override
     public byte peek(int index, int offset) {
 
         return (byte) (values[index + offset / 4] >> (offset % 4 * 8));
     }
 
-    //@Override
+    @Override
     public void poke(int index, int offset, byte value) {
 
         int bits = values[index + offset / 4];
