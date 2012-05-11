@@ -122,7 +122,12 @@ public class Context implements Serializable {
                 } catch (RuntimeException e) {
                     e.printStackTrace();
 
-                    JOptionPane.showMessageDialog(applet, "Error:" + e, "HSPLet", JOptionPane.ERROR_MESSAGE);
+                    java.lang.StackTraceElement[] s=(java.lang.StackTraceElement[])e.getStackTrace();
+                    java.lang.StringBuilder str=new java.lang.StringBuilder();
+                    for(int i=0;i<s.length;i++)
+                        str.append("\n   ").append(s[i].getClassName()).append(": ").append(s[i].getMethodName()).append("(").append(s[i].getFileName()).append(": ").append(s[i].getLineNumber()).append(")");
+                    JOptionPane.showMessageDialog(applet, "Error:" + e+"\r\n"+str.toString(), "HSPLet", JOptionPane.ERROR_MESSAGE);
+
                     try {
                         System.exit(1);
                     } catch (Exception e2) {
@@ -421,7 +426,8 @@ public class Context implements Serializable {
             JOptionPane.showMessageDialog(applet, "HSP error " + error + " on " + command + " "
                     + (message != null && message.length() != 0 ? "\r\n" + message : ""), "HSPLet",
                     JOptionPane.ERROR_MESSAGE);
-            ProgramCommand.end(this, 1);
+            throw new RuntimeException();
+            //ProgramCommand.end(this, 1);
         }
 
     }

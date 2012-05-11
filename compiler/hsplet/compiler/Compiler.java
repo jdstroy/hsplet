@@ -210,7 +210,6 @@ public class Compiler implements Opcodes, Serializable {
                                 packFile.getName(), libraryLoader);
                         c.compile(className, jar);
                     } finally {
-
                         jar.closeEntry();
                     }
 
@@ -358,7 +357,7 @@ public class Compiler implements Opcodes, Serializable {
      * @throws IOException
      *             入出力エラーが発生したとき。
      */
-    public void compile(final String className, final OutputStream out) throws IOException {
+    public void compile(final String className, final JarOutputStream out) throws IOException {
 
         this.className = className;
         this.classIName = className.replace('.', '/');
@@ -457,11 +456,16 @@ public class Compiler implements Opcodes, Serializable {
 
         superClassNode.accept(superWriter);
 
-        FileOutputStream sout = new FileOutputStream("C:\\Download\\ElonaSource\\hsplet\\dist\\output\\startSuper.class");
-        sout.write(superWriter.toByteArray());
-        sout.close();
+        //FileOutputStream sout = new FileOutputStream("C:\\Download\\ElonaSource\\hsplet\\dist\\output\\startSuper.class");
         // 出力
         out.write(writer.toByteArray());
+        out.closeEntry();
+        
+        final JarEntry jes = new JarEntry(superClassName + ".class");
+        jes.setMethod(JarEntry.DEFLATED);
+        out.putNextEntry(jes);
+        out.write(superWriter.toByteArray());
+        //out.close();
 
         if (collectStats) {
             System.err.println("literals:");
@@ -846,7 +850,6 @@ public class Compiler implements Opcodes, Serializable {
 
     private void createRun(int numTargets) {
 
-	    //System.out.println("Entering createRun");
         final MethodVisitor originalVisitor = cw.visitMethod(ACC_PUBLIC | ACC_FINAL, "run", "(I)" + opeDesc, null, new String[0]);
         //final CodeOpcodeCounter statsVisitor = new CodeOpcodeCounter(new EmptyVisitor());
         final MethodVisitor mv = originalVisitor;
@@ -889,7 +892,7 @@ public class Compiler implements Opcodes, Serializable {
         final Label try_handler = new Label();
         mv.visitLabel(try_handler);
 
-        mv.visitTryCatchBlock(start_try, end_try, try_handler, Type.getInternalName(GotoException.class));
+        //mv.visitTryCatchBlock(start_try, end_try, try_handler, Type.getInternalName(GotoException.class));
 
         mv.visitFieldInsn(GETFIELD, Type.getInternalName(GotoException.class), "label", "I");
 
@@ -1070,7 +1073,7 @@ public class Compiler implements Opcodes, Serializable {
     }
 
     private void getLiteralByIndex(final MethodVisitor mv, final int index, final boolean useLocals) {
-	    //if(mv instanceof CodeOpcodeCounter)
+	    //if(mv instanceof ScanOneVisitor)
 	    //	System.out.print(" Literal "+index);
         final int lvIndex = (useLocals && useLocalVariableForLiterals) ? getCommonLiteralLocalVariableIndexByIndex(index) : -1;
         if (lvIndex > -1) {
@@ -1478,8 +1481,8 @@ public class Compiler implements Opcodes, Serializable {
 
         // ステートメントは変数・パラメータへの代入、または命令で始まると決まっている。
 
-        //if(mv instanceof CodeOpcodeCounter)
-        //    System.out.print(ax.codes[codeIndex].offset+" "+byteCodeCodeTypes[ax.codes[codeIndex].type]+((CodeOpcodeCounter)mv).getCount());
+        //if(mv instanceof ScanOneVisitor)
+        //    System.out.print(ax.codes[codeIndex].offset+" "+byteCodeCodeTypes[ax.codes[codeIndex].type]);
         switch (ax.codes[codeIndex].type) {
             case ByteCode.Code.Type.Var:
             case ByteCode.Code.Type.Struct:
@@ -1510,11 +1513,7 @@ public class Compiler implements Opcodes, Serializable {
                 compileCommand(mv);
                 break;
             case ByteCode.Code.Type.CmpCmd:
-		        //if(mv instanceof CodeOpcodeCounter)
-		        //    System.out.print("CmpCmd "+((CodeOpcodeCounter)mv).getCount());
                 compileCompareCommand(mv);
-		        //if(mv instanceof CodeOpcodeCounter)
-		        //    System.out.print("\r\n");
                 break;
             case ByteCode.Code.Type.ModCmd:
                 compileModuleCommand(mv, false);
@@ -1531,6 +1530,8 @@ public class Compiler implements Opcodes, Serializable {
             default:
                 throw new RuntimeException("命令コード " + ax.codes[codeIndex].type + " は解釈できません。");
         }
+	        //if(mv instanceof ScanOneVisitor)
+	        //    System.out.print("\r\n");
     }
     private static final String[] assignOperators = new String[]{"assignAdd", "assignSub", "assignMul", "assignDiv",
         "assignMod", "assignAnd", "assignOr", "assignXor", "assign", "assignNe", "assignGt", "assignLt", "assignGtEq", "assignLtEq", "assignSr",
@@ -1630,7 +1631,7 @@ public class Compiler implements Opcodes, Serializable {
         if (enableVariableOptimization) {
             mv.visitFieldInsn(GETFIELD, varIName, "value", opeDesc);
         }
-        //if(mv instanceof CodeOpcodeCounter)
+        //if(mv instanceof ScanOneVisitor)
         //    System.out.print(" compVar "+code.value);
 
         compileArrayIndex(mv);
@@ -1640,7 +1641,7 @@ public class Compiler implements Opcodes, Serializable {
     private void compileArrayIndex(final MethodVisitor mv) {
 
         int paramCount = 0;
-	    //if(mv instanceof CodeOpcodeCounter)
+	    //if(mv instanceof ScanOneVisitor)
 	    //	System.out.print("[");
         if (codeIndex < ax.codes.length && ax.codes[codeIndex].type == Code.Type.Mark
                 && ax.codes[codeIndex].value == '(') {
@@ -1658,7 +1659,10 @@ public class Compiler implements Opcodes, Serializable {
             if (!moreThan2Dim) {
 
                 compileExpression(mv);
-                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+                if(skipToInt)
+                	skipToInt=false;
+                else
+                	mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
             } else {
                 mv.visitInsn(DUP);
@@ -1669,7 +1673,10 @@ public class Compiler implements Opcodes, Serializable {
                     ++paramCount;
 
                     compileExpression(mv);
-                    mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+	                if(skipToInt)
+	                	skipToInt=false;
+	                else
+	                    mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
                 } while (codeIndex < ax.codes.length
                         && !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')'));
@@ -1685,7 +1692,7 @@ public class Compiler implements Opcodes, Serializable {
             // 配列アクセスじゃないときはインデックスは 0 固定。
             mv.visitInsn(ICONST_0);
         }
-	    //if(mv instanceof CodeOpcodeCounter)
+	    //if(mv instanceof ScanOneVisitor)
 	    //	System.out.print("]");
     }
 
@@ -1722,7 +1729,7 @@ public class Compiler implements Opcodes, Serializable {
     private void compileToken(final MethodVisitor mv) {
 
         // トークンはリテラル・変数・演算子・関数呼び出しと決まっている。
-        //if(mv instanceof CodeOpcodeCounter)
+        //if(mv instanceof ScanOneVisitor)
         //    System.out.print(" "+byteCodeCodeTypes[ax.codes[codeIndex].type]);
 
         switch (ax.codes[codeIndex].type) {
@@ -1732,7 +1739,7 @@ public class Compiler implements Opcodes, Serializable {
             case ByteCode.Code.Type.INum:
 		    	if(mv instanceof ScanOneVisitor) {
 		        	((ScanOneVisitor)mv).decArgCount(ax.codes[codeIndex].value);
-		    	} else if((conversionArray!=null)&&(argsToOldLabel>0)) {
+		    	} else if((argsToOldLabel>0)&&(!(mv instanceof EmptyVisitor))) {
 			    	argsToOldLabel--;
 			    	if(argsToOldLabel==0) {
 			    		pushSmall(conversionArray[ax.codes[codeIndex].value], mv);
@@ -1779,20 +1786,22 @@ public class Compiler implements Opcodes, Serializable {
         }
     }
 
+    private boolean skipToInt=false;
     private void compileLabel(final MethodVisitor mv) {
 
         final Code code = ax.codes[codeIndex++];
 
-        mv.visitLdcInsn(new Integer(code.value));
     	if(mv instanceof ScanOneVisitor) {
         	((ScanOneVisitor)mv).decArgCount(code.value);
-    	} else if((conversionArray!=null)&&(argsToOldLabel>0)) {
+    	} else if((argsToOldLabel>0)&&(!(mv instanceof EmptyVisitor))) {
 	    	argsToOldLabel--;
 	    	if(argsToOldLabel==0) {
+		    	skipToInt=true;
 	    		pushSmall(conversionArray[code.value], mv);
 	    		return;
     		}
     	}
+        mv.visitLdcInsn(new Integer(code.value));
         mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromLabel", "(I)" + literalDesc);
 
         mv.visitInsn(ICONST_0);
@@ -1842,7 +1851,7 @@ public class Compiler implements Opcodes, Serializable {
         }
 
         mv.visitFieldInsn(GETFIELD, classIName, "p" + code.value, opeDesc);
-	    //if(mv instanceof CodeOpcodeCounter)
+	    //if(mv instanceof ScanOneVisitor)
 	    //	System.out.print(" Parameter "+code.value);
         
         compileArrayIndex(mv);
@@ -1861,7 +1870,7 @@ public class Compiler implements Opcodes, Serializable {
         final Class libraryClass = runtime.getClassFor(ax, code);
         final Method method = runtime.getMethodFor(ax, code);
         final String methodDesc = Type.getMethodDescriptor(method);
-	    //if(mv instanceof CodeOpcodeCounter)
+	    //if(mv instanceof ScanOneVisitor)
 	    //	System.out.print(" "+method.getName()+methodDesc);
 
         if (!Modifier.isStatic(method.getModifiers())) {
@@ -1992,7 +2001,9 @@ public class Compiler implements Opcodes, Serializable {
                 if (!omitted) {
                     compileExpression(mv);
 
-                    if (type.equals(Operand.class)) {
+	                if(skipToInt)
+	                	skipToInt=false;
+	                else if (type.equals(Operand.class)) {
 
                         ++paramIndex; // 次の int は読み飛ばす
 
@@ -2070,7 +2081,7 @@ public class Compiler implements Opcodes, Serializable {
         final Code code = ax.codes[codeIndex++];
         final Method method = runtime.getMethodFor(ax, code);
         final String methodDesc = Type.getMethodDescriptor(method);
-	    //if(mv instanceof CodeOpcodeCounter)
+	    //if(mv instanceof ScanOneVisitor)
 	    //	System.out.print(" "+method.getName()+methodDesc);
 
         final ByteCode.Function function = ax.functions[code.value];
@@ -2179,7 +2190,9 @@ public class Compiler implements Opcodes, Serializable {
 
                 compileExpression(mv);
 
-                switch (type) {
+                if(skipToInt)
+                	skipToInt=false;
+                else switch (type) {
                     case 1: // var
                     case -1: // local variable
                     case -3: // single variable
@@ -2332,7 +2345,7 @@ public class Compiler implements Opcodes, Serializable {
 	    "logmes"
     };
     private void compileProgramCommand(final MethodVisitor mv) {
-        //if((mv instanceof CodeOpcodeCounter)&&(ax.codes[codeIndex].value<0x1D))
+        //if((mv instanceof ScanOneVisitor)&&(ax.codes[codeIndex].value<0x1D))
         //    System.out.print(" "+progCmdCodeTypes[ax.codes[codeIndex].value]);
 
         switch (ax.codes[codeIndex].value) {
@@ -2401,8 +2414,6 @@ public class Compiler implements Opcodes, Serializable {
             default:
                 throw new UnsupportedOperationException("プログラム制御命令 " + ax.codes[codeIndex].value + " はサポートされていません。");
         }
-        //if(mv instanceof CodeOpcodeCounter)
-        //    System.out.print("\r\n");
     }
 
     private void compileGoto(final MethodVisitor mv) {
@@ -2421,7 +2432,7 @@ public class Compiler implements Opcodes, Serializable {
     	} //else if(mv instanceof ScanThreeVisitor) {
 	    //	System.out.println(((ScanThreeVisitor)mv).currentStatementAddress+" goto to "+ax.labels[label.value]);
     	//}
-        //if(mv instanceof CodeOpcodeCounter)
+        //if(conversionArray!=null)
         //    System.out.print(" to "+ax.labels[label.value]);
 
     }
@@ -2445,7 +2456,7 @@ public class Compiler implements Opcodes, Serializable {
         mv.visitMethodInsn(INVOKESTATIC, FOIName, "getFO", "("+opeDesc+")"+FODesc);
 
         mv.visitInsn(ARETURN);
-        //if(mv instanceof CodeOpcodeCounter)
+        //if(conversionArray!=null)
         //    System.out.println("AReturn");
 
     }
@@ -2463,7 +2474,10 @@ public class Compiler implements Opcodes, Serializable {
 
             compileExpression(mv);
 
-            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+            if(skipToInt)
+            	skipToInt=false;
+            else
+            	mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
         } else {
 
@@ -2475,7 +2489,10 @@ public class Compiler implements Opcodes, Serializable {
 
             compileExpression(mv);
 
-            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+            if(skipToInt)
+            	skipToInt=false;
+            else
+            	mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
         } else {
             mv.visitInsn(ICONST_0);
@@ -2485,7 +2502,7 @@ public class Compiler implements Opcodes, Serializable {
 
         Label L=getLabel(label.value);
         mv.visitJumpInsn(IFEQ, L);
-        //if(mv instanceof CodeOpcodeCounter)
+        //if(conversionArray!=null)
         //	System.out.print(" to "+ax.labels[label.value]);
 
         final Label startLabel = new Label();
@@ -2528,7 +2545,7 @@ public class Compiler implements Opcodes, Serializable {
 	    	if((currentLabel!=null)&&(currentLabel.isUsed)) L.branchesToHere++;
 	    	//System.out.println(((ScanThreeVisitor)mv).currentStatementAddress+" Break to "+ax.labels[label.value]);
     	}
-        //if(mv instanceof CodeOpcodeCounter)
+        //if(conversionArray!=null)
         //    System.out.print(" to "+ax.labels[label.value]);
 
     }
@@ -2562,7 +2579,10 @@ public class Compiler implements Opcodes, Serializable {
 
             compileExpression(mv);
 
-            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+            if(skipToInt)
+            	skipToInt=false;
+            else
+            	mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
             mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "nextLoop", "(I)Z");
 
@@ -2587,7 +2607,7 @@ public class Compiler implements Opcodes, Serializable {
         mv.visitJumpInsn(IFNE, (Label) loopStarts.peek());
 
         mv.visitJumpInsn(GOTO, L);
-		//if(mv instanceof CodeOpcodeCounter)
+		//if(conversionArray!=null)
         //	System.out.print(" to "+ax.labels[label.value]);
     }
 
@@ -2609,7 +2629,7 @@ public class Compiler implements Opcodes, Serializable {
         Label L=getLabel(label.value);
         mv.visitJumpInsn(IFEQ, L);
 
-        //if(mv instanceof CodeOpcodeCounter)
+        //if(conversionArray!=null)
         //	System.out.print(" to "+ax.labels[label.value]);
 
         final Label startLabel = new Label();
@@ -2660,7 +2680,7 @@ public class Compiler implements Opcodes, Serializable {
 	    	if((currentLabel!=null)&&(currentLabel.isUsed)) L.branchesToHere++;
 	    	//System.out.println(((ScanThreeVisitor)mv).currentStatementAddress+" Foreach-check to "+ax.labels[label.value]);
     	}
-        //if(mv instanceof CodeOpcodeCounter)
+        //if(conversionArray!=null)
         //	System.out.print(" to "+ax.labels[label.value]);
 
     }
@@ -2672,15 +2692,24 @@ public class Compiler implements Opcodes, Serializable {
 
         // 変数の値
         compileExpression(mv);
-        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+        if(skipToInt)
+        	skipToInt=false;
+        else
+        	mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
         // モード
         compileExpression(mv);
-        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+        if(skipToInt)
+        	skipToInt=false;
+        else
+        	mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
         // 基準値
         compileExpression(mv);
-        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+        if(skipToInt)
+        	skipToInt=false;
+        else
+        	mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
         mv.visitInsn(SWAP);
 
@@ -2703,7 +2732,7 @@ public class Compiler implements Opcodes, Serializable {
 	    	if((currentLabel!=null)&&(currentLabel.isUsed)) L.branchesToHere++;
 	    	//System.out.println(((ScanThreeVisitor)mv).currentStatementAddress+" Exgoto to "+ax.labels[label.value]);
     	}
-        //if(mv instanceof CodeOpcodeCounter)
+        //if(conversionArray!=null)
         //	System.out.print(" to "+ax.labels[label.value]);
 
         mv.visitJumpInsn(GOTO, nojump);
@@ -2730,7 +2759,10 @@ public class Compiler implements Opcodes, Serializable {
 
         // 変数の値
         compileExpression(mv);
-        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+        if(skipToInt)
+        	skipToInt=false;
+        else
+        	mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
         final Code statement = ax.codes[codeIndex++];
 
@@ -2847,7 +2879,7 @@ public class Compiler implements Opcodes, Serializable {
     }
 
     private void compileIf(final MethodVisitor mv) {
-	    //if(mv instanceof CodeOpcodeCounter)
+	    //if(mv instanceof ScanOneVisitor)
 	    //	System.out.print("If");
 
         //@SuppressWarnings("unused")
@@ -2859,7 +2891,10 @@ public class Compiler implements Opcodes, Serializable {
 
         compileExpression(mv);
 
-        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+        if(skipToInt)
+        	skipToInt=false;
+        else
+        	mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
         //if((labelLocations.ceiling(Integer.valueOf(base))==labelLocations.lower(Integer.valueOf(base+offset)))
         //  &&(labelLocations.ceiling(Integer.valueOf(base))!=null))
@@ -2889,7 +2924,7 @@ public class Compiler implements Opcodes, Serializable {
     }
 
     private void compileElse(final MethodVisitor mv) {
-	    //if(mv instanceof CodeOpcodeCounter)
+	    //if(mv instanceof ScanOneVisitor)
 	    //	System.out.print("Else");
         //@SuppressWarnings("unused")
         final Code code = ax.codes[codeIndex++];
@@ -2929,7 +2964,7 @@ public class Compiler implements Opcodes, Serializable {
 	    int numMethods=0;
 	    int numMains=0;
 	    for(MyTreeThing labelGroup : labelGroups) {
-            final MethodVisitor mv = cw.visitMethod(ACC_PRIVATE, "m" + numMethods++, "(I)"+FODesc, null, new String[0]);
+            final MethodVisitor mv = new CodeOpcodeCounter(cw.visitMethod(ACC_PRIVATE, "m" + numMethods++, "(I)"+FODesc, null, new String[0]));
 
 			compileLocalVariables(mv);
 			Integer[] mainLabels=labelGroup.mainLabels(allLabels);
@@ -2943,9 +2978,12 @@ public class Compiler implements Opcodes, Serializable {
 				mv.visitTableSwitchInsn(numMains, numMains+mainLabels.length-1, defaultLabel, tableLabels);
 				mv.visitLabel(defaultLabel);
 			}
+			//A thought. There should be an else here for if the first mainLabel is not the first label.
+			//If so, mv.visitJumpInsn(GOTO, allLabels[mainLabels[0].intValue()]); ?
 		    numMains+=mainLabels.length;
 			codeIndex=0;
 			int nextLabelStart;
+			int numStatements=0;
 			Label nextLabel;
 			Iterator<Integer> iter=labelGroup.iterator();
 			currentLabel=allLabels[iter.next().intValue()];
@@ -2972,6 +3010,9 @@ public class Compiler implements Opcodes, Serializable {
 							nextLabel=null;
 						}
 					}
+					//Label ln=new Label();
+					//mv.visitLineNumber(numStatements++, ln);
+					//mv.visitLabel(ln);
 					compileStatement(mv);
 				}
 				currentLabel=nextLabel;
@@ -3111,7 +3152,8 @@ public class Compiler implements Opcodes, Serializable {
         // Type of Scalar[]
 
 
-        final MethodVisitor mv = superClassWriter.visitMethod(ACC_PUBLIC, "<init>", "(" + contextDesc + ")V", null, null);
+        //final MethodVisitor mv = superClassWriter.visitMethod(ACC_PUBLIC, "<init>", "(" + contextDesc + ")V", null, null);
+        final MethodVisitor mv = superClassWriter.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
 
         
         // Call super()
@@ -3136,7 +3178,9 @@ public class Compiler implements Opcodes, Serializable {
         // Number of constants per method
         int size = 5000;
         
-        for (int start = 0, stop = size; stop < literals.size(); start = stop, stop += ((stop + size) < literals.size()) ? size : literals.size() % size, count++) {
+        for (int start = 0, stop = (size < literals.size()) ? size : literals.size();
+             stop <= literals.size();
+             start = stop, stop += ((stop + size) < literals.size()) ? size : literals.size() % size, count++) {
             final MethodVisitor mv = superClassWriter.visitMethod(ACC_PRIVATE, "ctor" + count, "()V", null, null);
             initializeConstants(mv, start, stop);
             mv.visitInsn(RETURN);
