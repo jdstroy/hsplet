@@ -196,8 +196,7 @@ public class DefaultRuntimeInfo implements RuntimeInfo {
                         name = DllCtrlClassStub.getMethodNameBySubTypeId(code.value);
                         break;
 		default:
-			throw new RuntimeException("命令タイプ " + code.type
-					+ " はメソッドと関連付けられません。");
+			throw new RuntimeException("命令タイプ " + code.type);
 		}
 
 		final Method[] methods = clazz.getMethods();

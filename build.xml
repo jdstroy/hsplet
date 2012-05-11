@@ -6,7 +6,7 @@
 
 	<property environment="env" />
 
-	<property name="bin" value="bin" />
+	<property name="bin" value="compiler" />
 	<property name="lib" value="lib" />
 	<property name="runtime" value="runtime" />
 	<property name="compiler" value="compiler" />
@@ -16,7 +16,7 @@
 	<property name="doc_src" value="doc" />
 	<property name="ext_src" value="ext" />
 	<property name="bootup_sln" value="${bootup}/bootup.sln" />
-	<property name="asm" value="asm-2.2" />
+	<property name="asm" value="asm-all-3.3" />
 
 	<property name="dist" value="dist" />
 	<property name="temp" value="${dist}/jartemp" />
@@ -33,6 +33,7 @@
 		<delete dir="${dist}" />
 
 		<mkdir dir="${dist}" />
+		<mkdir dir="${dist}/output" />
 
 		<copy todir="${dist}/lib">
 			<fileset dir="${lib}" includes="**/*" />
@@ -80,7 +81,7 @@
 		<mkdir dir="${temp}" />
 
 		<copy todir="${temp}">
-			<fileset dir="${bin}">
+			<fileset dir="${runtime}">
 
 				<include name="hsplet/**/*" />
 				<exclude name="hsplet/compiler/**/*" />
@@ -88,7 +89,14 @@
 			</fileset>
 		</copy>
 
-		<jar jarfile="${hsplet_jar}" basedir="${temp}" />
+		<jar jarfile="${hsplet_jar}" basedir="${temp}">
+			<manifest>
+				<attribute name="Manifest-Version" value="1.0" />
+				<attribute name="Created-By" value="Yuki" />
+				<attribute name="Signature-Version" value="1.0" />
+				<attribute name="Class-Path" value="lib/${asm}.jar lib/BrowserLauncher2-10rc4.jar ext/*" />
+			</manifest>
+		</jar>
 
 		<delete dir="${temp}" />
 
@@ -110,7 +118,7 @@
 				<attribute name="Manifest-Version" value="1.0" />
 				<attribute name="Created-By" value="Yuki" />
 				<attribute name="Signature-Version" value="1.0" />
-				<attribute name="Class-Path" value="hsplet.jar lib/asm-2.2.jar lib/BrowserLauncher2-10rc4.jar" />
+				<attribute name="Class-Path" value="ext/* hsplet.jar lib/${asm}.jar lib/BrowserLauncher2-10rc4.jar" />
 				<attribute name="Main-Class" value="hsplet.compiler.Launcher" />
 			</manifest>
 		</jar>
@@ -124,76 +132,64 @@
 		<mkdir dir="${ext_dist}" />
 
 		<mkdir dir="${temp}" />
-
 		<copy todir="${temp}">
 			<fileset dir="${bin}">
-
 				<include name="winmm.class" />
-
 			</fileset>
 		</copy>
-
 		<jar jarfile="${ext_dist}/winmm.jar" basedir="${temp}" />
-
 		<delete dir="${temp}" />
 
-
 		<mkdir dir="${temp}" />
-
 		<copy todir="${temp}">
 			<fileset dir="${bin}">
-
 				<include name="hspsock.class" />
 				<include name="hspsockBase*" />
-
 			</fileset>
 		</copy>
-
 		<jar jarfile="${ext_dist}/hspsock.jar" basedir="${temp}" />
-
 		<delete dir="${temp}" />
 
 		<mkdir dir="${temp}" />
-
 		<copy todir="${temp}">
 			<fileset dir="${bin}">
-
 				<include name="hspsockA.class" />
 				<include name="hspsockBase*" />
-
 			</fileset>
 		</copy>
-
 		<jar jarfile="${ext_dist}/hspsockA.jar" basedir="${temp}" />
-
 		<delete dir="${temp}" />
 
 		<mkdir dir="${temp}" />
-
 		<copy todir="${temp}">
 			<fileset dir="${bin}">
-
 				<include name="hspini.class" />
 			</fileset>
 		</copy>
-
 		<jar jarfile="${ext_dist}/hspini.jar" basedir="${temp}" />
-
 		<delete dir="${temp}" />
 
 		<mkdir dir="${temp}" />
-
 		<copy todir="${temp}">
 			<fileset dir="${bin}">
-
 				<include name="user32*" />
 			</fileset>
 		</copy>
-
 		<jar jarfile="${ext_dist}/user32.jar" basedir="${temp}" />
-
 		<delete dir="${temp}" />
 
+	</target>
+	<target name="whole_ext_jar">
+		<mkdir dir="${ext_dist}" />
+		<mkdir dir="${temp}" />
+		<copy todir="${temp}">
+			<fileset dir="${ext_dist}">
+				<include name="*.class" />
+				<include name="interfaces/*.class" />
+			</fileset>
+		</copy>
+		<jar jarfile="${ext_dist}/ext.jar" basedir="${temp}" />
+		<delete dir="${temp}" />
 	</target>
 	<target name="sample">
 

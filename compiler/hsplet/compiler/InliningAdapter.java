@@ -38,6 +38,7 @@ public class InliningAdapter extends RemappingMethodAdapter {
     public void visitInsn(int opcode) {
         if (opcode == Opcodes.RETURN) {
             super.visitJumpInsn(Opcodes.GOTO, end);
+            System.out.println("GOTO from K");
         } else {
             super.visitInsn(opcode);
         }
