@@ -868,7 +868,7 @@ public class Compiler implements Opcodes, Serializable {
 	        for(Integer I : labelGroup.mainLabels(allLabels)) {
 		        mv.visitLabel(switchTargets[allLabels[I.intValue()].branchesToHere]);
 	        }
-	        mv.visitMethodInsn(INVOKEVIRTUAL, parentIName, "m"+visitedGroups++, "(I)"+FODesc);	//FO
+	        mv.visitMethodInsn(INVOKEVIRTUAL, classIName, "m"+visitedGroups++, "(I)"+FODesc);	//FO
 	        mv.visitJumpInsn(GOTO, handle_return);
         }
         mv.visitLabel(handle_return);
@@ -2933,6 +2933,7 @@ public class Compiler implements Opcodes, Serializable {
         }
     }
 	private void compileGroup(TreeSet<Integer> labelGroup, MethodVisitor mv) {
+		compileLocalVariables(mv);
 		codeIndex=0;
 		int nextLabelStart;
 		Label nextLabel;
