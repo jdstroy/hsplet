@@ -74,7 +74,7 @@ public class Compiler implements Opcodes, Serializable {
     /** 直列化復元時に、データの互換性を確認するためのバージョン番号。 */
     private static final long serialVersionUID = 8668239863505235428L;
     /** デバッグ出力をするかどうか。 */
-    private static final boolean DEBUG_ENABLED = true;
+    private static final boolean DEBUG_ENABLED = false;
     /** Stores the results in an ASM tree.  This is slow and memory hungry;
      * you should use this only if you're debugging/poking around.  This 
      * shouldn't be used in production, but it is useful to find out 
@@ -1026,11 +1026,7 @@ public class Compiler implements Opcodes, Serializable {
         labels = new HashMap<Integer, Label>();
 
         // 先頭のラベル
-        Label L=new Label();
-        L.isMainLabel=true;
-        L.isUsed=true;
-        labels.put(new Integer(ax.codes[0].offset), L);
-        //labelLocations.add(new Integer(ax.codes[0].offset));
+        Label L;
 
         for (int i = 0; i < ax.labels.length; ++i) {
 	        L=new Label();
@@ -1039,6 +1035,13 @@ public class Compiler implements Opcodes, Serializable {
             labels.put(new Integer(ax.labels[i]), L);
             //labelLocations.add(new Integer(ax.labels[i]));
         }
+        
+        L=new Label();
+        L.isMainLabel=true;
+        L.isUsed=true;
+        labels.put(new Integer(ax.codes[0].offset), L);
+        //labelLocations.add(new Integer(ax.codes[0].offset));
+        
         for(ByteCode.Function function : ax.functions) {
 	        L=labels.get(ax.labels[function.otindex]);
 	        L.isMainLabel=true;
@@ -2924,49 +2927,62 @@ public class Compiler implements Opcodes, Serializable {
     private void createSubMethods() {
 
 	    int numMethods=0;
+	    int numMains=0;
 	    for(MyTreeThing labelGroup : labelGroups) {
             final MethodVisitor mv = cw.visitMethod(ACC_PRIVATE, "m" + numMethods++, "(I)"+FODesc, null, new String[0]);
-		    compileGroup(labelGroup, mv);
 
-            mv.visitMaxs(0, 0);
-            mv.visitEnd();
-        }
-    }
-	private void compileGroup(TreeSet<Integer> labelGroup, MethodVisitor mv) {
-		compileLocalVariables(mv);
-		codeIndex=0;
-		int nextLabelStart;
-		Label nextLabel;
-		Iterator<Integer> iter=labelGroup.iterator();
-		currentLabel=allLabels[iter.next().intValue()];
-		while(currentLabel!=null) {
-			if(iter.hasNext()) {
-				nextLabel=allLabels[iter.next().intValue()];
-				nextLabelStart=((Integer)nextLabel.extra).intValue();
-			} else {
-				nextLabelStart=-1;
-				nextLabel=null;
-			}
-			int startAddress=((Integer)currentLabel.extra).intValue();
-			while(ax.codes[codeIndex].offset<startAddress) codeIndex++;	//A smarter seek method would be nice
-			mv.visitLabel(currentLabel);
-			while((codeIndex<ax.codes.length)&&((currentLabel!=null)||(ax.codes[codeIndex].offset==nextLabelStart))) {
-				if(ax.codes[codeIndex].offset==nextLabelStart) {
-					currentLabel=nextLabel;
-					mv.visitLabel(nextLabel);
-					if(iter.hasNext()) {
-						nextLabel=allLabels[iter.next().intValue()];
-						nextLabelStart=((Integer)nextLabel.extra).intValue();
-					} else {
-						nextLabelStart=-1;
-						nextLabel=null;
-					}
+			compileLocalVariables(mv);
+			Integer[] mainLabels=labelGroup.mainLabels(allLabels);
+			if(mainLabels.length > 1) {
+				Label defaultLabel=new Label();
+				Label[] tableLabels=new Label[mainLabels.length];
+				for(int i=0;i<mainLabels.length;i++) {
+					tableLabels[i]=allLabels[mainLabels[i].intValue()];
 				}
-				System.out.println(codeIndex+" "+ax.codes[codeIndex].offset+" "+nextLabelStart+" "+currentLabel.myIndex);
-				compileStatement(mv);
+				mv.visitVarInsn(ILOAD, 1);
+				mv.visitTableSwitchInsn(numMains, numMains+mainLabels.length-1, defaultLabel, tableLabels);
+				mv.visitLabel(defaultLabel);
 			}
-			currentLabel=nextLabel;
-		}
+		    numMains+=mainLabels.length;
+			codeIndex=0;
+			int nextLabelStart;
+			Label nextLabel;
+			Iterator<Integer> iter=labelGroup.iterator();
+			currentLabel=allLabels[iter.next().intValue()];
+			while(currentLabel!=null) {
+				if(iter.hasNext()) {
+					nextLabel=allLabels[iter.next().intValue()];
+					nextLabelStart=((Integer)nextLabel.extra).intValue();
+				} else {
+					nextLabelStart=-1;
+					nextLabel=null;
+				}
+				int startAddress=((Integer)currentLabel.extra).intValue();
+				while(ax.codes[codeIndex].offset<startAddress) codeIndex++;	//A smarter seek method would be nice
+				mv.visitLabel(currentLabel);
+				while((codeIndex<ax.codes.length)&&((currentLabel!=null)||(ax.codes[codeIndex].offset==nextLabelStart))) {
+					if(ax.codes[codeIndex].offset==nextLabelStart) {
+						currentLabel=nextLabel;
+						mv.visitLabel(nextLabel);
+						if(iter.hasNext()) {
+							nextLabel=allLabels[iter.next().intValue()];
+							nextLabelStart=((Integer)nextLabel.extra).intValue();
+						} else {
+							nextLabelStart=-1;
+							nextLabel=null;
+						}
+					}
+					compileStatement(mv);
+				}
+				currentLabel=nextLabel;
+			}
+	
+	            mv.visitMaxs(0, 0);
+	            mv.visitEnd();
+	        }
+	    }
+		private void compileGroup(MyTreeThing labelGroup, MethodVisitor mv) {
+
 	}
     /* */
     private ClassNode createSuperClassVisitor() {
