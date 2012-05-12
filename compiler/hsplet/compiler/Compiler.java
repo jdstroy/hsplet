@@ -516,7 +516,11 @@ public class Compiler implements Opcodes, Serializable {
 	    for(MyTreeThing labelGroup : labelGroups) {
 		    for(Integer I : labelGroup.mainLabels(allLabels)) {
 			    Label label=allLabels[I.intValue()];
-			    if(label.extra==null) continue;
+			    if(label.extra==null) {
+				    //Default label and it does not get called elsewhere.
+				    label.branchesToHere=-1;
+				    continue;
+				}
 			    label.branchesToHere=mainCount;
 			    if(label.extra instanceof Integer) {
 				    Integer J=(Integer)label.extra;
@@ -853,6 +857,16 @@ public class Compiler implements Opcodes, Serializable {
         final MethodVisitor originalVisitor = cw.visitMethod(ACC_PUBLIC | ACC_FINAL, "run", "(I)" + opeDesc, null, new String[0]);
         //final CodeOpcodeCounter statsVisitor = new CodeOpcodeCounter(new EmptyVisitor());
         final MethodVisitor mv = originalVisitor;
+        if(numTargets==0) {
+	        mv.visitVarInsn(ALOAD, 0);
+	        mv.visitVarInsn(ILOAD, 1);
+	        mv.visitMethodInsn(INVOKEVIRTUAL, classIName, "m0", "(I)"+FODesc);
+	        mv.visitFieldInsn(GETFIELD, FOIName, "returnObject", opeDesc);
+        	mv.visitInsn(ARETURN);
+	        mv.visitMaxs(0, 0);
+	        mv.visitEnd();
+	        return;
+        }
 
         final Label start_try = new Label();
         final Label handle_return = new Label();
@@ -863,13 +877,18 @@ public class Compiler implements Opcodes, Serializable {
         mv.visitLabel(start_try);
         mv.visitVarInsn(ALOAD, 0);
         mv.visitVarInsn(ILOAD, 1);
+        	//mv.visitVarInsn(ALOAD, 0);
+        	//mv.visitFieldInsn(GETFIELD, classIName, "context", contextDesc);
         mv.visitVarInsn(ILOAD, 1);	//this, int, int
+        	//mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "checkSanity", "(I)I");
         mv.visitTableSwitchInsn(0, numTargets-1, start_run, switchTargets);	//this, int
         int visitedGroups=0;
         mv.visitLabel(start_run);
         for(MyTreeThing labelGroup : labelGroups) {
 	        for(Integer I : labelGroup.mainLabels(allLabels)) {
-		        mv.visitLabel(switchTargets[allLabels[I.intValue()].branchesToHere]);
+		        int i=allLabels[I.intValue()].branchesToHere;
+		        if(i!=-1)
+		        	mv.visitLabel(switchTargets[i]);
 	        }
 	        mv.visitMethodInsn(INVOKEVIRTUAL, classIName, "m"+visitedGroups++, "(I)"+FODesc);	//FO
 	        mv.visitJumpInsn(GOTO, handle_return);
@@ -878,7 +897,7 @@ public class Compiler implements Opcodes, Serializable {
         mv.visitInsn(DUP);	//FO, FO
         mv.visitFieldInsn(GETFIELD, FOIName, "returnNow", "Z");	//FO, Z
         final Label do_return=new Label();
-        mv.visitJumpInsn(IFEQ, do_return);	//FO
+        mv.visitJumpInsn(IFNE, do_return);	//FO
         mv.visitFieldInsn(GETFIELD, FOIName, "newTarget", "I");	//I
         mv.visitVarInsn(ISTORE, 1);	//Empty stack
         mv.visitJumpInsn(GOTO, start_try);
@@ -892,7 +911,7 @@ public class Compiler implements Opcodes, Serializable {
         final Label try_handler = new Label();
         mv.visitLabel(try_handler);
 
-        //mv.visitTryCatchBlock(start_try, end_try, try_handler, Type.getInternalName(GotoException.class));
+        mv.visitTryCatchBlock(start_try, end_try, try_handler, Type.getInternalName(GotoException.class));
 
         mv.visitFieldInsn(GETFIELD, Type.getInternalName(GotoException.class), "label", "I");
 
@@ -1743,6 +1762,7 @@ public class Compiler implements Opcodes, Serializable {
 			    	argsToOldLabel--;
 			    	if(argsToOldLabel==0) {
 			    		pushSmall(conversionArray[ax.codes[codeIndex].value], mv);
+			    		//mv.visitLdcInsn(new Integer(conversionArray[ax.codes[codeIndex].value]));
 			    		break;
 		    		}
 		    	}
@@ -1798,6 +1818,7 @@ public class Compiler implements Opcodes, Serializable {
 	    	if(argsToOldLabel==0) {
 		    	skipToInt=true;
 	    		pushSmall(conversionArray[code.value], mv);
+	    		//mv.visitLdcInsn(new Integer(conversionArray[code.value]));
 	    		return;
     		}
     	}
@@ -1909,7 +1930,16 @@ public class Compiler implements Opcodes, Serializable {
         }
 
         // åƒÇ—èoÇ∑ÅB
-        mv.visitMethodInsn(Modifier.isStatic(method.getModifiers()) ? INVOKESTATIC : INVOKEVIRTUAL, Type.getInternalName(libraryClass), method.getName(), methodDesc);
+        /* if(method.getName().equals("gosub")) {
+	        mv.visitInsn(SWAP);
+	        mv.visitInsn(POP);
+	        mv.visitIntInsn(ALOAD, 0);
+	        mv.visitInsn(SWAP);
+        	mv.visitMethodInsn(INVOKEVIRTUAL, classIName, "run", "(I)"+opeDesc);
+        	mv.visitInsn(POP);
+    	}
+        else */
+        	mv.visitMethodInsn(Modifier.isStatic(method.getModifiers()) ? INVOKESTATIC : INVOKEVIRTUAL, Type.getInternalName(libraryClass), method.getName(), methodDesc);
 
         if (hasresult) {
 
@@ -2964,7 +2994,9 @@ public class Compiler implements Opcodes, Serializable {
 	    int numMethods=0;
 	    int numMains=0;
 	    for(MyTreeThing labelGroup : labelGroups) {
-            final MethodVisitor mv = new CodeOpcodeCounter(cw.visitMethod(ACC_PRIVATE, "m" + numMethods++, "(I)"+FODesc, null, new String[0]));
+            MethodVisitor mv = cw.visitMethod(ACC_PRIVATE, "m" + numMethods++, "(I)"+FODesc, null, new String[0]);
+		    if(DEBUG_ENABLED)
+            	mv=new CodeOpcodeCounter(mv);
 
 			compileLocalVariables(mv);
 			Integer[] mainLabels=labelGroup.mainLabels(allLabels);
@@ -3017,7 +3049,10 @@ public class Compiler implements Opcodes, Serializable {
 				}
 				currentLabel=nextLabel;
 			}
-	
+				//mv.visitInsn(ACONST_NULL);
+		        //mv.visitMethodInsn(INVOKESTATIC, FOIName, "getFO", "("+opeDesc+")"+FODesc);
+		
+		        mv.visitInsn(ARETURN);
 	            mv.visitMaxs(0, 0);
 	            mv.visitEnd();
 	        }

@@ -31,8 +31,8 @@ public class CodeOpcodeCounter extends MethodAdapter {
     public void visitFieldInsn(int opcode, String owner, String name, String desc) {
         count++;
         Label ln=new Label();
-        visitLineNumber(count, ln);
         visitLabel(ln);
+        visitLineNumber(count, ln);
         super.visitFieldInsn(opcode, owner, name, desc);
     }
 
@@ -40,8 +40,8 @@ public class CodeOpcodeCounter extends MethodAdapter {
     public void visitIincInsn(int var, int increment) {
         count++;
         Label ln=new Label();
-        visitLineNumber(count, ln);
         visitLabel(ln);
+        visitLineNumber(count, ln);
         super.visitIincInsn(var, increment);
     }
 
@@ -49,8 +49,8 @@ public class CodeOpcodeCounter extends MethodAdapter {
     public void visitInsn(int opcode) {
         count++;
         Label ln=new Label();
-        visitLineNumber(count, ln);
         visitLabel(ln);
+        visitLineNumber(count, ln);
         super.visitInsn(opcode);
     }
 
@@ -58,8 +58,8 @@ public class CodeOpcodeCounter extends MethodAdapter {
     public void visitIntInsn(int opcode, int operand) {
         count++;
         Label ln=new Label();
-        visitLineNumber(count, ln);
         visitLabel(ln);
+        visitLineNumber(count, ln);
         super.visitIntInsn(opcode, operand);
     }
 
@@ -67,8 +67,8 @@ public class CodeOpcodeCounter extends MethodAdapter {
     public void visitJumpInsn(int opcode, Label label) {
         count++;
         Label ln=new Label();
-        visitLineNumber(count, ln);
         visitLabel(ln);
+        visitLineNumber(count, ln);
         super.visitJumpInsn(opcode, label);
     }
 
@@ -76,8 +76,8 @@ public class CodeOpcodeCounter extends MethodAdapter {
     public void visitLdcInsn(Object cst) {
         count++;
         Label ln=new Label();
-        visitLineNumber(count, ln);
         visitLabel(ln);
+        visitLineNumber(count, ln);
         super.visitLdcInsn(cst);
     }
 
@@ -85,8 +85,8 @@ public class CodeOpcodeCounter extends MethodAdapter {
     public void visitLookupSwitchInsn(Label dflt, int[] keys, Label[] labels) {
         count++;
         Label ln=new Label();
-        visitLineNumber(count, ln);
         visitLabel(ln);
+        visitLineNumber(count, ln);
         super.visitLookupSwitchInsn(dflt, keys, labels);
     }
 
@@ -94,8 +94,8 @@ public class CodeOpcodeCounter extends MethodAdapter {
     public void visitMethodInsn(int opcode, String owner, String name, String desc) {
         count++;
         Label ln=new Label();
-        visitLineNumber(count, ln);
         visitLabel(ln);
+        visitLineNumber(count, ln);
         super.visitMethodInsn(opcode, owner, name, desc);
     }
 
@@ -103,8 +103,8 @@ public class CodeOpcodeCounter extends MethodAdapter {
     public void visitMultiANewArrayInsn(String desc, int dims) {
         count++;
         Label ln=new Label();
-        visitLineNumber(count, ln);
         visitLabel(ln);
+        visitLineNumber(count, ln);
         super.visitMultiANewArrayInsn(desc, dims);
     }
 
@@ -112,8 +112,8 @@ public class CodeOpcodeCounter extends MethodAdapter {
     public void visitTableSwitchInsn(int min, int max, Label dflt, Label[] labels) {
         count++;
         Label ln=new Label();
-        visitLineNumber(count, ln);
         visitLabel(ln);
+        visitLineNumber(count, ln);
         super.visitTableSwitchInsn(min, max, dflt, labels);
     }
 
@@ -121,8 +121,8 @@ public class CodeOpcodeCounter extends MethodAdapter {
     public void visitTypeInsn(int opcode, String type) {
         count++;
         Label ln=new Label();
-        visitLineNumber(count, ln);
         visitLabel(ln);
+        visitLineNumber(count, ln);
         super.visitTypeInsn(opcode, type);
     }
 
@@ -130,8 +130,8 @@ public class CodeOpcodeCounter extends MethodAdapter {
     public void visitVarInsn(int opcode, int var) {
         count++;
         Label ln=new Label();
-        visitLineNumber(count, ln);
         visitLabel(ln);
+        visitLineNumber(count, ln);
         super.visitVarInsn(opcode, var);
     }
     
