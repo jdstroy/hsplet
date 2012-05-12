@@ -491,7 +491,6 @@ public class Compiler implements Opcodes, Serializable {
     private int[] literalsStats;
     private int[] literalsStatsAaLoad;
     private final boolean collectStats = false;
-    private final boolean collectStats = true;
 
     private int[] conversionArray;
     private int argsToOldLabel=0;
