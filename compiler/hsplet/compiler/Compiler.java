@@ -373,7 +373,7 @@ public class Compiler implements Opcodes, Serializable {
             cw = output;
         }
 
-        literals = new ArrayList();
+        literals = new ArrayList<Object>();
         loopStarts = new Stack<Label>();
         submethodStartEnds = new ArrayList();
         instancedLibraries = new ArrayList<Class>();
@@ -456,14 +456,14 @@ public class Compiler implements Opcodes, Serializable {
     }
     private int[] literalsStats;
     private int[] literalsStatsAaLoad;
-    private final boolean collectStats = true;
+    private final boolean collectStats = false;
 
     private void collectLiterals() {
 
         // ÇÊÇ≠égÇ§ÅB
         literals.add(new Integer(0));
         literals.add(new Double(0.0));
-        literals.add(new String(""));
+        literals.add("");
 
         // These are given local variables in all methods.
         int idx = localsStart;
@@ -766,8 +766,9 @@ public class Compiler implements Opcodes, Serializable {
                             mv.visitInsn(IADD);
                         }
                 }
-                literalsStatsAaLoad[index] += 1;
-
+                if (collectStats) {
+                    literalsStatsAaLoad[index] += 1;
+                }
                 mv.visitInsn(AALOAD);
             } else {
                 mv.visitVarInsn(ALOAD, thisIndex);
