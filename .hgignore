@@ -1,0 +1,6 @@
+^compiler.log$
+^compiler.settings$
+^dist/
+# Ignoring ext\EloText for now
+^ext/EloText.java$
+^ext/ElonaStringStore.java$
