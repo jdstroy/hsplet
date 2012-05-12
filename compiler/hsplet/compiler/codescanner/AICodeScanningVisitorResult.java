@@ -14,7 +14,17 @@ import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- *
+ * AtomicInteger variation of CodeScanningVisitorResult.  Worth benchmarking 
+ * this versus the regular Integer variation.
+ * AtomicInteger, unlike Integer, is mutable.  Depending on how the allocations
+ * and mutations are performed, AtomicInteger might be faster.  One could 
+ * implement a variation of CodeScanningVisitorResult through an Integer-like 
+ * class that is mutable without the overhead of the hardware-level atomicity 
+ * that this class provides, as we're only using this in a single thread.
+ * 
+ * Not that an int[] array is insufficient for our purposes here, as it would 
+ * not be able to implement the Comparable&lt;T&gt; interface required in a 
+ * TreeMap&lt;&lt;T&gt;, ArrayList&lt;FieldDescriptor&gt;&gt;
  * @author jdstroy
  */
 public class AICodeScanningVisitorResult implements ICodeScanningVisitorResult {
@@ -38,10 +48,8 @@ public class AICodeScanningVisitorResult implements ICodeScanningVisitorResult {
 
     @Override
     public SortedMap<? extends Number, ? extends Collection<FieldDescriptor>> getUsages() {
-        SortedMap<? extends Number, ? extends Collection<FieldDescriptor>> retVal;
         
         TreeMap<AtomicInteger, ArrayList<FieldDescriptor>> map = new TreeMap<AtomicInteger, ArrayList<FieldDescriptor>>();
-        retVal = map;
         Set<FieldDescriptor> keys = fieldUsage.keySet();
         for(FieldDescriptor fd : keys) {
             AtomicInteger uses = fieldUsage.get(fd);
@@ -54,7 +62,7 @@ public class AICodeScanningVisitorResult implements ICodeScanningVisitorResult {
             }
         }
         
-        return retVal;
+        return map;
     }
 
     @Override

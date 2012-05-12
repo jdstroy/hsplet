@@ -4,7 +4,6 @@
  */
 package hsplet.compiler.codescanner;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 
