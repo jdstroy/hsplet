@@ -5,10 +5,6 @@ package hsplet.compiler;
 
 import java.io.Serializable;
 
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.Attribute;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
 
 /**
  * âΩÇ‡é¿çsÇµÇ»Ç¢ MethodVisitorÅB
