@@ -3,7 +3,7 @@ package hsplet.compiler;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ScanTwoVisitor extends EmptyVisitor {
+public class ScanTwoVisitor extends NullVisitor {
 	//public Label currentLabel=null;
 	public LabelTree labelTree=new LabelTree();
 	

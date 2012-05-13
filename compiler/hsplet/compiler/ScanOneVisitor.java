@@ -2,7 +2,7 @@ package hsplet.compiler;
 
 import java.util.Map;
 
-public class ScanOneVisitor extends EmptyVisitor {
+public class ScanOneVisitor extends NullVisitor {
 
     private int currentArgCount = 0;
     private final Map<Integer, Label> labelsToSet;

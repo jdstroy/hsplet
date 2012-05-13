@@ -29,7 +29,7 @@ public class LibraryLoader extends ClassLoader {
 
         optloaders = new URLClassLoader[optlibs.length];
         for (int i = 0; i < optlibs.length; ++i) {
-            optloaders[i] = new URLClassLoader(new URL[]{new File(optlibs[i]).getAbsoluteFile().toURL()}, parent);
+            optloaders[i] = new URLClassLoader(new URL[]{new File(optlibs[i]).getAbsoluteFile().toURI().toURL()}, parent);
         }
     }
 
@@ -70,7 +70,7 @@ public class LibraryLoader extends ClassLoader {
         URL[] result = new URL[libs.length];
 
         for (int i = 0; i < libs.length; ++i) {
-            result[i] = new File(libs[i]).getAbsoluteFile().toURL();
+            result[i] = new File(libs[i]).getAbsoluteFile().toURI().toURL();
         }
         return result;
     }
