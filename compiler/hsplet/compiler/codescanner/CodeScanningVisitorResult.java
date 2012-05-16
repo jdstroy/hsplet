@@ -36,10 +36,7 @@ public class CodeScanningVisitorResult implements ICodeScanningVisitorResult {
 
     @Override
     public SortedMap<? extends Number, ? extends Collection<FieldDescriptor>> getUsages() {
-        SortedMap<? extends Number, ? extends Collection<FieldDescriptor>> retVal;
-
         TreeMap<Integer, ArrayList<FieldDescriptor>> map = new TreeMap<Integer, ArrayList<FieldDescriptor>>();
-        retVal = map;
         Set<FieldDescriptor> keys = fieldUsage.keySet();
         for (FieldDescriptor fd : keys) {
             Integer uses = fieldUsage.get(fd);
@@ -52,7 +49,7 @@ public class CodeScanningVisitorResult implements ICodeScanningVisitorResult {
             }
         }
 
-        return retVal;
+        return map;
     }
 
     @Override

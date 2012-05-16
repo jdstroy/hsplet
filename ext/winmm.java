@@ -27,28 +27,39 @@ import hsplet.function.FunctionBase;
  */
 public class winmm extends FunctionBase {
 
-	/** このクラスを含むソースファイルのバージョン文字列。 */
-	private static final String fileVersionID = "$Id: winmm.java,v 1.1 2006/01/09 12:07:06 Yuki Exp $";
+    public static final int TIMERR_NOERROR = 0, TIMERR_BASE = 96, TIMERR_NOCANDO = 97, TIMERR_STRUCT = 96 + 33;
+    /** このクラスを含むソースファイルのバージョン文字列。 */
+    private static final String fileVersionID = "$Id: winmm.java,v 1.1 2006/01/09 12:07:06 Yuki Exp $";
+    private static final long startMillis = System.currentTimeMillis();
 
-	private static final long startMillis = System.currentTimeMillis();
+    /**
+     * 起動してから現在までのミリ秒を取得する。
+     * 
+     * @return 起動してから現在までのミリ秒。
+     */
+    public static int timeGetTime() {
+        return (int) (System.currentTimeMillis() - startMillis);
+    }
 
-	/**
-	 * 起動してから現在までのミリ秒を取得する。
-	 * 
-	 * @return 起動してから現在までのミリ秒。
-	 */
-	public static int timeGetTime() {
+    /** 
+     * Requests a minimum timer resolution
+     * 
+     * @param i The requested minimum resolution of the timer in milliseconds
+     * @return TIMERR_NOERROR on success; TIMERR_NOCANDO if the requested 
+     * resolution cannot be fulfilled.
+     */
+    public static int timeBeginPeriod(int i) {
+        return TIMERR_NOCANDO;
+    }
 
-		return (int) (System.currentTimeMillis() - startMillis);
-	}
-
-
-        public static int timeBeginPeriod(int i) {
-            throw new UnsupportedOperationException("Not yet implemented.");
-        }
-
-
-        public static int timeEndPeriod(int i) {
-            throw new UnsupportedOperationException("Not yet implemented.");
-        }
+    /**
+     * Releases a request for a minimum timer resolution.
+     * @param i The formerly requested minimum resolution of the timer in 
+     * milliseconds.
+     * @return TIMERR_NOERROR on success; TIMERR_NOCANDO if the requested 
+     * resolution cannot be fulfilled.
+     */
+    public static int timeEndPeriod(int i) {
+        return TIMERR_NOCANDO;
+    }
 }

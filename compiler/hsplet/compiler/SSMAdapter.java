@@ -56,9 +56,9 @@ public class SSMAdapter extends MethodAdapter {
     protected void visit(MyOpcode o) {
         switch(o.opcode) {
             case MyOpcode.LABEL: {
-	            Label L=(Label)o.otherData;
-	            if(L==startLabel) L=replaceSL;
-	            else if(L==endLabel) L=replaceEL;
+                Label L=(Label)o.otherData;
+                if(L==startLabel) L=replaceSL;
+                else if(L==endLabel) L=replaceEL;
                 mv.visitLabel(L);
                 break;
             }
@@ -97,13 +97,13 @@ public class SSMAdapter extends MethodAdapter {
             case Opcodes.TABLESWITCH: {
                 Object[] data=(Object[])o.otherData;
                 for(int i=0;i<((Label[])data[2]).length;i++) {
-	                Label L=((Label[])data[2])[i];
-		            if(L==startLabel) ((Label[])data[2])[i]=replaceSL;
-		            else if(L==endLabel) ((Label[])data[2])[i]=replaceEL;
+                    Label L=((Label[])data[2])[i];
+                    if(L==startLabel) ((Label[])data[2])[i]=replaceSL;
+                    else if(L==endLabel) ((Label[])data[2])[i]=replaceEL;
                 }
                 Label L=(Label)data[1];
-	            if(L==startLabel) L=replaceSL;
-	            else if(L==endLabel) L=replaceEL;
+                if(L==startLabel) L=replaceSL;
+                else if(L==endLabel) L=replaceEL;
                 mv.visitTableSwitchInsn(((Integer)data[0]).intValue(), o.intData, L, (Label[])data[2]);
                 break;
             }
@@ -119,9 +119,9 @@ public class SSMAdapter extends MethodAdapter {
             case Opcodes.IF_ICMPLE:
             case Opcodes.IF_ICMPGE:
             case Opcodes.GOTO: {
-	            Label L=(Label)o.otherData;
-	            if(L==startLabel) L=replaceSL;
-	            else if(L==endLabel) L=replaceEL;
+                Label L=(Label)o.otherData;
+                if(L==startLabel) L=replaceSL;
+                else if(L==endLabel) L=replaceEL;
                 mv.visitJumpInsn(o.opcode, L);
                 break;
             }

@@ -11,34 +11,34 @@ import java.util.TreeMap;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author jdstroy
  */
 public class kernel32 extends FunctionBase {
 
+    public static final int NT_STATUS_SUCCESS = 0, W32_STATUS_ZERO_FAIL = 0;
     private Context context;
+    private int STATUS_DELETED = 1;
 
     public kernel32(final Context context) {
         this.context = context;
     }
+
     public int GetLastError() {
 
         return 0;
     }
 
-
     public int CreateMutex(Operand securityPointer, int index, int inherit, ByteString lpcstr) {
-        return 0;
+        return NT_STATUS_SUCCESS;
     }
 
     public int CreateMutexA(Operand securityPointer, int index, int inherit, ByteString lpcstr) {
-        return 0;
+        return CreateMutex(securityPointer, index, inherit, lpcstr);
     }
-
-
     private Map<Integer, Object> handleMap = new TreeMap<Integer, Object>();
+
     public int CloseHandle(int handle) {
         handleMap.remove(handle);
         return 1;
@@ -51,16 +51,20 @@ public class kernel32 extends FunctionBase {
             int cchSrc,
             ByteString lpDestStr,
             int cchDest) {
-        
+
         return 0;
     }
-    public int RemoveDirectoryA (String str) {
+
+    public int RemoveDirectoryA(String str) {
         File f = new File(str);
-        return (removeRecursive(f)) ? 1 : 0;
+        if (!f.isDirectory()) {
+            return W32_STATUS_ZERO_FAIL;
+        }
+        return f.delete() ? STATUS_DELETED : W32_STATUS_ZERO_FAIL;
     }
 
     private boolean removeRecursive(File f) {
-        if(f.isDirectory()) {
+        if (f.isDirectory()) {
             File[] files = f.listFiles();
             for (File g : files) {
                 removeRecursive(g);

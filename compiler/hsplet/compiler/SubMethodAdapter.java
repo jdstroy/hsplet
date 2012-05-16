@@ -144,10 +144,10 @@ public class SubMethodAdapter extends SSMAdapter {
         }
     }
     private void stackDecrease(int decrease) {
-	    while(decrease>0){
-		    stackTypes.remove(stackTypes.size()-1);
-		    decrease--;
-	    }
+        while(decrease>0){
+            stackTypes.remove(stackTypes.size()-1);
+            decrease--;
+        }
         //stackSize-=decrease;
         int stackSize=stackTypes.size();
         for(int i=markList.size()-1;i>=0&&markList.get(i).stackSize>stackSize;i--) {
@@ -162,8 +162,8 @@ public class SubMethodAdapter extends SSMAdapter {
     private void stackIncrease(int increase) {
         //stackSize+=increase;
         while(increase>0){
-	        stackTypes.add(NOTYPE);
-	        increase--;
+            stackTypes.add(NOTYPE);
+            increase--;
         }
     }
     private void handleStackChange(MyOpcode mo) {
@@ -192,11 +192,11 @@ public class SubMethodAdapter extends SSMAdapter {
                 stackDecrease(1);
                 String[] data=(String[])mo.otherData;
                 if(data[2].endsWith(";")) {
-	                stackTypes.add(OBJECT);
+                    stackTypes.add(OBJECT);
                 } else if(data[2].endsWith("I")||data[2].endsWith("Z")) {
-	                stackTypes.add(INTEGER);
+                    stackTypes.add(INTEGER);
                 } else if(data[2].endsWith("D")) {
-	                stackTypes.add(DOUBLE);
+                    stackTypes.add(DOUBLE);
                 } else throw new UnsupportedOperationException("Unknown type for stack: "+data[2]);
                 break;
             }
@@ -209,8 +209,8 @@ public class SubMethodAdapter extends SSMAdapter {
                 stackTypes.add(OBJECT);
                 break;
             case Opcodes.SWAP: {
-            	Integer type1=stackTypes.get(stackTypes.size()-1);
-            	Integer type2=stackTypes.get(stackTypes.size()-2);
+                Integer type1=stackTypes.get(stackTypes.size()-1);
+                Integer type2=stackTypes.get(stackTypes.size()-2);
                 stackDecrease(2);
                 stackTypes.add(type1);
                 stackTypes.add(type2);
@@ -241,24 +241,24 @@ public class SubMethodAdapter extends SSMAdapter {
                 break;
             case Opcodes.LDC: {
                 markEntrance();
-	            if(mo.otherData instanceof Integer) {
-		            stackTypes.add(INTEGER);
-	            } else if(mo.otherData instanceof Double) {
-		            stackTypes.add(DOUBLE);
-	            } else {
-		            stackTypes.add(OBJECT);
-	            }
+                if(mo.otherData instanceof Integer) {
+                    stackTypes.add(INTEGER);
+                } else if(mo.otherData instanceof Double) {
+                    stackTypes.add(DOUBLE);
+                } else {
+                    stackTypes.add(OBJECT);
+                }
                 break;
             }
             case Opcodes.GETSTATIC: {
                 markEntrance();
                 String[] data=(String[])mo.otherData;
                 if(data[2].endsWith(";")) {
-	                stackTypes.add(OBJECT);
+                    stackTypes.add(OBJECT);
                 } else if(data[2].endsWith("I")||data[2].endsWith("Z")) {
-	                stackTypes.add(INTEGER);
+                    stackTypes.add(INTEGER);
                 } else if(data[2].endsWith("D")) {
-	                stackTypes.add(DOUBLE);
+                    stackTypes.add(DOUBLE);
                 } else throw new UnsupportedOperationException("Unknown type for stack: "+data[2]);
                 break;
             }
@@ -271,7 +271,7 @@ public class SubMethodAdapter extends SSMAdapter {
         lastLabel=null;
     }
     private void markEntrance() {
-	    int stackSize=stackTypes.size();
+        int stackSize=stackTypes.size();
         if(waitTillStackClear) {
             if(stackSize==0)
                 waitTillStackClear=false;
@@ -356,19 +356,19 @@ public class SubMethodAdapter extends SSMAdapter {
             ((SSMAdapter)newMV).visit(op);
         }
         if(largestFound.endLabel!=null)
-        	newMV.visitLabel(((SSMAdapter)newMV).replaceEL);
+            newMV.visitLabel(((SSMAdapter)newMV).replaceEL);
         //System.out.println(methodName+" "+sig+" "+opcodeList.size());
         if(!largestFound.containsReturn) {
-	        if(sig.endsWith("V"))
-            	newMV.visitInsn(Opcodes.RETURN);
+            if(sig.endsWith("V"))
+                newMV.visitInsn(Opcodes.RETURN);
             else if(sig.endsWith("I"))
-            	newMV.visitInsn(Opcodes.IRETURN);
+                newMV.visitInsn(Opcodes.IRETURN);
             else if(sig.endsWith("D"))
-            	newMV.visitInsn(Opcodes.DRETURN);
+                newMV.visitInsn(Opcodes.DRETURN);
             else if(sig.endsWith(";"))
-            	newMV.visitInsn(Opcodes.ARETURN);
+                newMV.visitInsn(Opcodes.ARETURN);
             else
-            	throw new RuntimeException("Unknown return type from method! "+sig);
+                throw new RuntimeException("Unknown return type from method! "+sig);
             opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.ALOAD, 2));
             opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.INVOKEVIRTUAL, new String[]{myCompiler.classIName, methodName, sig}));
         } else {
@@ -391,7 +391,7 @@ public class SubMethodAdapter extends SSMAdapter {
     /* Despite being a long method with a lot of loops called often, this method should still be
      * very fast due to constantly pruning the arrays. */
     private void considerSubmethod(Label endLabel) {
-	    int stackSize=stackTypes.size();
+        int stackSize=stackTypes.size();
         if(waitTillStackClear) {
             if(stackSize==0)
                 waitTillStackClear=false;
@@ -425,18 +425,18 @@ public class SubMethodAdapter extends SSMAdapter {
         if((bestEntranceI==-1)||(totalSize<=4)) return;
         Mark m=markList.get(bestEntranceI);
         if(m.stackSize<stackSize) {
-	        Integer lastType=stackTypes.get(stackTypes.size()-1);
-	        if(lastType==OBJECT) otherReturn="()"+Compiler.ODesc;
-	        else if(lastType==INTEGER) otherReturn="()I";
-	        else if(lastType==DOUBLE) otherReturn="()D";
-	        else throw new RuntimeException("Unknown thing to return!");
+            Integer lastType=stackTypes.get(stackTypes.size()-1);
+            if(lastType==OBJECT) otherReturn="()"+Compiler.ODesc;
+            else if(lastType==INTEGER) otherReturn="()I";
+            else if(lastType==DOUBLE) otherReturn="()D";
+            else throw new RuntimeException("Unknown thing to return!");
         }
         int startLocation=m.location;
         for(int j=markList.size()-1;j>bestEntranceI;j--) {
             Mark next=markList.get(j);
             if(next.type==Mark.ENTRANCE) {
                 maxSizeSinceLastE+=next.maxSizeSinceLastE;
-                returnSinceLastE|=next.returnSinceLastE;	//should be redundant
+                returnSinceLastE|=next.returnSinceLastE;    //should be redundant
                 markList.remove(j);
                 //System.out.println("MarkOutB "+next.type+" "+next.location);
             }
@@ -497,7 +497,7 @@ public class SubMethodAdapter extends SSMAdapter {
     }
     @Override
     public void visitFieldInsn(int opcode, String owner, String name, String desc) {
-	    MyOpcode newOpcode=new MyOpcode(opcode, new String[]{owner, name, desc});
+        MyOpcode newOpcode=new MyOpcode(opcode, new String[]{owner, name, desc});
         handleStackChange(newOpcode);
         maxSizeSinceLastE+=getMaxSize(opcode);
         opcodeList.add(newOpcode);
@@ -506,14 +506,14 @@ public class SubMethodAdapter extends SSMAdapter {
 
     @Override
     public void visitIincInsn(int var, int increment) {
-	    MyOpcode newOpcode=new MyOpcode(Opcodes.IINC, var, Integer.valueOf(increment));
+        MyOpcode newOpcode=new MyOpcode(Opcodes.IINC, var, Integer.valueOf(increment));
         maxSizeSinceLastE+=getMaxSize(Opcodes.IINC);
         opcodeList.add(newOpcode);
     }
 
     @Override
     public void visitInsn(int opcode) {
-	    MyOpcode newOpcode=new MyOpcode(opcode);
+        MyOpcode newOpcode=new MyOpcode(opcode);
         handleStackChange(newOpcode);
         maxSizeSinceLastE+=getMaxSize(opcode);
         opcodeList.add(newOpcode);
@@ -522,7 +522,7 @@ public class SubMethodAdapter extends SSMAdapter {
 
     @Override
     public void visitIntInsn(int opcode, int operand) {
-	    MyOpcode newOpcode=new MyOpcode(opcode, operand);
+        MyOpcode newOpcode=new MyOpcode(opcode, operand);
         handleStackChange(newOpcode);
         maxSizeSinceLastE+=getMaxSize(opcode);
         opcodeList.add(newOpcode);
@@ -531,7 +531,7 @@ public class SubMethodAdapter extends SSMAdapter {
 
     @Override
     public void visitJumpInsn(int opcode, org.objectweb.asm.Label label) {
-	    MyOpcode newOpcode=new MyOpcode(opcode, label);
+        MyOpcode newOpcode=new MyOpcode(opcode, label);
         handleStackChange(newOpcode);
         maxSizeSinceLastE+=getMaxSize(opcode);
         opcodeList.add(newOpcode);
@@ -541,7 +541,7 @@ public class SubMethodAdapter extends SSMAdapter {
 
     @Override
     public void visitLdcInsn(Object cst) {
-	    MyOpcode newOpcode=new MyOpcode(Opcodes.LDC, cst);
+        MyOpcode newOpcode=new MyOpcode(Opcodes.LDC, cst);
         handleStackChange(newOpcode);
         maxSizeSinceLastE+=getMaxSize(Opcodes.LDC);
         opcodeList.add(newOpcode);
@@ -555,7 +555,7 @@ public class SubMethodAdapter extends SSMAdapter {
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc) {
-	    MyOpcode newOpcode=new MyOpcode(opcode, new String[]{owner, name, desc});
+        MyOpcode newOpcode=new MyOpcode(opcode, new String[]{owner, name, desc});
         int stackUse=(opcode==Opcodes.INVOKESTATIC)?0:1;
         int fieldEnd=desc.lastIndexOf(')');
         for(String fieldString=desc.substring(1, fieldEnd);fieldString.length()>0;stackUse++)
@@ -593,12 +593,12 @@ public class SubMethodAdapter extends SSMAdapter {
 
     @Override
     public void visitMultiANewArrayInsn(String desc, int dims) {
-	    throw new UnsupportedOperationException("Opcode not supported: "+Opcodes.MULTIANEWARRAY);
+        throw new UnsupportedOperationException("Opcode not supported: "+Opcodes.MULTIANEWARRAY);
     }
 
     @Override
     public void visitTableSwitchInsn(int min, int max, org.objectweb.asm.Label dflt, org.objectweb.asm.Label[] labels) {
-	    MyOpcode newOpcode=new MyOpcode(Opcodes.TABLESWITCH, max, new Object[]{Integer.valueOf(min), dflt, labels});
+        MyOpcode newOpcode=new MyOpcode(Opcodes.TABLESWITCH, max, new Object[]{Integer.valueOf(min), dflt, labels});
         handleStackChange(newOpcode);
         maxSizeSinceLastE+=(max-min+5)*4;
         opcodeList.add(newOpcode);
@@ -615,7 +615,7 @@ public class SubMethodAdapter extends SSMAdapter {
 
     @Override
     public void visitVarInsn(int opcode, int var) {
-	    MyOpcode newOpcode=new MyOpcode(opcode, var);
+        MyOpcode newOpcode=new MyOpcode(opcode, var);
         handleStackChange(newOpcode);
         if(opcode==Opcodes.ALOAD)
             maxSizeSinceLastE+=(var<4)?1:2;
@@ -632,12 +632,12 @@ public class SubMethodAdapter extends SSMAdapter {
             Mark oldMark=labelUsage.get(L);
             int change=stackTypes.size()-oldMark.stackSize;
             if(change!=0) {
-	            //if(stackTypes.size()!=0)
-	            //	throw new RuntimeException("Leftovers on the stack from something? "+stackTypes.size()+" "+opcodeList.size());
-	            if(change>0)
-	            	stackDecrease(change);
-	            else
-	            	stackIncrease(-change);
+                //if(stackTypes.size()!=0)
+                //    throw new RuntimeException("Leftovers on the stack from something? "+stackTypes.size()+" "+opcodeList.size());
+                if(change>0)
+                    stackDecrease(change);
+                else
+                    stackIncrease(-change);
             }
             int indexOf=markList.lastIndexOf(oldMark);
             for(int i=indexOf;i<markList.size();) {
@@ -646,7 +646,7 @@ public class SubMethodAdapter extends SSMAdapter {
                     markList.remove(i);
                     //System.out.println("MarkOutE "+next.type+" "+next.location);
                 } else if(next.type==Mark.ENTRANCE) {
-	                //System.out.println("MarkOutF "+next.type+" "+next.location);
+                    //System.out.println("MarkOutF "+next.type+" "+next.location);
                     markList.remove(i);
                     maxSizeSinceLastE+=next.maxSizeSinceLastE;
                     returnSinceLastE|=next.returnSinceLastE;
@@ -655,12 +655,12 @@ public class SubMethodAdapter extends SSMAdapter {
                     i++;
             }
             if((((Label)L).branchesToHere==0)&&(!((Label)L).isMainLabel)) {
-	            //System.out.println("No branches to label! "+((Label)L).extra);
+                //System.out.println("No branches to label! "+((Label)L).extra);
             }
             if(((++((Label)L).currentCount)==(((Label)L).branchesToHere))&&(!((Label)L).isMainLabel)) {
                 labelUsage.remove(L);
             } else {
-	            //System.out.println("Label found old branches "+((Label)L).currentCount+"/"+((Label)L).branchesToHere);
+                //System.out.println("Label found old branches "+((Label)L).currentCount+"/"+((Label)L).branchesToHere);
                 Mark newMark=new Mark(Mark.LABEL, stackTypes.size(), opcodeList.size(), 0, (Label)L, false);
                 markList.add(newMark);
                 labelUsage.put((Label)L, newMark);
@@ -694,14 +694,14 @@ public class SubMethodAdapter extends SSMAdapter {
         /*
         System.out.println("Leftover marks: "+markList.size());
         for(Mark m : markList) {
-	        System.out.print(m.type+" "+m.location);
-		    Label L=m.label;
-	        if(L!=null) {
-		        System.out.print(" Label "+L.currentCount+"/"+L.branchesToHere);
-		        if(L.isMainLabel)
-		        	System.out.print(" (Main)");
-	        }
-	        System.out.print("\r\n");
+            System.out.print(m.type+" "+m.location);
+            Label L=m.label;
+            if(L!=null) {
+                System.out.print(" Label "+L.currentCount+"/"+L.branchesToHere);
+                if(L.isMainLabel)
+                    System.out.print(" (Main)");
+            }
+            System.out.print("\r\n");
         }
         */
     }
