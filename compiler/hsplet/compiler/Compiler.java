@@ -75,6 +75,7 @@ public class Compiler implements Opcodes, Serializable {
     private static final long serialVersionUID = 8668239863505235428L;
     /** デバッグ出力をするかどうか。 */
     private static final boolean DEBUG_ENABLED = false;
+    private static final boolean LINENUMS_ENABLED = false;
     /** Stores the results in an ASM tree.  This is slow and memory hungry;
      * you should use this only if you're debugging/poking around.  This 
      * shouldn't be used in production, but it is useful to find out 
@@ -286,19 +287,21 @@ public class Compiler implements Opcodes, Serializable {
             out.write(buffer, 0, length);
         }
     }
-    private static final String FODesc = Type.getDescriptor(FlagObject.class);
-    private static final String FOIName = Type.getInternalName(FlagObject.class);
-    private static final String contextDesc = Type.getDescriptor(Context.class);
-    private static final String contextIName = Type.getInternalName(Context.class);
-    private static final String opeDesc = Type.getDescriptor(Operand.class);
-    private static final String opeIName = Type.getInternalName(Operand.class);
-    private static final String varDesc = Type.getDescriptor(Variable.class);
-    private static final String varIName = Type.getInternalName(Variable.class);
-    private static final String literalDesc = Type.getDescriptor(Scalar.class);
-    private static final String literalIName = Type.getInternalName(Scalar.class);
-    private static final String parentDesc = Type.getDescriptor(RunnableCode.class);
-    private static final String parentIName = Type.getInternalName(RunnableCode.class);
-    private static final String typeArrayOfScalar = "[L" + literalIName + ";";
+    public static final String ODesc = Type.getDescriptor(Object.class);
+    public static final String OIName = Type.getInternalName(Object.class);
+    public static final String FODesc = Type.getDescriptor(FlagObject.class);
+    public static final String FOIName = Type.getInternalName(FlagObject.class);
+    public static final String contextDesc = Type.getDescriptor(Context.class);
+    public static final String contextIName = Type.getInternalName(Context.class);
+    public static final String opeDesc = Type.getDescriptor(Operand.class);
+    public static final String opeIName = Type.getInternalName(Operand.class);
+    public static final String varDesc = Type.getDescriptor(Variable.class);
+    public static final String varIName = Type.getInternalName(Variable.class);
+    public static final String literalDesc = Type.getDescriptor(Scalar.class);
+    public static final String literalIName = Type.getInternalName(Scalar.class);
+    public static final String parentDesc = Type.getDescriptor(RunnableCode.class);
+    public static final String parentIName = Type.getInternalName(RunnableCode.class);
+    public static final String typeArrayOfScalar = "[L" + literalIName + ";";
     private static final int thisIndex = 0;
     private static final int jumpLabelIndex = 1; // int
     private static final int contextIndex = 2; // contextType
@@ -308,8 +311,8 @@ public class Compiler implements Opcodes, Serializable {
     private List<CommonObjectContainer> commonLiteralsList = new ArrayList<CommonObjectContainer>();
     private ClassVisitor cw, superClassWriter;
     private String inputName;
-    private String className;
-    private String classIName;
+    public String className;
+    public String classIName;
     private String superClassName;
     private String superClassIName;
     private ByteCode ax;
@@ -1122,12 +1125,22 @@ public class Compiler implements Opcodes, Serializable {
         }
     }
 
+    private int numExtraMethods=0;
+    public int getExtraMVNum() {
+	    return numExtraMethods++;
+    }
+    /*
+    public MethodVisitor getExtraMV(String signature) {
+	    return cw.visitMethod(ACC_PRIVATE, "me" + numExtraMethods++, signature, null, new String[0]);
+    }
+    */
+    
     /**
      * 必要なローカル変数を用意。
      *
      * @param mv
      */
-    private void compileLocalVariables(final MethodVisitor mv) {
+    public void compileLocalVariables(final MethodVisitor mv) {
 
         mv.visitVarInsn(ALOAD, thisIndex);
         mv.visitFieldInsn(GETFIELD, classIName, "context", contextDesc);
@@ -1517,17 +1530,17 @@ public class Compiler implements Opcodes, Serializable {
                 break;
             case ByteCode.Code.Type.IntCmd:
 		    	if(mv instanceof ScanOneVisitor) {
-			    	if(ax.codes[codeIndex].value<4) {
+			    	if(ax.codes[codeIndex].value<=4) {
 		        		((ScanOneVisitor)mv).setArgCount(1);
-	        		} else if(ax.codes[codeIndex].value==4) {
+	        		}/* else if(ax.codes[codeIndex].value==4) {
 		        		((ScanOneVisitor)mv).setArgCount(2);
-	        		}
+	        		}*/
 		    	} else if(conversionArray!=null) {
-			    	if(ax.codes[codeIndex].value<4) {
+			    	if(ax.codes[codeIndex].value<=4) {
 		        		argsToOldLabel=1;
-	        		} else if(ax.codes[codeIndex].value==4) {
+	        		}/* else if(ax.codes[codeIndex].value==4) {
 		        		argsToOldLabel=2;
-	        		}
+	        		}*/
         		}
                 compileCommand(mv);
                 break;
@@ -1757,14 +1770,20 @@ public class Compiler implements Opcodes, Serializable {
                 break;
             case ByteCode.Code.Type.INum:
 		    	if(mv instanceof ScanOneVisitor) {
-		        	((ScanOneVisitor)mv).decArgCount(ax.codes[codeIndex].value);
+		        	//((ScanOneVisitor)mv).decArgCount(ax.codes[codeIndex].value);
+		        	((ScanOneVisitor)mv).setArgCount(0);
 		    	} else if((argsToOldLabel>0)&&(!(mv instanceof EmptyVisitor))) {
+			    	argsToOldLabel=0;
+			    	/*
 			    	argsToOldLabel--;
 			    	if(argsToOldLabel==0) {
 			    		pushSmall(conversionArray[ax.codes[codeIndex].value], mv);
-			    		//mv.visitLdcInsn(new Integer(conversionArray[ax.codes[codeIndex].value]));
+				        mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromLabel", "(I)" + literalDesc);
+				
+				        mv.visitInsn(ICONST_0);
 			    		break;
 		    		}
+		    		*/
 		    	}
             case ByteCode.Code.Type.String:
             case ByteCode.Code.Type.DNum:
@@ -1813,16 +1832,18 @@ public class Compiler implements Opcodes, Serializable {
 
     	if(mv instanceof ScanOneVisitor) {
         	((ScanOneVisitor)mv).decArgCount(code.value);
-    	} else if((argsToOldLabel>0)&&(!(mv instanceof EmptyVisitor))) {
+    	}
+    	if((argsToOldLabel>0)&&(!(mv instanceof EmptyVisitor))) {
 	    	argsToOldLabel--;
 	    	if(argsToOldLabel==0) {
-		    	skipToInt=true;
+		    	//skipToInt=true;
 	    		pushSmall(conversionArray[code.value], mv);
 	    		//mv.visitLdcInsn(new Integer(conversionArray[code.value]));
-	    		return;
+	    		//return;
     		}
     	}
-        mv.visitLdcInsn(new Integer(code.value));
+    	else
+        	mv.visitLdcInsn(new Integer(code.value));
         mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromLabel", "(I)" + literalDesc);
 
         mv.visitInsn(ICONST_0);
@@ -1900,7 +1921,7 @@ public class Compiler implements Opcodes, Serializable {
                 instancedLibraries.add(libraryClass);
             }
 
-            mv.visitIntInsn(ALOAD, thisIndex);
+            mv.visitVarInsn(ALOAD, thisIndex);
             mv.visitFieldInsn(GETFIELD, classIName, "l" + instancedLibraries.indexOf(libraryClass), Type.getDescriptor(libraryClass));
         }
 
@@ -1933,7 +1954,7 @@ public class Compiler implements Opcodes, Serializable {
         /* if(method.getName().equals("gosub")) {
 	        mv.visitInsn(SWAP);
 	        mv.visitInsn(POP);
-	        mv.visitIntInsn(ALOAD, 0);
+	        mv.visitVarInsn(ALOAD, 0);
 	        mv.visitInsn(SWAP);
         	mv.visitMethodInsn(INVOKEVIRTUAL, classIName, "run", "(I)"+opeDesc);
         	mv.visitInsn(POP);
@@ -2161,6 +2182,7 @@ public class Compiler implements Opcodes, Serializable {
             mv.visitInsn(DUP);
 
             final Label noassign = new Label();
+            noassign.branchesToHere=1;
             mv.visitJumpInsn(IFNULL, noassign);
 
             mv.visitVarInsn(ALOAD, contextIndex);
@@ -2177,6 +2199,7 @@ public class Compiler implements Opcodes, Serializable {
             mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "assign", "(I" + opeDesc + "I)V");
 
             final Label end = new Label();
+            end.branchesToHere=1;
             mv.visitJumpInsn(GOTO, end);
             mv.visitLabel(noassign);
             mv.visitInsn(POP);
@@ -2459,9 +2482,10 @@ public class Compiler implements Opcodes, Serializable {
         		((ScanTwoVisitor)mv).labelTree.combine(currentLabel.myIndex, L.myIndex);
         		L.relyOn(currentLabel);
     		}
-    	} //else if(mv instanceof ScanThreeVisitor) {
+    	} else if(mv instanceof ScanThreeVisitor) {
+	    	if((currentLabel!=null)&&(currentLabel.isUsed)) L.branchesToHere++;
 	    //	System.out.println(((ScanThreeVisitor)mv).currentStatementAddress+" goto to "+ax.labels[label.value]);
-    	//}
+    	}
         //if(conversionArray!=null)
         //    System.out.print(" to "+ax.labels[label.value]);
 
@@ -2536,6 +2560,7 @@ public class Compiler implements Opcodes, Serializable {
         //	System.out.print(" to "+ax.labels[label.value]);
 
         final Label startLabel = new Label();
+        startLabel.branchesToHere=1;
 
         mv.visitLabel(startLabel);
 
@@ -2634,6 +2659,7 @@ public class Compiler implements Opcodes, Serializable {
 	    	if((currentLabel!=null)&&(currentLabel.isUsed)) L.branchesToHere++;
 	    	//System.out.println(((ScanThreeVisitor)mv).currentStatementAddress+" Continue to "+ax.labels[label.value]);
     	}
+    	loopStarts.peek().branchesToHere++;
         mv.visitJumpInsn(IFNE, (Label) loopStarts.peek());
 
         mv.visitJumpInsn(GOTO, L);
@@ -2663,6 +2689,7 @@ public class Compiler implements Opcodes, Serializable {
         //	System.out.print(" to "+ax.labels[label.value]);
 
         final Label startLabel = new Label();
+        startLabel.branchesToHere=1;
 
         mv.visitLabel(startLabel);
 
@@ -2746,9 +2773,11 @@ public class Compiler implements Opcodes, Serializable {
         final Code label = ax.codes[codeIndex++];
 
         final Label negative = new Label();
+        negative.branchesToHere=1;
         mv.visitJumpInsn(IFLE, negative);
 
         final Label nojump = new Label();
+        nojump.branchesToHere=1;
 
         Label L=getLabel(label.value);
         mv.visitJumpInsn(IF_ICMPGE, L);
@@ -2995,13 +3024,15 @@ public class Compiler implements Opcodes, Serializable {
 	    int numMains=0;
 	    for(MyTreeThing labelGroup : labelGroups) {
             MethodVisitor mv = cw.visitMethod(ACC_PRIVATE, "m" + numMethods++, "(I)"+FODesc, null, new String[0]);
-		    if(DEBUG_ENABLED)
-            	mv=new CodeOpcodeCounter(mv);
 
 			compileLocalVariables(mv);
+			mv=new SubMethodAdapter(this, mv, cw);
+		    if(LINENUMS_ENABLED)
+            	mv=new CodeOpcodeCounter(mv);
 			Integer[] mainLabels=labelGroup.mainLabels(allLabels);
 			if(mainLabels.length > 1) {
 				Label defaultLabel=new Label();
+				defaultLabel.branchesToHere=1;
 				Label[] tableLabels=new Label[mainLabels.length];
 				for(int i=0;i<mainLabels.length;i++) {
 					tableLabels[i]=allLabels[mainLabels[i].intValue()];
@@ -3049,15 +3080,15 @@ public class Compiler implements Opcodes, Serializable {
 				}
 				currentLabel=nextLabel;
 			}
-				//mv.visitInsn(ACONST_NULL);
-		        //mv.visitMethodInsn(INVOKESTATIC, FOIName, "getFO", "("+opeDesc+")"+FODesc);
-		
-		        mv.visitInsn(ARETURN);
-	            mv.visitMaxs(0, 0);
-	            mv.visitEnd();
-	        }
-	    }
-		private void compileGroup(MyTreeThing labelGroup, MethodVisitor mv) {
+			//mv.visitInsn(ACONST_NULL);
+	        //mv.visitMethodInsn(INVOKESTATIC, FOIName, "getFO", "("+opeDesc+")"+FODesc);
+	
+	        //mv.visitInsn(ARETURN);
+            mv.visitMaxs(0, 0);
+            mv.visitEnd();
+        }
+    }
+	private void compileGroup(MyTreeThing labelGroup, MethodVisitor mv) {
 
 	}
     /* */

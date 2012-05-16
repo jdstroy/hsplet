@@ -1,0 +1,708 @@
+package hsplet.compiler;
+
+//import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodAdapter;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.Opcodes;
+import java.util.HashMap;
+
+/**
+ *
+ * @author Kejardon
+ * Intended parser for handling submethods from Compiler.java.
+ */
+public class SubMethodAdapter extends SSMAdapter {
+
+    private class ArrayList<E> extends java.util.ArrayList<E> {
+        public void removeRange(int i, int j) {
+            super.removeRange(i, j);
+        }
+    }
+    //Counter for number of subsubmethods created.
+    //subsubmethods will be labeled "ssm"+SSMCount
+    public static int SSMCount=0;
+    private Compiler myCompiler;
+    private ClassVisitor cw;
+    public SubMethodAdapter(Compiler comp, MethodVisitor mv, ClassVisitor cv) {
+        super(mv);
+        myCompiler=comp;
+        cw=cv;
+        markList.add(new Mark(Mark.START, 0, 0, 0, null, false));
+    }
+
+    private class PotentialSSM {
+        public int startOpcode;
+        public int endOpcode;
+        public Label startLabel;
+        public Label endLabel;
+        public int maxSize;
+        public boolean containsReturn;
+        public String otherReturn;
+        public PotentialSSM(int s, int e, Label sl, Label el, int m, boolean c, String S) {
+            startOpcode=s;
+            endOpcode=e;
+            startLabel=sl;
+            endLabel=el;
+            maxSize=m;
+            containsReturn=c;
+            otherReturn=S;
+            //System.out.println("Potential: "+s+" "+e);
+        }
+    }
+    private class Mark {
+        public static final int START=0;
+        public static final int ENTRANCE=1;
+        public static final int BRANCH=2;
+        public static final int LABEL=3;
+        int type;
+        int stackSize;
+        int location;
+        int maxSizeSinceLastE;
+        Label label;
+        boolean returnSinceLastE;
+        public Mark(int t, int s, int l, int m, Label la, boolean r) {
+            type=t;
+            stackSize=s;
+            location=l;
+            maxSizeSinceLastE=m;
+            label=la;
+            returnSinceLastE=r;
+            //System.out.println("Mark"+t+": "+l+" "+s);
+        }
+    }
+    private HashMap<Label, Mark> labelUsage=new HashMap<Label, Mark>();
+    private ArrayList<MyOpcode> opcodeList=new ArrayList<MyOpcode>();
+    private ArrayList<PotentialSSM> potentialSSMs=new ArrayList<PotentialSSM>();
+    private ArrayList<Mark> markList=new ArrayList<Mark>();
+    private ArrayList<Integer> stackTypes=new ArrayList<Integer>();
+    //private int stackSize=0;
+    private int maxSizeSinceLastE=0;
+    private boolean returnSinceLastE=false;
+    private boolean waitTillStackClear=false;
+    private Label lastLabel=null;
+    private int lastEStack=-1;
+    private Integer NOTYPE=Integer.valueOf(-1);
+    private Integer INTEGER=Integer.valueOf(0);
+    private Integer DOUBLE=Integer.valueOf(1);
+    private Integer OBJECT=Integer.valueOf(2);
+
+    /* Unused in submethods but exist in outputted code:
+     * case ANEWARRAY:
+     * case NEW:
+     * case AASTORE:
+     * case RETURN:
+     * case ASTORE:
+     */
+    private int getMaxSize(int opcode) {
+        switch(opcode) {
+            //Handle in own code
+            //case TABLESWITCH:
+            //case Opcodes.ALOAD:
+            case Opcodes.ARETURN:
+            case Opcodes.ACONST_NULL:
+            case Opcodes.IADD:
+            case Opcodes.AALOAD:
+            case Opcodes.ICONST_M1:
+            case Opcodes.POP:
+            case Opcodes.SWAP:
+            case Opcodes.ICONST_0:
+            case Opcodes.ICONST_1:
+            case Opcodes.ICONST_2:
+            case Opcodes.ICONST_3:
+            case Opcodes.ICONST_4:
+            case Opcodes.ICONST_5:
+            case Opcodes.DUP:
+                return 1;
+            case Opcodes.ILOAD:
+            case Opcodes.BIPUSH:
+                return 2;
+            case Opcodes.ISTORE:
+                //after an ISTORE, wait till stack is empty to allow subroutine entrance/exits
+                waitTillStackClear=true;
+                return 2;
+            case Opcodes.LDC:
+            case Opcodes.SIPUSH:
+            case Opcodes.IFNULL:
+            case Opcodes.IINC:
+            case Opcodes.IFLE:
+            case Opcodes.PUTFIELD:
+            case Opcodes.GETFIELD:
+            case Opcodes.GETSTATIC:
+            case Opcodes.INVOKESTATIC:
+            case Opcodes.INVOKEVIRTUAL:
+                return 3;
+            case Opcodes.GOTO:
+                return 5;
+            case Opcodes.IFNE:
+            case Opcodes.IFEQ:
+            case Opcodes.IF_ICMPLE:
+            case Opcodes.IF_ICMPGE:
+                return 8;    //3 + 5 if long branch
+            default:
+                throw new UnsupportedOperationException("Opcode value for size: "+opcode);
+        }
+    }
+    private void stackDecrease(int decrease) {
+	    while(decrease>0){
+		    stackTypes.remove(stackTypes.size()-1);
+		    decrease--;
+	    }
+        //stackSize-=decrease;
+        int stackSize=stackTypes.size();
+        for(int i=markList.size()-1;i>=0&&markList.get(i).stackSize>stackSize;i--) {
+            if(markList.get(i).type==Mark.ENTRANCE) {
+                Mark removedMark=markList.remove(i);
+                maxSizeSinceLastE+=removedMark.maxSizeSinceLastE;
+                returnSinceLastE|=removedMark.returnSinceLastE;
+                //System.out.println("MarkOutA "+removedMark.type+" "+removedMark.location);
+            }
+        }
+    }
+    private void stackIncrease(int increase) {
+        //stackSize+=increase;
+        while(increase>0){
+	        stackTypes.add(NOTYPE);
+	        increase--;
+        }
+    }
+    private void handleStackChange(MyOpcode mo) {
+        switch(mo.opcode) {
+            //Handle in own code (do nothing)
+            //case IINC:
+            case Opcodes.ARETURN:
+                returnSinceLastE=true;
+            case Opcodes.TABLESWITCH:
+            case Opcodes.IFNULL:
+            case Opcodes.IFLE:
+            case Opcodes.IFNE:
+            case Opcodes.IFEQ:
+            case Opcodes.POP:
+            case Opcodes.ISTORE:
+                stackDecrease(1);
+                break;
+            case Opcodes.DUP: {
+                Integer type=stackTypes.get(stackTypes.size()-1);
+                stackDecrease(1);
+                stackTypes.add(type);
+                stackTypes.add(type);
+                break;
+            }
+            case Opcodes.GETFIELD: {
+                stackDecrease(1);
+                String[] data=(String[])mo.otherData;
+                if(data[2].endsWith(";")) {
+	                stackTypes.add(OBJECT);
+                } else if(data[2].endsWith("I")||data[2].endsWith("Z")) {
+	                stackTypes.add(INTEGER);
+                } else if(data[2].endsWith("D")) {
+	                stackTypes.add(DOUBLE);
+                } else throw new UnsupportedOperationException("Unknown type for stack: "+data[2]);
+                break;
+            }
+            case Opcodes.IADD:
+                stackDecrease(2);
+                stackTypes.add(INTEGER);
+                break;
+            case Opcodes.AALOAD:
+                stackDecrease(2);
+                stackTypes.add(OBJECT);
+                break;
+            case Opcodes.SWAP: {
+            	Integer type1=stackTypes.get(stackTypes.size()-1);
+            	Integer type2=stackTypes.get(stackTypes.size()-2);
+                stackDecrease(2);
+                stackTypes.add(type1);
+                stackTypes.add(type2);
+                break;
+            }
+            case Opcodes.IF_ICMPLE:
+            case Opcodes.IF_ICMPGE:
+            case Opcodes.PUTFIELD:
+                stackDecrease(2);
+                break;
+            case Opcodes.ACONST_NULL:
+            case Opcodes.ALOAD:
+                markEntrance();
+                stackTypes.add(OBJECT);
+                break;
+            case Opcodes.ICONST_M1:
+            case Opcodes.ICONST_0:
+            case Opcodes.ICONST_1:
+            case Opcodes.ICONST_2:
+            case Opcodes.ICONST_3:
+            case Opcodes.ICONST_4:
+            case Opcodes.ICONST_5:
+            case Opcodes.ILOAD:
+            case Opcodes.BIPUSH:
+            case Opcodes.SIPUSH:
+                markEntrance();
+                stackTypes.add(INTEGER);
+                break;
+            case Opcodes.LDC: {
+                markEntrance();
+	            if(mo.otherData instanceof Integer) {
+		            stackTypes.add(INTEGER);
+	            } else if(mo.otherData instanceof Double) {
+		            stackTypes.add(DOUBLE);
+	            } else {
+		            stackTypes.add(OBJECT);
+	            }
+                break;
+            }
+            case Opcodes.GETSTATIC: {
+                markEntrance();
+                String[] data=(String[])mo.otherData;
+                if(data[2].endsWith(";")) {
+	                stackTypes.add(OBJECT);
+                } else if(data[2].endsWith("I")||data[2].endsWith("Z")) {
+	                stackTypes.add(INTEGER);
+                } else if(data[2].endsWith("D")) {
+	                stackTypes.add(DOUBLE);
+                } else throw new UnsupportedOperationException("Unknown type for stack: "+data[2]);
+                break;
+            }
+            case Opcodes.GOTO:
+                markEntrance();
+                break;
+            default:
+                throw new UnsupportedOperationException("Opcode value for stack: "+mo.opcode);
+        }
+        lastLabel=null;
+    }
+    private void markEntrance() {
+	    int stackSize=stackTypes.size();
+        if(waitTillStackClear) {
+            if(stackSize==0)
+                waitTillStackClear=false;
+            else
+                return;
+        }
+        markList.add(new Mark(Mark.ENTRANCE, stackSize, opcodeList.size(), maxSizeSinceLastE, lastLabel, returnSinceLastE));
+        maxSizeSinceLastE=0;
+        returnSinceLastE=false;
+        lastEStack=stackSize;
+    }
+    private int commitLargestMethod(int fromHere) {
+        PotentialSSM largestFound=null;
+        for(int i=potentialSSMs.size()-1;i>=0;i--) {
+            PotentialSSM pot=potentialSSMs.get(i);
+            if(pot.endOpcode<fromHere) break;
+            if(pot.startOpcode<fromHere) continue;
+            if((largestFound==null)||(largestFound.maxSize<pot.maxSize))
+                largestFound=pot;
+        }
+        if(largestFound==null) return -1;
+        
+        //ALOAD_0, INVOKEVIRTUAL. +2 instruction, +4 bytes
+        //ALOAD_0, INVOKEVIRTUAL, DUP, IFNULL SKIP, ARETURN, SKIP, POP. +7 instruction, +10 bytes (+5 +6 compared to no return)
+        int instructionChange=largestFound.endOpcode-largestFound.startOpcode-2;
+        int maxSizeChange=largestFound.maxSize-4;
+        if(largestFound.containsReturn) {
+            instructionChange-=5;
+            maxSizeChange-=6;
+        }
+        //returning because of instructionChange isn't entirely a valid reason, but I do not expect it to be a necessary thing to deal with.
+        if((maxSizeChange<1)||(instructionChange<0)) return -1;
+        for(int i=markList.size()-1;i>=0;i--) {
+            Mark toFix=markList.get(i);
+            if(toFix.location<=largestFound.startOpcode) {
+                i++;
+                while(i<markList.size()) {
+                    Mark next=markList.get(i);
+                    if(next.type==Mark.ENTRANCE) {
+                        next.maxSizeSinceLastE-=maxSizeChange;
+                        if(next.maxSizeSinceLastE<0)
+                            throw new RuntimeException("Mark size underflowed from submethod commit.");
+                        break;
+                    }
+                    i++;
+                }
+                if(i==markList.size()) {
+                    maxSizeSinceLastE-=maxSizeChange;
+                    if(maxSizeSinceLastE<0)
+                        throw new RuntimeException("Method size underflowed from submethod commit.");
+                }
+                break;
+            }
+            if(toFix.location<largestFound.endOpcode) {
+                //I don't think this will happen but oh well.
+                if(toFix.type==Mark.ENTRANCE) {
+                    throw new RuntimeException("Unexpected entrance location to be removed. "+toFix.location+" "+toFix.maxSizeSinceLastE+" "+largestFound.startOpcode+" "+largestFound.endOpcode);
+                }
+                markList.remove(i);
+                continue;
+            }
+            toFix.location-=instructionChange;
+        }
+        for(int i=potentialSSMs.size()-1;i>=0;i--) {
+            PotentialSSM toFix=potentialSSMs.get(i);
+            if(toFix==largestFound) {
+                potentialSSMs.remove(i);
+                break;
+            }
+            if(toFix.endOpcode>largestFound.startOpcode) {
+                toFix.endOpcode-=instructionChange;
+                toFix.startOpcode-=instructionChange;
+            }
+        }
+
+        String methodName="me" + myCompiler.getExtraMVNum();
+        String sig=(largestFound.containsReturn)?"()"+Compiler.FODesc:largestFound.otherReturn;
+        MethodVisitor newMV = cw.visitMethod(Opcodes.ACC_PRIVATE, methodName, sig, null, new String[0]);
+        myCompiler.compileLocalVariables(newMV);
+        newMV=new SSMAdapter(newMV, largestFound.startLabel, largestFound.endLabel);
+        for(MyOpcode op : opcodeList.subList(largestFound.startOpcode, largestFound.endOpcode)) {
+            ((SSMAdapter)newMV).visit(op);
+        }
+        if(largestFound.endLabel!=null)
+        	newMV.visitLabel(((SSMAdapter)newMV).replaceEL);
+        //System.out.println(methodName+" "+sig+" "+opcodeList.size());
+        if(!largestFound.containsReturn) {
+	        if(sig.endsWith("V"))
+            	newMV.visitInsn(Opcodes.RETURN);
+            else if(sig.endsWith("I"))
+            	newMV.visitInsn(Opcodes.IRETURN);
+            else if(sig.endsWith("D"))
+            	newMV.visitInsn(Opcodes.DRETURN);
+            else if(sig.endsWith(";"))
+            	newMV.visitInsn(Opcodes.ARETURN);
+            else
+            	throw new RuntimeException("Unknown return type from method! "+sig);
+            opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.ALOAD, 2));
+            opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.INVOKEVIRTUAL, new String[]{myCompiler.classIName, methodName, sig}));
+        } else {
+            newMV.visitInsn(Opcodes.ACONST_NULL);
+            newMV.visitInsn(Opcodes.ARETURN);
+            opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.ALOAD, 2));
+            opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.INVOKEVIRTUAL, new String[]{myCompiler.classIName, methodName, "()"+Compiler.FODesc}));
+            opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.DUP));
+            Label nullLabel=new Label();
+            opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.IFNULL, nullLabel));
+            opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.ARETURN));
+            opcodeList.set(largestFound.startOpcode++, new MyOpcode(MyOpcode.LABEL, nullLabel));
+            opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.POP));
+        }
+        newMV.visitMaxs(0, 0);
+        newMV.visitEnd();
+        opcodeList.removeRange(largestFound.startOpcode, largestFound.endOpcode);
+        return maxSizeChange;
+    }
+    /* Despite being a long method with a lot of loops called often, this method should still be
+     * very fast due to constantly pruning the arrays. */
+    private void considerSubmethod(Label endLabel) {
+	    int stackSize=stackTypes.size();
+        if(waitTillStackClear) {
+            if(stackSize==0)
+                waitTillStackClear=false;
+            else
+                return;
+        }
+        if((returnSinceLastE && lastEStack<stackSize)
+          ||(lastEStack<stackSize-1)) return;
+        int totalSize=maxSizeSinceLastE;
+        int lastSize=0;
+        int bestEntranceI=-1;
+        String otherReturn="()V";
+        boolean aReturn=returnSinceLastE;
+        for(int i=markList.size()-1;i>=0;i--) {
+            Mark m=markList.get(i);
+            if((m.type==Mark.BRANCH)&&(m.label==endLabel)) continue;
+            if(m.type!=Mark.ENTRANCE) break;
+            if(m.stackSize<stackSize-1) break;
+            if((aReturn||m.returnSinceLastE) && m.stackSize<stackSize) break;
+            if(m.stackSize<=stackSize) bestEntranceI=i;
+            totalSize+=lastSize;
+            lastSize=m.maxSizeSinceLastE;
+            aReturn|=m.returnSinceLastE;
+            while(totalSize>64000) {
+                int change=commitLargestMethod(m.location);
+                if(change<0)
+                    throw new RuntimeException("Cannot fit the code into small enough methods (commit)! "+totalSize);
+                totalSize-=change;
+            }
+        }
+        if((bestEntranceI==-1)||(totalSize<=4)) return;
+        Mark m=markList.get(bestEntranceI);
+        if(m.stackSize<stackSize) {
+	        Integer lastType=stackTypes.get(stackTypes.size()-1);
+	        if(lastType==OBJECT) otherReturn="()"+Compiler.ODesc;
+	        else if(lastType==INTEGER) otherReturn="()I";
+	        else if(lastType==DOUBLE) otherReturn="()D";
+	        else throw new RuntimeException("Unknown thing to return!");
+        }
+        int startLocation=m.location;
+        for(int j=markList.size()-1;j>bestEntranceI;j--) {
+            Mark next=markList.get(j);
+            if(next.type==Mark.ENTRANCE) {
+                maxSizeSinceLastE+=next.maxSizeSinceLastE;
+                returnSinceLastE|=next.returnSinceLastE;	//should be redundant
+                markList.remove(j);
+                //System.out.println("MarkOutB "+next.type+" "+next.location);
+            }
+        }
+        int numPotential=potentialSSMs.size();
+        skipNewSSM:
+        {
+            for(int j=potentialSSMs.size()-1;j>=0;j--) {
+                PotentialSSM old=potentialSSMs.get(j);
+                if(old.startOpcode>startLocation) {
+                    potentialSSMs.remove(j);
+                    continue;
+                } else if(old.startOpcode==startLocation) {
+                    old.endOpcode=opcodeList.size();
+                    old.endLabel=endLabel;
+                    old.maxSize=maxSizeSinceLastE;
+                    old.otherReturn=otherReturn;
+                    old.containsReturn=returnSinceLastE;
+                    //System.out.println("PotentialR: "+startLocation+" "+opcodeList.size());
+                    break skipNewSSM;
+                } else {
+                    break;
+                }
+            }
+            potentialSSMs.add(new PotentialSSM(startLocation, opcodeList.size(), m.label, endLabel, maxSizeSinceLastE, returnSinceLastE, otherReturn));
+        }
+    }
+    private void markBranchTo(Label L) {
+        if(labelUsage.containsKey(L)) {
+            Mark oldMark=labelUsage.get(L);
+            if(oldMark.type==Mark.LABEL) {
+                int indexOf=markList.lastIndexOf(oldMark);
+                for(int i=indexOf;i<markList.size();) {
+                    Mark next=markList.get(i);
+                    if((next.type==Mark.ENTRANCE)&&(next.label!=L)) {
+                        markList.remove(i);
+                        //System.out.println("MarkOutC "+next.type+" "+next.location);
+                        maxSizeSinceLastE+=next.maxSizeSinceLastE;
+                        returnSinceLastE|=next.returnSinceLastE;
+                    }
+                    else
+                        i++;
+                }
+                if((++L.currentCount==L.branchesToHere)&&(!L.isMainLabel)) {
+                    labelUsage.remove(L);
+                    markList.remove(indexOf);
+                    //System.out.println("MarkOutD "+oldMark.type+" "+oldMark.location);
+                }
+            } else {
+                markList.add(new Mark(Mark.BRANCH, stackTypes.size(), opcodeList.size(), 0, L, false));
+                L.currentCount++;
+            }
+        } else {
+            Mark newMark=new Mark(Mark.BRANCH, stackTypes.size(), opcodeList.size(), 0, L, false);
+            markList.add(newMark);
+            labelUsage.put(L, newMark);
+        }
+    }
+    @Override
+    public void visitFieldInsn(int opcode, String owner, String name, String desc) {
+	    MyOpcode newOpcode=new MyOpcode(opcode, new String[]{owner, name, desc});
+        handleStackChange(newOpcode);
+        maxSizeSinceLastE+=getMaxSize(opcode);
+        opcodeList.add(newOpcode);
+        considerSubmethod(null);
+    }
+
+    @Override
+    public void visitIincInsn(int var, int increment) {
+	    MyOpcode newOpcode=new MyOpcode(Opcodes.IINC, var, Integer.valueOf(increment));
+        maxSizeSinceLastE+=getMaxSize(Opcodes.IINC);
+        opcodeList.add(newOpcode);
+    }
+
+    @Override
+    public void visitInsn(int opcode) {
+	    MyOpcode newOpcode=new MyOpcode(opcode);
+        handleStackChange(newOpcode);
+        maxSizeSinceLastE+=getMaxSize(opcode);
+        opcodeList.add(newOpcode);
+        considerSubmethod(null);
+    }
+
+    @Override
+    public void visitIntInsn(int opcode, int operand) {
+	    MyOpcode newOpcode=new MyOpcode(opcode, operand);
+        handleStackChange(newOpcode);
+        maxSizeSinceLastE+=getMaxSize(opcode);
+        opcodeList.add(newOpcode);
+        considerSubmethod(null);
+    }
+
+    @Override
+    public void visitJumpInsn(int opcode, org.objectweb.asm.Label label) {
+	    MyOpcode newOpcode=new MyOpcode(opcode, label);
+        handleStackChange(newOpcode);
+        maxSizeSinceLastE+=getMaxSize(opcode);
+        opcodeList.add(newOpcode);
+        markBranchTo((Label)label);
+        considerSubmethod(null);
+    }
+
+    @Override
+    public void visitLdcInsn(Object cst) {
+	    MyOpcode newOpcode=new MyOpcode(Opcodes.LDC, cst);
+        handleStackChange(newOpcode);
+        maxSizeSinceLastE+=getMaxSize(Opcodes.LDC);
+        opcodeList.add(newOpcode);
+        considerSubmethod(null);
+    }
+
+    @Override
+    public void visitLookupSwitchInsn(org.objectweb.asm.Label dflt, int[] keys, org.objectweb.asm.Label[] labels) {
+        throw new UnsupportedOperationException("Opcode not supported: "+Opcodes.LOOKUPSWITCH);
+    }
+
+    @Override
+    public void visitMethodInsn(int opcode, String owner, String name, String desc) {
+	    MyOpcode newOpcode=new MyOpcode(opcode, new String[]{owner, name, desc});
+        int stackUse=(opcode==Opcodes.INVOKESTATIC)?0:1;
+        int fieldEnd=desc.lastIndexOf(')');
+        for(String fieldString=desc.substring(1, fieldEnd);fieldString.length()>0;stackUse++)
+        {
+            if(fieldString.charAt(0)=='[')
+                throw new UnsupportedOperationException("Array argument for a method.");
+            if(fieldString.charAt(0)=='L')
+            {
+                int fieldStart=fieldString.indexOf(';');
+                if(fieldStart<0)
+                    throw new RuntimeException("Format error for Method signature: "+desc);
+                else
+                    fieldString=fieldString.substring(fieldStart+1);
+            }
+            else
+                fieldString=fieldString.substring(1);
+        }
+        if(stackUse>0)
+            stackDecrease(stackUse);
+        else
+            markEntrance();
+        maxSizeSinceLastE+=getMaxSize(opcode);
+        opcodeList.add(newOpcode);
+        if(!desc.endsWith("V")) {
+            if(desc.endsWith(";")) {
+                stackTypes.add(OBJECT);
+            } else if(desc.endsWith("I")||desc.endsWith("Z")) {
+                stackTypes.add(INTEGER);
+            } else if(desc.endsWith("D")) {
+                stackTypes.add(DOUBLE);
+            } else throw new UnsupportedOperationException("Unknown type for stack: "+desc);
+        }
+        considerSubmethod(null);
+    }
+
+    @Override
+    public void visitMultiANewArrayInsn(String desc, int dims) {
+	    throw new UnsupportedOperationException("Opcode not supported: "+Opcodes.MULTIANEWARRAY);
+    }
+
+    @Override
+    public void visitTableSwitchInsn(int min, int max, org.objectweb.asm.Label dflt, org.objectweb.asm.Label[] labels) {
+	    MyOpcode newOpcode=new MyOpcode(Opcodes.TABLESWITCH, max, new Object[]{Integer.valueOf(min), dflt, labels});
+        handleStackChange(newOpcode);
+        maxSizeSinceLastE+=(max-min+5)*4;
+        opcodeList.add(newOpcode);
+        markBranchTo((Label)dflt);
+        for(Label L : (Label[])labels)
+            markBranchTo(L);
+        considerSubmethod(null);
+    }
+
+    @Override
+    public void visitTypeInsn(int opcode, String type) {
+        throw new UnsupportedOperationException("Opcode not supported: "+opcode);
+    }
+
+    @Override
+    public void visitVarInsn(int opcode, int var) {
+	    MyOpcode newOpcode=new MyOpcode(opcode, var);
+        handleStackChange(newOpcode);
+        if(opcode==Opcodes.ALOAD)
+            maxSizeSinceLastE+=(var<4)?1:2;
+        else
+            maxSizeSinceLastE+=getMaxSize(opcode);
+        opcodeList.add(newOpcode);
+        considerSubmethod(null);
+    }
+
+    @Override
+    public void visitLabel(org.objectweb.asm.Label L) {
+        considerSubmethod((Label)L);
+        if(labelUsage.containsKey(L)) {
+            Mark oldMark=labelUsage.get(L);
+            int change=stackTypes.size()-oldMark.stackSize;
+            if(change!=0) {
+	            //if(stackTypes.size()!=0)
+	            //	throw new RuntimeException("Leftovers on the stack from something? "+stackTypes.size()+" "+opcodeList.size());
+	            if(change>0)
+	            	stackDecrease(change);
+	            else
+	            	stackIncrease(-change);
+            }
+            int indexOf=markList.lastIndexOf(oldMark);
+            for(int i=indexOf;i<markList.size();) {
+                Mark next=markList.get(i);
+                if((next.type==Mark.BRANCH)&&(next.label==L)) {
+                    markList.remove(i);
+                    //System.out.println("MarkOutE "+next.type+" "+next.location);
+                } else if(next.type==Mark.ENTRANCE) {
+	                //System.out.println("MarkOutF "+next.type+" "+next.location);
+                    markList.remove(i);
+                    maxSizeSinceLastE+=next.maxSizeSinceLastE;
+                    returnSinceLastE|=next.returnSinceLastE;
+                }
+                else
+                    i++;
+            }
+            if((((Label)L).branchesToHere==0)&&(!((Label)L).isMainLabel)) {
+	            //System.out.println("No branches to label! "+((Label)L).extra);
+            }
+            if(((++((Label)L).currentCount)==(((Label)L).branchesToHere))&&(!((Label)L).isMainLabel)) {
+                labelUsage.remove(L);
+            } else {
+	            //System.out.println("Label found old branches "+((Label)L).currentCount+"/"+((Label)L).branchesToHere);
+                Mark newMark=new Mark(Mark.LABEL, stackTypes.size(), opcodeList.size(), 0, (Label)L, false);
+                markList.add(newMark);
+                labelUsage.put((Label)L, newMark);
+            }
+        } else {
+            Mark newMark=new Mark(Mark.LABEL, stackTypes.size(), opcodeList.size(), 0, (Label)L, false);
+            markList.add(newMark);
+            labelUsage.put((Label)L, newMark);
+        }
+        opcodeList.add(new MyOpcode(MyOpcode.LABEL, L));
+    }
+
+    @Override
+    public void visitMaxs(int i, int j) {
+        int totalSize=maxSizeSinceLastE;
+        for(Mark m : markList) {
+            totalSize+=m.maxSizeSinceLastE;
+        }
+        while(totalSize>64000) {
+            int change=commitLargestMethod(0);
+            if(change<0)
+            //    throw new RuntimeException("Cannot fit the code into small enough methods (final crunch)! "+totalSize);
+                break;
+            totalSize-=change;
+        }
+        for(MyOpcode op : opcodeList) {
+            visit(op);
+        }
+        super.visitMaxs(i, j);
+        
+        /*
+        System.out.println("Leftover marks: "+markList.size());
+        for(Mark m : markList) {
+	        System.out.print(m.type+" "+m.location);
+		    Label L=m.label;
+	        if(L!=null) {
+		        System.out.print(" Label "+L.currentCount+"/"+L.branchesToHere);
+		        if(L.isMainLabel)
+		        	System.out.print(" (Main)");
+	        }
+	        System.out.print("\r\n");
+        }
+        */
+    }
+}
