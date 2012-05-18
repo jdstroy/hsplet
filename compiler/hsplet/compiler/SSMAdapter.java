@@ -69,6 +69,7 @@ public class SSMAdapter extends MethodAdapter {
             case Opcodes.POP:
             case Opcodes.DUP:
             case Opcodes.IADD:
+            case Opcodes.IMUL:
             case Opcodes.AALOAD:
             case Opcodes.SWAP:
             case Opcodes.ACONST_NULL:

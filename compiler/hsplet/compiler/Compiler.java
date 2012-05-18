@@ -80,14 +80,6 @@ public class Compiler implements Opcodes, Serializable {
      * shouldn't be used in production, but it is useful to find out 
      * how much of the constant pool is used.*/
     private static final boolean STORE_ENABLED = false;
-    /** From casual analysis of Context.java, it does not look like it is
-     * legal for code to branch from out of a loop to into a loop (and
-     * branching from in to out must be done a certain way ala break). This
-     * flag allows the compiler to act on that assumption and unmark some
-     * of the ax.labels as main labels, and potentially discarding them as
-     * unused code.
-     * For Elona, this is reducing main labels from 5708 to 5137.*/
-    private static final boolean DISCARD_LOOPBRANCHES = true;
 
     /**
      * ax ファイルをコンパイルする。
@@ -231,7 +223,10 @@ public class Compiler implements Opcodes, Serializable {
             }
 
         } finally {
-            jar.close();
+            try {
+                jar.close();
+            }
+            catch(Exception E){}
         }
 
         if (htmlFile != null) {
@@ -389,7 +384,6 @@ public class Compiler implements Opcodes, Serializable {
 
         literals = new ArrayList<Object>();
         loopStarts = new Stack<Label>();
-        //submethodStartEnds = new ArrayList();
         instancedLibraries = new ArrayList<Class>();
         codeIndex = 0;
 
@@ -512,8 +506,8 @@ public class Compiler implements Opcodes, Serializable {
                     ((ArrayList) label.extra).add(old);
                 }
                 ((ArrayList) label.extra).add(Integer.valueOf(i));
-                }
             }
+        }
         //Create the conversionArray to convert call/gosub/on*/button values during compiling
         conversionArray = new int[ax.labels.length];
         int mainCount = 0;
@@ -532,7 +526,7 @@ public class Compiler implements Opcodes, Serializable {
                 } else {
                     for (Integer J : ((ArrayList<Integer>) label.extra)) {
                         conversionArray[J.intValue()] = mainCount;
-                }
+                    }
                 }
                 mainCount++;
             }
@@ -559,13 +553,13 @@ public class Compiler implements Opcodes, Serializable {
                     str.append(" Targetted:").append(L.branchesToHere);
                     if (L.isMainLabel) {
                         str.append(" (Main)");
-                }
+                    }
                 } else {
                     if (L.branchesToHere > 0) {
                         str.append(" Not used but targetted??").append(L.branchesToHere);
                     } else {
                         str.append(" Not used.");
-                }
+                    }
                 }
                 System.out.println(str.toString());
                 str.setLength(0);
@@ -588,13 +582,13 @@ public class Compiler implements Opcodes, Serializable {
                             if (labels.get(ax.labels[i]) == label) {
                                 if (firstMainIndex > i) {
                                     firstMainIndex = i;
-                            }
+                                }
                                 if (lastMainIndex < i) {
                                     lastMainIndex = i;
+                                }
+                            }
                         }
                     }
-                }
-            }
                 }
             } else {
                 Iterator<Integer> iter = tree.iterator();
@@ -606,11 +600,11 @@ public class Compiler implements Opcodes, Serializable {
                         if (labels.get(ax.labels[i]) == label) {
                             if (firstMainIndex > i) {
                                 firstMainIndex = i;
-                        }
+                            }
                             if (lastMainIndex < i) {
                                 lastMainIndex = i;
-                    }
-                }
+                            }
+                        }
                     }
                 }
                 while (iter.hasNext()) {
@@ -622,12 +616,12 @@ public class Compiler implements Opcodes, Serializable {
                             if (labels.get(ax.labels[i]) == label) {
                                 if (firstMainIndex > i) {
                                     firstMainIndex = i;
-                            }
+                                }
                                 if (lastMainIndex < i) {
                                     lastMainIndex = i;
+                                }
+                            }
                         }
-                    }
-                }
                     }
                 }
                 str.append(". ");
@@ -874,7 +868,6 @@ public class Compiler implements Opcodes, Serializable {
 
     }
     private Map<Integer, Label> labels;    //labels from ax code (pregenned) or if/else statements(genned on the fly), keys are ax offsets.
-    //private TreeSet<Integer> labelLocations;
     private Label[] allLabels;
 
     private void createRun(int numTargets) {
@@ -906,10 +899,7 @@ public class Compiler implements Opcodes, Serializable {
         mv.visitLabel(start_try);
         mv.visitVarInsn(ALOAD, 0);
         mv.visitVarInsn(ILOAD, 1);
-            //mv.visitVarInsn(ALOAD, 0);
-            //mv.visitFieldInsn(GETFIELD, classIName, "context", contextDesc);
         mv.visitVarInsn(ILOAD, 1);    //this, int, int
-            //mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "checkSanity", "(I)I");
         mv.visitTableSwitchInsn(0, numTargets - 1, start_run, switchTargets);    //this, int
         int visitedGroups = 0;
         mv.visitLabel(start_run);
@@ -958,13 +948,6 @@ public class Compiler implements Opcodes, Serializable {
 
     private void firstScan(ScanOneVisitor mv) {
         while (codeIndex < ax.codes.length) {
-            if (DISCARD_LOOPBRANCHES) {
-                final Label label = labels.get(ax.codes[codeIndex].offset);
-                if ((label != null) && (loopStarts.size() > 0)) {
-                    label.isMainLabel = false;
-                    label.isUsed = false;
-                }
-            }
             compileStatement(mv);
         }
         allLabels = new Label[labels.size()];
@@ -982,7 +965,6 @@ public class Compiler implements Opcodes, Serializable {
     private HashMap<Integer, Label> loopExceptions = null;
 
     private void secondScan(ScanTwoVisitor mv) {
-        //LabelTree labelTree=new LabelTree();
         mv.labelTree.addBase(0);
         for (int i : ax.labels) {
             mv.labelTree.addBase(labels.get(i).myIndex);
@@ -998,11 +980,6 @@ public class Compiler implements Opcodes, Serializable {
                     label.relyOn(currentLabel);
                 }
                 currentLabel = label;
-                /*
-                for(Label loop : loopStarts) {
-                    mv.loopReliesOn(loop, label);
-                }
-                */
             }
             compileStatement(mv);
         }
@@ -1055,9 +1032,9 @@ public class Compiler implements Opcodes, Serializable {
                     myArray.remove(other);
                     if (myArray.size() == 0) {
                         label.extra = null;
+                    }
                 }
             }
-        }
             if (isSure) {
                 label.extra = null;
             }
@@ -1083,7 +1060,7 @@ public class Compiler implements Opcodes, Serializable {
                 mv.unusedStatements++;
             } else {
                 compileStatement(mv);
-        }
+            }
         }
         return mv.unusedStatements;
     }
@@ -1100,14 +1077,12 @@ public class Compiler implements Opcodes, Serializable {
             //L.isMainLabel=true;
             //L.isUsed=true;
             labels.put(new Integer(ax.labels[i]), L);
-            //labelLocations.add(new Integer(ax.labels[i]));
         }
 
         L = new Label();
         L.isMainLabel = true;
         L.isUsed = true;
         labels.put(new Integer(ax.codes[0].offset), L);
-        //labelLocations.add(new Integer(ax.codes[0].offset));
 
         for (ByteCode.Function function : ax.functions) {
             L = labels.get(ax.labels[function.otindex]);
@@ -1206,24 +1181,6 @@ public class Compiler implements Opcodes, Serializable {
         }
 
     }
-    /*
-    private void compileLabelJumpTable(final MethodVisitor mv) {
-    
-        mv.visitVarInsn(ILOAD, jumpLabelIndex);
-        mv.visitInsn(ICONST_M1);
-        mv.visitVarInsn(ISTORE, jumpLabelIndex);
-    
-        final Label[] labels = new Label[ax.labels.length];
-    
-        for (int i = 0; i < labels.length; ++i) {
-            labels[i] = getLabel(i);
-        }
-    
-        mv.visitTableSwitchInsn(0, ax.labels.length - 1, (Label) this.labels.get(new Integer(ax.codes[0].offset)),
-                labels);
-    
-    }
-     */
 
     private boolean commonVariable(int varIndex) {
         switch (varIndex) {
@@ -1273,258 +1230,6 @@ public class Compiler implements Opcodes, Serializable {
                 throw new UnsupportedOperationException("Not implemented");
         }
     }
-    /*
-    class MangledMethodSignature {
-    
-        public MangledMethodSignature(String name) {
-            this(name, "()V");
-        }
-    
-        public MangledMethodSignature(String name, String signature) {
-            this.name = name;
-            this.signature = signature;
-        }
-        private String name, signature;
-    
-        public String getName() {
-            return name;
-        }
-    
-        public void setName(String name) {
-            this.name = name;
-        }
-    
-        public String getSignature() {
-            return signature;
-        }
-    
-        public void setSignature(String signature) {
-            this.signature = signature;
-        }
-    }
-     */
-    //private int mergedMethodCount = 0;
-    /* Two or more consecutive calls are merged with this method visitor. */
-    //private Map<Integer, List<MangledMethodSignature>> map = new TreeMap<Integer, List<MangledMethodSignature>>();
-/*
-    private void mergeMethodCalls(final MethodVisitor mv, List<MangledMethodSignature> methods) {
-        // Call this.mm####
-        mv.visitVarInsn(ALOAD, thisIndex);
-        mv.visitMethodInsn(INVOKEVIRTUAL, classIName, "mm" + mergedMethodCount, "()V");
-    
-        map.put(new Integer(mergedMethodCount), methods);
-    
-        mergedMethodCount++;
-    }
-    private void createMergedMethodCalls(ClassVisitor cv) {
-        for (Integer index : map.keySet()) {
-            MethodVisitor subroutine = cv.visitMethod(ACC_PUBLIC, "mm" + index.toString(), "()V", null, null);
-    
-            List<MangledMethodSignature> methods = map.get(index);
-    
-            // And each of these methods will be called in series:
-            for (MangledMethodSignature method : methods) {
-                subroutine.visitVarInsn(ALOAD, thisIndex);
-                subroutine.visitMethodInsn(INVOKEVIRTUAL, classIName, method.getName(), method.getSignature());
-            }
-    
-            subroutine.visitInsn(RETURN);
-            subroutine.visitMaxs(0, 0);
-            subroutine.visitEnd();
-        }
-    }
-     */
-    //private ArrayList<String> methodNames = new ArrayList<String>();
-    //private List submethodStartEnds = new ArrayList();
-/*
-    private void compileSeparatedMethod(final MethodVisitor mv, final int endIndex) {
-    
-        compileLocalVariables(mv);
-    
-        while (codeIndex < endIndex) {
-    
-            final Label label = (Label) labels.get(new Integer(ax.codes[codeIndex].offset));
-    
-            if (label != null) {
-                mv.visitLabel(label);
-            }
-    
-            compileStatement(mv);
-        }
-    
-        if (codeIndex < ax.codes.length) {
-            final Label label = (Label) labels.get(new Integer(ax.codes[codeIndex].offset));
-    
-            if (label != null) {
-                mv.visitLabel(label);
-            }
-        }
-    
-    }
-    
-    private int findNextLabelGotoReturn() {
-    
-        for (int i = codeIndex; i < ax.codes.length; ++i) {
-    
-            // ラベル
-            if (i != codeIndex && labels.get(new Integer(ax.codes[i].offset)) != null) {
-                if (!isLoopLabel(ax.codes[i].offset)) {
-                    return i;
-                }
-            }
-    
-            if (ax.codes[i].type == ByteCode.Code.Type.ProgCmd) {
-    
-                // goto か return か exgoto か on
-                if (ax.codes[i].newLine
-                        && (ax.codes[i].value == 0 || ax.codes[i].value == 2 || ax.codes[i].value == 0x18 || ax.codes[i].value == 0x19)) {
-                    return i;
-                }
-    
-            }
-        }
-    
-        return ax.codes.length;
-    }
-    
-    private boolean isLoopLabel(int offset) {
-    
-        for (int i = 0; i < ax.codes.length; ++i) {
-            final Code code = ax.codes[i];
-    
-            if (code.type == Code.Type.CmpCmd) {
-    
-                if (code.value == 0 || code.value == 1) {
-                    // if のターゲット?
-                    if (ax.codes[i + 1].value + ax.codes[i + 2].offset == offset) {
-                        return false;
-                    }
-                }
-    
-            } else if (code.type == ByteCode.Code.Type.ProgCmd) {
-    
-                if (code.value == 3 || code.value == 4 || code.value == 6 || code.value == 0x0B || code.value == 0x0C) {
-                    ++i;
-                }
-            } else if (code.type == ByteCode.Code.Type.Label) {
-    
-                if (ax.labels[code.value] == offset) {
-                    return false;
-                }
-            }
-        }
-    
-        return true;
-    }
-     */
-    /**
-     * else/loop/break/continue/foreachCheck
-     *
-     * @param endIndex
-     * @return
-     */
-    /*
-    private int findBlockEnd(final int startIndex, final int endIndex) {
-    
-        for (int i = startIndex; i < endIndex;) {
-    
-            if (ax.codes[i].type == ByteCode.Code.Type.CmpCmd) {
-    
-                if (ax.codes[i].value == 1) {
-                    // else
-                    return i;
-                } else {
-    
-                    final int ifEndOffset = ax.codes[i + 2].offset + ax.codes[i + 1].value;
-    
-                    final int ifEnd = findCodeForOffset(i, endIndex, ifEndOffset);
-    
-                    if (ifEnd < 0) {
-                        return i;
-                    }
-    
-                    final int ifEnd2 = findBlockEnd(i + 2, ifEnd);
-    
-                    if (ifEnd2 == ifEnd) {
-                        // if の最後までいけた
-    
-                        i = ifEnd;
-                    } else if (ifEnd2 == ifEnd - 2 && ax.codes[ifEnd - 1].type == Code.Type.JumpOffset) {
-                        // else まで行けた
-    
-                        final int elseEndOffset = ax.codes[ifEnd].offset + ax.codes[ifEnd - 1].value;
-    
-                        final int elseEnd = findCodeForOffset(ifEnd, endIndex, elseEndOffset);
-    
-                        if (elseEnd < 0) {
-                            return i;
-                        }
-    
-                        final int elseEnd2 = findBlockEnd(ifEnd, elseEnd);
-    
-                        if (elseEnd2 == elseEnd) {
-                            i = elseEnd;
-                        } else {
-                            return i;
-                        }
-                    } else {
-                        return i;
-                    }
-                }
-            } else if (ax.codes[i].type == ByteCode.Code.Type.ProgCmd) {
-    
-                if (ax.codes[i].value == 3 || ax.codes[i].value == 5 || ax.codes[i].value == 6
-                        || ax.codes[i].value == 0x0C) {
-                    // break/loop/continue/foreachCheck
-                    return i;
-                } else if (ax.codes[i].value == 4 || ax.codes[i].value == 0x0B) {
-                    // repeat/foreach
-    
-                    final int loopEndOffset = ax.labels[ax.codes[i + 1].value];
-    
-                    final int loopEnd = findCodeForOffset(i, endIndex, loopEndOffset);
-    
-                    if (loopEnd < 0) {
-                        // このループはブロックに入りきらない
-                        return i;
-                    }
-    
-                    i = loopEnd;
-                } else {
-                    ++i;
-                }
-            } else {
-                ++i;
-            }
-    
-        }
-    
-        return endIndex;
-    }
-    private boolean containsOuterRepeatLoop(int startIndex, int endIndex, int blockEnd) {
-    
-        for (int i = startIndex; i < endIndex; ++i) {
-    
-            if (ax.codes[i].type == ByteCode.Code.Type.ProgCmd
-                    && (ax.codes[i].value == 3 || ax.codes[i].value == 4 || ax.codes[i].value == 5
-                    || ax.codes[i].value == 6 || ax.codes[i].value == 0x0B || ax.codes[i].value == 0x0C)) {
-                return true;
-            }
-        }
-    
-        return false;
-    }
-    private int findCodeForOffset(int startIndex, final int endIndex, final int offset) {
-    
-        for (int i = startIndex; i < ax.codes.length && i <= endIndex; ++i) {
-    
-            if (ax.codes[i].offset == offset) {
-                return i;
-            }
-        }
-        return -1;
-    }
-     */
     private final String[] byteCodeCodeTypes = new String[]{
         "Mark ",
         "Var ",
@@ -1571,16 +1276,12 @@ public class Compiler implements Opcodes, Serializable {
                 if(mv instanceof ScanOneVisitor) {
                     if(ax.codes[codeIndex].value<=4) {
                         ((ScanOneVisitor)mv).setArgCount(1);
-                    }/* else if(ax.codes[codeIndex].value==4) {
-                        ((ScanOneVisitor)mv).setArgCount(2);
-                    }*/
+                    }
                 } else if(conversionArray!=null) {
                     if(ax.codes[codeIndex].value<=4) {
                         argsToOldLabel=1;
-                    }/* else if(ax.codes[codeIndex].value==4) {
-                        argsToOldLabel=2;
-                    }*/
                     }
+                }
                 compileCommand(mv);
                 break;
             case ByteCode.Code.Type.CmpCmd:
@@ -1769,7 +1470,7 @@ public class Compiler implements Opcodes, Serializable {
         //    System.out.print("]");
     }
 
-    private void compileExpression(final MethodVisitor mv) {
+    private int compileExpression(final MethodVisitor mv) {
 
         // 先読みして最適化を有効化、トークンが二つ以上ある（演算される）時は有効。
         // {
@@ -1787,9 +1488,10 @@ public class Compiler implements Opcodes, Serializable {
 
         // }
 
+        int i=0;
         do {
 
-            compileToken(mv);
+            i+=compileToken(mv);
 
         } while (codeIndex < ax.codes.length
                 && !(ax.codes[codeIndex].type == Code.Type.Mark && (ax.codes[codeIndex].value == ')' || ax.codes[codeIndex].value == '?'))
@@ -1797,76 +1499,77 @@ public class Compiler implements Opcodes, Serializable {
 
         enableVariableOptimization = prevEnableVariableOptimization;
 
+        return i;
     }
 
-    private void compileToken(final MethodVisitor mv) {
+    private int compileToken(final MethodVisitor mv) {
 
         // トークンはリテラル・変数・演算子・関数呼び出しと決まっている。
         //if(mv instanceof ScanOneVisitor)
         //    System.out.print(" "+byteCodeCodeTypes[ax.codes[codeIndex].type]);
 
+        int added=0;
         switch (ax.codes[codeIndex].type) {
             case ByteCode.Code.Type.Mark:
                 compileOperator(mv);
+                added=-1;
                 break;
             case ByteCode.Code.Type.INum:
                 if(mv instanceof ScanOneVisitor) {
-                    //((ScanOneVisitor)mv).decArgCount(ax.codes[codeIndex].value);
                     ((ScanOneVisitor)mv).setArgCount(0);
                 } else if((argsToOldLabel>0)&&(!(mv instanceof EmptyVisitor))) {
                     argsToOldLabel=0;
-                    /*
-                    argsToOldLabel--;
-                    if (argsToOldLabel == 0) {
-                        int index = conversionArray[ax.codes[codeIndex].value];
-                        assert (index < 32768);
-                        pushInteger(index, mv);
-
-                        mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromLabel", "(I)" + literalDesc);
-                
-                        mv.visitInsn(ICONST_0);
-                        break;
-                    }
-                    */
                 }
             case ByteCode.Code.Type.String:
             case ByteCode.Code.Type.DNum:
                 compileLiteral(mv);
+                added=1;
                 break;
             case ByteCode.Code.Type.Struct:
                 compileParameter(mv);
+                added=1;
                 break;
             case ByteCode.Code.Type.Label:
                 compileLabel(mv);
+                added=1;
                 break;
             case ByteCode.Code.Type.Var:
                 compileVariable(mv);
+                added=1;
                 break;
             case ByteCode.Code.Type.ExtSysVar:
                 compileGuiSystmVariable(mv);
+                added=1;
                 break;
             case ByteCode.Code.Type.ModCmd:
                 compileModuleCommand(mv, true);
+                added=1;
                 break;
             case ByteCode.Code.Type.IntFunc:
                 compileFunction(mv);
+                added=1;
                 break;
             case ByteCode.Code.Type.SysVar:
                 compileSystemVariable(mv);
+                added=1;
                 break;
             case ByteCode.Code.Type.ProgCmd:
                 compileProgramCommand(mv);
+                //added=0;
                 break;
             case ByteCode.Code.Type.DllFunc:
                 compileDllFunction(mv);
+                added=1;
                 break;
             case ByteCode.Code.Type.DllCtrl:
                 compileDllFunction(mv);
+                added=1;
                 break;
 
             default:
                 throw new RuntimeException("命令コード " + ax.codes[codeIndex].type + " は解釈できません。");
         }
+        return added;
     }
     private boolean skipToInt = false;
 
@@ -1877,6 +1580,7 @@ public class Compiler implements Opcodes, Serializable {
         if(mv instanceof ScanOneVisitor) {
             ((ScanOneVisitor)mv).decArgCount(code.value);
         }
+        //skipToInt is currently disabled because it is not always safe to use.
         if((argsToOldLabel>0)&&(!(mv instanceof EmptyVisitor))) {
             argsToOldLabel--;
             if(argsToOldLabel==0) {
@@ -2051,7 +1755,7 @@ public class Compiler implements Opcodes, Serializable {
 
         for (int paramIndex = 0; paramIndex < method.getParameterTypes().length; ++paramIndex) {
 
-            final Class type = method.getParameterTypes()[paramIndex];
+            Class type = method.getParameterTypes()[paramIndex];
 
             if (type.equals(Context.class)) {
 
@@ -2095,39 +1799,47 @@ public class Compiler implements Opcodes, Serializable {
                 firstParam = false;
 
                 if (!omitted) {
-                    compileExpression(mv);
-
-                    if (skipToInt) {
-                        skipToInt = false;
-                    } else if (type.equals(Operand.class)) {
-
-                        ++paramIndex; // 次の int は読み飛ばす
-
-                        // 次は必ず int
-                        if (!method.getParameterTypes()[paramIndex].equals(Integer.TYPE)) {
-                            throw new RuntimeException(
-                                    "拡張ライブラリの引数に Operand を受け取ったときはかならずその次の引数で配列インデックスを受け取らなければいけません。");
+                    int numVals=compileExpression(mv);
+                    
+                    while(true) {
+                        if (skipToInt) {
+                            skipToInt = false;
+                        } else if (type.equals(Operand.class)) {
+    
+                            ++paramIndex; // 次の int は読み飛ばす
+    
+                            // 次は必ず int
+                            if (!method.getParameterTypes()[paramIndex].equals(Integer.TYPE)) {
+                                throw new RuntimeException(
+                                        "拡張ライブラリの引数に Operand を受け取ったときはかならずその次の引数で配列インデックスを受け取らなければいけません。");
+                            }
+    
+                        } else if (type.equals(Integer.TYPE)) {
+    
+                            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+    
+                        } else if (type.equals(Double.TYPE)) {
+    
+                            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toDouble", "(I)D");
+    
+                        } else if (type.equals(ByteString.class)) {
+    
+                            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toByteString", "(I)" + Type.getDescriptor(type));
+    
+                        } else if (type.equals(String.class)) {
+    
+                            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toString", "(I)"
+                                    + Type.getDescriptor(String.class));
+    
+                        } else {
+                            throw new UnsupportedOperationException("拡張ライブラリの引数型 " + type + " はサポートされていません。");
                         }
-
-                    } else if (type.equals(Integer.TYPE)) {
-
-                        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
-
-                    } else if (type.equals(Double.TYPE)) {
-
-                        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toDouble", "(I)D");
-
-                    } else if (type.equals(ByteString.class)) {
-
-                        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toByteString", "(I)" + Type.getDescriptor(type));
-
-                    } else if (type.equals(String.class)) {
-
-                        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toString", "(I)"
-                                + Type.getDescriptor(String.class));
-
-                    } else {
-                        throw new UnsupportedOperationException("拡張ライブラリの引数型 " + type + " はサポートされていません。");
+                        
+                        if(--numVals<=0)
+                            break;
+                        
+                        paramIndex++;
+                        type = method.getParameterTypes()[paramIndex];
                     }
 
                 } else {
@@ -2758,7 +2470,7 @@ public class Compiler implements Opcodes, Serializable {
         } else if (mv instanceof ScanThreeVisitor) {
             if ((currentLabel != null) && (currentLabel.isUsed)) {
                 L.branchesToHere++;
-        }
+            }
             //System.out.println(((ScanThreeVisitor)mv).currentStatementAddress+" Foreach-skip to "+ax.labels[label.value]);
         }
 
@@ -2791,7 +2503,7 @@ public class Compiler implements Opcodes, Serializable {
         } else if (mv instanceof ScanThreeVisitor) {
             if ((currentLabel != null) && (currentLabel.isUsed)) {
                 L.branchesToHere++;
-        }
+            }
             //System.out.println(((ScanThreeVisitor)mv).currentStatementAddress+" Foreach-check to "+ax.labels[label.value]);
         }
         //if(conversionArray!=null)
@@ -3017,9 +2729,6 @@ public class Compiler implements Opcodes, Serializable {
             mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
         }
 
-        //if((labelLocations.ceiling(Integer.valueOf(base))==labelLocations.lower(Integer.valueOf(base+offset)))
-        //  &&(labelLocations.ceiling(Integer.valueOf(base))!=null))
-        //    System.out.println("GOTO within If: "+base+" "+labelLocations.ceiling(Integer.valueOf(base)).toString()+" "+(base+offset));
         final Label existingLabel = (Label) labels.get(new Integer(base + offset));
         if (existingLabel != null) {
             mv.visitJumpInsn(IFEQ, existingLabel);
@@ -3031,7 +2740,7 @@ public class Compiler implements Opcodes, Serializable {
             } else if (mv instanceof ScanThreeVisitor) {
                 if ((currentLabel != null) && (currentLabel.isUsed)) {
                     existingLabel.branchesToHere++;
-            }
+                }
                 //System.out.println(((ScanThreeVisitor)mv).currentStatementAddress+" If to "+(base + offset));
             }
             //System.out.println("Existing "+base+" "+(base + offset));
@@ -3055,9 +2764,6 @@ public class Compiler implements Opcodes, Serializable {
         final int offset = ax.codes[codeIndex++].value;
         final int base = ax.codes[codeIndex].offset;
 
-        //if((labelLocations.ceiling(Integer.valueOf(base))==labelLocations.lower(Integer.valueOf(base+offset)))
-        //  &&(labelLocations.ceiling(Integer.valueOf(base))!=null))
-        //    System.out.println("GOTO within Else: "+base+" "+labelLocations.ceiling(Integer.valueOf(base)).toString()+" "+(base+offset));
         final Label existingLabel = (Label) labels.get(new Integer(base + offset));
         if (existingLabel != null) {
             mv.visitJumpInsn(GOTO, existingLabel);
@@ -3069,7 +2775,7 @@ public class Compiler implements Opcodes, Serializable {
             } else if (mv instanceof ScanThreeVisitor) {
                 if ((currentLabel != null) && (currentLabel.isUsed)) {
                     existingLabel.branchesToHere++;
-            }
+                }
                 //System.out.println(((ScanThreeVisitor)mv).currentStatementAddress+" Else to "+(base + offset));
             }
             //System.out.println("Existing "+base+" "+(base + offset));
@@ -3140,25 +2846,14 @@ public class Compiler implements Opcodes, Serializable {
                             nextLabel = null;
                         }
                     }
-                    //Label ln=new Label();
-                    //mv.visitLineNumber(numStatements++, ln);
-                    //mv.visitLabel(ln);
                     compileStatement(mv);
                 }
                 currentLabel = nextLabel;
             }
-            //mv.visitInsn(ACONST_NULL);
-            //mv.visitMethodInsn(INVOKESTATIC, FOIName, "getFO", "("+opeDesc+")"+FODesc);
-
-            //mv.visitInsn(ARETURN);
             mv.visitMaxs(0, 0);
             mv.visitEnd();
         }
     }
-
-    private void compileGroup(MyTreeThing labelGroup, MethodVisitor mv) {
-    }
-    /* */
 
     private ClassNode createSuperClassVisitor() {
         ClassNode node = new ClassNode();
@@ -3190,14 +2885,14 @@ public class Compiler implements Opcodes, Serializable {
         } else if (i < ICONST_INSNS.length) {
             mv.visitInsn(ICONST_INSNS[i]);
         } else if (i < 128) {
-                    mv.visitIntInsn(BIPUSH, i);
-                } else if (i < 32768) {
-                    mv.visitIntInsn(SIPUSH, i);
-                } else {
-                    return false;
-                }
-                return true;
+            mv.visitIntInsn(BIPUSH, i);
+        } else if (i < 32768) {
+            mv.visitIntInsn(SIPUSH, i);
+        } else {
+            return false;
         }
+        return true;
+    }
 
     /**
      * Pushes a positive integer on the stack for the given method without using 
@@ -3227,10 +2922,16 @@ public class Compiler implements Opcodes, Serializable {
             assert (i > 32767);
             int iterations = (i / 32767);
             pushInteger(32767, mv);
+            if(iterations > 1) {
+                pushInteger(iterations, mv);
+                mv.visitInsn(IMUL);
+            }
+            /*
             for(int j = 1; j < iterations; j++) {
                 mv.visitInsn(DUP);
                 mv.visitInsn(IADD);
             }
+            */
             assert( i - (32767 * iterations) < 32767 );
             pushInteger(i - (32767 * iterations), mv);
             mv.visitInsn(IADD);

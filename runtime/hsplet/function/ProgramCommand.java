@@ -305,7 +305,7 @@ public class ProgramCommand extends FunctionBase {
 		}
 	}
 
-	public static void mcall(final Context context, final Operand v, final int vi) {
+	public static void mcall(final Context context, final Operand v, final int vi, String methodName) {
 
 		context.error(HSPError.UnsupportedOperation, "mcall");
 

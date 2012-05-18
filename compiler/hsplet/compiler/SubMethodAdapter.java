@@ -5,6 +5,7 @@ import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import java.util.HashMap;
 
 /**
@@ -85,7 +86,35 @@ public class SubMethodAdapter extends SSMAdapter {
     private Integer NOTYPE=Integer.valueOf(-1);
     private Integer INTEGER=Integer.valueOf(0);
     private Integer DOUBLE=Integer.valueOf(1);
-    private Integer OBJECT=Integer.valueOf(2);
+    private Integer BOOLEAN=Integer.valueOf(2);
+    private Integer OBJECT=Integer.valueOf(3);
+    /*
+    private Integer CONTEXT=Integer.valueOf(4);
+    private Integer VARIABLE=Integer.valueOf(5);
+    private Integer OPERAND=Integer.valueOf(5);
+    private Integer LITERAL=Integer.valueOf(6);
+    private Integer RUNNABLE=Integer.valueOf(7);
+    private Integer JUMPSTMNT=Integer.valueOf(8);
+    private Integer FLAGOBJ=Integer.valueOf(10);
+    private Integer SCALAR=Integer.valueOf(11);
+    private Integer INTSCALAR=Integer.valueOf(12);
+    */
+    private HashMap<String, Integer> stackTypeMap=new HashMap<String, Integer>();
+    private ArrayList<String> stackTypeList=new ArrayList<String>();
+    private int baseStackType=4;
+    private int nextStackType=baseStackType;
+    private Integer getStackTypeInt(String desc) {
+        Integer I=stackTypeMap.get(desc);
+        if(I==null) {
+            I=Integer.valueOf(nextStackType++);
+            stackTypeList.add(desc);
+            stackTypeMap.put(desc, I);
+        }
+        return I;
+    }
+    private String getStackTypeDesc(Integer I) {
+        return stackTypeList.get(I.intValue()-baseStackType);
+    }
 
     /* Unused in submethods but exist in outputted code:
      * case ANEWARRAY:
@@ -102,6 +131,7 @@ public class SubMethodAdapter extends SSMAdapter {
             case Opcodes.ARETURN:
             case Opcodes.ACONST_NULL:
             case Opcodes.IADD:
+            case Opcodes.IMUL:
             case Opcodes.AALOAD:
             case Opcodes.ICONST_M1:
             case Opcodes.POP:
@@ -192,15 +222,18 @@ public class SubMethodAdapter extends SSMAdapter {
                 stackDecrease(1);
                 String[] data=(String[])mo.otherData;
                 if(data[2].endsWith(";")) {
-                    stackTypes.add(OBJECT);
-                } else if(data[2].endsWith("I")||data[2].endsWith("Z")) {
+                    stackTypes.add(getStackTypeInt(data[2].substring(data[2].indexOf(")")+1)));
+                } else if(data[2].endsWith("I")) {
                     stackTypes.add(INTEGER);
+                } else if(data[2].endsWith("Z")) {
+                    stackTypes.add(BOOLEAN);
                 } else if(data[2].endsWith("D")) {
                     stackTypes.add(DOUBLE);
                 } else throw new UnsupportedOperationException("Unknown type for stack: "+data[2]);
                 break;
             }
             case Opcodes.IADD:
+            case Opcodes.IMUL:
                 stackDecrease(2);
                 stackTypes.add(INTEGER);
                 break;
@@ -246,7 +279,7 @@ public class SubMethodAdapter extends SSMAdapter {
                 } else if(mo.otherData instanceof Double) {
                     stackTypes.add(DOUBLE);
                 } else {
-                    stackTypes.add(OBJECT);
+                    stackTypes.add(getStackTypeInt(Type.getDescriptor(mo.otherData.getClass())));
                 }
                 break;
             }
@@ -254,9 +287,11 @@ public class SubMethodAdapter extends SSMAdapter {
                 markEntrance();
                 String[] data=(String[])mo.otherData;
                 if(data[2].endsWith(";")) {
-                    stackTypes.add(OBJECT);
-                } else if(data[2].endsWith("I")||data[2].endsWith("Z")) {
+                    stackTypes.add(getStackTypeInt(data[2].substring(data[2].indexOf(")")+1)));
+                } else if(data[2].endsWith("I")) {
                     stackTypes.add(INTEGER);
+                } else if(data[2].endsWith("Z")) {
+                    stackTypes.add(BOOLEAN);
                 } else if(data[2].endsWith("D")) {
                     stackTypes.add(DOUBLE);
                 } else throw new UnsupportedOperationException("Unknown type for stack: "+data[2]);
@@ -361,7 +396,7 @@ public class SubMethodAdapter extends SSMAdapter {
         if(!largestFound.containsReturn) {
             if(sig.endsWith("V"))
                 newMV.visitInsn(Opcodes.RETURN);
-            else if(sig.endsWith("I"))
+            else if((sig.endsWith("I"))||(sig.endsWith("Z")))
                 newMV.visitInsn(Opcodes.IRETURN);
             else if(sig.endsWith("D"))
                 newMV.visitInsn(Opcodes.DRETURN);
@@ -369,12 +404,12 @@ public class SubMethodAdapter extends SSMAdapter {
                 newMV.visitInsn(Opcodes.ARETURN);
             else
                 throw new RuntimeException("Unknown return type from method! "+sig);
-            opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.ALOAD, 2));
+            opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.ALOAD, 0));
             opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.INVOKEVIRTUAL, new String[]{myCompiler.classIName, methodName, sig}));
         } else {
             newMV.visitInsn(Opcodes.ACONST_NULL);
             newMV.visitInsn(Opcodes.ARETURN);
-            opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.ALOAD, 2));
+            opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.ALOAD, 0));
             opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.INVOKEVIRTUAL, new String[]{myCompiler.classIName, methodName, "()"+Compiler.FODesc}));
             opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.DUP));
             Label nullLabel=new Label();
@@ -404,13 +439,21 @@ public class SubMethodAdapter extends SSMAdapter {
         int lastSize=0;
         int bestEntranceI=-1;
         String otherReturn="()V";
+        if(stackSize>0) {
+            Integer lastType=stackTypes.get(stackTypes.size()-1);
+            if((lastType==OBJECT)||(lastType==NOTYPE)) {}
+            else if(lastType==INTEGER) otherReturn="()I";
+            else if(lastType==DOUBLE) otherReturn="()D";
+            else if(lastType==BOOLEAN) otherReturn="()Z";
+            else otherReturn="()"+getStackTypeDesc(lastType);
+        }
         boolean aReturn=returnSinceLastE;
         for(int i=markList.size()-1;i>=0;i--) {
             Mark m=markList.get(i);
             if((m.type==Mark.BRANCH)&&(m.label==endLabel)) continue;
             if(m.type!=Mark.ENTRANCE) break;
             if(m.stackSize<stackSize-1) break;
-            if((aReturn||m.returnSinceLastE) && m.stackSize<stackSize) break;
+            if((aReturn||m.returnSinceLastE||(otherReturn=="()V")) && m.stackSize<stackSize) break;
             if(m.stackSize<=stackSize) bestEntranceI=i;
             totalSize+=lastSize;
             lastSize=m.maxSizeSinceLastE;
@@ -424,13 +467,6 @@ public class SubMethodAdapter extends SSMAdapter {
         }
         if((bestEntranceI==-1)||(totalSize<=4)) return;
         Mark m=markList.get(bestEntranceI);
-        if(m.stackSize<stackSize) {
-            Integer lastType=stackTypes.get(stackTypes.size()-1);
-            if(lastType==OBJECT) otherReturn="()"+Compiler.ODesc;
-            else if(lastType==INTEGER) otherReturn="()I";
-            else if(lastType==DOUBLE) otherReturn="()D";
-            else throw new RuntimeException("Unknown thing to return!");
-        }
         int startLocation=m.location;
         for(int j=markList.size()-1;j>bestEntranceI;j--) {
             Mark next=markList.get(j);
@@ -461,7 +497,8 @@ public class SubMethodAdapter extends SSMAdapter {
                     break;
                 }
             }
-            potentialSSMs.add(new PotentialSSM(startLocation, opcodeList.size(), m.label, endLabel, maxSizeSinceLastE, returnSinceLastE, otherReturn));
+            potentialSSMs.add(new PotentialSSM(startLocation, opcodeList.size(), m.label, endLabel,
+                maxSizeSinceLastE, returnSinceLastE, (m.stackSize==stackSize)?"()V":otherReturn));
         }
     }
     private void markBranchTo(Label L) {
@@ -581,9 +618,11 @@ public class SubMethodAdapter extends SSMAdapter {
         opcodeList.add(newOpcode);
         if(!desc.endsWith("V")) {
             if(desc.endsWith(";")) {
-                stackTypes.add(OBJECT);
-            } else if(desc.endsWith("I")||desc.endsWith("Z")) {
+                stackTypes.add(getStackTypeInt(desc.substring(desc.indexOf(")")+1)));
+            } else if(desc.endsWith("I")) {
                 stackTypes.add(INTEGER);
+            } else if(desc.endsWith("Z")) {
+                stackTypes.add(BOOLEAN);
             } else if(desc.endsWith("D")) {
                 stackTypes.add(DOUBLE);
             } else throw new UnsupportedOperationException("Unknown type for stack: "+desc);
@@ -682,8 +721,8 @@ public class SubMethodAdapter extends SSMAdapter {
         while(totalSize>64000) {
             int change=commitLargestMethod(0);
             if(change<0)
-            //    throw new RuntimeException("Cannot fit the code into small enough methods (final crunch)! "+totalSize);
-                break;
+                throw new RuntimeException("Cannot fit the code into small enough methods (final crunch)! "+totalSize);
+            //    break;
             totalSize-=change;
         }
         for(MyOpcode op : opcodeList) {
