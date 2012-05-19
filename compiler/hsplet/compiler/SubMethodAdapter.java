@@ -666,6 +666,21 @@ public class SubMethodAdapter extends SSMAdapter {
 
     @Override
     public void visitLabel(org.objectweb.asm.Label L) {
+        unusedBranchCheck:
+        if(opcodeList.size()>0 && opcodeList.get(opcodeList.size()-1).otherData==L) {
+            //Only pruning GOTOs for now
+            if(opcodeList.get(opcodeList.size()-1).opcode!=Opcodes.GOTO) {
+                break unusedBranchCheck;
+            }
+            //Undoing a goto:
+            //Stack does not require a fix. Remove entrance mark. Leave branch mark for normal logic to remove.
+            //Reduce maxsize. Remove opcode. There won't be a potential submethod to worry about.
+            Mark markToRemove=markList.remove(markList.size()-2);
+            maxSizeSinceLastE-=5;
+            maxSizeSinceLastE+=markToRemove.maxSizeSinceLastE;
+            returnSinceLastE|=markToRemove.returnSinceLastE;
+            opcodeList.remove(opcodeList.size()-1);
+        }
         considerSubmethod((Label)L);
         if(labelUsage.containsKey(L)) {
             Mark oldMark=labelUsage.get(L);
@@ -693,9 +708,9 @@ public class SubMethodAdapter extends SSMAdapter {
                 else
                     i++;
             }
-            if((((Label)L).branchesToHere==0)&&(!((Label)L).isMainLabel)) {
+            //if((((Label)L).branchesToHere==0)&&(!((Label)L).isMainLabel)) {
                 //System.out.println("No branches to label! "+((Label)L).extra);
-            }
+            //}
             if(((++((Label)L).currentCount)==(((Label)L).branchesToHere))&&(!((Label)L).isMainLabel)) {
                 labelUsage.remove(L);
             } else {

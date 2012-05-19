@@ -819,7 +819,7 @@ public class Compiler implements Opcodes, Serializable {
             if (!useSuperClassConstants) {
                 mv.visitVarInsn(ALOAD, thisIndex);
 
-                mv.visitLdcInsn(value);
+                efficientLDC(mv, value);
 
                 mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "("
                         + Type.getDescriptor(value instanceof Integer ? Integer.TYPE
@@ -1044,7 +1044,7 @@ public class Compiler implements Opcodes, Serializable {
     //This simply counts REAL branches to labels
 
     private int thirdScan(ScanThreeVisitor mv) {
-        MethodVisitor empty = new EmptyVisitor();
+        MethodVisitor empty = EmptyVisitor.mv;
         while (codeIndex < ax.codes.length) {
             mv.currentStatementAddress = ax.codes[codeIndex].offset;
             final Label label = labels.get(mv.currentStatementAddress);
@@ -1316,12 +1316,12 @@ public class Compiler implements Opcodes, Serializable {
 
         // 演算子を先読みして最適化を有効にする。
         // {
-        final int index = codeIndex;
+        int index = codeIndex;
 
         if (ax.codes[codeIndex].type == Code.Type.Var) {
-            compileVariable(new EmptyVisitor());
+            compileVariable(EmptyVisitor.mv);
         } else {
-            compileParameter(new EmptyVisitor());
+            compileParameter(EmptyVisitor.mv);
         }
 
         enableVariableOptimization |= ax.codes[codeIndex].value != 8;
@@ -1347,36 +1347,49 @@ public class Compiler implements Opcodes, Serializable {
 
             String name = assignOperators[code.value];
 
-            mv.visitVarInsn(ISTORE, assignOffsetIndex);
+            index = codeIndex;
+            compileExpression(EmptyVisitor.mv);
+            boolean lastCommand = (codeIndex >= ax.codes.length || ax.codes[codeIndex].newLine);
+            codeIndex = index;
 
-            do {
-
-                mv.visitInsn(DUP);
-
-                mv.visitVarInsn(ILOAD, assignOffsetIndex);
-
-                mv.visitIincInsn(assignOffsetIndex, 1);
-
+            if(lastCommand) {
                 compileExpression(mv);
-
                 mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(I" + opeDesc + "I)V");
-
-            } while (codeIndex < ax.codes.length && !ax.codes[codeIndex].newLine);
-
-            mv.visitInsn(POP);
-
+            } else {
+                mv.visitVarInsn(ISTORE, assignOffsetIndex);
+    
+                do {
+    
+                    mv.visitInsn(DUP);
+                    mv.visitVarInsn(ILOAD, assignOffsetIndex);
+                    mv.visitIincInsn(assignOffsetIndex, 1);
+                    compileExpression(mv);
+                    mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(I" + opeDesc + "I)V");
+    
+                    index = codeIndex;
+                    compileExpression(EmptyVisitor.mv);
+                    lastCommand = (codeIndex >= ax.codes.length || ax.codes[codeIndex].newLine);
+                    codeIndex = index;
+    
+                } while (!lastCommand);
+    
+                mv.visitVarInsn(ILOAD, assignOffsetIndex);
+                compileExpression(mv);
+                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(I" + opeDesc + "I)V");
+            }
+    
         } else {
-
+    
             // 単項演算子
-
+    
             String name = unaryOperators[code.value];
-
+    
             mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(I)V");
-
+    
         }
-
+    
         enableVariableOptimization = prevEnableVariableOptimization;
-
+    
     }
 
     private void compileVariableFastLoad(final MethodVisitor mv, final int varIndex) {
@@ -1422,7 +1435,7 @@ public class Compiler implements Opcodes, Serializable {
 
             final int index = codeIndex;
 
-            compileExpression(new EmptyVisitor());
+            compileExpression(EmptyVisitor.mv);
 
             final boolean moreThan2Dim = (codeIndex < ax.codes.length && !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')'));
 
@@ -1431,11 +1444,7 @@ public class Compiler implements Opcodes, Serializable {
             if (!moreThan2Dim) {
 
                 compileExpression(mv);
-                if (skipToInt) {
-                    skipToInt = false;
-                } else {
-                    mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
-                }
+                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
             } else {
                 mv.visitInsn(DUP);
@@ -1446,11 +1455,7 @@ public class Compiler implements Opcodes, Serializable {
                     ++paramCount;
 
                     compileExpression(mv);
-                    if (skipToInt) {
-                        skipToInt = false;
-                    } else {
-                        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
-                    }
+                    mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
                 } while (codeIndex < ax.codes.length
                         && !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')'));
@@ -1470,6 +1475,7 @@ public class Compiler implements Opcodes, Serializable {
         //    System.out.print("]");
     }
 
+    private boolean maySkipLabel=false;
     private int compileExpression(final MethodVisitor mv) {
 
         // 先読みして最適化を有効化、トークンが二つ以上ある（演算される）時は有効。
@@ -1479,7 +1485,7 @@ public class Compiler implements Opcodes, Serializable {
 
         final int index = codeIndex;
 
-        compileToken(new EmptyVisitor());
+        compileToken(EmptyVisitor.mv);
 
         enableVariableOptimization |= (codeIndex < ax.codes.length
                 && !(ax.codes[codeIndex].type == Code.Type.Mark && (ax.codes[codeIndex].value == ')' || ax.codes[codeIndex].value == '?')) && !(ax.codes[codeIndex].newLine | ax.codes[codeIndex].comma));
@@ -1580,19 +1586,19 @@ public class Compiler implements Opcodes, Serializable {
         if(mv instanceof ScanOneVisitor) {
             ((ScanOneVisitor)mv).decArgCount(code.value);
         }
-        //skipToInt is currently disabled because it is not always safe to use.
         if((argsToOldLabel>0)&&(!(mv instanceof EmptyVisitor))) {
             argsToOldLabel--;
             if(argsToOldLabel==0) {
-                //skipToInt=true;
                 assert (code.value < 32768);
                 pushInteger(conversionArray[code.value], mv);
-                //mv.visitLdcInsn(new Integer(conversionArray[code.value]));
-                //return;
             }
         }
         else
-            mv.visitLdcInsn(new Integer(code.value));
+            efficientLDC(mv, Integer.valueOf(code.value));
+        if(maySkipLabel) {
+            skipToInt=true;
+            return;
+        }
         mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromLabel", "(I)" + literalDesc);
 
         mv.visitInsn(ICONST_0);
@@ -1799,6 +1805,7 @@ public class Compiler implements Opcodes, Serializable {
                 firstParam = false;
 
                 if (!omitted) {
+                    maySkipLabel=type.equals(Integer.TYPE);
                     int numVals=compileExpression(mv);
                     
                     while(true) {
@@ -1841,6 +1848,7 @@ public class Compiler implements Opcodes, Serializable {
                         paramIndex++;
                         type = method.getParameterTypes()[paramIndex];
                     }
+                    maySkipLabel=false;
 
                 } else {
 
@@ -1879,7 +1887,7 @@ public class Compiler implements Opcodes, Serializable {
         while (!noeatparam && codeIndex < ax.codes.length && !(ax.codes[codeIndex].newLine)
                 && !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')')) {
 
-            compileExpression(new EmptyVisitor());
+            compileExpression(EmptyVisitor.mv);
 
         }
     }
@@ -1914,7 +1922,7 @@ public class Compiler implements Opcodes, Serializable {
         } else {
             labelInt = new Integer(ax.functions[code.value].otindex);
         }
-        mv.visitLdcInsn(labelInt);
+        efficientLDC(mv, labelInt);
 
         mv.visitMethodInsn(INVOKESTATIC, Type.getInternalName(method.getDeclaringClass()), method.getName(),
                 methodDesc);
@@ -2001,10 +2009,7 @@ public class Compiler implements Opcodes, Serializable {
 
                 compileExpression(mv);
 
-                if (skipToInt) {
-                    skipToInt = false;
-                } else {
-                    switch (type) {
+                switch (type) {
                     case 1: // var
                     case -1: // local variable
                     case -3: // single variable
@@ -2052,7 +2057,6 @@ public class Compiler implements Opcodes, Serializable {
                     default:
                         throw new UnsupportedOperationException("ユーザ定義命令の引数型 " + type + " はサポートされていません。");
                 }
-                }
 
             } else {
 
@@ -2095,7 +2099,7 @@ public class Compiler implements Opcodes, Serializable {
         while (codeIndex < ax.codes.length && !(ax.codes[codeIndex].newLine)
                 && !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')')) {
 
-            compileExpression(new EmptyVisitor());
+            compileExpression(EmptyVisitor.mv);
 
         }
     }
@@ -2288,11 +2292,7 @@ public class Compiler implements Opcodes, Serializable {
 
             compileExpression(mv);
 
-            if (skipToInt) {
-                skipToInt = false;
-            } else {
-                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
-            }
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
         } else {
 
@@ -2304,11 +2304,7 @@ public class Compiler implements Opcodes, Serializable {
 
             compileExpression(mv);
 
-            if (skipToInt) {
-                skipToInt = false;
-            } else {
-                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
-            }
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
         } else {
             mv.visitInsn(ICONST_0);
@@ -2399,11 +2395,7 @@ public class Compiler implements Opcodes, Serializable {
 
             compileExpression(mv);
 
-            if (skipToInt) {
-                skipToInt = false;
-            } else {
-                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
-            }
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
             mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "nextLoop", "(I)Z");
 
@@ -2518,27 +2510,15 @@ public class Compiler implements Opcodes, Serializable {
 
         // 変数の値
         compileExpression(mv);
-        if (skipToInt) {
-            skipToInt = false;
-        } else {
-            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
-        }
+        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
         // モード
         compileExpression(mv);
-        if (skipToInt) {
-            skipToInt = false;
-        } else {
-            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
-        }
+        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
         // 基準値
         compileExpression(mv);
-        if (skipToInt) {
-            skipToInt = false;
-        } else {
-            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
-        }
+        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
         mv.visitInsn(SWAP);
 
@@ -2723,11 +2703,7 @@ public class Compiler implements Opcodes, Serializable {
 
         compileExpression(mv);
 
-        if (skipToInt) {
-            skipToInt = false;
-        } else {
-            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
-        }
+        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
         final Label existingLabel = (Label) labels.get(new Integer(base + offset));
         if (existingLabel != null) {
@@ -2866,8 +2842,58 @@ public class Compiler implements Opcodes, Serializable {
         fv.visitEnd();
 
     }
-    private final int[] ICONST_INSNS = new int[]{ICONST_0, ICONST_1, ICONST_2, ICONST_3, ICONST_4, ICONST_5};
 
+    /**
+     * Guaranteed equivalent-or-better option for LDC.
+     * Should slightly improve constantpool size and bytecode size.
+     */
+    private void efficientLDC(MethodVisitor mv, Object O) {
+        if(O instanceof Integer) {
+            if(pushByte(((Integer)O).intValue(), mv)) {
+                return;
+            }
+        } else if(O instanceof Double) {
+            double value = ((Double)O).doubleValue();
+            if (value == 0.0) {
+                mv.visitInsn(DCONST_0);
+                return;
+            } else if (value == 1.0) {
+                mv.visitInsn(DCONST_1);
+                return;
+            }
+        }
+        mv.visitLdcInsn(O);
+    }
+
+    /**
+     * Pushes i onto the stack for mv for values from -128 to 127.  Returns true 
+     * if i was successfully pushed on the stack, false otherwise.
+     * 
+     * This implementation never produces more than 1 opcode per call.
+     * 
+     * @param i The integer to push on to the stack for mv; must be within 0 to
+     * 32768 inclusive.
+     * @param mv The MethodVisitor to add an opcode to push an integer on the stack.
+     * @return true if mv changed due to this method call; false otherwise.
+     */
+    private boolean pushByte(int i, MethodVisitor mv) {
+        if(!(i >= -128 && i <= 127)) return false;
+        switch(i) {
+            case -1:
+                mv.visitInsn(ICONST_M1);
+                break;
+            case 0: case 1: case 2:
+            case 3: case 4: case 5:
+                mv.visitInsn(ICONST_INSNS[i]);
+                break;
+            default:
+                mv.visitIntInsn(BIPUSH, i);
+                break;
+        }
+        return true;
+    }
+
+    private final int[] ICONST_INSNS = new int[]{ICONST_0, ICONST_1, ICONST_2, ICONST_3, ICONST_4, ICONST_5};
     /**
      * Pushes i onto the stack for mv for values from 0 to 32767.  Returns true 
      * if i was successfully pushed on the stack, false otherwise.
@@ -2974,7 +3000,7 @@ public class Compiler implements Opcodes, Serializable {
                 pushInteger(i, mv);
 
                 // push the constant on the stack
-                mv.visitLdcInsn(value);
+                efficientLDC(mv, value);
 
                 // call Scalar.fromValue on the constant to get a Scalar
                 // pop the constant off, but push a Scalar on
@@ -2994,7 +3020,7 @@ public class Compiler implements Opcodes, Serializable {
                 final Object value = literals.get(i);
 
                 // push the constant on the stack
-                mv.visitLdcInsn(value);
+                efficientLDC(mv, value);
 
                 // call Scalar.fromValue on the constant to get a Scalar
                 // pop the constant off, but push a Scalar on

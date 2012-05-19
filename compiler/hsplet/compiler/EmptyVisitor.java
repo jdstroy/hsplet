@@ -22,5 +22,7 @@ public class EmptyVisitor extends NullVisitor implements  Serializable {
 
   /** このクラスを含むソースファイルのバージョン文字列。 */
   private static final String fileVersionID = "$Id: EmptyVisitor.java,v 1.1 2006/01/09 12:07:05 Yuki Exp $";
+  
+  public static final EmptyVisitor mv=new EmptyVisitor();
 
 }
