@@ -47,6 +47,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.util.CheckClassAdapter;
 
 /**
  * axファイルをコンパイルするクラス。
@@ -200,6 +201,8 @@ public class Compiler implements Opcodes, Serializable {
                         final Compiler c = new Compiler(new ByteCode(new FileInputStream(packFile)),
                                 packFile.getName(), libraryLoader);
                         c.compile(className, jar);
+		    } catch (Exception ex) {
+			ex.printStackTrace();
                     } finally {
                         jar.closeEntry();
                     }
@@ -374,6 +377,8 @@ public class Compiler implements Opcodes, Serializable {
         if (STORE_ENABLED) {
             output = bufferClassNode;
         }
+
+	output = new CheckClassAdapter(output);
 
         // フィールドの初期化。
         if (DEBUG_ENABLED) {
@@ -877,7 +882,9 @@ public class Compiler implements Opcodes, Serializable {
         if(LINENUMS_ENABLED)
             mv = new CodeOpcodeCounter(originalVisitor);
         else
-            mv=originalVisitor;
+            mv = originalVisitor;
+        
+        mv.visitCode();
         if (numTargets == 0) {
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ILOAD, 1);
@@ -893,9 +900,13 @@ public class Compiler implements Opcodes, Serializable {
         final Label handle_return = new Label();
         final Label start_run = new Label();
         final Label[] switchTargets = new Label[numTargets];
+        final Label end_try = new Label();
+        final Label try_handler = new Label();
+        
         for (int i = 0; i < switchTargets.length; i++) {
             switchTargets[i] = new Label();
         }
+        mv.visitTryCatchBlock(start_try, end_try, try_handler, Type.getInternalName(GotoException.class));
         mv.visitLabel(start_try);
         mv.visitVarInsn(ALOAD, 0);
         mv.visitVarInsn(ILOAD, 1);
@@ -925,13 +936,12 @@ public class Compiler implements Opcodes, Serializable {
         mv.visitFieldInsn(GETFIELD, FOIName, "returnObject", opeDesc);    //Operand
         mv.visitInsn(ARETURN);
 
-        final Label end_try = new Label();
         mv.visitLabel(end_try);
 
-        final Label try_handler = new Label();
+        
         mv.visitLabel(try_handler);
 
-        mv.visitTryCatchBlock(start_try, end_try, try_handler, Type.getInternalName(GotoException.class));
+        
 
         mv.visitFieldInsn(GETFIELD, Type.getInternalName(GotoException.class), "label", "I");
 

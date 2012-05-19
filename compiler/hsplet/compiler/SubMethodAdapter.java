@@ -386,29 +386,29 @@ public class SubMethodAdapter extends SSMAdapter {
         String sig=(largestFound.containsReturn)?"()"+Compiler.FODesc:largestFound.otherReturn;
         MethodVisitor newMV = cw.visitMethod(Opcodes.ACC_PRIVATE, methodName, sig, null, new String[0]);
         myCompiler.compileLocalVariables(newMV);
-        newMV=new SSMAdapter(newMV, largestFound.startLabel, largestFound.endLabel);
+        SSMAdapter adapterMV = new SSMAdapter(newMV, largestFound.startLabel, largestFound.endLabel);
         for(MyOpcode op : opcodeList.subList(largestFound.startOpcode, largestFound.endOpcode)) {
-            ((SSMAdapter)newMV).visit(op);
+            adapterMV.visit(op);
         }
         if(largestFound.endLabel!=null)
-            newMV.visitLabel(((SSMAdapter)newMV).replaceEL);
+            adapterMV.visitLabel(adapterMV.replaceEL);
         //System.out.println(methodName+" "+sig+" "+opcodeList.size());
         if(!largestFound.containsReturn) {
             if(sig.endsWith("V"))
-                newMV.visitInsn(Opcodes.RETURN);
+                adapterMV.visitInsn(Opcodes.RETURN);
             else if((sig.endsWith("I"))||(sig.endsWith("Z")))
-                newMV.visitInsn(Opcodes.IRETURN);
+                adapterMV.visitInsn(Opcodes.IRETURN);
             else if(sig.endsWith("D"))
-                newMV.visitInsn(Opcodes.DRETURN);
+                adapterMV.visitInsn(Opcodes.DRETURN);
             else if(sig.endsWith(";"))
-                newMV.visitInsn(Opcodes.ARETURN);
+                adapterMV.visitInsn(Opcodes.ARETURN);
             else
                 throw new RuntimeException("Unknown return type from method! "+sig);
             opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.ALOAD, 0));
             opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.INVOKEVIRTUAL, new String[]{myCompiler.classIName, methodName, sig}));
         } else {
-            newMV.visitInsn(Opcodes.ACONST_NULL);
-            newMV.visitInsn(Opcodes.ARETURN);
+            adapterMV.visitInsn(Opcodes.ACONST_NULL);
+            adapterMV.visitInsn(Opcodes.ARETURN);
             opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.ALOAD, 0));
             opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.INVOKEVIRTUAL, new String[]{myCompiler.classIName, methodName, "()"+Compiler.FODesc}));
             opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.DUP));
@@ -418,8 +418,8 @@ public class SubMethodAdapter extends SSMAdapter {
             opcodeList.set(largestFound.startOpcode++, new MyOpcode(MyOpcode.LABEL, nullLabel));
             opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.POP));
         }
-        newMV.visitMaxs(0, 0);
-        newMV.visitEnd();
+        adapterMV.visitMaxs(0, 0);
+        adapterMV.visitEnd();
         opcodeList.removeRange(largestFound.startOpcode, largestFound.endOpcode);
         return maxSizeChange;
     }
