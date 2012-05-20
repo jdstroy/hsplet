@@ -53,11 +53,12 @@ public class Label extends org.objectweb.asm.Label {
             extra = other;
         } else if (extra instanceof Label) {
             Label old = (Label) extra;
-            extra = new HashSet<Label>();
-            ((HashSet) extra).add(old);
-            ((HashSet) extra).add(other);
+            HashSet<Label> newExtra = new HashSet<Label>();
+            extra = newExtra;
+            newExtra.add(old);
+            newExtra.add(other);
         } else if (extra instanceof HashSet) {
-            ((HashSet) extra).add(other);
+            ((HashSet<Label>) extra).add(other);
         } else {
             throw new RuntimeException("Error in label logic! Unknown thing in extra in second scan.");
         }
