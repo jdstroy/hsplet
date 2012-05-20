@@ -6,6 +6,7 @@ package hsplet.function;
 import hsplet.Context;
 import hsplet.HSPError;
 import hsplet.variable.ByteString;
+import hsplet.variable.IExpandable;
 import hsplet.variable.Operand;
 import hsplet.variable.OperandInputStream;
 import hsplet.variable.Scalar;
@@ -405,9 +406,11 @@ public class BasicCommand extends FunctionBase {
 		context.error(HSPError.UnsupportedOperation, "chdpm");
 	}
 
-	public static void memexpand(final Context context, final Operand v, final int vi) {
+	public static void memexpand(final Context context, final Operand v, final int vi, final int newSize) {
 
-		context.error(HSPError.UnsupportedOperation, "memexpand");
+            if (v instanceof IExpandable) {
+                ((IExpandable) v).expand(newSize);
+            }
 	}
 
 	public static void memcpy(final Context context, final Operand dv, final int dvi, final Operand sv, final int svi,
