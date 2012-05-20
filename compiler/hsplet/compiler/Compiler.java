@@ -42,7 +42,7 @@ import java.util.jar.JarOutputStream;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
-//import org.objectweb.asm.Label;
+//import org.objectweb.asm.KLabel;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -315,7 +315,7 @@ public class Compiler implements Opcodes, Serializable {
     private ByteCode ax;
     private int codeIndex;
     private List<Object> literals;
-    private Stack<Label> loopStarts;
+    private Stack<KLabel> loopStarts;
     private boolean enableVariableOptimization;
     private RuntimeInfo runtime;
     private List<Class> instancedLibraries;
@@ -388,7 +388,7 @@ public class Compiler implements Opcodes, Serializable {
         }
 
         literals = new ArrayList<Object>();
-        loopStarts = new Stack<Label>();
+        loopStarts = new Stack<KLabel>();
         instancedLibraries = new ArrayList<Class>();
         codeIndex = 0;
 
@@ -500,7 +500,7 @@ public class Compiler implements Opcodes, Serializable {
     private int restructureLabels() {
         //Identify all main labels by their old index
         for (int i = 0; i < ax.labels.length; i++) {
-            Label label = labels.get(ax.labels[i]);
+            KLabel label = labels.get(ax.labels[i]);
             if (label.isMainLabel) {
                 if (label.extra == null) {
                     label.extra = Integer.valueOf(i);
@@ -518,7 +518,7 @@ public class Compiler implements Opcodes, Serializable {
         int mainCount = 0;
         for (MyTreeThing labelGroup : labelGroups) {
             for (Integer I : labelGroup.mainLabels(allLabels)) {
-                Label label = allLabels[I.intValue()];
+                KLabel label = allLabels[I.intValue()];
                 if (label.extra == null) {
                     //Default label and it does not get called elsewhere.
                     label.branchesToHere = -1;
@@ -552,7 +552,7 @@ public class Compiler implements Opcodes, Serializable {
             System.out.println("HSP Address:LabelIndex");
             for (Iterator<Integer> iter = tree.iterator(); iter.hasNext();) {
                 Integer I = iter.next();
-                Label L = labels.get(I);
+                KLabel L = labels.get(I);
                 str.append(I).append(":").append(L.myIndex);
                 if (L.isUsed) {
                     str.append(" Targetted:").append(L.branchesToHere);
@@ -580,7 +580,7 @@ public class Compiler implements Opcodes, Serializable {
             if (tree.size() > 1000) {
                 str.append("(").append(tree.size()).append(" labels, ").append(tree.first()).append("-").append(tree.last()).append(") ");
                 for (Iterator<Integer> iter = tree.iterator(); iter.hasNext();) {
-                    Label label = allLabels[iter.next().intValue()];
+                    KLabel label = allLabels[iter.next().intValue()];
                     if (label.isMainLabel) {
                         mainCount++;
                         for (int i = 0; i < ax.labels.length; i++) {
@@ -597,7 +597,7 @@ public class Compiler implements Opcodes, Serializable {
                 }
             } else {
                 Iterator<Integer> iter = tree.iterator();
-                Label label = allLabels[iter.next().intValue()];
+                KLabel label = allLabels[iter.next().intValue()];
                 str.append(label.myIndex);
                 if (label.isMainLabel) {
                     mainCount++;
@@ -666,7 +666,7 @@ public class Compiler implements Opcodes, Serializable {
             int falseMains = 0;
             int unusedMains = 0;
             for (int i = 0; i < ax.labels.length; i++) {
-                Label L = labels.get(ax.labels[i]);
+                KLabel L = labels.get(ax.labels[i]);
                 if (L.isMainLabel) {
                     continue;
                 }
@@ -872,8 +872,8 @@ public class Compiler implements Opcodes, Serializable {
         mv.visitEnd();
 
     }
-    private Map<Integer, Label> labels;    //labels from ax code (pregenned) or if/else statements(genned on the fly), keys are ax offsets.
-    private Label[] allLabels;
+    private Map<Integer, KLabel> labels;    //labels from ax code (pregenned) or if/else statements(genned on the fly), keys are ax offsets.
+    private KLabel[] allLabels;
 
     private void createRun(int numTargets) {
 
@@ -896,15 +896,15 @@ public class Compiler implements Opcodes, Serializable {
             return;
         }
 
-        final Label start_try = new Label();
-        final Label handle_return = new Label();
-        final Label start_run = new Label();
-        final Label[] switchTargets = new Label[numTargets];
-        final Label end_try = new Label();
-        final Label try_handler = new Label();
+        final KLabel start_try = new KLabel();
+        final KLabel handle_return = new KLabel();
+        final KLabel start_run = new KLabel();
+        final KLabel[] switchTargets = new KLabel[numTargets];
+        final KLabel end_try = new KLabel();
+        final KLabel try_handler = new KLabel();
         
         for (int i = 0; i < switchTargets.length; i++) {
-            switchTargets[i] = new Label();
+            switchTargets[i] = new KLabel();
         }
         mv.visitTryCatchBlock(start_try, end_try, try_handler, Type.getInternalName(GotoException.class));
         mv.visitLabel(start_try);
@@ -927,7 +927,7 @@ public class Compiler implements Opcodes, Serializable {
         mv.visitLabel(handle_return);
         mv.visitInsn(DUP);    //FO, FO
         mv.visitFieldInsn(GETFIELD, FOIName, "returnNow", "Z");    //FO, Z
-        final Label do_return = new Label();
+        final KLabel do_return = new KLabel();
         mv.visitJumpInsn(IFNE, do_return);    //FO
         mv.visitFieldInsn(GETFIELD, FOIName, "newTarget", "I");    //I
         mv.visitVarInsn(ISTORE, 1);    //Empty stack
@@ -960,19 +960,19 @@ public class Compiler implements Opcodes, Serializable {
         while (codeIndex < ax.codes.length) {
             compileStatement(mv);
         }
-        allLabels = new Label[labels.size()];
+        allLabels = new KLabel[labels.size()];
         allLabelOffsets = new TreeSet<Integer>(labels.keySet());
         int i = 0;
         for (Iterator<Integer> iter = allLabelOffsets.iterator(); iter.hasNext(); i++) {
-            Label L = labels.get(iter.next());
+            KLabel L = labels.get(iter.next());
             L.myIndex = i;
             allLabels[i] = L;
         }
     }
     // Analyze how all labels interact to group together for methods, and identify unused labels
     private MyTreeThing[] labelGroups = null;
-    private Label currentLabel = null;
-    private HashMap<Integer, Label> loopExceptions = null;
+    private KLabel currentLabel = null;
+    private HashMap<Integer, KLabel> loopExceptions = null;
 
     private void secondScan(ScanTwoVisitor mv) {
         mv.labelTree.addBase(0);
@@ -982,7 +982,7 @@ public class Compiler implements Opcodes, Serializable {
         currentLabel = null;
         while (codeIndex < ax.codes.length) {
             mv.currentStatementAddress = ax.codes[codeIndex].offset;
-            final Label label = labels.get(new Integer(mv.currentStatementAddress));
+            final KLabel label = labels.get(new Integer(mv.currentStatementAddress));
             if (label != null) {
                 //NOTE/THOUGHT: This does not necessarily need to combine labels just because they run into eachother.
                 if ((currentLabel != null) && (currentLabel != label)) {
@@ -993,8 +993,8 @@ public class Compiler implements Opcodes, Serializable {
             }
             compileStatement(mv);
         }
-        HashSet<Label> recursionCheck = new HashSet<Label>();
-        for (Label L : allLabels) {
+        HashSet<KLabel> recursionCheck = new HashSet<KLabel>();
+        for (KLabel L : allLabels) {
             recursionCheck.clear();
             resolveLabel(L, recursionCheck, true);
             if (!L.isUsed) {
@@ -1005,7 +1005,7 @@ public class Compiler implements Opcodes, Serializable {
             if(L.extra!=null) throw new RuntimeException("Error in label logic! .extra not cleared after use logic.");
             if((L.isUsed)&&(!mv.labelTree.contains(L.myIndex))) {
                 //throw new RuntimeException("Error in label logic! Used label not in tree.");
-                System.out.println("Label "+L.myIndex+" used but not in tree.");
+                System.out.println("KLabel "+L.myIndex+" used but not in tree.");
             }
             */
         }
@@ -1013,7 +1013,7 @@ public class Compiler implements Opcodes, Serializable {
         loopExceptions = mv.getLoopExceptions();
     }
 
-    private boolean resolveLabel(Label label, HashSet<Label> recursionCheck, boolean isSure) {
+    private boolean resolveLabel(KLabel label, HashSet<KLabel> recursionCheck, boolean isSure) {
         if (recursionCheck.contains(label)) {
             return false;
         }
@@ -1021,8 +1021,8 @@ public class Compiler implements Opcodes, Serializable {
             return label.isUsed;
         }
         //if(label.extra==Boolean.TRUE) { label.isUsed=true; label.extra=null; return true; }
-        if (label.extra instanceof Label) {
-            Label other = (Label) label.extra;
+        if (label.extra instanceof KLabel) {
+            KLabel other = (KLabel) label.extra;
             recursionCheck.add(label);
             label.isUsed = resolveLabel(other, recursionCheck, isSure);
             if (isSure || other.extra == null) {
@@ -1031,9 +1031,9 @@ public class Compiler implements Opcodes, Serializable {
             return label.isUsed;
         }
         if (label.extra instanceof HashSet) {
-            HashSet<Label> myArray = (HashSet<Label>) label.extra;
+            HashSet<KLabel> myArray = (HashSet<KLabel>) label.extra;
             recursionCheck.add(label);
-            for (Label other : myArray.toArray(new Label[0])) {
+            for (KLabel other : myArray.toArray(new KLabel[0])) {
                 if (resolveLabel(other, recursionCheck, false)) {
                     label.isUsed = true;
                     label.extra = null;
@@ -1057,7 +1057,7 @@ public class Compiler implements Opcodes, Serializable {
         MethodVisitor empty = EmptyVisitor.mv;
         while (codeIndex < ax.codes.length) {
             mv.currentStatementAddress = ax.codes[codeIndex].offset;
-            final Label label = labels.get(mv.currentStatementAddress);
+            final KLabel label = labels.get(mv.currentStatementAddress);
             if ((label != null) && (label.isUsed)) {
                 currentLabel = label;
             }
@@ -1077,19 +1077,19 @@ public class Compiler implements Opcodes, Serializable {
 
     private void prepareLabels() {
 
-        labels = new HashMap<Integer, Label>();
+        labels = new HashMap<Integer, KLabel>();
 
         // êÊì™ÇÃÉâÉxÉã
-        Label L;
+        KLabel L;
 
         for (int i = 0; i < ax.labels.length; ++i) {
-            L = new Label();
+            L = new KLabel();
             //L.isMainLabel=true;
             //L.isUsed=true;
             labels.put(new Integer(ax.labels[i]), L);
         }
 
-        L = new Label();
+        L = new KLabel();
         L.isMainLabel = true;
         L.isUsed = true;
         labels.put(new Integer(ax.codes[0].offset), L);
@@ -1102,7 +1102,7 @@ public class Compiler implements Opcodes, Serializable {
     }
 
     //Get a label from the original code's list of labels (aka only pregenned labels, no compiler-generated labels for loops and such)
-    private Label getLabel(final int index) {
+    private KLabel getLabel(final int index) {
 
         return labels.get(new Integer(ax.labels[index]));
     }
@@ -1959,7 +1959,7 @@ public class Compiler implements Opcodes, Serializable {
 
             mv.visitInsn(DUP);
 
-            final Label noassign = new Label();
+            final KLabel noassign = new KLabel();
             noassign.branchesToHere=1;
             mv.visitJumpInsn(IFNULL, noassign);
 
@@ -1976,7 +1976,7 @@ public class Compiler implements Opcodes, Serializable {
 
             mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "assign", "(I" + opeDesc + "I)V");
 
-            final Label end = new Label();
+            final KLabel end = new KLabel();
             end.branchesToHere=1;
             mv.visitJumpInsn(GOTO, end);
             mv.visitLabel(noassign);
@@ -2251,7 +2251,7 @@ public class Compiler implements Opcodes, Serializable {
         final Code code = ax.codes[codeIndex++];
         final Code label = ax.codes[codeIndex++];
 
-        Label L = getLabel(label.value);
+        KLabel L = getLabel(label.value);
         mv.visitJumpInsn(GOTO, L);
         if (mv instanceof ScanTwoVisitor) {
             if (currentLabel != null) {
@@ -2324,12 +2324,12 @@ public class Compiler implements Opcodes, Serializable {
 
         mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "startLoop", "(II)Z");
 
-        Label L = getLabel(label.value);
+        KLabel L = getLabel(label.value);
         mv.visitJumpInsn(IFEQ, L);
         //if(conversionArray!=null)
         //    System.out.print(" to "+ax.labels[label.value]);
 
-        final Label startLabel = new Label();
+        final KLabel startLabel = new KLabel();
         startLabel.branchesToHere=1;
 
         mv.visitLabel(startLabel);
@@ -2359,7 +2359,7 @@ public class Compiler implements Opcodes, Serializable {
         mv.visitVarInsn(ALOAD, contextIndex);
         mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "endLoop", "()V");
 
-        Label L = getLabel(label.value);
+        KLabel L = getLabel(label.value);
         mv.visitJumpInsn(GOTO, L);
         if (mv instanceof ScanTwoVisitor) {
             if (currentLabel != null) {
@@ -2390,7 +2390,7 @@ public class Compiler implements Opcodes, Serializable {
                 ((ScanTwoVisitor) mv).loopReliesOn(loopStarts.peek(), currentLabel);
         }
         }
-        mv.visitJumpInsn(IFNE, (Label) loopStarts.pop());
+        mv.visitJumpInsn(IFNE, (KLabel) loopStarts.pop());
 
     }
 
@@ -2417,7 +2417,7 @@ public class Compiler implements Opcodes, Serializable {
 
         }
 
-        Label L = getLabel(label.value);
+        KLabel L = getLabel(label.value);
         if (mv instanceof ScanTwoVisitor) {
             if (currentLabel != null) {
                 ((ScanTwoVisitor) mv).loopReliesOn(loopStarts.peek(), currentLabel);
@@ -2431,7 +2431,7 @@ public class Compiler implements Opcodes, Serializable {
             //System.out.println(((ScanThreeVisitor)mv).currentStatementAddress+" Continue to "+ax.labels[label.value]);
         }
         loopStarts.peek().branchesToHere++;
-        mv.visitJumpInsn(IFNE, (Label) loopStarts.peek());
+        mv.visitJumpInsn(IFNE, (KLabel) loopStarts.peek());
 
         mv.visitJumpInsn(GOTO, L);
         //if(conversionArray!=null)
@@ -2453,13 +2453,13 @@ public class Compiler implements Opcodes, Serializable {
 
         mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "startLoop", "(II)Z");
 
-        Label L = getLabel(label.value);
+        KLabel L = getLabel(label.value);
         mv.visitJumpInsn(IFEQ, L);
 
         //if(conversionArray!=null)
         //    System.out.print(" to "+ax.labels[label.value]);
 
-        final Label startLabel = new Label();
+        final KLabel startLabel = new KLabel();
         startLabel.branchesToHere=1;
 
         mv.visitLabel(startLabel);
@@ -2497,7 +2497,7 @@ public class Compiler implements Opcodes, Serializable {
 
         mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "checkForeach", "(" + opeDesc + ")Z");
 
-        Label L = getLabel(label.value);
+        KLabel L = getLabel(label.value);
         mv.visitJumpInsn(IFEQ, L);
         if (mv instanceof ScanTwoVisitor) {
             if (currentLabel != null) {
@@ -2536,14 +2536,14 @@ public class Compiler implements Opcodes, Serializable {
 
         final Code label = ax.codes[codeIndex++];
 
-        final Label negative = new Label();
+        final KLabel negative = new KLabel();
         negative.branchesToHere=1;
         mv.visitJumpInsn(IFLE, negative);
 
-        final Label nojump = new Label();
+        final KLabel nojump = new KLabel();
         nojump.branchesToHere=1;
 
-        Label L = getLabel(label.value);
+        KLabel L = getLabel(label.value);
         mv.visitJumpInsn(IF_ICMPGE, L);
         if (mv instanceof ScanTwoVisitor) {
             if (currentLabel != null) {
@@ -2606,19 +2606,19 @@ public class Compiler implements Opcodes, Serializable {
             // goto
         
             if(mv instanceof ScanTwoVisitor) {
-                for(Label label : labels) {
+                for(KLabel label : labels) {
                     ((ScanTwoVisitor)mv).labelTree.combine(currentLabel.myIndex, label.myIndex);
                     label.relyOn(currentLabel);
                 }
             }
             else if(mv instanceof ScanThreeVisitor) {
                 if((currentLabel!=null)&&(currentLabel.isUsed))
-                for(Label label : labels) {
+                for(KLabel label : labels) {
                     label.branchesToHere++;
                 }
             }
-            final Label nojump = new Label();
-            mv.visitTableSwitchInsn(0, labels.size() - 1, nojump, (Label[]) labels.toArray(new Label[0]));
+            final KLabel nojump = new KLabel();
+            mv.visitTableSwitchInsn(0, labels.size() - 1, nojump, (KLabel[]) labels.toArray(new KLabel[0]));
         
             mv.visitLabel(nojump);
         
@@ -2627,18 +2627,18 @@ public class Compiler implements Opcodes, Serializable {
             final Method method = runtime.getMethodFor(ax, statement);
             final String methodDesc = Type.getMethodDescriptor(method);
         
-            final Label[] pushLabels = new Label[labels.size()];
+            final KLabel[] pushLabels = new KLabel[labels.size()];
             for (int i = 0; i < pushLabels.length; ++i) {
-                pushLabels[i] = new Label();
+                pushLabels[i] = new KLabel();
             }
         
-            final Label endSwitch = new Label();
-            final Label nojump = new Label();
+            final KLabel endSwitch = new KLabel();
+            final KLabel nojump = new KLabel();
         
             mv.visitTableSwitchInsn(0, labels.size() - 1, nojump, pushLabels);
         
             for (int i = 0; i < pushLabels.length; ++i) {
-                final Label label = pushLabels[i];
+                final KLabel label = pushLabels[i];
         
                 mv.visitLabel(label);
                 mv.visitLdcInsn(labelIndexs.get(i));
@@ -2717,7 +2717,7 @@ public class Compiler implements Opcodes, Serializable {
 
         mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
 
-        final Label existingLabel = (Label) labels.get(new Integer(base + offset));
+        final KLabel existingLabel = (KLabel) labels.get(new Integer(base + offset));
         if (existingLabel != null) {
             mv.visitJumpInsn(IFEQ, existingLabel);
             if (mv instanceof ScanTwoVisitor) {
@@ -2733,7 +2733,7 @@ public class Compiler implements Opcodes, Serializable {
             }
             //System.out.println("Existing "+base+" "+(base + offset));
         } else {
-            final Label label = new Label();
+            final KLabel label = new KLabel();
             labels.put(new Integer(base + offset), label);
             mv.visitJumpInsn(IFEQ, label);
         }
@@ -2752,7 +2752,7 @@ public class Compiler implements Opcodes, Serializable {
         final int offset = ax.codes[codeIndex++].value;
         final int base = ax.codes[codeIndex].offset;
 
-        final Label existingLabel = (Label) labels.get(new Integer(base + offset));
+        final KLabel existingLabel = (KLabel) labels.get(new Integer(base + offset));
         if (existingLabel != null) {
             mv.visitJumpInsn(GOTO, existingLabel);
             if (mv instanceof ScanTwoVisitor) {
@@ -2768,7 +2768,7 @@ public class Compiler implements Opcodes, Serializable {
             }
             //System.out.println("Existing "+base+" "+(base + offset));
         } else {
-            final Label label = new Label();
+            final KLabel label = new KLabel();
             labels.put(new Integer(base + offset), label);
             mv.visitJumpInsn(GOTO, label);
         }
@@ -2793,9 +2793,9 @@ public class Compiler implements Opcodes, Serializable {
 
             Integer[] mainLabels=labelGroup.mainLabels(allLabels);
             if(mainLabels.length > 1) {
-                Label defaultLabel=new Label();
+                KLabel defaultLabel=new KLabel();
                 defaultLabel.branchesToHere=1;
-                Label[] tableLabels=new Label[mainLabels.length];
+                KLabel[] tableLabels=new KLabel[mainLabels.length];
                 for(int i=0;i<mainLabels.length;i++) {
                     tableLabels[i]=allLabels[mainLabels[i].intValue()];
                 }
@@ -2809,7 +2809,7 @@ public class Compiler implements Opcodes, Serializable {
             codeIndex = 0;
             int nextLabelStart;
             int numStatements = 0;
-            Label nextLabel;
+            KLabel nextLabel;
             Iterator<Integer> iter = labelGroup.iterator();
             currentLabel = allLabels[iter.next().intValue()];
             while (currentLabel != null) {
@@ -3110,7 +3110,7 @@ class MyTreeThing extends TreeSet<Integer> {
     public boolean used = false;
     private Integer[] mainLabels;
 
-    public Integer[] mainLabels(Label[] allLabels) {
+    public Integer[] mainLabels(KLabel[] allLabels) {
         if (mainLabels == null) {
             ArrayList<Integer> mains = new ArrayList<Integer>();
             for (Integer I : this) {

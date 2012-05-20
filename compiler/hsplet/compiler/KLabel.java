@@ -5,14 +5,13 @@
 package hsplet.compiler;
 
 import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
- *
+ * An extended Label with extra stuff.  We should probably make a container 
+ * class for this instead.
  * @author Kejardon
  */
-public class Label extends org.objectweb.asm.Label {
+public class KLabel extends org.objectweb.asm.Label {
 
     public int branchesToHere = 0;
     public int currentCount = 0;
@@ -37,7 +36,7 @@ public class Label extends org.objectweb.asm.Label {
         return extra_integers;
     }*/
 
-    public void relyOn(Label other) {
+    public void relyOn(KLabel other) {
         if (isUsed) {
             return;
         }
@@ -51,14 +50,14 @@ public class Label extends org.objectweb.asm.Label {
             extra = null;
         } else if (extra == null) {
             extra = other;
-        } else if (extra instanceof Label) {
-            Label old = (Label) extra;
-            HashSet<Label> newExtra = new HashSet<Label>();
+        } else if (extra instanceof KLabel) {
+            KLabel old = (KLabel) extra;
+            HashSet<KLabel> newExtra = new HashSet<KLabel>();
             extra = newExtra;
             newExtra.add(old);
             newExtra.add(other);
         } else if (extra instanceof HashSet) {
-            ((HashSet<Label>) extra).add(other);
+            ((HashSet<KLabel>) extra).add(other);
         } else {
             throw new RuntimeException("Error in label logic! Unknown thing in extra in second scan.");
         }

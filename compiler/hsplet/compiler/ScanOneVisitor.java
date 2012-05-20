@@ -5,10 +5,10 @@ import java.util.Map;
 public class ScanOneVisitor extends NullVisitor {
 
     private int currentArgCount = 0;
-    private final Map<Integer, Label> labelsToSet;
+    private final Map<Integer, KLabel> labelsToSet;
     private final int[] labelAddresses;
 
-    public ScanOneVisitor(Map<Integer, Label> map, int[] addresses) {
+    public ScanOneVisitor(Map<Integer, KLabel> map, int[] addresses) {
         labelsToSet = map;
         labelAddresses = addresses;
     }
@@ -22,7 +22,7 @@ public class ScanOneVisitor extends NullVisitor {
             return;
         }
         if ((--currentArgCount) == 0) {
-            Label L = labelsToSet.get(labelAddresses[i]);
+            KLabel L = labelsToSet.get(labelAddresses[i]);
             L.isMainLabel = true;
             L.isUsed = true;
         }

@@ -1,6 +1,6 @@
 package hsplet.compiler;
 
-//import org.objectweb.asm.Label;
+//import org.objectweb.asm.KLabel;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.ClassVisitor;
@@ -33,12 +33,12 @@ public class SubMethodAdapter extends SSMAdapter {
     private class PotentialSSM {
         public int startOpcode;
         public int endOpcode;
-        public Label startLabel;
-        public Label endLabel;
+        public KLabel startLabel;
+        public KLabel endLabel;
         public int maxSize;
         public boolean containsReturn;
         public String otherReturn;
-        public PotentialSSM(int s, int e, Label sl, Label el, int m, boolean c, String S) {
+        public PotentialSSM(int s, int e, KLabel sl, KLabel el, int m, boolean c, String S) {
             startOpcode=s;
             endOpcode=e;
             startLabel=sl;
@@ -58,9 +58,9 @@ public class SubMethodAdapter extends SSMAdapter {
         int stackSize;
         int location;
         int maxSizeSinceLastE;
-        Label label;
+        KLabel label;
         boolean returnSinceLastE;
-        public Mark(int t, int s, int l, int m, Label la, boolean r) {
+        public Mark(int t, int s, int l, int m, KLabel la, boolean r) {
             type=t;
             stackSize=s;
             location=l;
@@ -70,7 +70,7 @@ public class SubMethodAdapter extends SSMAdapter {
             //System.out.println("Mark"+t+": "+l+" "+s);
         }
     }
-    private HashMap<Label, Mark> labelUsage=new HashMap<Label, Mark>();
+    private HashMap<KLabel, Mark> labelUsage=new HashMap<KLabel, Mark>();
     private ArrayList<MyOpcode> opcodeList=new ArrayList<MyOpcode>();
     private ArrayList<PotentialSSM> potentialSSMs=new ArrayList<PotentialSSM>();
     private ArrayList<Mark> markList=new ArrayList<Mark>();
@@ -79,7 +79,7 @@ public class SubMethodAdapter extends SSMAdapter {
     private int maxSizeSinceLastE=0;
     private boolean returnSinceLastE=false;
     private boolean waitTillStackClear=false;
-    private Label lastLabel=null;
+    private KLabel lastLabel=null;
     private int lastEStack=-1;
     private Integer NOTYPE=Integer.valueOf(-1);
     private Integer INTEGER=Integer.valueOf(0);
@@ -410,7 +410,7 @@ public class SubMethodAdapter extends SSMAdapter {
             opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.ALOAD, 0));
             opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.INVOKEVIRTUAL, new String[]{myCompiler.classIName, methodName, "()"+Compiler.FODesc}));
             opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.DUP));
-            Label nullLabel=new Label();
+            KLabel nullLabel=new KLabel();
             opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.IFNULL, nullLabel));
             opcodeList.set(largestFound.startOpcode++, new MyOpcode(Opcodes.ARETURN));
             opcodeList.set(largestFound.startOpcode++, new MyOpcode(MyOpcode.LABEL, nullLabel));
@@ -423,7 +423,7 @@ public class SubMethodAdapter extends SSMAdapter {
     }
     /* Despite being a long method with a lot of loops called often, this method should still be
      * very fast due to constantly pruning the arrays. */
-    private void considerSubmethod(Label endLabel) {
+    private void considerSubmethod(KLabel endLabel) {
         int stackSize=stackTypes.size();
         if(waitTillStackClear) {
             if(stackSize==0)
@@ -499,7 +499,7 @@ public class SubMethodAdapter extends SSMAdapter {
                 maxSizeSinceLastE, returnSinceLastE, (m.stackSize==stackSize)?"()V":otherReturn));
         }
     }
-    private void markBranchTo(Label L) {
+    private void markBranchTo(KLabel L) {
         if(labelUsage.containsKey(L)) {
             Mark oldMark=labelUsage.get(L);
             if(oldMark.type==Mark.LABEL) {
@@ -570,7 +570,7 @@ public class SubMethodAdapter extends SSMAdapter {
         handleStackChange(newOpcode);
         maxSizeSinceLastE+=getMaxSize(opcode);
         opcodeList.add(newOpcode);
-        markBranchTo((Label)label);
+        markBranchTo((KLabel)label);
         considerSubmethod(null);
     }
 
@@ -639,8 +639,8 @@ public class SubMethodAdapter extends SSMAdapter {
         handleStackChange(newOpcode);
         maxSizeSinceLastE+=(max-min+5)*4;
         opcodeList.add(newOpcode);
-        markBranchTo((Label)dflt);
-        for(Label L : (Label[])labels)
+        markBranchTo((KLabel)dflt);
+        for(KLabel L : (KLabel[])labels)
             markBranchTo(L);
         considerSubmethod(null);
     }
@@ -679,7 +679,7 @@ public class SubMethodAdapter extends SSMAdapter {
             returnSinceLastE|=markToRemove.returnSinceLastE;
             opcodeList.remove(opcodeList.size()-1);
         }
-        considerSubmethod((Label)L);
+        considerSubmethod((KLabel)L);
         if(labelUsage.containsKey(L)) {
             Mark oldMark=labelUsage.get(L);
             int change=stackTypes.size()-oldMark.stackSize;
@@ -706,21 +706,21 @@ public class SubMethodAdapter extends SSMAdapter {
                 else
                     i++;
             }
-            //if((((Label)L).branchesToHere==0)&&(!((Label)L).isMainLabel)) {
-                //System.out.println("No branches to label! "+((Label)L).extra);
+            //if((((KLabel)L).branchesToHere==0)&&(!((KLabel)L).isMainLabel)) {
+                //System.out.println("No branches to label! "+((KLabel)L).extra);
             //}
-            if(((++((Label)L).currentCount)==(((Label)L).branchesToHere))&&(!((Label)L).isMainLabel)) {
+            if(((++((KLabel)L).currentCount)==(((KLabel)L).branchesToHere))&&(!((KLabel)L).isMainLabel)) {
                 labelUsage.remove(L);
             } else {
-                //System.out.println("Label found old branches "+((Label)L).currentCount+"/"+((Label)L).branchesToHere);
-                Mark newMark=new Mark(Mark.LABEL, stackTypes.size(), opcodeList.size(), 0, (Label)L, false);
+                //System.out.println("KLabel found old branches "+((KLabel)L).currentCount+"/"+((KLabel)L).branchesToHere);
+                Mark newMark=new Mark(Mark.LABEL, stackTypes.size(), opcodeList.size(), 0, (KLabel)L, false);
                 markList.add(newMark);
-                labelUsage.put((Label)L, newMark);
+                labelUsage.put((KLabel)L, newMark);
             }
         } else {
-            Mark newMark=new Mark(Mark.LABEL, stackTypes.size(), opcodeList.size(), 0, (Label)L, false);
+            Mark newMark=new Mark(Mark.LABEL, stackTypes.size(), opcodeList.size(), 0, (KLabel)L, false);
             markList.add(newMark);
-            labelUsage.put((Label)L, newMark);
+            labelUsage.put((KLabel)L, newMark);
         }
         opcodeList.add(new MyOpcode(MyOpcode.LABEL, L));
     }
@@ -747,9 +747,9 @@ public class SubMethodAdapter extends SSMAdapter {
         System.out.println("Leftover marks: "+markList.size());
         for(Mark m : markList) {
             System.out.print(m.type+" "+m.location);
-            Label L=m.label;
+            KLabel L=m.label;
             if(L!=null) {
-                System.out.print(" Label "+L.currentCount+"/"+L.branchesToHere);
+                System.out.print(" KLabel "+L.currentCount+"/"+L.branchesToHere);
                 if(L.isMainLabel)
                     System.out.print(" (Main)");
             }

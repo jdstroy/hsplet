@@ -1,6 +1,6 @@
 package hsplet.compiler;
 
-//import org.objectweb.asm.Label;
+//import org.objectweb.asm.KLabel;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -11,25 +11,25 @@ import org.objectweb.asm.Opcodes;
  * Intended parser for handling subsubmethods from Compiler.java.
  */
 public class SSMAdapter extends MethodAdapter {
-    protected final Label startLabel;
-    protected final Label endLabel;
-    protected Label replaceSL;
-    protected Label replaceEL;
+    protected final KLabel startLabel;
+    protected final KLabel endLabel;
+    protected KLabel replaceSL;
+    protected KLabel replaceEL;
     public SSMAdapter(MethodVisitor mv) {
         super(mv);
         startLabel=null;
         endLabel=null;
     }
-    public SSMAdapter(MethodVisitor mv, Label sl, Label el) {
+    public SSMAdapter(MethodVisitor mv, KLabel sl, KLabel el) {
         super(mv);
         startLabel=sl;
         if(startLabel!=null) {
-            replaceSL=new Label();
+            replaceSL=new KLabel();
             mv.visitLabel(replaceSL);
         }
         endLabel=el;
         if(endLabel!=null)
-            replaceEL=new Label();
+            replaceEL=new KLabel();
     }
     protected class MyOpcode {
         public static final int LABEL=-1;
@@ -56,7 +56,7 @@ public class SSMAdapter extends MethodAdapter {
     protected void visit(MyOpcode o) {
         switch(o.opcode) {
             case MyOpcode.LABEL: {
-                Label L=(Label)o.otherData;
+                KLabel L=(KLabel)o.otherData;
                 if(L==startLabel) L=replaceSL;
                 else if(L==endLabel) L=replaceEL;
                 mv.visitLabel(L);
@@ -97,15 +97,15 @@ public class SSMAdapter extends MethodAdapter {
             }
             case Opcodes.TABLESWITCH: {
                 Object[] data=(Object[])o.otherData;
-                for(int i=0;i<((Label[])data[2]).length;i++) {
-                    Label L=((Label[])data[2])[i];
-                    if(L==startLabel) ((Label[])data[2])[i]=replaceSL;
-                    else if(L==endLabel) ((Label[])data[2])[i]=replaceEL;
+                for(int i=0;i<((KLabel[])data[2]).length;i++) {
+                    KLabel L=((KLabel[])data[2])[i];
+                    if(L==startLabel) ((KLabel[])data[2])[i]=replaceSL;
+                    else if(L==endLabel) ((KLabel[])data[2])[i]=replaceEL;
                 }
-                Label L=(Label)data[1];
+                KLabel L=(KLabel)data[1];
                 if(L==startLabel) L=replaceSL;
                 else if(L==endLabel) L=replaceEL;
-                mv.visitTableSwitchInsn(((Integer)data[0]).intValue(), o.intData, L, (Label[])data[2]);
+                mv.visitTableSwitchInsn(((Integer)data[0]).intValue(), o.intData, L, (KLabel[])data[2]);
                 break;
             }
             case Opcodes.ISTORE:
@@ -120,7 +120,7 @@ public class SSMAdapter extends MethodAdapter {
             case Opcodes.IF_ICMPLE:
             case Opcodes.IF_ICMPGE:
             case Opcodes.GOTO: {
-                Label L=(Label)o.otherData;
+                KLabel L=(KLabel)o.otherData;
                 if(L==startLabel) L=replaceSL;
                 else if(L==endLabel) L=replaceEL;
                 mv.visitJumpInsn(o.opcode, L);
