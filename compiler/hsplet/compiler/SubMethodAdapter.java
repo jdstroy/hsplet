@@ -383,8 +383,8 @@ public class SubMethodAdapter extends SSMAdapter {
         String methodName="me" + myCompiler.getExtraMVNum();
         String sig=(largestFound.containsReturn)?"()"+Compiler.FODesc:largestFound.otherReturn;
         MethodVisitor newMV = myCompiler.getExtraMV(methodName, sig);
-        myCompiler.compileLocalVariables(newMV);
         SSMAdapter adapterMV = new SSMAdapter(newMV, largestFound.startLabel, largestFound.endLabel);
+        myCompiler.compileLocalVariables(adapterMV);
         for(MyOpcode op : opcodeList.subList(largestFound.startOpcode, largestFound.endOpcode)) {
             adapterMV.visit(op);
         }

@@ -314,7 +314,7 @@ public class Compiler implements Opcodes, Serializable {
     private String superClassIName;
     private ByteCode ax;
     private int codeIndex;
-    private List literals;
+    private List<Object> literals;
     private Stack<Label> loopStarts;
     private boolean enableVariableOptimization;
     private RuntimeInfo runtime;
@@ -378,7 +378,7 @@ public class Compiler implements Opcodes, Serializable {
             output = bufferClassNode;
         }
 
-        //output = new CheckClassAdapter(output);
+	//output = new CheckClassAdapter(output);
 
         // フィールドの初期化。
         if (DEBUG_ENABLED) {
@@ -2983,20 +2983,6 @@ public class Compiler implements Opcodes, Serializable {
 
         if (useLiteralsInArray) {
 
-            // Create array of literal Scalars by:
-
-            // get this
-            mv.visitVarInsn(ALOAD, thisIndex);
-            // push the size
-            mv.visitIntInsn(SIPUSH, literals.size());
-
-            // make the array of type Scalar, popping size
-            mv.visitTypeInsn(ANEWARRAY, literalIName);
-
-            // Store this field in this class
-            mv.visitFieldInsn(PUTFIELD, superClassIName, "cLiterals", typeArrayOfScalar);
-
-
             // push this on the stack
             mv.visitVarInsn(ALOAD, thisIndex);
 
@@ -3054,6 +3040,7 @@ public class Compiler implements Opcodes, Serializable {
 
     private void createSuperClassCtor() {
 
+        
         int subMethods = createSuperClassCtorSubMethods();
         // Type of Scalar[]
 
@@ -3061,6 +3048,24 @@ public class Compiler implements Opcodes, Serializable {
         final MethodVisitor mv = superClassWriter.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
 
 
+        // Literals array initialization
+        
+        if (useLiteralsInArray) {
+
+            // Create array of literal Scalars by:
+
+            // get this
+            mv.visitVarInsn(ALOAD, thisIndex);
+            // push the size
+            mv.visitIntInsn(SIPUSH, literals.size());
+
+            // make the array of type Scalar, popping size
+            mv.visitTypeInsn(ANEWARRAY, literalIName);
+
+            // Store this field in this class
+            mv.visitFieldInsn(PUTFIELD, superClassIName, "cLiterals", typeArrayOfScalar);
+
+        }
         // Call super()
         mv.visitVarInsn(ALOAD, thisIndex);
         mv.visitMethodInsn(INVOKESPECIAL, parentIName, "<init>", "()V");
