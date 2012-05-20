@@ -163,13 +163,23 @@ public class BasicCommand extends FunctionBase {
 	}
 
 	public static void delete(final Context context, final String fileName) {
-
-		context.error(HSPError.UnsupportedOperation, "delete");
+            try {
+                boolean retval = new File(cwd(context), fileName).delete();
+                context.stat.value = retval ? 0 : 1;
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
+                context.stat.value = 2;
+            }
 	}
 
 	public static void mkdir(final Context context, final String fileName) {
-
-		context.error(HSPError.UnsupportedOperation, "mkdir");
+            try {
+                boolean retval = new File(cwd(context), fileName).mkdir();
+                context.stat.value = retval ? 0 : 1;
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
+                context.stat.value = 2;
+            }
 	}
 
 	public static void chdir(final Context context, final String dirName) {
