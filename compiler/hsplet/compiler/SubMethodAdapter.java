@@ -24,11 +24,9 @@ public class SubMethodAdapter extends SSMAdapter {
     //subsubmethods will be labeled "ssm"+SSMCount
     public static int SSMCount=0;
     private Compiler myCompiler;
-    private ClassVisitor cw;
-    public SubMethodAdapter(Compiler comp, MethodVisitor mv, ClassVisitor cv) {
+    public SubMethodAdapter(Compiler comp, MethodVisitor mv) {
         super(mv);
         myCompiler=comp;
-        cw=cv;
         markList.add(new Mark(Mark.START, 0, 0, 0, null, false));
     }
 
@@ -384,7 +382,7 @@ public class SubMethodAdapter extends SSMAdapter {
 
         String methodName="me" + myCompiler.getExtraMVNum();
         String sig=(largestFound.containsReturn)?"()"+Compiler.FODesc:largestFound.otherReturn;
-        MethodVisitor newMV = cw.visitMethod(Opcodes.ACC_PRIVATE, methodName, sig, null, new String[0]);
+        MethodVisitor newMV = myCompiler.getExtraMV(methodName, sig);
         myCompiler.compileLocalVariables(newMV);
         SSMAdapter adapterMV = new SSMAdapter(newMV, largestFound.startLabel, largestFound.endLabel);
         for(MyOpcode op : opcodeList.subList(largestFound.startOpcode, largestFound.endOpcode)) {

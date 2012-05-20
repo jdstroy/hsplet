@@ -75,7 +75,7 @@ public class Compiler implements Opcodes, Serializable {
     private static final long serialVersionUID = 8668239863505235428L;
     /** デバッグ出力をするかどうか。 */
     private static final boolean DEBUG_ENABLED = false;
-    private static final boolean LINENUMS_ENABLED = false;
+    private static final boolean LINENUMS_ENABLED = true;
     /** Stores the results in an ASM tree.  This is slow and memory hungry;
      * you should use this only if you're debugging/poking around.  This 
      * shouldn't be used in production, but it is useful to find out 
@@ -378,7 +378,7 @@ public class Compiler implements Opcodes, Serializable {
             output = bufferClassNode;
         }
 
-	output = new CheckClassAdapter(output);
+        //output = new CheckClassAdapter(output);
 
         // フィールドの初期化。
         if (DEBUG_ENABLED) {
@@ -1153,11 +1153,13 @@ public class Compiler implements Opcodes, Serializable {
     public int getExtraMVNum() {
         return numExtraMethods++;
     }
-    /*
-    public MethodVisitor getExtraMV(String signature) {
-        return cw.visitMethod(ACC_PRIVATE, "me" + numExtraMethods++, signature, null, new String[0]);
+    public MethodVisitor getExtraMV(String name, String signature) {
+	    MethodVisitor mv=cw.visitMethod(ACC_PRIVATE, name, signature, null, new String[0]);
+	    if(LINENUMS_ENABLED) {
+		    mv=new CodeOpcodeCounter(mv);
+	    }
+        return mv;
     }
-    */
     
     /**
      * 必要なローカル変数を用意。
@@ -2782,10 +2784,13 @@ public class Compiler implements Opcodes, Serializable {
         for(MyTreeThing labelGroup : labelGroups) {
             MethodVisitor mv = cw.visitMethod(ACC_PRIVATE, "m" + numMethods++, "(I)"+FODesc, null, new String[0]);
 
-            compileLocalVariables(mv);
-            mv=new SubMethodAdapter(this, mv, cw);
             if(LINENUMS_ENABLED)
                 mv=new CodeOpcodeCounter(mv);
+
+            compileLocalVariables(mv);
+
+            mv=new SubMethodAdapter(this, mv);
+
             Integer[] mainLabels=labelGroup.mainLabels(allLabels);
             if(mainLabels.length > 1) {
                 Label defaultLabel=new Label();
