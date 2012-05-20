@@ -410,6 +410,8 @@ public class BasicCommand extends FunctionBase {
 
             if (v instanceof IExpandable) {
                 ((IExpandable) v).expand(newSize);
+            } else {
+                context.error(HSPError.UnsupportedOperation, "memexpand");
             }
 	}
 
