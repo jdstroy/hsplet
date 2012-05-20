@@ -12,11 +12,18 @@ import hsplet.variable.Scalar;
 import hsplet.variable.StringArray;
 import hsplet.variable.Variable;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * HSP の基本コマンド群。
@@ -179,11 +186,31 @@ public class BasicCommand extends FunctionBase {
 			e.printStackTrace();
 		}
 	}
+        
+        private static File cwd(final Context context) throws URISyntaxException {
+            return new File(context.curdir.toURI());
+        }
 
-	public static void dirlist(final Context context, final Operand v, final int vi) {
+	public static void dirlist(final Context context, final ByteString result, final String mask, int mode) {
+            try {
+                context.stat.value = 0; // OK
 
-		context.stat.value = 0;
-		context.error(HSPError.UnsupportedOperation, "dirlist");
+                // We might get an IllegalArgumentException.  We shall see.
+                File[] dirlist = cwd(context).listFiles(new Globber(mask, mode));
+                StringBuilder sb = new StringBuilder();
+                List<File> fList = Arrays.asList(dirlist);
+                for (Iterator<File> it = fList.iterator(); it.hasNext(); ) {
+                    File f = it.next();
+                    sb.append(f.getName());
+                    if (it.hasNext()) {
+                        sb.append('\n');
+                    }
+                }
+
+                result.assign(new ByteString(sb.toString()));
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, "Tried to convert to File URI but failed", ex);
+            }
 	}
 
 	public static void bload(final Context context, final String fileName, final Operand v, final int vi,
