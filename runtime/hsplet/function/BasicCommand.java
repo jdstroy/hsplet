@@ -14,6 +14,8 @@ import hsplet.variable.StringArray;
 import hsplet.variable.Variable;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -131,9 +133,8 @@ public class BasicCommand extends FunctionBase {
 							context.strsize.value = -1;
 						}
 						else if ( con.getContentLength()>=0 ){
-								context.strsize.value = con.getContentLength();								
-						}
-						else {
+							context.strsize.value = con.getContentLength();
+						} else {
 
 							final byte[] buf = new byte[1024];
 							
@@ -164,23 +165,23 @@ public class BasicCommand extends FunctionBase {
 	}
 
 	public static void delete(final Context context, final String fileName) {
-            try {
-                boolean retval = new File(cwd(context), fileName).delete();
-                context.stat.value = retval ? 0 : 1;
-            } catch (URISyntaxException ex) {
-                Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
-                context.stat.value = 2;
-            }
+        try {
+            boolean retval = new File(cwd(context), fileName).delete();
+            context.stat.value = retval ? 0 : 1;
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
+            context.stat.value = 2;
+        }
 	}
 
 	public static void mkdir(final Context context, final String fileName) {
-            try {
-                boolean retval = new File(cwd(context), fileName).mkdir();
-                context.stat.value = retval ? 0 : 1;
-            } catch (URISyntaxException ex) {
-                Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
-                context.stat.value = 2;
-            }
+        try {
+            boolean retval = new File(cwd(context), fileName).mkdir();
+            context.stat.value = retval ? 0 : 1;
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
+            context.stat.value = 2;
+        }
 	}
 
 	public static void chdir(final Context context, final String dirName) {
@@ -198,30 +199,30 @@ public class BasicCommand extends FunctionBase {
 		}
 	}
         
-        private static File cwd(final Context context) throws URISyntaxException {
-            return new File(context.curdir.toURI());
-        }
+    private static File cwd(final Context context) throws URISyntaxException {
+        return new File(context.curdir.toURI());
+    }
 
 	public static void dirlist(final Context context, final ByteString result, final String mask, int mode) {
-            try {
-                context.stat.value = 0; // OK
+        try {
+            context.stat.value = 0; // OK
 
-                // We might get an IllegalArgumentException.  We shall see.
-                File[] dirlist = cwd(context).listFiles(new Globber(mask, mode));
-                StringBuilder sb = new StringBuilder();
-                List<File> fList = Arrays.asList(dirlist);
-                for (Iterator<File> it = fList.iterator(); it.hasNext(); ) {
-                    File f = it.next();
-                    sb.append(f.getName());
-                    if (it.hasNext()) {
-                        sb.append('\n');
-                    }
+            // We might get an IllegalArgumentException.  We shall see.
+            File[] dirlist = cwd(context).listFiles(new Globber(mask, mode));
+            StringBuilder sb = new StringBuilder();
+            List<File> fList = Arrays.asList(dirlist);
+            for (Iterator<File> it = fList.iterator(); it.hasNext(); ) {
+                File f = it.next();
+                sb.append(f.getName());
+                if (it.hasNext()) {
+                    sb.append('\n');
                 }
-
-                result.assign(new ByteString(sb.toString()));
-            } catch (URISyntaxException ex) {
-                Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, "Tried to convert to File URI but failed", ex);
             }
+
+            result.assign(new ByteString(sb.toString()));
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, "Tried to convert to File URI but failed", ex);
+        }
 	}
 
 	public static void bload(final Context context, final String fileName, final Operand v, final int vi,
@@ -304,13 +305,39 @@ public class BasicCommand extends FunctionBase {
 	public static void bsave(final Context context, final String fileName, final Operand v, final int vi,
 			final Operand sizev, final int sizevi, final int offset) {
 
-		context.error(HSPError.UnsupportedOperation, "bsave");
+		context.error(HSPError.UnsupportedOperation, "bsave "+fileName);
 
 	}
 
-	public static void bcopy(final Context context, final Operand v, final int vi) {
+	public static void bcopy(final Context context, String fileName, String target) {
 
-		context.error(HSPError.UnsupportedOperation, "bcopy");
+		//context.error(HSPError.UnsupportedOperation, "bcopy "+fileName+" "+target);
+		if (fileName == null) {
+			context.error(HSPError.ParameterCannotBeOmitted, "bcopy", "fileName");
+			return;
+		}
+		if (target == null) {
+			context.error(HSPError.ParameterCannotBeOmitted, "bcopy", "target");
+			return;
+		}
+        try {
+			File sourceFile = new File(context.getResourceURL(fileName).toURI());
+			
+			if(!sourceFile.exists()) {
+				context.error(HSPError.FileNotFound, fileName);
+				return;
+			}
+			File targetFile = new File(context.getResourceURL(target).toURI());
+			File dir = targetFile.getParentFile();
+			if((dir!=null)&&(!dir.exists())) {
+				dir.mkdirs();
+			}
+			Files.copy(sourceFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, "Tried to convert to File URI but failed", ex);
+        } catch (IOException ex) {
+            context.error(HSPError.ErrorOnExecution, "bcopy", "Failed to copy "+fileName+" to "+target);
+        }
 
 	}
 
@@ -588,7 +615,7 @@ public class BasicCommand extends FunctionBase {
 
 	}
 
-	public static void notesave(final Context context, final Operand v, final int vi) {
+	public static void notesave(final Context context, String filename) {
 
 		context.error(HSPError.UnsupportedOperation, "notesave");
 	}

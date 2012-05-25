@@ -75,7 +75,7 @@ public class Compiler implements Opcodes, Serializable {
     private static final long serialVersionUID = 8668239863505235428L;
     /** デバッグ出力をするかどうか。 */
     private static final boolean DEBUG_ENABLED = false;
-    private static final boolean LINENUMS_ENABLED = true;
+    private static final boolean LINENUMS_ENABLED = false;
     /** Stores the results in an ASM tree.  This is slow and memory hungry;
      * you should use this only if you're debugging/poking around.  This 
      * shouldn't be used in production, but it is useful to find out 
@@ -1095,6 +1095,7 @@ public class Compiler implements Opcodes, Serializable {
         labels.put(new Integer(ax.codes[0].offset), L);
 
         for (ByteCode.Function function : ax.functions) {
+            if(function.index>=0) continue;
             L = labels.get(ax.labels[function.otindex]);
             L.isMainLabel = true;
             L.isUsed = true;

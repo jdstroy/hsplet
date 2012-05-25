@@ -305,7 +305,8 @@ public class ProgramCommand extends FunctionBase {
 		}
 	}
 
-	public static void mcall(final Context context, final Operand v, final int vi, String methodName) {
+	//this may not be right for other projects, but it is all Elona uses
+	public static void mcall(final Context context, final Operand v, final int vi, String methodName, final Operand methodArg, final int methodArgi) {
 
 		context.error(HSPError.UnsupportedOperation, "mcall");
 
