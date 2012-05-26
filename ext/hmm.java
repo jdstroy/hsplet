@@ -1,9 +1,9 @@
 
 import hsplet.Context;
 import hsplet.HSPError;
+import hsplet.PEXInfo;
 import hsplet.function.FunctionBase;
 import hsplet.gui.Bmscr;
-import hsplet.variable.ByteString;
 
 /*
  * To change this template, choose Tools | Templates
@@ -22,33 +22,33 @@ public class hmm extends FunctionBase  {
         this.context = context;
     }
     
-    public int DSINIT(int bmscr_window_id, int a, int b, int c) {
+    public void DSINIT(int bmscr_window_id, int a, int b, int c) {
         if (bmscr_window_id < 0 || bmscr_window_id >= context.windows.size() || context.windows.get(bmscr_window_id) == null) {
             context.error(HSPError.InvalidParameterValue, "grotate", "id==" + bmscr_window_id);
         }
 
         final Bmscr target = context.windows.get(bmscr_window_id);
+        /* Looks like we need not do anything at all! */
         
-        throw new UnsupportedOperationException("Not supported yet.");
+        //throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public int DSEND(int a, int b, int c, int d) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void DSEND(int a, int b, int c, int d) {
+        //throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
     public int DSRELEASE(int a, int b, int c, int d) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
     
-    public int DSLOADFNAME(ByteString pexinfo, int n, int o, int p) {
+    public int DSLOADFNAME(@PEXInfo String filename, int index, int o, int p) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
-    public int DSPLAY(int a, int b, int c, int d) {
+    public int DSPLAY(int sound, int lp, int c, int d) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -83,7 +83,7 @@ public class hmm extends FunctionBase  {
     }
 
     
-    public int DMLOADFNAME(ByteString a, int z, int b, int c) {
+    public int DMLOADFNAME(@PEXInfo String filename, int z, int b, int c) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
