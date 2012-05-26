@@ -118,7 +118,7 @@ public class GuiFrontEndModel implements Serializable {
 			gui.packListModel.clear();
 
 			for (int i = 0; i < packFiles.size(); ++i) {
-				gui.packListModel.add(i, packFiles.get(i));
+				gui.packListModel.add(i, new File(packFiles.get(i)));
 			}
 
 			gui.mp3CheckBox.setSelected(mp3);

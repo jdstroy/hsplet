@@ -116,7 +116,7 @@ public final class Application extends JFrame implements AppletStub,
 		return new Application(startClass, width, height, debug, cmdline);
 	}
 
-	private final Map parameters = new HashMap();
+	private final Map<Object,Object> parameters = new HashMap();
 
 	private final Map<String,InputStream> streams = Collections.synchronizedMap(new HashMap<String,InputStream>());
 

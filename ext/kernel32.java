@@ -30,11 +30,11 @@ public class kernel32 extends FunctionBase {
         return 0;
     }
 
-    public int CreateMutex(Operand securityPointer, int index, int inherit, ByteString lpcstr) {
+    public int CreateMutex(Operand securityPointer, int index, int inherit, String lpcstr) {
         return NT_STATUS_SUCCESS;
     }
 
-    public int CreateMutexA(Operand securityPointer, int index, int inherit, ByteString lpcstr) {
+    public int CreateMutexA(Operand securityPointer, int index, int inherit, String lpcstr) {
         return CreateMutex(securityPointer, index, inherit, lpcstr);
     }
     private Map<Integer, Object> handleMap = new TreeMap<Integer, Object>();
@@ -47,9 +47,9 @@ public class kernel32 extends FunctionBase {
     public int LCMapStringA(
             int Locale,
             int dwMapFlags,
-            ByteString lpSrcStr,
+            String lpSrcStr,
             int cchSrc,
-            ByteString lpDestStr,
+            String lpDestStr,
             int cchDest) {
 
         return 0;

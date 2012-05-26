@@ -849,7 +849,7 @@ public class Compiler implements Opcodes, Serializable {
                 mv.visitVarInsn(ALOAD, 1);
                 mv.visitMethodInsn(INVOKESPECIAL, Type.getInternalName(clazz), "<init>", "(" + contextDesc + ")V");
 
-            } catch (Exception e) {
+            } catch (NoSuchMethodException e) {
 
                 try {
                     // デフォルトコンストラクタがあるなら。
@@ -3106,21 +3106,3 @@ public class Compiler implements Opcodes, Serializable {
     }
 }
 
-class MyTreeThing extends TreeSet<Integer> {
-
-    public boolean used = false;
-    private Integer[] mainLabels;
-
-    public Integer[] mainLabels(KLabel[] allLabels) {
-        if (mainLabels == null) {
-            ArrayList<Integer> mains = new ArrayList<Integer>();
-            for (Integer I : this) {
-                if (allLabels[I.intValue()].isMainLabel) {
-                    mains.add(I);
-                }
-            }
-            mainLabels = mains.toArray(new Integer[0]);
-        }
-        return mainLabels;
-    }
-}

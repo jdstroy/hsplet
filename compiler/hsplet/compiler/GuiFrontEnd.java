@@ -550,12 +550,14 @@ public class GuiFrontEnd extends JFrame {
 		}
 	}
 
-	public static class FileListModel extends DefaultListModel {
+	public static class FileListModel extends DefaultListModel<File> {
 
-		//@Override
-		public Object getElementAt(int index) {
-			return (new File(get(index).toString())).getName();
+                @Override
+		public File getElementAt(int index) {
+			return (new File(get(index).toString()));
 		}
+                
+                
 	}
 
 	public static File startupFolder;
@@ -701,9 +703,9 @@ public class GuiFrontEnd extends JFrame {
 	 * 	
 	 * @return javax.swing.JList	
 	 */
-	private JList getPackList() {
+	private JList<File> getPackList() {
 		if (packList == null) {
-			packList = new JList();
+			packList = new JList<File>();
 			packList.setPreferredSize(new java.awt.Dimension(200, 200));
 			packList.setModel(getPackListModel());
 		}
@@ -795,7 +797,7 @@ public class GuiFrontEnd extends JFrame {
 	 * 	
 	 * @return javax.swing.DefaultListModel	
 	 */
-	private DefaultListModel getPackListModel() {
+	private DefaultListModel<File> getPackListModel() {
 		if (packListModel == null) {
 			packListModel = new FileListModel();
 		}
@@ -870,7 +872,7 @@ public class GuiFrontEnd extends JFrame {
 
 	private JLabel packLabel = null;
 
-	private JList packList = null;
+	private JList<File> packList = null;
 
 	private JPanel packReferPanel = null;
 
@@ -884,7 +886,7 @@ public class GuiFrontEnd extends JFrame {
 
 	private LogoPanel logoPanel = null;
 
-	DefaultListModel packListModel = null; //  @jve:decl-index=0:visual-constraint=""
+	DefaultListModel<File> packListModel = null; //  @jve:decl-index=0:visual-constraint=""
 
 	private JButton removePackButton = null;
 
@@ -1109,7 +1111,7 @@ public class GuiFrontEnd extends JFrame {
 		boolean found = false;
 
 		for (int i = 0; i < packListModel.getSize(); ++i) {
-			if (((String) packListModel.getElementAt(i)).equalsIgnoreCase(startClassText.getName() + ".ax")) {
+			if ((packListModel.getElementAt(i).toString()).equalsIgnoreCase(startClassText.getName() + ".ax")) {
 				found = true;
 				break;
 			}
@@ -1126,7 +1128,7 @@ public class GuiFrontEnd extends JFrame {
 		if (startClassText.getText().length() == 0) {
 
 			for (int i = 0; i < packListModel.getSize(); ++i) {
-				if (((String) packListModel.getElementAt(i)).equalsIgnoreCase("start.ax")) {
+				if ((packListModel.getElementAt(i).getName()).equalsIgnoreCase("start.ax")) {
 					startClassText.setText("start");
 					modified = true;
 					break;

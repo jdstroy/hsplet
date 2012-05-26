@@ -1,11 +1,12 @@
 
 import hsplet.Context;
+import hsplet.PEXInfo;
 import hsplet.function.FunctionBase;
-import hsplet.variable.ByteString;
+import hsplet.variable.Operand;
 
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * To change this template, choose Tools | Templates and open the template in
+ * the editor.
  */
 /**
  *
@@ -27,7 +28,7 @@ public class hspinet extends FunctionBase {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public int neterror(ByteString pexinfo, int n, int m, int o) {
+    public int neterror(@PEXInfo Operand pexinfo, int offset, int n, int m, int o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

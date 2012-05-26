@@ -42,7 +42,7 @@ public class user32 extends FunctionBase implements Serializable {
     private static final int MF_BYCOMMAND = 0;
     private static final int MF_BYPOSITION = 0x400;
     private Context context;
-    private List objects = new ArrayList();
+    private List<Object> objects = new ArrayList<Object>();
 
     public user32(final Context context) {
         this.context = context;

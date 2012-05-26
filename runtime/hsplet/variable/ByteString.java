@@ -20,7 +20,7 @@ import java.nio.charset.CoderResult;
  * @author Yuki
  * @version $Revision: 1.7.2.1 $, $Date: 2006/08/02 12:13:06 $
  */
-public final class ByteString implements Serializable {
+public class ByteString implements Serializable {
 
 	/** 直列化復元時に、データの互換性を確認するためのバージョン番号。 */
 	private static final long serialVersionUID = 6225913660341986054L;
