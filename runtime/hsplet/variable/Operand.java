@@ -30,6 +30,12 @@ public abstract class Operand implements Serializable {
 
 	/** このクラスを含むソースファイルのバージョン文字列。 */
 	private static final String fileVersionID = "$Id: Operand.java,v 1.2.4.1 2006/08/02 12:13:06 Yuki Exp $";
+	protected static int allErrorIndex=1;
+	protected int errorIndex=0;
+	public int errorIndex(){
+		if(errorIndex==0) errorIndex=allErrorIndex++;
+		return errorIndex;
+	}
 
 	/**
 	 * データの型。

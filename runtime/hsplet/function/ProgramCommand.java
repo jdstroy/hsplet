@@ -252,6 +252,7 @@ public class ProgramCommand extends FunctionBase {
 			return;
 		}
 
+		//System.out.println(((Variable)v).errorIndex()+" Context variable");
 		switch (type) {
 		case 64:
 			((Variable) v).value = context.stat;

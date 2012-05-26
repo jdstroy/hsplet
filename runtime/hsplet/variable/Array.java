@@ -76,18 +76,30 @@ public abstract class Array extends Operand {
   //@Override
   public int getIndex(final int i0, final int i1) {
 
+    if(i1>l1){
+	    if(Variable.class.isAssignableFrom(this.getClass())) System.out.print("v");
+	    System.out.println(errorIndex()+" l1 exceeded: "+i1+" "+l1);
+    }
     return i1 * l0 + i0;
   }
 
   //@Override
   public int getIndex(final int i0, final int i1, final int i2) {
 
+    if(i2>l2){
+	    if(Variable.class.isAssignableFrom(this.getClass())) System.out.print("v");
+	    System.out.println(errorIndex()+" l2 exceeded: "+i2+" "+l2);
+    }
     return (i2 * l1 + i1) * l0 + i0;
   }
 
   //@Override
   public int getIndex(final int i0, final int i1, final int i2, final int i3) {
 
+    if(i3>l3){
+	    if(Variable.class.isAssignableFrom(this.getClass())) System.out.print("v");
+	    System.out.println(errorIndex()+" l3 exceeded: "+i3+" "+l3);
+    }
     return ((i3 * l2 + i2) * l1 + i1) * l0 + i0;
   }
 
