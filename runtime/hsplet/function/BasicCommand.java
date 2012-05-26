@@ -495,6 +495,7 @@ public class BasicCommand extends FunctionBase {
 
 		if (v.getType() != Operand.Type.STRING) {
 			if (v instanceof Variable) {
+				//System.out.println(((Variable)v).errorIndex()+" Assign change(note): "+v.getType()+" "+Operand.Type.STRING);
 				((Variable) v).value = new StringArray();
 			} else {
 				context.error(HSPError.ParameterTypeMismatch, "notesel", "vartype( v )==" + v.getType());

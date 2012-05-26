@@ -203,8 +203,8 @@ public class Compiler implements Opcodes, Serializable {
                         final Compiler c = new Compiler(new ByteCode(new FileInputStream(packFile)),
                                 packFile.getName(), libraryLoader);
                         c.compile(className, jar);
-		    } catch (Exception ex) {
-			ex.printStackTrace();
+            } catch (Exception ex) {
+            ex.printStackTrace();
                     } finally {
                         jar.closeEntry();
                     }
@@ -381,7 +381,7 @@ public class Compiler implements Opcodes, Serializable {
             output = bufferClassNode;
         }
 
-	//output = new CheckClassAdapter(output);
+    //output = new CheckClassAdapter(output);
 
         // フィールドの初期化。
         if (DEBUG_ENABLED) {
@@ -1158,10 +1158,10 @@ public class Compiler implements Opcodes, Serializable {
         return numExtraMethods++;
     }
     public MethodVisitor getExtraMV(String name, String signature) {
-	    MethodVisitor mv=cw.visitMethod(ACC_PRIVATE, name, signature, null, new String[0]);
-	    if(LINENUMS_ENABLED) {
-		    mv=new CodeOpcodeCounter(mv);
-	    }
+        MethodVisitor mv=cw.visitMethod(ACC_PRIVATE, name, signature, null, new String[0]);
+        if(LINENUMS_ENABLED) {
+            mv=new CodeOpcodeCounter(mv);
+        }
         return mv;
     }
     
@@ -2796,15 +2796,21 @@ public class Compiler implements Opcodes, Serializable {
             mv=new SubMethodAdapter(this, mv);
 
             Integer[] mainLabels=labelGroup.mainLabels(allLabels);
-            if(mainLabels.length > 1) {
+            int numTableLabels=mainLabels.length;
+            if(numTableLabels > 1) {
+                boolean dummyMainLabel=(allLabels[mainLabels[0].intValue()].branchesToHere==-1);
+                if(dummyMainLabel) numTableLabels--;
                 KLabel defaultLabel=new KLabel();
                 defaultLabel.branchesToHere=1;
-                KLabel[] tableLabels=new KLabel[mainLabels.length];
-                for(int i=0;i<mainLabels.length;i++) {
-                    tableLabels[i]=allLabels[mainLabels[i].intValue()];
-                }
+                KLabel[] tableLabels=new KLabel[numTableLabels];
+                if(dummyMainLabel)
+                    for(int i=0;i<numTableLabels;i++)
+                        tableLabels[i]=allLabels[mainLabels[i+1].intValue()];
+                else
+                    for(int i=0;i<numTableLabels;i++)
+                        tableLabels[i]=allLabels[mainLabels[i].intValue()];
                 mv.visitVarInsn(ILOAD, 1);
-                mv.visitTableSwitchInsn(numMains, numMains + mainLabels.length - 1, defaultLabel, tableLabels);
+                mv.visitTableSwitchInsn(numMains, numMains + numTableLabels - 1, defaultLabel, tableLabels);
                 mv.visitLabel(defaultLabel);
             }
             //A thought. There should be an else here for if the first mainLabel is not the first label.

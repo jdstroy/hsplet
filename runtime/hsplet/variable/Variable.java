@@ -25,6 +25,8 @@ public final class Variable extends Operand {
 
 	/** このクラスを含むソースファイルのバージョン文字列。 */
 	private static final String fileVersionID = "$Id: Variable.java,v 1.3.2.1 2006/08/02 12:13:06 Yuki Exp $";
+	//private static int globalErrorIndex=1;
+	//public int myErrorIndex;
 
 	/** 値を保持するオブジェクト。 */
 	public Operand value;
@@ -34,6 +36,7 @@ public final class Variable extends Operand {
 	 */
 	public Variable() {
 
+		//myErrorIndex=globalErrorIndex++;
 		this.value = new IntArray();
 	}
 
@@ -122,6 +125,7 @@ public final class Variable extends Operand {
 
 		// 型が違う代入、初期化される
 		if (getType() != rhs.getType()) {
+			//System.out.println(myErrorIndex+" Assign change: "+getType()+" "+rhs.getType());
 			switch (rhs.getType()) {
 			case Type.INTEGER:
 				value = new IntArray();
