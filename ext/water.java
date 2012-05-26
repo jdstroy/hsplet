@@ -1,8 +1,7 @@
 
 import hsplet.Context;
 import hsplet.function.FunctionBase;
-import hsplet.variable.Operand;
-import interfaces.IWater;
+import hsplet.gui.Bmscr;
 
 /*
  * To change this template, choose Tools | Templates
@@ -36,7 +35,9 @@ public class water extends FunctionBase {
     }
 
     
-    public int water_draw(int bmscr, int a, int b, int c) {
+    public int water_draw(int bmscr_index, int a, int b, int c) {
+        Bmscr el = context.windows.get(bmscr_index); // Just guessing here
+        
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

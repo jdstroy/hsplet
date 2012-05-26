@@ -5,3 +5,4 @@
 ^ext/EloText.java$
 ^ext/ElonaStringStore.java$
 ^build/
+^nbproject/

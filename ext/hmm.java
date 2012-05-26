@@ -1,6 +1,8 @@
 
 import hsplet.Context;
+import hsplet.HSPError;
 import hsplet.function.FunctionBase;
+import hsplet.gui.Bmscr;
 import hsplet.variable.ByteString;
 
 /*
@@ -20,7 +22,13 @@ public class hmm extends FunctionBase  {
         this.context = context;
     }
     
-    public int DSINIT(int bmscr, int a, int b, int c) {
+    public int DSINIT(int bmscr_window_id, int a, int b, int c) {
+        if (bmscr_window_id < 0 || bmscr_window_id >= context.windows.size() || context.windows.get(bmscr_window_id) == null) {
+            context.error(HSPError.InvalidParameterValue, "grotate", "id==" + bmscr_window_id);
+        }
+
+        final Bmscr target = context.windows.get(bmscr_window_id);
+        
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

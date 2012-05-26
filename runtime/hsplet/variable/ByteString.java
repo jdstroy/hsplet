@@ -354,5 +354,31 @@ public final class ByteString implements Serializable {
 		}
 		return nextIndex;
 	}
+        
+        public int lineCount() {
+            int lines = 0;
+            for(int i = 0; i < length; i++) {
+                if (get(i) == '\n') {
+                    lines++;
+                }
+            }
+            return lines;
+        }
+        
+        public String getLine(int index) {
+            
+		int lineIndex = lineIndex(index);
+		int lineLength = nextLineIndex(lineIndex) - lineIndex;
 
+		final ByteString string = substring(lineIndex, lineLength);
+
+		if (string.length() >= 1 && string.get(string.length() - 1) == '\n') {
+
+			string.set(string.length() - 1, (byte) 0);
+			if (string.length() >= 1 && string.get(string.length() - 1) == '\r') {
+				string.set(string.length() - 1, (byte) 0);
+			}
+		}
+		return string.toString();
+        }
 }

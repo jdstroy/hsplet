@@ -147,7 +147,7 @@ public class user32 extends FunctionBase implements Serializable {
 
         final JMenuBar menu = (JMenuBar) objects.get(menuId);
 
-        final Bmscr win = (Bmscr) context.windows.get(windowId);
+        final Bmscr win = context.windows.get(windowId);
 
         if (win.component instanceof JFrame) {
             ((JFrame) win.component).setJMenuBar(menu);
