@@ -8,6 +8,8 @@ import hsplet.Context;
 import hsplet.RunnableCode;
 import hsplet.compiler.ByteCode.Code;
 import hsplet.compiler.ByteCode.Function;
+import hsplet.compiler.util.OpcodeIndexAsLineClassAdapter;
+import hsplet.compiler.util.OpcodeIndexAsLineMethodAdapter;
 import hsplet.function.GotoException;
 import hsplet.function.JumpStatement;
 import hsplet.variable.ByteString;
@@ -369,6 +371,7 @@ public class Compiler implements Opcodes, Serializable {
         //final ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
         final ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         output = writer;
+        //output = new OpcodeIndexAsLineClassAdapter(writer);
 
         ClassWriter superWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         //final ClassWriter writer = new ClassWriter(true);

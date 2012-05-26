@@ -16,23 +16,11 @@ public class OpcodeIndexAsLineMethodAdapter extends CodeOpcodeCounter {
     public OpcodeIndexAsLineMethodAdapter(MethodVisitor mv) {
         super(mv);
     }
-
-    @Override
-    public void visitCode() {
-        insertDebugLine();
-        super.visitCode();
-    }
     
     private void insertDebugLine() {
         Label label = new Label();
         visitLabel(label);
         visitLineNumber(getCount(), label);
-    }
-
-    @Override
-    public void visitEnd() {
-        insertDebugLine();
-        super.visitEnd();
     }
 
     @Override
@@ -63,12 +51,6 @@ public class OpcodeIndexAsLineMethodAdapter extends CodeOpcodeCounter {
     public void visitLdcInsn(Object cst) {
         insertDebugLine();
         super.visitLdcInsn(cst);
-    }
-
-    @Override
-    public void visitLineNumber(int line, Label start) {
-        insertDebugLine();
-        super.visitLineNumber(line, start);
     }
 
     @Override
