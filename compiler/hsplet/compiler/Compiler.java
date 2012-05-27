@@ -9,7 +9,6 @@ import hsplet.RunnableCode;
 import hsplet.compiler.ByteCode.Code;
 import hsplet.compiler.ByteCode.Function;
 import hsplet.compiler.util.OpcodeIndexAsLineClassAdapter;
-import hsplet.compiler.util.OpcodeIndexAsLineMethodAdapter;
 import hsplet.function.GotoException;
 import hsplet.function.JumpStatement;
 import hsplet.variable.ByteString;
@@ -40,6 +39,8 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -49,7 +50,6 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.util.CheckClassAdapter;
 
 /**
  * axファイルをコンパイルするクラス。
@@ -203,8 +203,8 @@ public class Compiler implements Opcodes, Serializable {
                         final Compiler c = new Compiler(new ByteCode(new FileInputStream(packFile)),
                                 packFile.getName(), libraryLoader);
                         c.compile(className, jar);
-            } catch (Exception ex) {
-            ex.printStackTrace();
+                    } catch (Exception ex) {
+                        Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
                     } finally {
                         jar.closeEntry();
                     }
@@ -371,8 +371,10 @@ public class Compiler implements Opcodes, Serializable {
         //final ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
         final ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         output = writer;
-        //output = new OpcodeIndexAsLineClassAdapter(writer);
-
+        
+        if (LINENUMS_ENABLED) {
+            output = new OpcodeIndexAsLineClassAdapter(writer);
+        }
         ClassWriter superWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         //final ClassWriter writer = new ClassWriter(true);
         ClassNode bufferClassNode = new ClassNode();
@@ -881,11 +883,7 @@ public class Compiler implements Opcodes, Serializable {
     private void createRun(int numTargets) {
 
         final MethodVisitor originalVisitor = cw.visitMethod(ACC_PUBLIC | ACC_FINAL, "run", "(I)" + opeDesc, null, new String[0]);
-        final MethodVisitor mv;
-        if(LINENUMS_ENABLED)
-            mv = new CodeOpcodeCounter(originalVisitor);
-        else
-            mv = originalVisitor;
+        final MethodVisitor mv = originalVisitor;
         
         mv.visitCode();
         if (numTargets == 0) {
@@ -1159,9 +1157,6 @@ public class Compiler implements Opcodes, Serializable {
     }
     public MethodVisitor getExtraMV(String name, String signature) {
         MethodVisitor mv=cw.visitMethod(ACC_PRIVATE, name, signature, null, new String[0]);
-        if(LINENUMS_ENABLED) {
-            mv=new CodeOpcodeCounter(mv);
-        }
         return mv;
     }
     
@@ -2787,9 +2782,6 @@ public class Compiler implements Opcodes, Serializable {
         int numMains=0;
         for(MyTreeThing labelGroup : labelGroups) {
             MethodVisitor mv = cw.visitMethod(ACC_PRIVATE, "m" + numMethods++, "(I)"+FODesc, null, new String[0]);
-
-            if(LINENUMS_ENABLED)
-                mv=new CodeOpcodeCounter(mv);
 
             compileLocalVariables(mv);
 
