@@ -77,6 +77,7 @@ public class Compiler implements Opcodes, Serializable {
     private static final long serialVersionUID = 8668239863505235428L;
     /** デバッグ出力をするかどうか。 */
     private static final boolean DEBUG_ENABLED = false;
+    /** Show opcode index as line numbers in debug output */
     private static final boolean LINENUMS_ENABLED = false;
     /** Stores the results in an ASM tree.  This is slow and memory hungry;
      * you should use this only if you're debugging/poking around.  This 
