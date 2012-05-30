@@ -13,11 +13,9 @@ import hsplet.variable.Scalar;
 import hsplet.variable.StringArray;
 import hsplet.variable.Variable;
 
-import java.io.File;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -609,16 +607,31 @@ public class BasicCommand extends FunctionBase {
 				in.close();
 			}
 
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
 			context.error(HSPError.FileNotFound, "noteload", fileName);
 		}
 
 	}
 
 	public static void notesave(final Context context, String filename) {
-
-		context.error(HSPError.UnsupportedOperation, "notesave");
+            FileOutputStream out = null;
+            try {
+                out = new FileOutputStream(filename);
+                context.note.toByteString(0).dump(out);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
+                context.error(HSPError.FileNotFound, "notesave");
+            } catch (IOException ex) {
+                Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
+                context.error(HSPError.FileNotFound, "notesave");
+            } finally {
+                if (out != null) try {
+                    out.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(BasicCommand.class.getName()).log(Level.FINER, null, ex);
+                }
+            }
 	}
 
 	public static void randomize(final Context context, final Operand v, final int vi) {

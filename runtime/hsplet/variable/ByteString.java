@@ -3,6 +3,8 @@
  */
 package hsplet.variable;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -380,5 +382,10 @@ public class ByteString implements Serializable {
 			}
 		}
 		return string.toString();
+        }
+        
+        public void dump(OutputStream out) throws IOException {
+            out.write(bytes);
+            out.flush();
         }
 }
