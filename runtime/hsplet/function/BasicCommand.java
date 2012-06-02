@@ -628,8 +628,10 @@ public class BasicCommand extends FunctionBase {
     public static void notesave(final Context context, String filename) {
         FileOutputStream out = null;
         try {
-            out = new FileOutputStream(filename);
+            out = new FileOutputStream(new File(cwd(context).toURI().resolve(filename)));
             context.note.toByteString(0).dump(out);
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
             context.error(HSPError.FileNotFound, "notesave");
