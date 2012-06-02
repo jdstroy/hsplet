@@ -2808,7 +2808,7 @@ public class Compiler implements Opcodes, Serializable {
             }
             //A thought. There should be an else here for if the first mainLabel is not the first label.
             //If so, mv.visitJumpInsn(GOTO, allLabels[mainLabels[0].intValue()]); ?
-            numMains += mainLabels.length;
+            numMains += numTableLabels;
             codeIndex = 0;
             int nextLabelStart;
             int numStatements = 0;
