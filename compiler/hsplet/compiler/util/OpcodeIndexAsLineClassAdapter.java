@@ -4,9 +4,12 @@
  */
 package hsplet.compiler.util;
 
-import org.objectweb.asm.ClassAdapter;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.objectweb.asm.*;
 
 /**
  *
@@ -21,5 +24,29 @@ public class OpcodeIndexAsLineClassAdapter extends ClassAdapter {
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         return new OpcodeIndexAsLineMethodAdapter(super.visitMethod(access, name, desc, signature, exceptions));
+    }
+
+    public static void main(String[] args) {
+        try {
+            FileOutputStream fos = null;
+            ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+            new ClassReader(args[0]).accept(new OpcodeIndexAsLineClassAdapter(writer), 0);
+            try {
+                fos = new FileOutputStream(args[1]);
+                fos.write(writer.toByteArray());
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(OpcodeIndexAsLineClassAdapter.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(OpcodeIndexAsLineClassAdapter.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    fos.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(OpcodeIndexAsLineClassAdapter.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(OpcodeIndexAsLineClassAdapter.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
