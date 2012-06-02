@@ -211,7 +211,7 @@ public class BasicCommand extends FunctionBase {
             // We might get an IllegalArgumentException.  We shall see.
             /* Is it using /?  Probably was coded with HSPlet/Java/*nix in mind.
               If it isn't, we'll assume we're on Windows.*/
-            final String new_mask = (!mask.contains("/") && mask.contains("\\")) ? mask : mask.replace('\\', '/');
+            final String new_mask = winPathToNetPath(mask);
             File[] dirlist = cwd(context).listFiles(new Globber(new_mask, mode));
             StringBuilder sb = new StringBuilder();
             List<File> fList = Arrays.asList(dirlist);
@@ -550,6 +550,12 @@ public class BasicCommand extends FunctionBase {
         note.replace(lineIndex, lineLength, lineStr);
 
     }
+    
+    private static String winPathToNetPath(String winpath) {
+        String output = winpath.replace('\\', '/');
+        //String output = winpath.contains("/") ? winpath : winpath.replace('\\', '/');
+        return output.startsWith("/") ? output.substring(1) : output;
+    }
 
     public static void notedel(final Context context, final int line) {
 
@@ -628,7 +634,7 @@ public class BasicCommand extends FunctionBase {
     public static void notesave(final Context context, String filename) {
         FileOutputStream out = null;
         try {
-            out = new FileOutputStream(new File(cwd(context).toURI().resolve(filename)));
+            out = new FileOutputStream(new File(cwd(context).toURI().resolve(winPathToNetPath(filename))));
             context.note.toByteString(0).dump(out);
         } catch (URISyntaxException ex) {
             Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
