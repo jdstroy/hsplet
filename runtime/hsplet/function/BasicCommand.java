@@ -211,7 +211,7 @@ public class BasicCommand extends FunctionBase {
             // We might get an IllegalArgumentException.  We shall see.
             /* Is it using /?  Probably was coded with HSPlet/Java/*nix in mind.
               If it isn't, we'll assume we're on Windows.*/
-            final String new_mask = (mask.contains("/") && mask.contains("\\")) ? mask : mask.replace('\\', '/');
+            final String new_mask = (!mask.contains("/") && mask.contains("\\")) ? mask : mask.replace('\\', '/');
             File[] dirlist = cwd(context).listFiles(new Globber(new_mask, mode));
             StringBuilder sb = new StringBuilder();
             List<File> fList = Arrays.asList(dirlist);
