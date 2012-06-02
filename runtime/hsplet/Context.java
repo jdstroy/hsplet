@@ -18,6 +18,7 @@ import hsplet.variable.Operand;
 import hsplet.variable.OperandInputStream;
 import hsplet.variable.StringArray;
 import hsplet.variable.StringScalar;
+import java.awt.im.InputContext;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -60,6 +61,13 @@ public class Context implements Serializable {
     public long stickTriggerTime = System.currentTimeMillis();
     public int mouseX = 0;
     public int mouseY = 0;
+    
+    private final List<InputContext> inputContexts = new ArrayList<InputContext>();
+
+    public List<InputContext> getInputContexts() {
+        return inputContexts;
+    }
+
 
     public void init(final Applet applet, final Class startClass) {
 
