@@ -4,6 +4,9 @@ import hsplet.HSPError;
 import hsplet.PEXInfo;
 import hsplet.function.FunctionBase;
 import hsplet.gui.Bmscr;
+import hsplet.variable.Operand;
+import hsplet.variable.Scalar;
+import hsplet.variable.Variable;
 
 /*
  * To change this template, choose Tools | Templates
@@ -112,19 +115,37 @@ public class hmm extends FunctionBase  {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    
-    public int HMMBITON(int a, int b, int c, int d) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    /**
+     * Turns on bit position in target.
+     * @param target
+     * @param position
+     * @return 
+     */
+    public int HMMBITON(Operand target, int index, int position) {
+        target.or(index, Scalar.fromValue(1 << (position)), 0);
+        return 1;
     }
 
     
-    public int HMMBITOFF(int a, int b, int c, int d) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    /**
+     * Turns off bit position in target.
+     * @param target
+     * @param position
+     * @return 
+     */
+    public int HMMBITOFF(Operand target, int index, int position) {
+        target.and(0, Scalar.fromValue(~(1 << (position))), 0);
+        return 1;
     }
 
-    
-    public int HMMBITCHECK(int a, int b, int c, int d) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    /**
+     * Returns the value of the bit in position of target.
+     * @param target
+     * @param position
+     * @return 
+     */
+    public int HMMBITCHECK(Operand target, int index, int position) {
+        return ((target.toInt(index) >> position) & 1);
     }
 
 }
