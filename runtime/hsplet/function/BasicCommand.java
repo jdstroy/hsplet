@@ -204,13 +204,18 @@ public class BasicCommand extends FunctionBase {
 
     public static void dirlist(final Context context, final ByteString result, final String mask, int mode) {
         try {
-            context.stat.value = 0; // OK
+            /*
+             * try {
+             */
 
             // We might get an IllegalArgumentException.  We shall see.
-            File[] dirlist = cwd(context).listFiles(new Globber(mask, mode));
+            /* Is it using /?  Probably was coded with HSPlet/Java/*nix in mind.
+              If it isn't, we'll assume we're on Windows.*/
+            final String new_mask = (mask.contains("/") && mask.contains("\\")) ? mask : mask.replace('\\', '/');
+            File[] dirlist = cwd(context).listFiles(new Globber(new_mask, mode));
             StringBuilder sb = new StringBuilder();
             List<File> fList = Arrays.asList(dirlist);
-            for (Iterator<File> it = fList.iterator(); it.hasNext(); ) {
+            for (Iterator<File> it = fList.iterator(); it.hasNext();) {
                 File f = it.next();
                 sb.append(f.getName());
                 if (it.hasNext()) {
@@ -219,6 +224,11 @@ public class BasicCommand extends FunctionBase {
             }
 
             result.assign(new ByteString(sb.toString()));
+            context.stat.value = 0; // OK
+            /*
+             * } catch (Exception ex) { context.stat.value = 1; // OK
+            }
+             */
         } catch (URISyntaxException ex) {
             Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, "Tried to convert to File URI but failed", ex);
         }
