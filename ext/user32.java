@@ -3,13 +3,20 @@ import hsplet.Context;
 import hsplet.function.FunctionBase;
 import hsplet.gui.Bmscr;
 import hsplet.gui.HSPScreen;
+import hsplet.variable.Operand;
+import java.awt.AWTException;
 
 import java.awt.Component;
+import java.awt.Robot;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JApplet;
 import javax.swing.JCheckBoxMenuItem;
@@ -23,7 +30,7 @@ import javax.swing.JSeparator;
 
 /**
  * user32.dll ‚ðŽÀ‘•‚·‚éƒNƒ‰ƒX.
- * 
+ *
  * @author Yuki
  * @version $Revision: 1.2 $, $Date: 2006/05/20 06:12:07 $
  */
@@ -41,8 +48,11 @@ public class user32 extends FunctionBase implements Serializable {
     public static final int WM_COMMAND = 0x0111;
     private static final int MF_BYCOMMAND = 0;
     private static final int MF_BYPOSITION = 0x400;
+    public static final int KEYEVENTF_KEYUP = 0x0002;
     private Context context;
     private List<Object> objects = new ArrayList<Object>();
+    public static final int WINAPI_STATUS_SUCCESS = 1;
+    public static final int WINAPI_STATUS_FAILURE = 0;
 
     public user32(final Context context) {
         this.context = context;
@@ -51,12 +61,31 @@ public class user32 extends FunctionBase implements Serializable {
         objects.add(new Object());
     }
 
-    public int keybd_event(int a, int b, int c) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public void keybd_event(int bVk, int bScan, int dwFlags, int dwExtraInfo) {
+        Logger.getLogger(user32.class.getName()).log(Level.FINEST,
+                "keybd_event({0}, {1}, {2}, {3})", new Object[]{
+                    bVk, bScan, dwFlags, dwExtraInfo
+                });
+        try {
+            Robot r = new Robot();
+            if ((dwFlags & KEYEVENTF_KEYUP) == KEYEVENTF_KEYUP) {
+                r.keyRelease(bVk);
+            } else {
+                r.keyPress(bVk);
+            }
+        } catch (AWTException ex) {
+            Logger.getLogger(user32.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    public int GetKeyboardState(hsplet.variable.ByteString str) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public int GetKeyboardState(Operand out, int index) {
+        Logger.getLogger(getClass().getName()).log(Level.WARNING,
+                "GetKeyboardState(PBYTE) was called but is not completely "
+                + "implemented!");
+        out.poke(index, KeyEvent.VK_NUM_LOCK, Integer.valueOf(
+                (Toolkit.getDefaultToolkit().
+                getLockingKeyState(KeyEvent.VK_NUM_LOCK) ? 1 : 0)).byteValue());
+        return WINAPI_STATUS_FAILURE;
     }
 
     private int addObject(final Object o) {
