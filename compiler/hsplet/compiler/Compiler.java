@@ -2188,7 +2188,7 @@ public class Compiler implements Opcodes, Serializable {
                 break;
             case 0x03: // break
                 compileBreak(mv);
-                currentLabel = null;
+                //currentLabel = null;
                 break;
             case 0x04: // repeat
                 compileRepeat(mv);
@@ -2388,7 +2388,7 @@ public class Compiler implements Opcodes, Serializable {
         if (mv instanceof ScanTwoVisitor) {
             if (currentLabel != null) {
                 ((ScanTwoVisitor) mv).loopReliesOn(loopStarts.peek(), currentLabel);
-        }
+            }
         }
         mv.visitJumpInsn(IFNE, (KLabel) loopStarts.pop());
 
@@ -2427,7 +2427,7 @@ public class Compiler implements Opcodes, Serializable {
         } else if (mv instanceof ScanThreeVisitor) {
             if ((currentLabel != null) && (currentLabel.isUsed)) {
                 L.branchesToHere++;
-        }
+            }
             //System.out.println(((ScanThreeVisitor)mv).currentStatementAddress+" Continue to "+ax.labels[label.value]);
         }
         loopStarts.peek().branchesToHere++;
