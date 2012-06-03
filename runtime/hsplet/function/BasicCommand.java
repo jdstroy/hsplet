@@ -184,17 +184,17 @@ public class BasicCommand extends FunctionBase {
     }
 
     public static void chdir(final Context context, final String dirName) {
-
-        if (dirName == null) {
-            context.error(HSPError.ParameterCannotBeOmitted, "chdir", "dirName");
-            return;
-        }
-
         try {
+            if (dirName == null) {
+                context.error(HSPError.ParameterCannotBeOmitted, "chdir", "dirName");
+                return;
+            }
+
             final String rel = dirName.replace('\\', '/');
             context.curdir = new URL(context.curdir, rel + (rel.endsWith("/") ? "" : "/"));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+            Logger.getLogger(BasicCommand.class.getName()).log(Level.INFO, "chdir: Requested {0}, gave {1}", new Object[] {dirName, context.curdir});
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -557,6 +557,10 @@ public class BasicCommand extends FunctionBase {
         return output.startsWith("/") ? output.substring(1) : output;
     }
 
+    private static String safeWinPath2NetPath(String winpath) {
+        String output = winpath.contains("/") ? winpath : winpath.replace('\\', '/');
+        return output.startsWith("/") ? output.substring(1) : output;
+    }
     public static void notedel(final Context context, final int line) {
 
         // 文字列型なら使用中のバッファが返ってくるはず。
@@ -583,11 +587,24 @@ public class BasicCommand extends FunctionBase {
         note.set(0, (byte) 0);
 
         try {
-            final InputStream in = context.getResource(fileName);
-
+            InputStream in = context.getResource(fileName);
+            
             if (in == null) {
-                context.error(HSPError.FileNotFound, "noteload", fileName);
-                return;
+                // One more thing to try
+                try {
+                    Logger.getLogger(BasicCommand.class.getName()).log(Level.INFO, 
+                        "noteload {0} => {1}", 
+                        new Object[] {
+                            fileName, 
+                            context.curdir.toURI().resolve(safeWinPath2NetPath(fileName))
+                        }
+                    );
+                    in = new FileInputStream(new File(context.curdir.toURI().resolve(safeWinPath2NetPath(fileName))));
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
+                    context.error(HSPError.FileNotFound, "noteload", fileName);
+                    return;
+                }
             }
 
             try {
