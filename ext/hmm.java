@@ -28,12 +28,14 @@ public class hmm extends FunctionBase {
         private boolean playing;
         private int fileSeekPosition;
         private boolean playWhenWindowIsActive;
+        private int volume;
 
         public DSObject(String fileName, int fileSeekPosition, boolean playWhenWindowIsActive) {
             this.fileName = fileName;
             this.fileSeekPosition = fileSeekPosition;
             this.playWhenWindowIsActive = playWhenWindowIsActive;
             playing = false;
+            volume = 0;
         }
 
         public boolean isPlaying() {
@@ -46,6 +48,14 @@ public class hmm extends FunctionBase {
 
         public void stop() {
             Logger.getLogger(getClass().getName()).log(Level.WARNING, "stop() called but not implemented.");
+        }
+
+        public int getVolume() {
+            return volume;
+        }
+
+        public void setVolume(int volume) {
+            this.volume = volume;
         }
     }
 
@@ -146,34 +156,12 @@ public class hmm extends FunctionBase {
      * Function to change the volume of the buffer of p1.
      *
      * @param buffer
-     * @param inVolume
+     * @param volume
      * @return
      */
-    public int DSSETVOLUME(int buffer, int inVolume) {
-        Logger.getLogger(getClass().getName()).log(Level.WARNING, "DSSETVOLUME({0},{1}) called but not implemented.", new Object[]{buffer, inVolume});
-        Mixer.Info[] infos = AudioSystem.getMixerInfo();
-        for (Mixer.Info info : infos) {
-            Mixer mixer = AudioSystem.getMixer(info);
-            if (mixer.isLineSupported(Port.Info.SPEAKER)) {
-                try {
-                    Line port = mixer.getLine(Port.Info.SPEAKER);
-                    port.open();
-                    if (port.isControlSupported(FloatControl.Type.VOLUME)) {
-                        Control volume = port.getControl(FloatControl.Type.VOLUME);
-                        FloatControl fc = (FloatControl) volume;
-                        fc.setValue((float) ((((float) inVolume) / 1024.0)
-                                * (fc.getMaximum() - fc.getMinimum())
-                                + fc.getMinimum()));
-                        System.out.println(info);
-                        System.out.println("- " + Port.Info.SPEAKER);
-                        System.out.println("  - " + volume);
-                    }
-                    port.close();
-                } catch (LineUnavailableException ex) {
-                    Logger.getLogger(hmm.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
+    public int DSSETVOLUME(int buffer, int volume) {
+        DSObject.class.cast(dsBuffers.get(new Integer(buffer))).setVolume(volume);
+        Logger.getLogger(getClass().getName()).log(Level.WARNING, "DSSETVOLUME({0},{1}) called but not implemented.", new Object[]{buffer, volume});
         return DS_OK;
         //throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -184,12 +172,36 @@ public class hmm extends FunctionBase {
      * @return The volume, or 0 for failure.
      */
     public int DSGETMASTERVOLUME() {
-        Logger.getLogger(getClass().getName()).log(Level.WARNING, "DSGETMASTERVOLUME() called but not implemented.");
+        Mixer.Info[] infos = AudioSystem.getMixerInfo();
+        for (Mixer.Info info : infos) {
+            Mixer mixer = AudioSystem.getMixer(info);
+            if (mixer.isLineSupported(Port.Info.SPEAKER)) {
+                try (Line port = mixer.getLine(Port.Info.SPEAKER)) {
+                    port.open();
+                    if (port.isControlSupported(FloatControl.Type.VOLUME)) {
+                        Control volume = port.getControl(
+                                FloatControl.Type.VOLUME);
+                        FloatControl fc = (FloatControl) volume;
+                        Logger.getLogger(getClass().getName()).log(Level.FINEST,
+                                "{0}", info);
+                        Logger.getLogger(getClass().getName()).log(Level.FINEST,
+                                "{0}={1}", new Object[]{Port.Info.SPEAKER,
+                                    volume});
+                        return Double.valueOf(1024.0 * (fc.getMaximum()
+                                - fc.getMinimum()) + fc.getMinimum()).
+                                intValue();
+                    }
+                } catch (LineUnavailableException ex) {
+                    Logger.getLogger(hmm.class.getName()).log(Level.SEVERE,
+                            null, ex);
+                }
+            }
+        }
         return DS_ERR;
     }
 
     public int CHECKPLAY(int bufferIndex) {
-        Logger.getLogger(getClass().getName()).log(Level.WARNING, "CHECKPLAY({0}) called but not implemented.", bufferIndex);
+        //Logger.getLogger(getClass().getName()).log(Level.WARNING, "CHECKPLAY({0}) called but not implemented.", bufferIndex);
         return dsBuffers.get(new Integer(bufferIndex)).isPlaying() ? DS_OK : DS_ERR;
     }
 
