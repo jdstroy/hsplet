@@ -262,7 +262,7 @@ public class BasicFunction extends FunctionBase {
 
         if (count < 0) {
             Logger.getLogger(BasicFunction.class.getName()).log(Level.WARNING,
-                    "strmid(\"{0}\", {1}, {2}) was called!  We'll be returning "
+                    "strmid(\"{0}\", {1}, {2}) was called!  We will be returning "
                     + "the empty string, but be aware that this may not be the "
                     + "behavior that you want!",
                     new Object[]{str, index, count});
