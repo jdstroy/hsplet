@@ -162,10 +162,10 @@ public class BasicCommand extends FunctionBase {
         }
 
     }
-
+    
     public static void delete(final Context context, final String fileName) {
         try {
-            boolean retval = new File(cwd(context), fileName).delete();
+            boolean retval = new File(context.resolve(fileName)).delete();
             context.stat.value = retval ? 0 : 1;
         } catch (URISyntaxException ex) {
             Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
@@ -175,7 +175,7 @@ public class BasicCommand extends FunctionBase {
 
     public static void mkdir(final Context context, final String fileName) {
         try {
-            boolean retval = new File(cwd(context), fileName).mkdir();
+            boolean retval = new File(context.resolve(fileName)).mkdir();
             context.stat.value = retval ? 0 : 1;
         } catch (URISyntaxException ex) {
             Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
@@ -651,7 +651,7 @@ public class BasicCommand extends FunctionBase {
     public static void notesave(final Context context, String filename) {
         FileOutputStream out = null;
         try {
-            out = new FileOutputStream(new File(cwd(context).toURI().resolve(winPathToNetPath(filename))));
+            out = new FileOutputStream(new File(context.resolve(filename)));
             context.note.toByteString(0).dump(out);
         } catch (URISyntaxException ex) {
             Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);

@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,19 +40,20 @@ import java.util.Stack;
 import javax.swing.JOptionPane;
 
 /**
- * HSPLet の実行されているコンテキストを表すクラス。
- * <p>
- * システム変数などを含む。
- * </p>
- * 
+ * HSPLet の実行されているコンテキストを表すクラス。 <p> システム変数などを含む。 </p>
+ *
  * @author Yuki
  * @version $Revision: 1.14 $, $Date: 2006/05/20 06:12:07 $
  */
 public class Context implements Serializable {
 
-    /** このクラスを含むソースファイルのバージョン文字列。 */
+    /**
+     * このクラスを含むソースファイルのバージョン文字列。
+     */
     private static final String fileVersionID = "$Id: Context.java,v 1.14 2006/05/20 06:12:07 Yuki Exp $";
-    /** 直列化復元時に、データの互換性を確認するためのバージョン番号。 */
+    /**
+     * 直列化復元時に、データの互換性を確認するためのバージョン番号。
+     */
     private static final long serialVersionUID = 4644182106732036912L;
     public Applet applet;
     private Class runClass;
@@ -61,13 +64,11 @@ public class Context implements Serializable {
     public long stickTriggerTime = System.currentTimeMillis();
     public int mouseX = 0;
     public int mouseY = 0;
-    
     private final List<InputContext> inputContexts = new ArrayList<InputContext>();
 
     public List<InputContext> getInputContexts() {
         return inputContexts;
     }
-
 
     public void init(final Applet applet, final Class startClass) {
 
@@ -130,11 +131,12 @@ public class Context implements Serializable {
                 } catch (RuntimeException e) {
                     e.printStackTrace();
 
-                    java.lang.StackTraceElement[] s=(java.lang.StackTraceElement[])e.getStackTrace();
-                    java.lang.StringBuilder str=new java.lang.StringBuilder();
-                    for(int i=0;i<s.length;i++)
+                    java.lang.StackTraceElement[] s = (java.lang.StackTraceElement[]) e.getStackTrace();
+                    java.lang.StringBuilder str = new java.lang.StringBuilder();
+                    for (int i = 0; i < s.length; i++) {
                         str.append("\n   ").append(s[i].getClassName()).append(": ").append(s[i].getMethodName()).append("(").append(s[i].getFileName()).append(": ").append(s[i].getLineNumber()).append(")");
-                    JOptionPane.showMessageDialog(applet, "Error:" + e+"\r\n"+str.toString(), "HSPLet", JOptionPane.ERROR_MESSAGE);
+                    }
+                    JOptionPane.showMessageDialog(applet, "Error:" + e + "\r\n" + str.toString(), "HSPLet", JOptionPane.ERROR_MESSAGE);
 
                     try {
                         System.exit(1);
@@ -206,7 +208,7 @@ public class Context implements Serializable {
     public OnEvent oncmd(int window, int message) {
 
         while (window >= winoncmds.size()) {
-            winoncmds.add(new HashMap<Integer,OnEvent>());
+            winoncmds.add(new HashMap<Integer, OnEvent>());
         }
 
         final Map<Integer, OnEvent> oncmds = (HashMap<Integer, OnEvent>) winoncmds.get(window);
@@ -459,5 +461,23 @@ public class Context implements Serializable {
                 }
             });
         }
+    }
+
+    /**
+     * Converts Win32 filename requests into a URI, relative to the cwd as
+     * appropriate.
+     *
+     * @param fileName Input file name
+     * @return
+     */
+    public URI resolve(String fileName) throws URISyntaxException {
+        return curdir.toURI().resolve(((fileName.startsWith("\\")) ? fileName.substring(1) : fileName).replace('\\', '/'));
+    }
+
+    public URI resolveSafe(String fileName) throws URISyntaxException {
+        return curdir.toURI().
+                resolve(
+                fileName.contains("/") ? fileName : ((fileName.startsWith("\\"))
+                ? fileName.substring(1) : fileName).replace('\\', '/'));
     }
 }
