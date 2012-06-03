@@ -599,7 +599,7 @@ public class BasicCommand extends FunctionBase {
                             context.curdir.toURI().resolve(safeWinPath2NetPath(fileName))
                         }
                     );
-                    in = new FileInputStream(new File(context.curdir.toURI().resolve(safeWinPath2NetPath(fileName))));
+                    in = new FileInputStream(new File(context.resolveSafe(fileName)));
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
                     context.error(HSPError.FileNotFound, "noteload", fileName);
@@ -641,7 +641,7 @@ public class BasicCommand extends FunctionBase {
                 in.close();
             }
 
-        } catch (Exception ex) {
+        } catch (URISyntaxException | IOException ex) {
             Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
             context.error(HSPError.FileNotFound, "noteload", fileName);
         }
@@ -654,8 +654,6 @@ public class BasicCommand extends FunctionBase {
             out = new FileOutputStream(new File(context.resolve(filename)));
             context.note.toByteString(0).dump(out);
         } catch (URISyntaxException ex) {
-            Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FileNotFoundException ex) {
             Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
             context.error(HSPError.FileNotFound, "notesave");
         } catch (IOException ex) {
