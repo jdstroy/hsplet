@@ -38,7 +38,7 @@ public class z extends FunctionBase {
 
     public int zOpen(Operand handle, int index, String path, int fileMode, int modeB) {
         try {
-            URI new_path = context.resolveSafe(path);
+            URI new_path = context.resolve(path);
             Logger.getLogger(z.class.getName()).log(Level.INFO, "zOpen({0})", path);
             try {
                 handle.assign(index, Scalar.fromValue(serial), 0);
