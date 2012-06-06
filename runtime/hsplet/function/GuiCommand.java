@@ -33,6 +33,7 @@ import java.awt.RenderingHints;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -41,6 +42,8 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.JColorChooser;
@@ -926,7 +929,12 @@ public class GuiCommand extends FunctionBase {
 	}
 
 	public static void getkey(final Context context, final Operand v, final int vi, final int key) {
-
+                Logger.getLogger(GuiCommand.class.getName()).log(Level.FINEST, 
+                    "getKey: Request = {0}, Response = {1}", new Object[] {
+                        KeyEvent.getKeyText(key), 
+                        Boolean.toString(context.keyPressed[key])
+                    }
+                );
 		v.assign(vi, Scalar.fromValue(context.keyPressed[key] ? 1 : 0), 0);
 
 	}
