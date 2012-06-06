@@ -6,6 +6,9 @@ import hsplet.variable.Operand;
 import java.io.File;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.yi.jdstroy.commons.winapi.NTSTATUS;
 
 /*
  * To change this template, choose Tools | Templates
@@ -31,7 +34,8 @@ public class kernel32 extends FunctionBase {
     }
 
     public int CreateMutex(Operand securityPointer, int index, int inherit, String lpcstr) {
-        return NT_STATUS_SUCCESS;
+        Logger.getLogger(getClass().getName()).log(Level.FINE, "CreateMutex() called but not implemented - requesting \"{0}\"", lpcstr);
+        return NTSTATUS.STATUS_SUCCESS.value();
     }
 
     public int CreateMutexA(Operand securityPointer, int index, int inherit, String lpcstr) {

@@ -160,8 +160,9 @@ public class hmm extends FunctionBase {
      * @return
      */
     public int DSSETVOLUME(int buffer, int volume) {
-        if(!dsBuffers.containsKey(buffer)) return DS_ERR;
-        DSObject.class.cast(dsBuffers.get(new Integer(buffer))).setVolume(volume);
+        if (dsBuffers.containsKey(new Integer(buffer))) {
+            DSObject.class.cast(dsBuffers.get(new Integer(buffer))).setVolume(volume);
+        }
         Logger.getLogger(getClass().getName()).log(Level.WARNING, "DSSETVOLUME({0},{1}) called but not implemented.", new Object[]{buffer, volume});
         return DS_OK;
         //throw new UnsupportedOperationException("Not supported yet.");

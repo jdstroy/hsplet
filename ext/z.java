@@ -37,9 +37,16 @@ public class z extends FunctionBase {
     private int serial = 0;
 
     public int zOpen(Operand handle, int index, String path, int fileMode, int modeB) {
+        Logger.getLogger(z.class.getName()).log(Level.INFO,
+                "zOpen(\"{0}, {1}, {2}\")", new Object[]{
+                    path, fileMode, modeB
+                });
         try {
             URI new_path = context.resolve(path);
-            Logger.getLogger(z.class.getName()).log(Level.INFO, "zOpen({0})", path);
+
+            Logger.getLogger(z.class.getName()).log(Level.FINER, 
+                    "zOpen(\"{0}\") converted to zOpen(\"{1}\")", 
+                    new Object[]{path, new_path});
             try {
                 handle.assign(index, Scalar.fromValue(serial), 0);
                 if (fileMode == 0) {
