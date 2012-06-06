@@ -14,6 +14,8 @@ import java.awt.Toolkit;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * HSP ÇÃägí£GUIä÷êîåQÅB
@@ -93,7 +95,13 @@ public class GuiFunction extends FunctionBase {
 		case 1:
 			return context.mouseY;
 		case 2:
-			return context.activeWindow;
+                    Logger.getLogger(GuiFunction.class.getName()).log(
+                            Level.WARNING, 
+                            "ginfo(2) = {0}; this is being forced to 0", 
+                            context.activeWindow);
+                    // TODO: Fix me!
+			//return context.activeWindow;
+                    return 0;
 		case 3:
 			return context.targetWindow;
 		case 4:
