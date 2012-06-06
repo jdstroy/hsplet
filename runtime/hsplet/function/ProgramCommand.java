@@ -114,9 +114,9 @@ public class ProgramCommand extends FunctionBase {
 
 	private static void doTasks(final Context context) {
 
-		while (context.tasks.size() != 0) {
+		while (!context.tasks.isEmpty()) {
 
-			final Task task = (Task) context.tasks.get(0);
+			final Task task = context.tasks.get(0);
 			context.tasks.remove(0);
 
 			task.run(context);

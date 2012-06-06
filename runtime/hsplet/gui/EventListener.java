@@ -17,6 +17,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
@@ -260,6 +262,7 @@ public class EventListener implements MouseListener, MouseMotionListener, KeyLis
 
 	public void keyPressed(KeyEvent e) {
 
+            Logger.getLogger(getClass().getName()).log(Level.FINEST, "keyPressed: {0}", KeyEvent.getKeyText(e.getKeyCode()));
 		context.keyPressed[vkJtoW[e.getKeyCode()]] = true;
 
 		final int stickCode = getStickCode(e);
@@ -286,6 +289,7 @@ public class EventListener implements MouseListener, MouseMotionListener, KeyLis
 
 	public void keyReleased(KeyEvent e) {
 
+            Logger.getLogger(getClass().getName()).log(Level.FINEST, "keyReleased: {0}", KeyEvent.getKeyText(e.getKeyCode()));
 		context.keyPressed[vkJtoW[e.getKeyCode()]] = false;
 
 		final int stickCode = getStickCode(e);
