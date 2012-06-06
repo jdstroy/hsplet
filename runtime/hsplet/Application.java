@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.UIManager;
@@ -97,7 +99,7 @@ public final class Application extends JFrame implements AppletStub,
 		try {
 			run(Class.forName(startClass), width, height, debug, cmdline);
 		} catch (Throwable e) {
-			e.printStackTrace();
+                        Logger.getLogger(Application.class.getName()).log(Level.SEVERE, null, e);
 		}
 	}
 
@@ -257,7 +259,7 @@ public final class Application extends JFrame implements AppletStub,
 		final String classPath = System.getProperty("user.dir");
 
 		try {
-			return new File(classPath + "/").toURL();
+			return new File(classPath + "/").toURI().toURL();
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
