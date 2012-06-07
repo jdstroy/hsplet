@@ -30,7 +30,7 @@ public class water extends FunctionBase {
 
     
     public int water_setripple(int a, int b, int c, int d) {
-        Logger.getLogger(getClass().getName()).log(Level.WARNING, "water_setripple() called but unimplemented");
+        //Logger.getLogger(getClass().getName()).log(Level.WARNING, "water_setripple() called but unimplemented");
         return 0;
     }
 

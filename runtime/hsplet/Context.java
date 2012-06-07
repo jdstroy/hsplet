@@ -36,6 +36,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.ArrayDeque;
 
 import javax.swing.JOptionPane;
 
@@ -302,7 +303,21 @@ public class Context implements Serializable {
     public final StringScalar refstr = new StringScalar("");
     public final DoubleScalar refdval = new DoubleScalar(0.0);
     public OperandInputStream memfile = null;
+    public final ArrayDeque<Operand[]> argumentStack = new ArrayDeque<Operand[]>();
+    public final ArrayDeque<Integer> argIndexStack = new ArrayDeque<Integer>();
 
+    public Operand getArgument(int index) {
+        //For now let's throw an exception normally if something wants an illegal index.
+        return argumentStack.peekLast()[index-argIndexStack.peekLast().intValue()];
+    }
+    public void addArguments(Operand[] args, int paramStart) {
+        argumentStack.add(args);
+        argIndexStack.add(paramStart);
+    }
+    public void popArguments() {
+        argumentStack.removeLast();
+        argIndexStack.removeLast();
+    }
     public static final class OnEvent {
 
         public boolean enabled;

@@ -78,7 +78,7 @@ public class Compiler implements Opcodes, Serializable {
     /** デバッグ出力をするかどうか。 */
     private static final boolean DEBUG_ENABLED = false;
     /** Show opcode index as line numbers in debug output */
-    private static final boolean LINENUMS_ENABLED = false;
+    private static final boolean LINENUMS_ENABLED = true;
     /** Stores the results in an ASM tree.  This is slow and memory hungry;
      * you should use this only if you're debugging/poking around.  This 
      * shouldn't be used in production, but it is useful to find out 
@@ -781,10 +781,12 @@ public class Compiler implements Opcodes, Serializable {
         }
 
         // 使用する引数を用意する。
+        /*
         for (int i = 0; i < ax.parameters.length; ++i) {
 
             cw.visitField(ACC_PRIVATE | ACC_FINAL, "p" + i, opeDesc, null, null);
         }
+        */
 
         // 定数を用意する、毎回作っていたら遅い。
         for (int i = 0; i < literals.size(); ++i) {
@@ -1653,13 +1655,17 @@ public class Compiler implements Opcodes, Serializable {
 
         final Code code = ax.codes[codeIndex++];
 
-        mv.visitVarInsn(ALOAD, thisIndex);
 
         if (collectStats) {
             paramsStats[code.value]++;
         }
 
-        mv.visitFieldInsn(GETFIELD, classIName, "p" + code.value, opeDesc);
+        //mv.visitVarInsn(ALOAD, thisIndex);
+        //mv.visitFieldInsn(GETFIELD, classIName, "p" + code.value, opeDesc);
+        mv.visitVarInsn(ALOAD, contextIndex);
+        pushSmall(code.value, mv);
+        mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "getArgument", "(I)"+opeDesc);
+        
         //if(mv instanceof ScanOneVisitor)
         //    System.out.print(" Parameter "+code.value);
 
@@ -1936,6 +1942,7 @@ public class Compiler implements Opcodes, Serializable {
         }
         efficientLDC(mv, labelInt);
 
+        pushSmall(function.prmindex, mv);
         mv.visitMethodInsn(INVOKESTATIC, Type.getInternalName(method.getDeclaringClass()), method.getName(),
                 methodDesc);
 
@@ -1990,12 +1997,17 @@ public class Compiler implements Opcodes, Serializable {
 
         boolean firstParam = true;
 
+        pushSmall(function.prmmax, mv);
+        mv.visitTypeInsn(ANEWARRAY, Type.getDescriptor(Operand[].class));
         for (int paramIndex = 0; paramIndex < function.prmmax; ++paramIndex) {
 
             final ByteCode.Parameter param = ax.parameters[function.prmindex + paramIndex];
             final int type = param.mptype;
 
-            mv.visitVarInsn(ALOAD, thisIndex);
+            //mv.visitVarInsn(ALOAD, thisIndex);
+            mv.visitInsn(DUP);
+            pushSmall(paramIndex, mv);
+            
 
             boolean omitted;
 
@@ -2103,7 +2115,9 @@ public class Compiler implements Opcodes, Serializable {
                 }
             }
 
-            mv.visitFieldInsn(PUTFIELD, classIName, "p" + (function.prmindex + paramIndex), opeDesc);
+            
+            //mv.visitFieldInsn(PUTFIELD, classIName, "p" + (function.prmindex + paramIndex), opeDesc);
+            mv.visitInsn(AASTORE);
 
         }
 
@@ -2788,6 +2802,9 @@ public class Compiler implements Opcodes, Serializable {
 
             mv=new SubMethodAdapter(this, mv);
 
+            //NOTE: Hack for Elona to reduce method count. Reduce this number if it causes ClassFormatError: Invalid method Code length
+            if(numMethods==1)
+                ((SubMethodAdapter)mv).maxSize=73000;
             Integer[] mainLabels=labelGroup.mainLabels(allLabels);
             int numTableLabels=mainLabels.length;
             if(numTableLabels > 1) {

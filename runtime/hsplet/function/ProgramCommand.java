@@ -41,13 +41,15 @@ public class ProgramCommand extends FunctionBase {
 		}
 	}
 
-	public static Operand call(final Context context, final int label) {
+	public static Operand call(final Operand[] arguments, final Context context, final int label, final int paramStart) {
 
 		++context.sublev.value;
+		context.addArguments(arguments, paramStart);
 		try {
 			return context.getRunnableCode().run(label);
 		} finally {
 			--context.sublev.value;
+			context.popArguments();
 		}
 	}
 
