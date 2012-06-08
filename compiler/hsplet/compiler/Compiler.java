@@ -1941,7 +1941,6 @@ public class Compiler implements Opcodes, Serializable {
         }
         efficientLDC(mv, labelInt);
 
-        pushInteger(function.prmindex, mv);
         mv.visitMethodInsn(INVOKESTATIC, Type.getInternalName(method.getDeclaringClass()), method.getName(),
                 methodDesc);
 

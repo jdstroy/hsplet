@@ -135,7 +135,7 @@ public class SSMAdapter extends MethodAdapter {
                 mv.visitIntInsn(o.opcode, o.intData);
                 break;
             case Opcodes.ANEWARRAY:
-                mv.visitTypeInsn(o.opcode, (String)o.otherData);
+                mv.visitTypeInsn(o.opcode, ((String)o.otherData).substring(1, ((String)o.otherData).length()-1));
                 break;
             default:
                 throw new UnsupportedOperationException("Opcode value for write: "+o.opcode);

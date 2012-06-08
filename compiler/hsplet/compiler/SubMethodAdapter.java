@@ -77,6 +77,9 @@ public class SubMethodAdapter extends SSMAdapter {
     private ArrayList<PotentialSSM> potentialSSMs=new ArrayList<PotentialSSM>();
     private ArrayList<Mark> markList=new ArrayList<Mark>();
     private ArrayList<Integer> stackTypes=new ArrayList<Integer>();
+    /*{
+        public boolean add(Integer I){System.out.println("Add "+(I.intValue()>baseStackType?getStackTypeDesc(I):I)); return super.add(I);}
+    };*/
     //private int stackSize=0;
     private int maxSizeSinceLastE=0;
     private boolean returnSinceLastE=false;
@@ -174,10 +177,12 @@ public class SubMethodAdapter extends SSMAdapter {
         }
     }
     private void stackDecrease(int decrease) {
+        //System.out.print("Decrease "+decrease+" to ");
         while(decrease>0){
             stackTypes.remove(stackTypes.size()-1);
             decrease--;
         }
+        //System.out.println(stackTypes.size());
         //stackSize-=decrease;
         int stackSize=stackTypes.size();
         for(int i=markList.size()-1;i>=0&&markList.get(i).stackSize>stackSize;i--) {
@@ -213,7 +218,7 @@ public class SubMethodAdapter extends SSMAdapter {
                 break;
             case Opcodes.ANEWARRAY:
                 stackDecrease(1);
-                stackTypes.add(getStackTypeInt("["+mo.otherData.toString()+";"));
+                stackTypes.add(getStackTypeInt(mo.otherData.toString()));
                 break;
             case Opcodes.DUP: {
                 Integer type=stackTypes.get(stackTypes.size()-1);
@@ -345,7 +350,7 @@ public class SubMethodAdapter extends SSMAdapter {
             maxSizeChange-=6;
         }
         //returning because of instructionChange isn't entirely a valid reason, but I do not expect it to be a necessary thing to deal with.
-        if((maxSizeChange<1)||(instructionChange<0)) return -1;
+        if((maxSizeChange<1)||(instructionChange<0)) return -2;
         for(int i=markList.size()-1;i>=0;i--) {
             Mark toFix=markList.get(i);
             if(toFix.location<=largestFound.startOpcode) {
@@ -660,7 +665,10 @@ public class SubMethodAdapter extends SSMAdapter {
         if(opcode!=Opcodes.ANEWARRAY)
             throw new UnsupportedOperationException("Opcode not supported: "+opcode);
         MyOpcode newOpcode;
-        newOpcode=new MyOpcode(opcode, type);
+        if(opcode==Opcodes.ANEWARRAY)
+            newOpcode=new MyOpcode(opcode, "["+type+";");
+        else
+            newOpcode=new MyOpcode(opcode, type);
         handleStackChange(newOpcode);
         maxSizeSinceLastE+=getMaxSize(opcode);
         opcodeList.add(newOpcode);
