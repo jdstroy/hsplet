@@ -62,7 +62,7 @@ public class user32 extends FunctionBase implements Serializable {
     }
 
     public void keybd_event(int bVk, int bScan, int dwFlags, int dwExtraInfo) {
-        Logger.getLogger(user32.class.getName()).log(Level.FINEST,
+        Logger.getLogger(user32.class.getName()).log(Level.INFO,
                 "keybd_event({0}, {1}, {2}, {3})", new Object[]{
                     bVk, bScan, dwFlags, dwExtraInfo
                 });
