@@ -929,7 +929,7 @@ public class GuiCommand extends FunctionBase {
 	}
 
 	public static void getkey(final Context context, final Operand v, final int vi, final int key) {
-                Logger.getLogger(GuiCommand.class.getName()).log(Level.FINEST, 
+                Logger.getLogger(GuiCommand.class.getName()).log(Level.INFO, 
                     "getKey: Request = {0}, Response = {1}", new Object[] {
                         KeyEvent.getKeyText(key), 
                         Boolean.toString(context.keyPressed[key])

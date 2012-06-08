@@ -95,13 +95,7 @@ public class GuiFunction extends FunctionBase {
 		case 1:
 			return context.mouseY;
 		case 2:
-                    Logger.getLogger(GuiFunction.class.getName()).log(
-                            Level.WARNING, 
-                            "ginfo(2) = {0}; this is being forced to 0", 
-                            context.activeWindow);
-                    // TODO: Fix me!
-			//return context.activeWindow;
-                    return 0;
+			return context.activeWindow;
 		case 3:
 			return context.targetWindow;
 		case 4:

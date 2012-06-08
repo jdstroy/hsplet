@@ -315,7 +315,8 @@ public class EventListener implements MouseListener, MouseMotionListener, KeyLis
 
 	public void focusLost(final FocusEvent e) {
 
-		context.activeWindow = -1;
+            // Don't do anything with focusLost - issue #12
+		//context.activeWindow = -1;
 
 	}
 
