@@ -204,7 +204,10 @@ public class hmm extends FunctionBase {
 
     public int CHECKPLAY(int bufferIndex) {
         //Logger.getLogger(getClass().getName()).log(Level.WARNING, "CHECKPLAY({0}) called but not implemented.", bufferIndex);
-        return dsBuffers.get(new Integer(bufferIndex)).isPlaying() ? DS_OK : DS_ERR;
+        if (dsBuffers.containsKey(new Integer(bufferIndex))) {
+            return dsBuffers.get(new Integer(bufferIndex)).isPlaying() ? DS_OK : DS_ERR;
+        }
+        return DS_ERR;
     }
 
     public int DMINIT(int bmscr, int a, int b, int c) {

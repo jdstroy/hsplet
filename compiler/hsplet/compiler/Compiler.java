@@ -780,12 +780,6 @@ public class Compiler implements Opcodes, Serializable {
             cw.visitField(ACC_PRIVATE | ACC_FINAL, "v" + i, varDesc, null, null);
         }
 
-        // 使用する引数を用意する。
-        for (int i = 0; i < ax.parameters.length; ++i) {
-
-            cw.visitField(ACC_PRIVATE | ACC_FINAL, "p" + i, opeDesc, null, null);
-        }
-
         // 定数を用意する、毎回作っていたら遅い。
         for (int i = 0; i < literals.size(); ++i) {
             if (!useSuperClassConstants && !useLiteralsInArray) {
@@ -1077,6 +1071,7 @@ public class Compiler implements Opcodes, Serializable {
         return mv.unusedStatements;
     }
 
+    int[] functionParamFix;
     private void prepareLabels() {
 
         labels = new HashMap<Integer, KLabel>();
@@ -1096,11 +1091,20 @@ public class Compiler implements Opcodes, Serializable {
         L.isUsed = true;
         labels.put(new Integer(ax.codes[0].offset), L);
 
+        int maxFunctionParm=0;
         for (ByteCode.Function function : ax.functions) {
+            if(function.prmmax>0 && (function.prmmax+function.prmindex>maxFunctionParm))
+                maxFunctionParm=function.prmmax+function.prmindex;
             if(function.index>=0) continue;
             L = labels.get(ax.labels[function.otindex]);
             L.isMainLabel = true;
             L.isUsed = true;
+        }
+        functionParamFix=new int[maxFunctionParm];
+        for (ByteCode.Function function : ax.functions) {
+            for(int i=1;i<function.prmmax;i++) {
+                functionParamFix[function.prmindex+i]=i;
+            }
         }
     }
 
@@ -1653,13 +1657,14 @@ public class Compiler implements Opcodes, Serializable {
 
         final Code code = ax.codes[codeIndex++];
 
-        mv.visitVarInsn(ALOAD, thisIndex);
-
         if (collectStats) {
             paramsStats[code.value]++;
         }
 
-        mv.visitFieldInsn(GETFIELD, classIName, "p" + code.value, opeDesc);
+        mv.visitVarInsn(ALOAD, contextIndex);
+        pushInteger(functionParamFix[code.value], mv);
+        mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "getArgument", "(I)"+opeDesc);
+
         //if(mv instanceof ScanOneVisitor)
         //    System.out.print(" Parameter "+code.value);
 
@@ -1936,6 +1941,7 @@ public class Compiler implements Opcodes, Serializable {
         }
         efficientLDC(mv, labelInt);
 
+        pushInteger(function.prmindex, mv);
         mv.visitMethodInsn(INVOKESTATIC, Type.getInternalName(method.getDeclaringClass()), method.getName(),
                 methodDesc);
 
@@ -1990,12 +1996,16 @@ public class Compiler implements Opcodes, Serializable {
 
         boolean firstParam = true;
 
+        pushInteger(function.prmmax, mv);
+        mv.visitTypeInsn(ANEWARRAY, opeIName);
+
         for (int paramIndex = 0; paramIndex < function.prmmax; ++paramIndex) {
 
             final ByteCode.Parameter param = ax.parameters[function.prmindex + paramIndex];
             final int type = param.mptype;
 
-            mv.visitVarInsn(ALOAD, thisIndex);
+            mv.visitInsn(DUP);
+            pushInteger(paramIndex, mv);
 
             boolean omitted;
 
@@ -2103,7 +2113,7 @@ public class Compiler implements Opcodes, Serializable {
                 }
             }
 
-            mv.visitFieldInsn(PUTFIELD, classIName, "p" + (function.prmindex + paramIndex), opeDesc);
+            mv.visitInsn(AASTORE);
 
         }
 
@@ -2787,6 +2797,10 @@ public class Compiler implements Opcodes, Serializable {
             compileLocalVariables(mv);
 
             mv=new SubMethodAdapter(this, mv);
+
+            //NOTE: Hack for Elona to reduce method count. Reduce this number if it causes ClassFormatError: Invalid method Code length
+            if(numMethods==1)
+                ((SubMethodAdapter)mv).maxSize=73000;
 
             Integer[] mainLabels=labelGroup.mainLabels(allLabels);
             int numTableLabels=mainLabels.length;

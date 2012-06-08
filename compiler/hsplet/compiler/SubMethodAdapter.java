@@ -30,6 +30,8 @@ public class SubMethodAdapter extends SSMAdapter {
         markList.add(new Mark(Mark.START, 0, 0, 0, null, false));
     }
 
+    public int maxSize=64000;
+    public int maxSubSize=64000;
     private class PotentialSSM {
         public int startOpcode;
         public int endOpcode;
@@ -115,9 +117,7 @@ public class SubMethodAdapter extends SSMAdapter {
     }
 
     /* Unused in submethods but exist in outputted code:
-     * case ANEWARRAY:
      * case NEW:
-     * case AASTORE:
      * case RETURN:
      * case ASTORE:
      */
@@ -126,6 +126,7 @@ public class SubMethodAdapter extends SSMAdapter {
             //Handle in own code
             //case TABLESWITCH:
             //case Opcodes.ALOAD:
+            case Opcodes.AASTORE:
             case Opcodes.ARETURN:
             case Opcodes.ACONST_NULL:
             case Opcodes.IADD:
@@ -149,6 +150,7 @@ public class SubMethodAdapter extends SSMAdapter {
                 //after an ISTORE, wait till stack is empty to allow subroutine entrance/exits
                 waitTillStackClear=true;
                 return 2;
+            case Opcodes.ANEWARRAY:
             case Opcodes.LDC:
             case Opcodes.SIPUSH:
             case Opcodes.IFNULL:
@@ -209,6 +211,10 @@ public class SubMethodAdapter extends SSMAdapter {
             case Opcodes.ISTORE:
                 stackDecrease(1);
                 break;
+            case Opcodes.ANEWARRAY:
+                stackDecrease(1);
+                stackTypes.add(getStackTypeInt("["+mo.otherData.toString()+";"));
+                break;
             case Opcodes.DUP: {
                 Integer type=stackTypes.get(stackTypes.size()-1);
                 stackDecrease(1);
@@ -251,6 +257,9 @@ public class SubMethodAdapter extends SSMAdapter {
             case Opcodes.IF_ICMPGE:
             case Opcodes.PUTFIELD:
                 stackDecrease(2);
+                break;
+            case Opcodes.AASTORE:
+                stackDecrease(3);
                 break;
             case Opcodes.ACONST_NULL:
             case Opcodes.ALOAD:
@@ -364,6 +373,7 @@ public class SubMethodAdapter extends SSMAdapter {
                     throw new RuntimeException("Unexpected entrance location to be removed. "+toFix.location+" "+toFix.maxSizeSinceLastE+" "+largestFound.startOpcode+" "+largestFound.endOpcode);
                 }
                 markList.remove(i);
+                System.out.println("Removing "+(toFix.label==null?"null":""+toFix.label.myIndex+" "+toFix.label.currentCount+" "+toFix.label.branchesToHere+" "+toFix.label.isMainLabel));
                 continue;
             }
             toFix.location-=instructionChange;
@@ -456,7 +466,7 @@ public class SubMethodAdapter extends SSMAdapter {
             totalSize+=lastSize;
             lastSize=m.maxSizeSinceLastE;
             aReturn|=m.returnSinceLastE;
-            while(totalSize>64000) {
+            while(totalSize>maxSubSize) {
                 int change=commitLargestMethod(m.location);
                 if(change<0)
                     throw new RuntimeException("Cannot fit the code into small enough methods (commit)! "+totalSize);
@@ -595,8 +605,8 @@ public class SubMethodAdapter extends SSMAdapter {
         int fieldEnd=desc.lastIndexOf(')');
         for(String fieldString=desc.substring(1, fieldEnd);fieldString.length()>0;stackUse++)
         {
-            if(fieldString.charAt(0)=='[')
-                throw new UnsupportedOperationException("Array argument for a method.");
+            while(fieldString.charAt(0)=='[')
+                fieldString=fieldString.substring(1);
             if(fieldString.charAt(0)=='L')
             {
                 int fieldStart=fieldString.indexOf(';');
@@ -647,7 +657,14 @@ public class SubMethodAdapter extends SSMAdapter {
 
     @Override
     public void visitTypeInsn(int opcode, String type) {
-        throw new UnsupportedOperationException("Opcode not supported: "+opcode);
+        if(opcode!=Opcodes.ANEWARRAY)
+            throw new UnsupportedOperationException("Opcode not supported: "+opcode);
+        MyOpcode newOpcode;
+        newOpcode=new MyOpcode(opcode, type);
+        handleStackChange(newOpcode);
+        maxSizeSinceLastE+=getMaxSize(opcode);
+        opcodeList.add(newOpcode);
+        considerSubmethod(null);
     }
 
     @Override
@@ -673,10 +690,13 @@ public class SubMethodAdapter extends SSMAdapter {
             //Undoing a goto:
             //Stack does not require a fix. Remove entrance mark. Leave branch mark for normal logic to remove.
             //Reduce maxsize. Remove opcode. There won't be a potential submethod to worry about.
-            Mark markToRemove=markList.remove(markList.size()-2);
             maxSizeSinceLastE-=5;
-            maxSizeSinceLastE+=markToRemove.maxSizeSinceLastE;
-            returnSinceLastE|=markToRemove.returnSinceLastE;
+            Mark markToRemove=markList.get(markList.size()-2);
+            if(markToRemove.type==Mark.ENTRANCE) {
+                markList.remove(markList.size()-2);
+                maxSizeSinceLastE+=markToRemove.maxSizeSinceLastE;
+                returnSinceLastE|=markToRemove.returnSinceLastE;
+            }
             opcodeList.remove(opcodeList.size()-1);
         }
         considerSubmethod((KLabel)L);
@@ -731,7 +751,7 @@ public class SubMethodAdapter extends SSMAdapter {
         for(Mark m : markList) {
             totalSize+=m.maxSizeSinceLastE;
         }
-        while(totalSize>64000) {
+        while(totalSize>maxSize) {
             int change=commitLargestMethod(0);
             if(change<0)
                 throw new RuntimeException("Cannot fit the code into small enough methods (final crunch)! "+totalSize);

@@ -65,6 +65,7 @@ public class SSMAdapter extends MethodAdapter {
             case Opcodes.IINC:
                 mv.visitIincInsn(o.intData, ((Integer)o.otherData).intValue());
                 break;
+            case Opcodes.AASTORE:
             case Opcodes.ARETURN:
             case Opcodes.POP:
             case Opcodes.DUP:
@@ -132,6 +133,9 @@ public class SSMAdapter extends MethodAdapter {
             case Opcodes.BIPUSH:
             case Opcodes.SIPUSH:
                 mv.visitIntInsn(o.opcode, o.intData);
+                break;
+            case Opcodes.ANEWARRAY:
+                mv.visitTypeInsn(o.opcode, (String)o.otherData);
                 break;
             default:
                 throw new UnsupportedOperationException("Opcode value for write: "+o.opcode);
