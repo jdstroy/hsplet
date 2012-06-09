@@ -193,7 +193,7 @@ public class ByteString implements Serializable {
 		}
 
 		if ( rhs.length < length ) {
-			return -1;
+			return 1;
 		}
 
 		return 0;
@@ -211,7 +211,7 @@ public class ByteString implements Serializable {
 		for (int i = 0; i < l; ++i) {
 
 			if (lb[lo + i] != rb[ro + i]) {
-				return lb[lo + i] - rb[ro + i];
+				return (lb[lo + i] > rb[ro + i] ? 1 : -1);
 			}
 		}
 
