@@ -227,6 +227,10 @@ public class BasicFunction extends FunctionBase {
             context.error(HSPError.ParameterCannotBeOmitted, "instr", "substr");
             return 0;
         }
+        
+        if (index < 0 || index > str.length()) {
+            Logger.getLogger(BasicFunction.class.getName()).log(Level.WARNING, "instr({0}, {1}, {2}) called!", new Object[] { str, Integer.valueOf(index), substr});
+        };
 
         return str.indexOf(substr, index);
     }
