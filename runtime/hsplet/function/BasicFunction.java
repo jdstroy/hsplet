@@ -227,10 +227,15 @@ public class BasicFunction extends FunctionBase {
             context.error(HSPError.ParameterCannotBeOmitted, "instr", "substr");
             return 0;
         }
-        
+
         if (index < 0 || index > str.length()) {
-            Logger.getLogger(BasicFunction.class.getName()).log(Level.WARNING, "instr({0}, {1}, {2}) called!", new Object[] { str, Integer.valueOf(index), substr});
+            Logger.getLogger(BasicFunction.class.getName()).log(Level.WARNING, "instr(\"{0}\", {1}, \"{2}\") called!", new Object[]{str, Integer.valueOf(index), substr});
         };
+
+        // Implementation per OpenHSP
+        if (index < 0) {
+            return -1;
+        }
 
         return str.indexOf(substr, index);
     }
