@@ -4,8 +4,8 @@ import hsplet.function.FunctionBase;
 import hsplet.gui.Bmscr;
 import hsplet.variable.Operand;
 import hsplet.variable.Scalar;
-import interfaces.IHSPExtExt;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 
 /*
@@ -66,23 +66,12 @@ public class hspext_ext extends FunctionBase {
 
         final Graphics2D g = win.backGraphics;
 
-        final int x1 = win.cx;
-        final int x2 = win.cx + x_width;
-        final int y1 = win.cy;
-        final int y2 = win.cy + y_height;
+        final int x1 = ___bound(win.cx, 0, win.backImage.getWidth());
+        final int x2 = ___bound(win.cx + x_width, 0, win.backImage.getWidth());
+        final int y1 = ___bound(win.cy, 0, win.backImage.getHeight());
+        final int y2 = ___bound(win.cy + y_height, 0, win.backImage.getHeight());
 
-        // 終点は書いてはダメ
-
-        if (x2 >= 0 && y2 >= 0 && x2 < win.backImage.getWidth() && y2 < win.backImage.getHeight()) {
-            final int last = win.backImage.getRGB(x2, y2);
-            
-            __gfadd(win.backImage, x1, y1, x2, y2, -red, -green, -blue);
-            
-            win.backImage.setRGB(x2, y2, last);
-        } else {
-
-            g.drawLine(x1, y1, x2, y2);
-        }
+        __gfadd(win.backImage, x1, y1, x2, y2, -red, -green, -blue);
 
         final int l = Math.min(x1, x2);
         final int t = Math.min(y1, y2);
@@ -90,6 +79,10 @@ public class hspext_ext extends FunctionBase {
         final int b = Math.max(y1, y2);
 
         win.redraw(l, t, r - l, b - t);
+    }
+
+    private static int ___bound(int input, int lower, int upper) {
+        return Math.max(Math.min(input, upper), lower);
     }
 
     public void gfdec2(int red, int green, int blue) {
@@ -97,22 +90,12 @@ public class hspext_ext extends FunctionBase {
 
         final Graphics2D g = win.backGraphics;
 
-        final int x1 = win.cx;
-        final int x2 = win.cx + x_width;
-        final int y1 = win.cy;
-        final int y2 = win.cy + y_height;
+        final int x1 = ___bound(win.cx, 0, win.backImage.getWidth());
+        final int x2 = ___bound(win.cx + x_width, 0, win.backImage.getWidth());
+        final int y1 = ___bound(win.cy, 0, win.backImage.getHeight());
+        final int y2 = ___bound(win.cy + y_height, 0, win.backImage.getHeight());
 
-        // 終点は書いてはダメ
-
-        if (x2 >= 0 && y2 >= 0 && x2 < win.backImage.getWidth() && y2 < win.backImage.getHeight()) {
-            final int last = win.backImage.getRGB(x2, y2);
-            
-            __gfadd2(win.backImage, x1, y1, x2, y2, -red, -green, -blue);
-            
-            win.backImage.setRGB(x2, y2, last);
-        } else {
-            g.drawLine(x1, y1, x2, y2);
-        }
+        __gfadd2(win.backImage, x1, y1, x2, y2, -red, -green, -blue);
 
         final int l = Math.min(x1, x2);
         final int t = Math.min(y1, y2);
@@ -121,26 +104,28 @@ public class hspext_ext extends FunctionBase {
 
         win.redraw(l, t, r - l, b - t);
     }
-    
-    /** Adds red, green, and blue to all pixels in the bounding box specified by
+
+    /**
+     * Adds red, green, and blue to all pixels in the bounding box specified by
      * the coordinates (startx, starty) and (endx, endy).
+     *
      * @param target BufferedImage on which to draw
      * @param startx Starting x coordinate
      * @param starty Starting y coordinate
      * @param endx Ending x coordinate
      * @param endy Ending y coordinate
-     * @param add_red Amount to add (subtract if negative) to red 
+     * @param add_red Amount to add (subtract if negative) to red
      * @param add_green Amount to add (subtract if negative) to green
      * @param add_blue Amount to add (subtract if negative) to blue
      */
-    private void __gfadd(BufferedImage target, int startx, int starty, 
-            int endx, int endy, 
+    private void __gfadd(BufferedImage target, int startx, int starty,
+            int endx, int endy,
             int add_red, int add_green, int add_blue) {
-        
+
         // We're doing this because we aren't guaranteed that they will be in 
         // order.
         int x0, y0, x1, y1;
-        
+
         if (startx < endx) {
             x0 = startx;
             x1 = endx;
@@ -148,7 +133,7 @@ public class hspext_ext extends FunctionBase {
             x1 = startx;
             x0 = endx;
         }
-        
+
         if (starty < endy) {
             y0 = starty;
             y1 = endy;
@@ -156,14 +141,14 @@ public class hspext_ext extends FunctionBase {
             y1 = starty;
             y0 = endy;
         }
-        
-        for(int x = x0; x < x1; x++) {
+
+        for (int x = x0; x < x1; x++) {
             for (int y = y0; y < y1; y++) {
                 int argb = target.getRGB(x, y);
                 int alpha = argb >> 24;
-                int new_red = Math.min(Math.max(((argb >> 16) % 0xff) + add_red, 0), 255);
-                int new_green = Math.min(Math.max(((argb >> 8) % 0xff) + add_green, 0), 255);
-                int new_blue = Math.min(Math.max((argb % 0xff) + add_blue, 0), 255);
+                int new_red = Math.min(Math.max(((argb >> 16) & 0xff) + add_red, 0), 255);
+                int new_green = Math.min(Math.max(((argb >> 8) & 0xff) + add_green, 0), 255);
+                int new_blue = Math.min(Math.max((argb & 0xff) + add_blue, 0), 255);
                 target.setRGB(x, y, ((alpha << 24) | (new_red << 16) | (new_green << 8) | new_blue));
             }
         }
@@ -171,25 +156,26 @@ public class hspext_ext extends FunctionBase {
 
     /**
      * Bounded version of __gfadd at argb=(0,0,0)
+     *
      * @param target BufferedImage on which to draw
      * @param startx Starting x coordinate
      * @param starty Starting y coordinate
      * @param endx Ending x coordinate
      * @param endy Ending y coordinate
-     * @param add_red Amount to add (subtract if negative) to red 
+     * @param add_red Amount to add (subtract if negative) to red
      * @param add_green Amount to add (subtract if negative) to green
      * @param add_blue Amount to add (subtract if negative) to blue
      */
-    private void __gfadd2(BufferedImage target, 
-            int startx, int starty, 
-            int endx, int endy, 
+    private void __gfadd2(BufferedImage target,
+            int startx, int starty,
+            int endx, int endy,
             int add_red, int add_green, int add_blue) {
-        
-        
+
+
         // We're doing this because we aren't guaranteed that they will be in 
         // order.
         int x0, y0, x1, y1;
-        
+
         if (startx < endx) {
             x0 = startx;
             x1 = endx;
@@ -197,7 +183,7 @@ public class hspext_ext extends FunctionBase {
             x1 = startx;
             x0 = endx;
         }
-        
+
         if (starty < endy) {
             y0 = starty;
             y1 = endy;
@@ -205,22 +191,25 @@ public class hspext_ext extends FunctionBase {
             y1 = starty;
             y0 = endy;
         }
-        
-        for(int x = x0; x < x1; x++) {
+
+        for (int x = x0; x < x1; x++) {
             for (int y = y0; y < y1; y++) {
                 int argb = target.getRGB(x, y);
                 int alpha = argb >> 24;
-                int old_red = ((argb >> 16) % 0xff);
-                int old_green = ((argb >> 8) % 0xff);
-                int old_blue = (argb % 0xff);
-                
+                int old_red = ((argb >> 16) & 0xff);
+                int old_green = ((argb >> 8) & 0xff);
+                int old_blue = (argb & 0xff);
+
                 int new_red = old_red < 1 ? old_red : Math.min(Math.max(old_red + add_red, 1), 255);
                 int new_green = old_green < 1 ? old_green : Math.min(Math.max(old_green + add_green, 1), 255);
                 int new_blue = old_blue < 1 ? old_blue : Math.min(Math.max(old_blue + add_blue, 1), 255);
+
                 target.setRGB(x, y, ((alpha << 24) | (new_red << 16) | (new_green << 8) | new_blue));
+                //target.setRGB(x, y, argb);
             }
         }
     }
+
     /**
      * Adds the specified colors to the pixels in the bounding box given by
      * gfini
@@ -234,23 +223,12 @@ public class hspext_ext extends FunctionBase {
 
         final Graphics2D g = win.backGraphics;
 
-        final int x1 = win.cx;
-        final int x2 = win.cx + x_width;
-        final int y1 = win.cy;
-        final int y2 = win.cy + y_height;
+        final int x1 = ___bound(win.cx, 0, win.backImage.getWidth());
+        final int x2 = ___bound(win.cx + x_width, 0, win.backImage.getWidth());
+        final int y1 = ___bound(win.cy, 0, win.backImage.getHeight());
+        final int y2 = ___bound(win.cy + y_height, 0, win.backImage.getHeight());
 
-        // 終点は書いてはダメ
-
-        if (x2 >= 0 && y2 >= 0 && x2 < win.backImage.getWidth() && y2 < win.backImage.getHeight()) {
-            final int last = win.backImage.getRGB(x2, y2);
-            
-            __gfadd(win.backImage, x1, y1, x2, y2, red, green, blue);
-            
-            win.backImage.setRGB(x2, y2, last);
-        } else {
-
-            g.drawLine(x1, y1, x2, y2);
-        }
+        __gfadd(win.backImage, x1, y1, x2, y2, red, green, blue);
 
         final int l = Math.min(x1, x2);
         final int t = Math.min(y1, y2);
