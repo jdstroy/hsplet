@@ -5,9 +5,13 @@ package hsplet.gui;
 
 import hsplet.variable.*;
 import java.awt.Component;
+import java.awt.EventQueue;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
@@ -74,9 +78,22 @@ public class Mesbox extends JScrollPane implements VolatileValueUpdater, HSPCont
 
     public void setValue(Operand v, int vi) {
 
-        text.setText(v.toString(vi));
+        final JTextArea component = text;
+        final String value = v.toString(vi);
+        try {
+            EventQueue.invokeAndWait(new Runnable() {
 
-        this.v.updaters.add(this);
+                @Override
+                public void run() {
+                    component.setText(value);
+                }
+            });
+            this.v.updaters.add(this);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Mesbox.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(Mesbox.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
