@@ -7,6 +7,10 @@ import hsplet.function.GuiCommand;
 import hsplet.gui.Bmscr;
 import hsplet.gui.GraphicsRenderer;
 import hsplet.variable.Operand;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 
 /*
  * To change this template, choose Tools | Templates and open the template in
@@ -37,12 +41,31 @@ public class elona extends FunctionBase {
      * @param dhi 
      */
 
+    private static ImageObserver dummyObserver = new ImageObserver() {
+
+        @Override
+        public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
+            return false;
+        }
+    };
     public void grotate(@PEXInfo int source_window_id, int p2_x_coordinate,
             int p3_y_coordinate, double p4_rotation_angle_radians,
             //int p5_x_size, int p6_y_size
             final Operand dwv, final int dwi, final Operand dhv, final int dhi
             ) {
+        final Bmscr win = context.windows.get(context.targetWindow);
+        int minX = Math.min(win.cx, p2_x_coordinate);
+        int width = Math.abs(win.cx - p2_x_coordinate);
+        int minY = Math.min(win.cy, p3_y_coordinate);
+        int height = Math.abs(win.cy - p3_y_coordinate);
+        
+        //BufferedImage im = new BufferedImage(width, height, win.backImage.getType());
+        //im.getRaster().setRect(win.backImage.getData(new Rectangle(minX, minY, width, height)));
+        
+        
+        //win.backImage.getGraphics().drawImage(im, win.cx, win.cy, dummyObserver);
         GuiCommand.grotate(context, source_window_id, p2_x_coordinate, p3_y_coordinate, p4_rotation_angle_radians, dwv, dwi, dhv, dhi);
+        //win.backImage.getSubimage(minX, minY, width, height).setData(im.getRaster());
         /*
                 final Bmscr win = context.windows.get(context.targetWindow);
 

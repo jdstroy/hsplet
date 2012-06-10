@@ -10,6 +10,9 @@ import hsplet.variable.VolatileValue;
 import hsplet.variable.VolatileValueUpdater;
 
 import java.awt.Component;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -80,6 +83,16 @@ public class Mesbox extends JScrollPane implements VolatileValueUpdater, HSPCont
 		this.v.updaters.add(this);
 	}
 
+    @Override
+    public void requestFocus() {
+        text.requestFocus();
+    }
+
+    @Override
+    public boolean requestFocusInWindow() {
+        return text.requestFocusInWindow();
+    }
+    
 	public void changedUpdate(DocumentEvent e) {
 		this.v.updaters.add(this);
 
@@ -94,4 +107,22 @@ public class Mesbox extends JScrollPane implements VolatileValueUpdater, HSPCont
 		this.v.updaters.add(this);
 
 	}
+
+    @Override
+    public synchronized void addKeyListener(KeyListener l) {
+        super.addKeyListener(l);
+        text.addKeyListener(l);
+    }
+
+    @Override
+    public synchronized void addMouseListener(MouseListener l) {
+        super.addMouseListener(l);
+        text.addMouseListener(l);
+    }
+
+    @Override
+    public synchronized void addMouseMotionListener(MouseMotionListener l) {
+        super.addMouseMotionListener(l);
+        text.addMouseMotionListener(l);
+    }
 }

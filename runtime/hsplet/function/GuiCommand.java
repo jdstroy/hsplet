@@ -929,12 +929,12 @@ public class GuiCommand extends FunctionBase {
 	}
 
 	public static void getkey(final Context context, final Operand v, final int vi, final int key) {
-                Logger.getLogger(GuiCommand.class.getName()).log(Level.INFO, 
+                /*Logger.getLogger(GuiCommand.class.getName()).log(Level.FINEST, 
                     "getKey: Request = {0}, Response = {1}", new Object[] {
                         KeyEvent.getKeyText(key), 
                         Boolean.toString(context.keyPressed[key])
                     }
-                );
+                );*/
 		v.assign(vi, Scalar.fromValue(context.keyPressed[key] ? 1 : 0), 0);
 
 	}
@@ -961,7 +961,7 @@ public class GuiCommand extends FunctionBase {
 		}
 	}
 
-	public static void listbobx(final Context context, final Operand v, final int vi, final int height,
+	public static void listbox(final Context context, final Operand v, final int vi, final int height,
 			final String items) {
 
 		if (v == null) {
@@ -1073,7 +1073,7 @@ public class GuiCommand extends FunctionBase {
 		if (win.contents != null) {
 
 			final Mesbox obj = new Mesbox((Variable) v, vi, (type & 1) != 0, (type & 4) != 0);
-
+                    
 			addObject(context, win, obj, new Dimension(w, h));
 
 		}
@@ -1257,7 +1257,7 @@ public class GuiCommand extends FunctionBase {
 		context.windows.set(id, screen);
 		context.listener.listen(screen);
 	}
-
+                
 	public static void mouse(final Context context, final Operand v, final int vi) {
 
 		context.error(HSPError.UnsupportedOperation, "mouse");
@@ -1266,12 +1266,12 @@ public class GuiCommand extends FunctionBase {
 
 	public static void objsel(final Context context, final int id) {
 
-		final Bmscr win = (Bmscr) context.windows.get(context.targetWindow);
+		final Bmscr win = context.windows.get(context.targetWindow);
 
 		if (id < 0) {
 			context.stat.value = 0;
 			for (int i = 0; i < win.controls.size(); ++i) {
-				if (win.controls.get(i) != null && ((HSPControl) win.controls.get(i)).asComponent().hasFocus()) {
+				if (win.controls.get(i) != null && (win.controls.get(i)).asComponent().hasFocus()) {
 					context.stat.value = i;
 					return;
 				}
@@ -1279,7 +1279,7 @@ public class GuiCommand extends FunctionBase {
 
 		} else {
 			if (id < win.controls.size() && win.controls.get(id) != null) {
-				((HSPControl) win.controls.get(id)).asComponent().requestFocus();
+				(win.controls.get(id)).asComponent().requestFocusInWindow();
 			}
 		}
 
@@ -1337,7 +1337,7 @@ public class GuiCommand extends FunctionBase {
 		if (win.contents != null) {
 			for (int i = start; i < end; ++i) {
 				if (win.controls.get(i) != null) {
-					Component c = ((HSPControl) win.controls.get(i)).asComponent();
+					Component c = (win.controls.get(i)).asComponent();
 					c.setVisible(false);
 					win.contents.remove(c);
 					win.controls.set(i, null);
@@ -1377,7 +1377,7 @@ public class GuiCommand extends FunctionBase {
 
 		final Bmscr win = (Bmscr) context.windows.get(context.targetWindow);
 		if (win.controls.get(id) != null) {
-			((HSPControl) win.controls.get(id)).setValue(v, vi);
+			win.controls.get(id).setValue(v, vi);
 		}
 
 	}
@@ -1468,7 +1468,11 @@ public class GuiCommand extends FunctionBase {
 		int[] sxs = new int[] { sx, sx + win.gwidth - 1, sx + win.gwidth - 1, sx };
 		int[] sys = new int[] { sy, sy, sy + win.gheight - 1, sy + win.gheight - 1 };
 		
+                try {
 		GraphicsRenderer.gsquare(win, dx, dy, ((Bmscr) context.windows.get(id)).backImage, sxs, sys);
+                } catch (ArrayIndexOutOfBoundsException ex) {
+                    Logger.getLogger(GuiCommand.class.getName()).log(Level.SEVERE, "", ex);
+                }
 
 		final int l = Math.min(Math.min(Math.min(dx[0], dx[1]), dx[2]), dx[3]);
 		final int t = Math.min(Math.min(Math.min(dy[0], dy[1]), dy[2]), dy[3]);
