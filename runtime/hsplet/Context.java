@@ -12,32 +12,14 @@ import hsplet.gui.EventListener;
 import hsplet.media.HSPMedia;
 import hsplet.media.Mci;
 import hsplet.util.VCRandom;
-import hsplet.variable.DoubleScalar;
-import hsplet.variable.IntScalar;
-import hsplet.variable.Operand;
-import hsplet.variable.OperandInputStream;
-import hsplet.variable.StringArray;
-import hsplet.variable.StringScalar;
+import hsplet.variable.*;
 import java.awt.im.InputContext;
-
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-import java.util.ArrayDeque;
-
+import java.util.*;
 import javax.swing.JOptionPane;
 
 /**
@@ -309,9 +291,11 @@ public class Context implements Serializable {
         //For now let's throw an exception normally if something wants an illegal index.
         return argumentStack.peekLast()[index];
     }
+
     public void addArguments(Operand[] args) {
         argumentStack.add(args);
     }
+
     public void popArguments() {
         argumentStack.removeLast();
     }
