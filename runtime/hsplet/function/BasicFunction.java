@@ -291,7 +291,7 @@ public class BasicFunction extends FunctionBase {
                         + "index other than -1 do not behave in a well-defined manner.",
                         new Object[]{str, index, count});
             }
-            return str.substring(str.length() - 1 - count, count);
+            return str.substring(str.length() - count, count);
         }
     }
 
