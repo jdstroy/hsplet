@@ -65,7 +65,7 @@ public class Mesbox extends JScrollPane implements VolatileValueUpdater, HSPCont
 
     public void update(final Operand value) {
 
-        value.assign(vi, Scalar.fromValue(text.getText()), 0);
+        value.assign(vi, Scalar.fromValue(text.getText().replace("\n", "\r\n")), 0);
     }
 
     public Component asComponent() {
