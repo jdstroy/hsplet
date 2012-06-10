@@ -5,10 +5,14 @@ package hsplet.gui;
 
 import java.awt.AlphaComposite;
 import java.awt.Composite;
+import java.awt.EventQueue;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 高度な(？)画像描画をサポートするクラス。
@@ -418,13 +422,29 @@ public class GraphicsRenderer {
 			}
 		}
 
+                
 		if (win.gmode >= 2) {
 			dr.getPixels(dx, dy, dw, 1, destPixels);
 		}
 
-		gcopy_line(win, destPixels, srcPixels, dw);
+                final int[] destPixelsFinal = destPixels;
+                final int[] dOpt = new int[] { dx, dy, dw};
+        try {
+            EventQueue.invokeAndWait(new Runnable() {
 
-		dr.setPixels(dx, dy, dw, 1, destPixels);
+        @Override
+        public void run() {
+            
+            gcopy_line(win, destPixelsFinal, srcPixels, dOpt[2]);
+
+            dr.setPixels(dOpt[0], dOpt[1], dOpt[2], 1, destPixelsFinal);
+        }
+    }); } catch (InterruptedException ex) {
+            Logger.getLogger(GraphicsRenderer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(GraphicsRenderer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+		
 	}
 
 	/**
