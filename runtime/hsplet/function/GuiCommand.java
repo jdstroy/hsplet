@@ -22,15 +22,7 @@ import hsplet.variable.Operand;
 import hsplet.variable.Scalar;
 import hsplet.variable.Variable;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.SystemColor;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -39,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
@@ -751,19 +744,30 @@ public class GuiCommand extends FunctionBase {
             context.error(HSPError.InvalidParameterValue, "width", "h==" + h);
             return;
         }
+        try {
+            EventQueue.invokeAndWait(new Runnable() {
 
-        if (win.contents != null) {
-            win.contents.setPreferredSize(new Dimension(w, h));
-            win.contents.setSize(w, h);
+                @Override
+                public void run() {
+                    if (win.contents != null) {
+                        win.contents.setPreferredSize(new Dimension(w, h));
+                        win.contents.setSize(w, h);
+                    }
+                    if (win.window != null) {
+
+                        final int l = toInt(hv, hvi, win.window.getX());
+                        final int t = toInt(tv, tvi, win.window.getY());
+
+                        win.window.setLocation(l, t);
+                    }
+
+                }
+            });
+        } catch (InterruptedException ex) {
+            Logger.getLogger(GuiCommand.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(GuiCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (win.window != null) {
-
-            final int l = toInt(hv, hvi, win.window.getX());
-            final int t = toInt(tv, tvi, win.window.getY());
-
-            win.window.setLocation(l, t);
-        }
-
     }
 
     public static void gsel(final Context context, final int id, final int mode) {
@@ -784,16 +788,42 @@ public class GuiCommand extends FunctionBase {
             case 0:
                 break;
             case 1:
-                if (win.component != null) {
-                    win.component.setVisible(true);
-                    win.component.requestFocus();
+                try {
+                    EventQueue.invokeAndWait(new Runnable() {
+
+                        @Override
+                        public void run() {
+
+                            if (win.component != null) {
+                                win.component.setVisible(true);
+                                win.component.requestFocus();
+                            }
+                        }
+                    });
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(GuiCommand.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InvocationTargetException ex) {
+                    Logger.getLogger(GuiCommand.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 break;
             case 2:
-                if (win.component != null) {
-                    win.component.setVisible(true);
-                    win.component.requestFocus();
+                try {
+                    EventQueue.invokeAndWait(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            if (win.component != null) {
+                                win.component.setVisible(true);
+                                win.component.requestFocus();
+                            }
+                        }
+                    });
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(GuiCommand.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InvocationTargetException ex) {
+                    Logger.getLogger(GuiCommand.class.getName()).log(Level.SEVERE, null, ex);
                 }
+
                 context.error(HSPError.UnsupportedOperation, "gsel", "mode==" + mode);
                 break;
             default:
@@ -932,7 +962,7 @@ public class GuiCommand extends FunctionBase {
          * Logger.getLogger(GuiCommand.class.getName()).log(Level.FINEST,
          * "getKey: Request = {0}, Response = {1}", new Object[] {
          * KeyEvent.getKeyText(key), Boolean.toString(context.keyPressed[key]) }
-                );
+         * );
          */
         v.assign(vi, Scalar.fromValue(context.keyPressed[key] ? 1 : 0), 0);
 
