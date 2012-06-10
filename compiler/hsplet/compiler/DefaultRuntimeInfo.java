@@ -61,7 +61,7 @@ public class DefaultRuntimeInfo implements RuntimeInfo {
 			"title", "pos", "circle", "cls", "font", "sysfont", "objsize",
 			"picload", "color", "palcolor", "palette", "redraw", "width",
 			"gsel", "gcopy", "gzoom", // < 0x20
-			"gmode", "bmpsave", "hsvcolor", "getkey", "listbobx", "chkbox",
+			"gmode", "bmpsave", "hsvcolor", "getkey", "listbox", "chkbox",
 			"combox", "input", "mesbox", "buffer", "screen", "bgscr", "mouse",
 			"objsel", "groll", // <0x30
 			"line", "clrobj", "boxf", "objprm", "objmode", "stick", "grect",
