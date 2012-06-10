@@ -6,9 +6,7 @@ package hsplet.gui;
 import hsplet.variable.*;
 import java.awt.Component;
 import java.awt.EventQueue;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -85,7 +83,9 @@ public class Mesbox extends JScrollPane implements VolatileValueUpdater, HSPCont
 
                 @Override
                 public void run() {
-                    component.setText(value);
+                    if (!value.equals(component.getText())) {
+                        component.setText(value);
+                    }
                 }
             });
             this.v.updaters.add(this);
@@ -98,12 +98,38 @@ public class Mesbox extends JScrollPane implements VolatileValueUpdater, HSPCont
 
     @Override
     public void requestFocus() {
-        text.requestFocus();
+        try {
+            EventQueue.invokeAndWait(new Runnable() {
+
+                @Override
+                public void run() {
+                    text.requestFocus();
+                }
+            });
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Mesbox.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(Mesbox.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
     public boolean requestFocusInWindow() {
-        return text.requestFocusInWindow();
+        final boolean[] out = new boolean[1];
+        try {
+            EventQueue.invokeAndWait(new Runnable() {
+
+                @Override
+                public void run() {
+                    out[0] = text.requestFocusInWindow();
+                }
+            });
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Mesbox.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(Mesbox.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return out[0];
     }
 
     @Override
