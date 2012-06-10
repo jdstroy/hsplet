@@ -268,7 +268,8 @@ public class Context implements Serializable {
         if (index >= 0) {
             cnt = cnts[index];
             lastCnt = lastCnts[index];
-        }
+        } else
+            cnt = new IntScalar(0);
     }
     public final IntScalar system = new IntScalar(0);
     public final IntScalar hspstat = new IntScalar(0x80000000);

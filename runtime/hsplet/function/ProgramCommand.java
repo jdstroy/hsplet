@@ -35,7 +35,8 @@ public class ProgramCommand extends FunctionBase {
 
 		++context.sublev.value;
 		try {
-			context.getRunnableCode().run(label);
+			Operand O=context.getRunnableCode().run(label);
+			if(O!=null) context.stat.value=O.toInt(0);
 		} finally {
 			--context.sublev.value;
 		}
