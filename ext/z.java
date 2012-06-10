@@ -37,8 +37,8 @@ public class z extends FunctionBase {
     private int serial = 0;
 
     public int zOpen(Operand handle, int index, String path, int fileMode, int modeB) {
-        Logger.getLogger(z.class.getName()).log(Level.INFO,
-                "zOpen(\"{0}, {1}, {2}\")", new Object[]{
+        Logger.getLogger(z.class.getName()).log(Level.FINE,
+                "zOpen(\"{0}\", {1}, {2})", new Object[]{
                     path, fileMode, modeB
                 });
         try {
