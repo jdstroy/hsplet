@@ -162,7 +162,7 @@ public class BasicCommand extends FunctionBase {
         }
 
     }
-    
+
     public static void delete(final Context context, final String fileName) {
         try {
             boolean retval = new File(context.resolve(fileName)).delete();
@@ -192,7 +192,7 @@ public class BasicCommand extends FunctionBase {
 
             final String rel = dirName.replace('\\', '/');
             context.curdir = new URL(context.curdir, rel + (rel.endsWith("/") ? "" : "/"));
-            Logger.getLogger(BasicCommand.class.getName()).log(Level.INFO, "chdir: Requested {0}, gave {1}", new Object[] {dirName, context.curdir});
+            Logger.getLogger(BasicCommand.class.getName()).log(Level.INFO, "chdir: Requested {0}, gave {1}", new Object[]{dirName, context.curdir});
         } catch (MalformedURLException ex) {
             Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -209,8 +209,10 @@ public class BasicCommand extends FunctionBase {
              */
 
             // We might get an IllegalArgumentException.  We shall see.
-            /* Is it using /?  Probably was coded with HSPlet/Java/*nix in mind.
-              If it isn't, we'll assume we're on Windows.*/
+            /*
+             * Is it using /? Probably was coded with HSPlet/Java/*nix in mind.
+             * If it isn't, we'll assume we're on Windows.
+             */
             final String new_mask = winPathToNetPath(mask);
             File[] dirlist = cwd(context).listFiles(new Globber(new_mask, mode));
             StringBuilder sb = new StringBuilder();
@@ -226,8 +228,7 @@ public class BasicCommand extends FunctionBase {
             result.assign(new ByteString(sb.toString()));
             context.stat.value = 0; // OK
             /*
-             * } catch (Exception ex) { context.stat.value = 1; // OK
-            }
+             * } catch (Exception ex) { context.stat.value = 1; // OK }
              */
         } catch (URISyntaxException ex) {
             Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, "Tried to convert to File URI but failed", ex);
@@ -313,8 +314,57 @@ public class BasicCommand extends FunctionBase {
 
     public static void bsave(final Context context, final String fileName, final Operand v, final int vi,
             final Operand sizev, final int sizevi, final int offset) {
+        FileOutputStream out = null;
 
-        context.error(HSPError.UnsupportedOperation, "bsave " + fileName);
+        try {
+
+            if (fileName == null) {
+                context.error(HSPError.ParameterCannotBeOmitted, "bload", "fileName");
+                return;
+            }
+
+            if (v == null) {
+                context.error(HSPError.ParameterCannotBeOmitted, "bload", "v");
+                return;
+            }
+
+            final int size = toInt(sizev, sizevi, -1);
+
+            File outputFile = new File(context.getResourceURL(fileName).toURI());
+            out = new FileOutputStream(outputFile);
+
+            out.getChannel().position(offset);
+
+            try {
+
+                try {
+                    for (int i = 0; i < size; i++) {
+                        out.write(v.peek(vi, i));
+                    }
+
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    // 変数バッファオーバー
+                }
+
+                //context.strsize.value = readedDataSize;
+
+            } finally {
+                out.close();
+            }
+
+        } catch (IOException ex) {
+            Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
+            context.error(HSPError.FileNotFound, "bload", fileName);
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
+            context.error(HSPError.FileNotFound, "bload", fileName);
+        } finally {
+            try {
+                out.close();
+            } catch (IOException ex) {
+                Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
 
     }
 
@@ -550,7 +600,7 @@ public class BasicCommand extends FunctionBase {
         note.replace(lineIndex, lineLength, lineStr);
 
     }
-    
+
     private static String winPathToNetPath(String winpath) {
         String output = winpath.replace('\\', '/');
         //String output = winpath.contains("/") ? winpath : winpath.replace('\\', '/');
@@ -561,6 +611,7 @@ public class BasicCommand extends FunctionBase {
         String output = winpath.contains("/") ? winpath : winpath.replace('\\', '/');
         return output.startsWith("/") ? output.substring(1) : output;
     }
+
     public static void notedel(final Context context, final int line) {
 
         // 文字列型なら使用中のバッファが返ってくるはず。
@@ -588,17 +639,16 @@ public class BasicCommand extends FunctionBase {
 
         try {
             InputStream in = context.getResource(fileName);
-            
+
             if (in == null) {
                 // One more thing to try
                 try {
-                    Logger.getLogger(BasicCommand.class.getName()).log(Level.INFO, 
-                        "noteload {0} => {1}", 
-                        new Object[] {
-                            fileName, 
-                            context.curdir.toURI().resolve(safeWinPath2NetPath(fileName))
-                        }
-                    );
+                    Logger.getLogger(BasicCommand.class.getName()).log(Level.INFO,
+                            "noteload {0} => {1}",
+                            new Object[]{
+                                fileName,
+                                context.curdir.toURI().resolve(safeWinPath2NetPath(fileName))
+                            });
                     in = new FileInputStream(new File(context.resolveSafe(fileName)));
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
