@@ -4,9 +4,12 @@ import hsplet.function.FunctionBase;
 import hsplet.gui.Bmscr;
 import hsplet.variable.Operand;
 import hsplet.variable.Scalar;
+import java.awt.Frame;
 import java.awt.Graphics2D;
-import java.awt.Image;
+import java.awt.Window;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * To change this template, choose Tools | Templates and open the template in
@@ -44,9 +47,22 @@ public class hspext_ext extends FunctionBase {
     public void aplobj(String objname, int a) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    private Window aplSelTarget = null;
 
     public void aplsel(Operand destination, int index, String name, int startId) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Window[] windows = Window.getWindows();
+        List<Window> tempFrames = new ArrayList<Window>();
+        for (Window w : windows) {
+            if (name.isEmpty()) {
+                tempFrames.add(w);
+            } else if (Frame.class.isInstance(w)) {
+                Frame f = Frame.class.cast(w);
+                if (f.getTitle().contains(name)) {
+                    tempFrames.add(f);
+                }
+            }
+        }
+        aplSelTarget = (index < tempFrames.size()) ? tempFrames.get(index) : null;
     }
 
     public void ematan(Operand destination, int index, double x, double y) {
