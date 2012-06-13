@@ -50,24 +50,25 @@ public class Mci implements Serializable {
 	public void exec(final String command) {
 
 		final String[] commands = split(command);
+                final String firstWord = commands[0];
 
 		if (commands.length < 1) {
 			return;
 		}
 
-		if (commands[0].equalsIgnoreCase("open")) {
+		if (firstWord.equalsIgnoreCase("open")) {
 			open(commands);
-		} else if (commands[0].equalsIgnoreCase("set")) {
+		} else if (firstWord.equalsIgnoreCase("set")) {
 			set(commands);
-		} else if (commands[0].equalsIgnoreCase("seek")) {
+		} else if (firstWord.equalsIgnoreCase("seek")) {
 			seek(commands);
-		} else if (commands[0].equalsIgnoreCase("play")) {
+		} else if (firstWord.equalsIgnoreCase("play")) {
 			play(commands);
-		} else if (commands[0].equalsIgnoreCase("status")) {
+		} else if (firstWord.equalsIgnoreCase("status")) {
 			status(commands);
-		} else if (commands[0].equalsIgnoreCase("stop")) {
+		} else if (firstWord.equalsIgnoreCase("stop")) {
 			stop(commands);
-		} else if (commands[0].equalsIgnoreCase("close")) {
+		} else if (firstWord.equalsIgnoreCase("close")) {
 			close(commands);
 		} else {
 			throw new UnsupportedOperationException("mci 命令 " + command + " はサポートされていません。");
