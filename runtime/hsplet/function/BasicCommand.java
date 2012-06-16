@@ -687,9 +687,9 @@ public class BasicCommand extends FunctionBase {
                             "noteload {0} => {1}",
                             new Object[]{
                                 fileName,
-                                context.resolveSafe(fileName)
+                                context.resolve(fileName)
                             });
-                    in = new FileInputStream(new File(context.resolveSafe(fileName)));
+                    in = new FileInputStream(new File(context.resolve(fileName)));
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
                     context.error(HSPError.FileNotFound, "noteload", fileName);
