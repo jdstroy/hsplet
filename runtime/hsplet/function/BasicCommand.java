@@ -167,7 +167,7 @@ public class BasicCommand extends FunctionBase {
     public static void delete(final Context context, final String fileName) {
         try {
             boolean retval = new File(context.resolve(fileName)).delete();
-            context.stat.value = retval ? 0 : 1;
+            context.stat.value = retval ? 1 : 0;
         } catch (URISyntaxException ex) {
             Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
             context.stat.value = 2;
@@ -231,10 +231,6 @@ public class BasicCommand extends FunctionBase {
 
     public static void dirlist(final Context context, final ByteString result, final String mask, int mode) {
         try {
-            /*
-             * try {
-             */
-
             // We might get an IllegalArgumentException.  We shall see.
             /*
              * Is it using /? Probably was coded with HSPlet/Java/*nix in mind.
@@ -257,6 +253,7 @@ public class BasicCommand extends FunctionBase {
                     new Globber(
                     file_mask,
                     mode));
+            
             StringBuilder sb = new StringBuilder();
             List<File> fList = Arrays.asList(dirlist);
             for (Iterator<File> it = fList.iterator(); it.hasNext();) {
@@ -268,12 +265,13 @@ public class BasicCommand extends FunctionBase {
             }
 
             result.assign(new ByteString(sb.toString()));
-            context.stat.value = 0; // OK
-            /*
-             * } catch (Exception ex) { context.stat.value = 1; // OK }
-             */
+            context.stat.value = dirlist.length; // OK; if no entries, return 0
         } catch (URISyntaxException ex) {
+            context.stat.value = 0; // Fail
             Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, "Tried to convert to File URI but failed", ex);
+        } catch (Exception ex) {
+            context.stat.value = 0; // Fail
+            Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
