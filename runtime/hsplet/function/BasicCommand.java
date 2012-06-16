@@ -17,6 +17,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -202,6 +203,32 @@ public class BasicCommand extends FunctionBase {
         return new File(context.curdir.toURI());
     }
 
+    private static int firstWildcard(final CharSequence s1) {
+        for (int i = 0; i < s1.length(); i++) {
+            switch (s1.charAt(i)) {
+                case '?':
+                case '*':
+                    return i;
+            }
+        }
+        return -1;
+    }
+
+    private static int findLastNonWildcardSegment(String globberPattern) {
+        // Find the first * or ?
+        // Grab the substring from 0 to index of last / before the first * or ?
+        // If * or ? do not exist, then grab up to the the last /; otherwise, 
+        // grab nothing
+        int firstWildcardIndex = firstWildcard(globberPattern);
+        if (firstWildcardIndex == -1) {
+            // no wildcard
+            return globberPattern.lastIndexOf('/');
+        } else {
+            int slash = globberPattern.lastIndexOf('/', firstWildcardIndex);
+            return slash;
+        }
+    }
+
     public static void dirlist(final Context context, final ByteString result, final String mask, int mode) {
         try {
             /*
@@ -214,7 +241,22 @@ public class BasicCommand extends FunctionBase {
              * If it isn't, we'll assume we're on Windows.
              */
             final String new_mask = winPathToNetPath(mask);
-            File[] dirlist = cwd(context).listFiles(new Globber(new_mask, mode));
+            // Need to parse new_mask - split between the dirname and mask
+            int index = findLastNonWildcardSegment(new_mask);
+
+            URI subdir;
+            String file_mask;
+            if (index == -1) {
+                subdir = cwd(context).toURI();
+                file_mask = new_mask;
+            } else {
+                subdir = cwd(context).toURI().resolve(new_mask.substring(0, index));
+                file_mask = new_mask.substring(index + 1, new_mask.length());
+            }
+            File[] dirlist = new File(subdir).listFiles(
+                    new Globber(
+                    file_mask,
+                    mode));
             StringBuilder sb = new StringBuilder();
             List<File> fList = Arrays.asList(dirlist);
             for (Iterator<File> it = fList.iterator(); it.hasNext();) {
