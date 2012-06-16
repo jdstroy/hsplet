@@ -20,6 +20,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -268,8 +270,9 @@ public class Context implements Serializable {
         if (index >= 0) {
             cnt = cnts[index];
             lastCnt = lastCnts[index];
-        } else
+        } else {
             cnt = new IntScalar(0);
+        }
     }
     public final IntScalar system = new IntScalar(0);
     public final IntScalar hspstat = new IntScalar(0x80000000);
@@ -314,7 +317,17 @@ public class Context implements Serializable {
     }
 
     public InputStream getResource(final String fileName) {
-        return getResource(curdir, fileName);
+        InputStream in = getResource(curdir, fileName);
+        if (in == null) {
+            try {
+                in = new FileInputStream(new File(resolve(fileName)));
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(Context.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Context.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return in;
     }
 
     public InputStream getBufferedResource(final String fileName) {
