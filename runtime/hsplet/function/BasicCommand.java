@@ -123,7 +123,7 @@ public class BasicCommand extends FunctionBase {
             if (fileName.startsWith("MEM:")) {
                 context.strsize.value = context.memfile.getSize();
             } else {
-                final URL url = context.getResourceURL(fileName);
+                final URL url = context.resolve(fileName).toURL();
 
                 final URLConnection con = url.openConnection();
 
@@ -292,11 +292,22 @@ public class BasicCommand extends FunctionBase {
 
         try {
 
-            final InputStream in = context.getResource(fileName);
+            InputStream in = context.getResource(fileName);
 
             if (in == null) {
-                context.error(HSPError.FileNotFound, "bload", fileName);
-                return;
+                try {
+                    Logger.getLogger(BasicCommand.class.getName()).log(Level.INFO,
+                            "noteload {0} => {1}",
+                            new Object[]{
+                                fileName,
+                                context.resolve(fileName)
+                            });
+                    in = new FileInputStream(new File(context.resolve(fileName)));
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
+                    context.error(HSPError.FileNotFound, "noteload", fileName);
+                    return;
+                }
             }
 
             try {
@@ -345,9 +356,12 @@ public class BasicCommand extends FunctionBase {
                 in.close();
             }
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (URISyntaxException ex) {
             context.error(HSPError.FileNotFound, "bload", fileName);
+            Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            context.error(HSPError.FileNotFound, "bload", fileName);
+            Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -370,7 +384,7 @@ public class BasicCommand extends FunctionBase {
 
             final int size = toInt(sizev, sizevi, -1);
 
-            File outputFile = new File(context.getResourceURL(fileName).toURI());
+            File outputFile = new File(context.resolve(fileName));
             out = new FileOutputStream(outputFile);
 
             out.getChannel().position(offset);
@@ -420,13 +434,13 @@ public class BasicCommand extends FunctionBase {
             return;
         }
         try {
-            File sourceFile = new File(context.getResourceURL(fileName).toURI());
+            File sourceFile = new File(context.resolve(fileName));
 
             if (!sourceFile.exists()) {
                 context.error(HSPError.FileNotFound, fileName);
                 return;
             }
-            File targetFile = new File(context.getResourceURL(target).toURI());
+            File targetFile = new File(context.resolve(target));
             File dir = targetFile.getParentFile();
             if ((dir != null) && (!dir.exists())) {
                 dir.mkdirs();
