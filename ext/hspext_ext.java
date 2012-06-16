@@ -4,12 +4,13 @@ import hsplet.function.FunctionBase;
 import hsplet.gui.Bmscr;
 import hsplet.variable.Operand;
 import hsplet.variable.Scalar;
-import java.awt.Frame;
-import java.awt.Graphics2D;
-import java.awt.Window;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.text.JTextComponent;
 
 /*
  * To change this template, choose Tools | Templates and open the template in
@@ -35,34 +36,88 @@ public class hspext_ext extends FunctionBase {
      * number of lines. rowIndex is ignored. 2 - The number of characters in
      * rowIndex.
      *
-     * @param numericTarget
+     * @param destination
      * @param index
      * @param mode
      * @param rowIndex
      */
-    public void apledit(Operand numericTarget, int index, int mode, int rowIndex) {
+    public void apledit(Operand destination, int index, int mode, int rowIndex) {
+        
+        Component component = aplObjTarget;
+        
+        if (JTextComponent.class.isInstance(component)) {
+            JTextComponent jtc = JTextComponent.class.cast(component);
+            switch(mode) {
+                case 0: //get 1 byte
+                    // http://usk.s16.xrea.com/hsp/hsphelp_eng/hsp255_eng/hsphelp/help_a.htm#s_apledit
+                    destination.assign(index, Scalar.fromValue(jtc.getText().getBytes()[destination.toInt(index)]), 0);
+                    context.stat.value = 0; //?
+                    return;
+                case 1: //get number of rows
+                    destination.assign(index, Scalar.fromValue(jtc.getText().split("\n").length), 0);
+                    return;
+                case 2: //get the number of characters in the line at rowIndex
+                    destination.assign(index, Scalar.fromValue(0), 0);
+                    return;
+            }
+            
+        } else if (TextComponent.class.isInstance(component)) {
+            TextComponent tc = TextComponent.class.cast(component);
+            switch(mode) {
+                case 0: //get 1 byte
+                    // http://usk.s16.xrea.com/hsp/hsphelp_eng/hsp255_eng/hsphelp/help_a.htm#s_apledit
+                    destination.assign(index, Scalar.fromValue(tc.getText().getBytes()[destination.toInt(index)]), 0);
+                    context.stat.value = 0; //?
+                    return;
+                case 1: //get number of rows
+                    destination.assign(index, Scalar.fromValue(tc.getText().split("\n").length), 0);
+                    return;
+                case 2: //get the number of characters in the line at rowIndex
+                    destination.assign(index, Scalar.fromValue(0), 0);
+                    return;
+            }
+            
+        }
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    private Component aplObjTarget = null;
 
-    public void aplobj(String objname, int a) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void aplobj(String objClassName, int a) {
+        try {
+            synchronized (aplSelTarget.getTreeLock()) {
+                aplObjTarget = aplSelTarget.getComponent(a);
+                context.stat.value = 0;
+                context.refstr.value.assign(aplObjTarget.getClass().getName());
+            }
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            Logger.getLogger(getClass().getName()).log(Level.WARNING,
+                    "aplobj requested invalid index", ex);
+            aplObjTarget = null;
+            context.stat.value = 1;
+        }
     }
     private Window aplSelTarget = null;
 
-    public void aplsel(Operand destination, int index, String name, int startId) {
+    public void aplsel(String windowName, int startId) {
         Window[] windows = Window.getWindows();
         List<Window> tempFrames = new ArrayList<Window>();
         for (Window w : windows) {
-            if (name.isEmpty()) {
+            if (windowName.isEmpty()) {
                 tempFrames.add(w);
             } else if (Frame.class.isInstance(w)) {
                 Frame f = Frame.class.cast(w);
-                if (f.getTitle().contains(name)) {
+                if (f.getTitle().contains(windowName)) {
                     tempFrames.add(f);
                 }
             }
         }
-        aplSelTarget = (index < tempFrames.size()) ? tempFrames.get(index) : null;
+        if (startId < tempFrames.size()) {
+            aplSelTarget = tempFrames.get(startId);
+            context.stat.value = 0;
+        } else {
+            aplSelTarget = null;
+            context.stat.value = 1;
+        }
     }
 
     public void ematan(Operand destination, int index, double x, double y) {
