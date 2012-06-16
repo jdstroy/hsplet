@@ -362,55 +362,64 @@ public class Context implements Serializable {
         return getResourceURL(curdir, fileName);
     }
 
+    private static URL resolve(URL dir, String fileName) throws URISyntaxException, MalformedURLException {
+        return dir.toURI().resolve(((fileName.startsWith("\\")) ? fileName.substring(1) : fileName).replace('\\', '/')).toURL();
+    }
+    
+    private static URI resolve(URI dir, String fileName) {
+        return dir.resolve(((fileName.startsWith("\\")) ? fileName.substring(1) : fileName).replace('\\', '/'));
+    }
     public URL getResourceURL(final URL dir, final String fileName) {
-
-        final URL url;
         try {
-            url = new URL(dir, fileName);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+            final URL url;
+            url = resolve(dir, fileName);
+
+            if (url.toString().startsWith(exedir.toString())) {
+
+                String relativeName = url.toString().substring(exedir.toString().length()).replaceAll("\\\\", "/");
+
+                if (relativeName.startsWith("/")) {
+                    relativeName = relativeName.substring(1);
+                }
+
+                {
+                    final URL result = getClass().getClassLoader().getResource(relativeName);
+
+                    if (result != null) {
+                        return result;
+                    }
+                }
+
+                {
+                    // パックファイルはディレクトリも無視する
+
+                    final URL result = getClass().getClassLoader().getResource(fileName);
+
+                    if (result != null) {
+                        return result;
+                    }
+                }
+
+                {
+                    // パックファイルはすべてのディレクトリも無視する
+
+                    final URL result = getClass().getClassLoader().getResource(new File(relativeName).getName());
+
+                    if (result != null) {
+                        return result;
+                    }
+                }
+
+            }
+
+            return url;
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(Context.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(Context.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
-
-        if (url.toString().startsWith(exedir.toString())) {
-
-            String relativeName = url.toString().substring(exedir.toString().length()).replaceAll("\\\\", "/");
-
-            if (relativeName.startsWith("/")) {
-                relativeName = relativeName.substring(1);
-            }
-
-            {
-                final URL result = getClass().getClassLoader().getResource(relativeName);
-
-                if (result != null) {
-                    return result;
-                }
-            }
-
-            {
-                // パックファイルはディレクトリも無視する
-
-                final URL result = getClass().getClassLoader().getResource(fileName);
-
-                if (result != null) {
-                    return result;
-                }
-            }
-
-            {
-                // パックファイルはすべてのディレクトリも無視する
-
-                final URL result = getClass().getClassLoader().getResource(new File(relativeName).getName());
-
-                if (result != null) {
-                    return result;
-                }
-            }
-
-        }
-
-        return url;
     }
 
     public void showPage(final URL url, final String target) {
@@ -482,7 +491,7 @@ public class Context implements Serializable {
      * @return
      */
     public URI resolve(String fileName) throws URISyntaxException {
-        return curdir.toURI().resolve(((fileName.startsWith("\\")) ? fileName.substring(1) : fileName).replace('\\', '/'));
+        return resolve(curdir.toURI(), fileName);
     }
 
     public URI resolveSafe(String fileName) throws URISyntaxException {
