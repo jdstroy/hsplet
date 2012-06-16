@@ -687,7 +687,7 @@ public class BasicCommand extends FunctionBase {
                             "noteload {0} => {1}",
                             new Object[]{
                                 fileName,
-                                context.curdir.toURI().resolve(safeWinPath2NetPath(fileName))
+                                context.resolveSafe(fileName)
                             });
                     in = new FileInputStream(new File(context.resolveSafe(fileName)));
                 } catch (FileNotFoundException ex) {
