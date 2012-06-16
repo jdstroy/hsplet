@@ -385,7 +385,7 @@ public class ByteString implements Serializable {
         }
         
         public void dump(OutputStream out) throws IOException {
-        out.write(bytes, offset, bytes.length - offset);
+        out.write(bytes, offset, length);
             out.flush();
         }
 }
