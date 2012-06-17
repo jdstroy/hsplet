@@ -381,8 +381,30 @@ public class BasicCommand extends FunctionBase {
                 context.error(HSPError.ParameterCannotBeOmitted, "bload", "v");
                 return;
             }
+            
+            
+            int defaultSize = v.l0() * v.l1() * v.l2() * v.l3();
+                
+            if (sizev == null) {
+                switch(v.getType()) {
+                    case Operand.Type.STRING:
+                        defaultSize = v.toByteString(vi).length();
+                        break;
+                    case Operand.Type.INTEGER:
+                        defaultSize = defaultSize * 4;
+                        break;
+                    case Operand.Type.DOUBLE:
+                        defaultSize = defaultSize * 8;
+                        break;
+                    default:
+                        Logger.getLogger(BasicCommand.class.getName()).log(
+                                Level.WARNING, 
+                                "bsave called on unsupported type with sizev == "
+                                + "null");
+                }
+            }
 
-            final int size = toInt(sizev, sizevi, -1);
+            final int size = toInt(sizev, sizevi, defaultSize);
 
             File outputFile = new File(context.resolve(fileName));
             out = new FileOutputStream(outputFile);
