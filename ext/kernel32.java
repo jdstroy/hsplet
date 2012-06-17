@@ -4,6 +4,7 @@ import hsplet.function.FunctionBase;
 import hsplet.variable.ByteString;
 import hsplet.variable.Operand;
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -59,12 +60,17 @@ public class kernel32 extends FunctionBase {
         return 0;
     }
 
-    public int RemoveDirectoryA(String str) {
-        File f = new File(str);
-        if (!f.isDirectory()) {
+    public int RemoveDirectoryA(String fileName) {
+        try {
+            File f = new File(context.resolve(fileName));
+            if (!f.isDirectory()) {
+                return W32_STATUS_ZERO_FAIL;
+            }
+            return f.delete() ? STATUS_DELETED : W32_STATUS_ZERO_FAIL;
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(kernel32.class.getName()).log(Level.SEVERE, null, ex);
             return W32_STATUS_ZERO_FAIL;
         }
-        return f.delete() ? STATUS_DELETED : W32_STATUS_ZERO_FAIL;
     }
 
     private boolean removeRecursive(File f) {

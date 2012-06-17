@@ -369,6 +369,7 @@ public class Context implements Serializable {
     private static URI resolve(URI dir, String fileName) {
         return dir.resolve(((fileName.startsWith("\\")) ? fileName.substring(1) : fileName).replace('\\', '/'));
     }
+    
     public URL getResourceURL(final URL dir, final String fileName) {
         try {
             final URL url;
@@ -485,8 +486,9 @@ public class Context implements Serializable {
 
     /**
      * Converts Win32 filename requests into a URI, relative to the cwd as
-     * appropriate.
-     *
+     * appropriate.  Converts all back-slashes to forward-slashes, and makes
+     * all accesses relative.
+     * 
      * @param fileName Input file name
      * @return
      */
@@ -494,6 +496,15 @@ public class Context implements Serializable {
         return resolve(curdir.toURI(), fileName);
     }
 
+    /**
+     * Converts Win32 filename requests into a URI, relative to the cwd as
+     * appropriate.  Converts all back-slashes to forward-slashes if there are 
+     * no forward-slashes in fileName.  If backslashes exist, absolute references
+     * are converted to relative references.
+     *
+     * @param fileName Input file name
+     * @return
+     */
     public URI resolveSafe(String fileName) throws URISyntaxException {
         return curdir.toURI().
                 resolve(
