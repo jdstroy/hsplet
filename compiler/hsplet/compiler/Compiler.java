@@ -1687,6 +1687,11 @@ public class Compiler implements Opcodes, Serializable {
         //if(mv instanceof ScanOneVisitor)
         //    System.out.print(" "+method.getName()+methodDesc);
 
+        if (!hasresult &&  method.getReturnType().equals(Integer.TYPE)) {
+            mv.visitVarInsn(ALOAD, contextIndex);
+            mv.visitFieldInsn(GETFIELD, contextIName, "stat", Type.getDescriptor(IntScalar.class));
+        }
+
         if (!Modifier.isStatic(method.getModifiers())) {
 
             if (!instancedLibraries.contains(libraryClass)) {
@@ -1740,6 +1745,7 @@ public class Compiler implements Opcodes, Serializable {
 
             if (method.getReturnType().equals(Void.TYPE)) {
                 getLiteralByIndex(mv, literals.indexOf(new Integer(0)));
+                System.out.println("Wanted a result from "+libraryClass.getName()+"."+method.getName()+".");
             } else if (method.getReturnType().equals(Operand.class)) {
                 // 何もする必要なし
             } else {
@@ -1757,15 +1763,16 @@ public class Compiler implements Opcodes, Serializable {
 
             if (method.getReturnType().equals(Integer.TYPE)) {
 
-                mv.visitVarInsn(ALOAD, contextIndex);
-                mv.visitFieldInsn(GETFIELD, contextIName, "stat", Type.getDescriptor(IntScalar.class));
+                //mv.visitVarInsn(ALOAD, contextIndex);
+                //mv.visitFieldInsn(GETFIELD, contextIName, "stat", Type.getDescriptor(IntScalar.class));
 
-                mv.visitInsn(SWAP);
+                //mv.visitInsn(SWAP);
 
                 mv.visitFieldInsn(PUTFIELD, Type.getInternalName(IntScalar.class), "value", "I");
 
             } else if (!method.getReturnType().equals(Void.TYPE)) {
                 // int 以外は無視
+                //System.out.println("Call of "+libraryClass.getName()+"."+method.getName()+" with no desired result.");
                 mv.visitInsn(POP);
             }
         }
@@ -1912,7 +1919,7 @@ public class Compiler implements Opcodes, Serializable {
     private void compileModuleCommand(final MethodVisitor mv, final boolean hasresult) {
 
         final Code code = ax.codes[codeIndex++];
-        final Method method = runtime.getMethodFor(ax, code);
+        final Method method = runtime.getMethodFor(ax, code, hasresult ? "callVal" : "call");
         final String methodDesc = Type.getMethodDescriptor(method);
         //if(mv instanceof ScanOneVisitor)
         //    System.out.print(" "+method.getName()+methodDesc);
@@ -1950,7 +1957,8 @@ public class Compiler implements Opcodes, Serializable {
 
             if (!function.isFunction()) {
 
-                getLiteralByIndex(mv, literals.indexOf(new Integer(0)));
+                //getLiteralByIndex(mv, literals.indexOf(new Integer(0)));
+                throw new RuntimeException("Invalid call in .ax code.");
 
             } else {
 
@@ -1959,34 +1967,38 @@ public class Compiler implements Opcodes, Serializable {
             }
 
         } else {
+            //Nothing here anymore, ProgramCommand handles 'stat' type stuff
+            if (!method.getReturnType().equals(Void.TYPE)) {
+                System.out.println("Invalid method found?!");
+            }
 
             // 命令のときは戻り値は stat に代入
 
-            mv.visitInsn(DUP);
+            //mv.visitInsn(DUP);
 
-            final KLabel noassign = new KLabel();
-            noassign.branchesToHere=1;
-            mv.visitJumpInsn(IFNULL, noassign);
+            //final KLabel noassign = new KLabel();
+            //noassign.branchesToHere=1;
+            //mv.visitJumpInsn(IFNULL, noassign);
 
-            mv.visitVarInsn(ALOAD, contextIndex);
-            mv.visitFieldInsn(GETFIELD, contextIName, "stat", Type.getDescriptor(IntScalar.class));
+            //mv.visitVarInsn(ALOAD, contextIndex);
+            //mv.visitFieldInsn(GETFIELD, contextIName, "stat", Type.getDescriptor(IntScalar.class));
 
-            mv.visitInsn(SWAP);
+            //mv.visitInsn(SWAP);
 
-            mv.visitInsn(ICONST_0);
+            //mv.visitInsn(ICONST_0);
 
-            mv.visitInsn(SWAP);
+            //mv.visitInsn(SWAP);
 
-            mv.visitInsn(ICONST_0);
+            //mv.visitInsn(ICONST_0);
 
-            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "assign", "(I" + opeDesc + "I)V");
+            //mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "assign", "(I" + opeDesc + "I)V");
 
-            final KLabel end = new KLabel();
-            end.branchesToHere=1;
-            mv.visitJumpInsn(GOTO, end);
-            mv.visitLabel(noassign);
-            mv.visitInsn(POP);
-            mv.visitLabel(end);
+            //final KLabel end = new KLabel();
+            //end.branchesToHere=1;
+            //mv.visitJumpInsn(GOTO, end);
+            //mv.visitLabel(noassign);
+            //mv.visitInsn(POP);
+            //mv.visitLabel(end);
         }
 
     }
@@ -2685,14 +2697,14 @@ public class Compiler implements Opcodes, Serializable {
 
     private void compileDllCommand(final MethodVisitor mv) {
 
-        mv.visitVarInsn(ALOAD, contextIndex);
-        mv.visitFieldInsn(GETFIELD, contextIName, "stat", Type.getDescriptor(IntScalar.class));
+        //mv.visitVarInsn(ALOAD, contextIndex);
+        //mv.visitFieldInsn(GETFIELD, contextIName, "stat", Type.getDescriptor(IntScalar.class));
 
-        mv.visitInsn(ICONST_0);
+        //mv.visitInsn(ICONST_0);
 
-        compileInvocation(mv, false, true);
+        compileInvocation(mv, false, false);
 
-        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "assign", "(I" + opeDesc + "I)V");
+        //mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "assign", "(I" + opeDesc + "I)V");
 
     }
 
@@ -2799,7 +2811,7 @@ public class Compiler implements Opcodes, Serializable {
 
             //NOTE: Hack for Elona to reduce method count. Reduce this number if it causes ClassFormatError: Invalid method Code length
             if(numMethods==1)
-                ((SubMethodAdapter)mv).maxSize=73000;
+                ((SubMethodAdapter)mv).maxSize=72000;
 
             Integer[] mainLabels=labelGroup.mainLabels(allLabels);
             int numTableLabels=mainLabels.length;

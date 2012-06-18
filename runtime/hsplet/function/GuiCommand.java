@@ -106,6 +106,8 @@ public class GuiCommand extends FunctionBase {
             final Button obj = new Button(text, context, jump == null ? JumpStatement.Goto : jump, label);
 
             addObject(context, win, obj, new Dimension(win.owidth, win.oheight));
+            
+            obj.setID(context.stat.value);
         }
     }
 

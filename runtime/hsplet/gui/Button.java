@@ -52,9 +52,16 @@ public class Button extends javax.swing.JButton implements ActionListener, HSPCo
 
 	private final int label;
 
+	private Integer ID;
+
+	public void setID(int ID) {
+		this.ID = Integer.valueOf(ID);
+	}
+
 	public void actionPerformed(ActionEvent e) {
 
-		context.tasks.add(new JumpTask(jump, label, null, null, null));
+		//context.tasks.add(new JumpTask(jump, label, null, null, null));
+		context.tasks.add(new JumpTask(jump, label, ID));
 	}
 
 	public Component asComponent() {

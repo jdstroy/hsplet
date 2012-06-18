@@ -129,6 +129,18 @@ public class DefaultRuntimeInfo implements RuntimeInfo {
 		}
 	}
 
+	public Method getMethodFor(final ByteCode ax, final Code code, final String name) {
+		final Class clazz = getClassFor(ax, code);
+		final Method[] methods = clazz.getMethods();
+		
+		for( int i = 0; i<methods.length; ++i ){
+			final Method m = methods[i];
+			if (m.getName().equals(name)) {
+				return m;
+			}
+		}
+		return null;
+	}
 	public Method getMethodFor(final ByteCode ax, final Code code) {
 
 		final Class clazz = getClassFor(ax, code);

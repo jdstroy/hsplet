@@ -53,11 +53,49 @@ public class ProgramCommand extends FunctionBase {
 		}
 	}
 
-	public static Operand call(final Operand[] arguments, final Context context, final int label) {
+	public static void call(final Operand[] arguments, final Context context, final int label) {
 		++context.sublev.value;
 		context.addArguments(arguments);
 		try {
-			return context.getRunnableCode().run(label);
+			Operand O=context.getRunnableCode().run(label);
+			if(O!=null) switch(O.getType())
+			{
+				case Operand.Type.STRING:
+					context.refstr.value=O.toByteString(0);
+					break;
+				case Operand.Type.DOUBLE:
+					context.refdval.value=O.toDouble(0);
+					break;
+				case Operand.Type.INTEGER:
+					context.stat.value=O.toInt(0);
+					break;
+			}
+			return;
+		} finally {
+			--context.sublev.value;
+			context.popArguments();
+		}
+	}
+	public static Operand callVal(final Operand[] arguments, final Context context, final int label) {
+		++context.sublev.value;
+		context.addArguments(arguments);
+		try {
+			Operand O=context.getRunnableCode().run(label);
+			if(O!=null) switch(O.getType())
+			{
+				case Operand.Type.STRING:
+					context.refstr.value=O.toByteString(0);
+					break;
+				case Operand.Type.DOUBLE:
+					context.refdval.value=O.toDouble(0);
+					break;
+				case Operand.Type.INTEGER:
+					context.stat.value=O.toInt(0);
+					break;
+			} else {
+				context.error(HSPError.ReturnValueNotSpecified, "callVal", "label==" + label);
+			}
+			return O;
 		} finally {
 			--context.sublev.value;
 			context.popArguments();

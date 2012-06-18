@@ -30,6 +30,8 @@ public class JumpTask implements Task {
 
 	private final Integer lparam;
 
+	private final Integer ID;
+
 	/**
 	 * オブジェクトを構築する。
 	 * @param jump ジャンプの種類。
@@ -49,6 +51,17 @@ public class JumpTask implements Task {
 		this.iparam = iparam;
 		this.wparam = wparam;
 		this.lparam = lparam;
+		this.ID = null;
+	}
+	public JumpTask(final JumpStatement jump, final int label,
+			final Integer ID) {
+
+		this.jump = jump;
+		this.label = label;
+		this.iparam = null;
+		this.wparam = null;
+		this.lparam = null;
+		this.ID = ID;
 	}
 
 	public void run(Context context) {
@@ -61,6 +74,9 @@ public class JumpTask implements Task {
 		}
 		if (wparam != null) {
 			context.wparam.value = wparam.intValue();
+		}
+		if (ID != null) {
+			context.stat.value = ID.intValue();
 		}
 
 		if ( jump==JumpStatement.Goto ){

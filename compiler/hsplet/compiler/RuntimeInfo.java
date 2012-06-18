@@ -38,4 +38,6 @@ public interface RuntimeInfo extends Serializable {
 	 */
 	public Method getMethodFor(final ByteCode ax, final ByteCode.Code code);
 
+	//Compiler provides the name, runtimeinfo gets the actual method
+	public Method getMethodFor(final ByteCode ax, final ByteCode.Code code, final String name);
 }
