@@ -363,11 +363,11 @@ public class Context implements Serializable {
     }
 
     private static URL resolve(URL dir, String fileName) throws URISyntaxException, MalformedURLException {
-        return dir.toURI().resolve(((fileName.startsWith("\\")) ? fileName.substring(1) : fileName).replace('\\', '/')).toURL();
+        return dir.toURI().resolve(new URI(((fileName.startsWith("\\")) ? fileName.substring(1) : fileName).replace('\\', '/'))).toURL();
     }
     
-    private static URI resolve(URI dir, String fileName) {
-        return dir.resolve(((fileName.startsWith("\\")) ? fileName.substring(1) : fileName).replace('\\', '/'));
+    private static URI resolve(URI dir, String fileName) throws URISyntaxException {
+        return dir.resolve(new URI(((fileName.startsWith("\\")) ? fileName.substring(1) : fileName).replace('\\', '/')));
     }
     
     public URL getResourceURL(final URL dir, final String fileName) {
@@ -507,8 +507,8 @@ public class Context implements Serializable {
      */
     public URI resolveSafe(String fileName) throws URISyntaxException {
         return curdir.toURI().
-                resolve(
+                resolve(new URI(
                 fileName.contains("/") ? fileName : ((fileName.startsWith("\\"))
-                ? fileName.substring(1) : fileName).replace('\\', '/'));
+                ? fileName.substring(1) : fileName).replace('\\', '/')));
     }
 }
