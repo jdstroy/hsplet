@@ -19,6 +19,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,6 +51,7 @@ public class Context implements Serializable {
     public int mouseX = 0;
     public int mouseY = 0;
     private final List<InputContext> inputContexts = new ArrayList<InputContext>();
+    private boolean tryAlternateCases = false;
 
     public List<InputContext> getInputContexts() {
         return inputContexts;
@@ -365,12 +367,81 @@ public class Context implements Serializable {
     private static URL resolve(URL dir, String fileName) throws URISyntaxException, MalformedURLException {
         return dir.toURI().resolve(new URI(((fileName.startsWith("\\")) ? fileName.substring(1) : fileName).replace('\\', '/'))).toURL();
     }
-    
+
     private static URI resolve(URI dir, String fileName) throws URISyntaxException {
         return dir.resolve(new URI(((fileName.startsWith("\\")) ? fileName.substring(1) : fileName).replace('\\', '/')));
     }
-    
+
+    private URI getResourceUrlCaseInsensitive(final URI tryThis) {
+        File fileRoot = new File(tryThis);
+        Path pathRoot = fileRoot.toPath();
+        LinkedList<Path> pathSegments = new LinkedList<Path>();
+        Path rootExists = pathRoot.getRoot();
+        for (Path p : pathRoot) {
+            if (p.toFile().exists()) {
+                rootExists = p;
+            } else {
+                pathSegments.add(p);
+            }
+        }
+
+        // At this point, rootExists is either null or exists.
+
+        if (rootExists == null) {
+            // What now? Not much of a choice here.  We just return the default:
+            return tryThis;
+        } else {
+            Path newExistance = rootExists;
+            outer:
+            while (!pathSegments.isEmpty()) {
+                // rootExists exists, and its parents exist.  Let's reconstruct the children.
+
+                List<File> children = Arrays.asList(rootExists.toFile().listFiles());
+                Path segment = pathSegments.poll();
+                inner:
+                for (File child : children) {
+                    if (child.getName().equalsIgnoreCase(segment.toFile().getName())) {
+                        newExistance = newExistance.resolve(child.getName());
+                        continue outer;
+                    }
+                }
+                newExistance = newExistance.resolve(segment.toFile().getName());
+                // Didn't find it.  At this point, we need to signal that we didn't find it.
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE,
+                        "Failed to find a match for {0} at {1}, returning {2}",
+                        new Object[]{
+                            segment, fileRoot.getAbsolutePath(), newExistance.toString()
+                        });
+
+            }
+            return newExistance.toUri();
+        }
+    }
+
     public URL getResourceURL(final URL dir, final String fileName) {
+        URL returnValue = _getResourceURL(dir, fileName);
+        if (tryAlternateCases) {
+            try {
+                URI fileURI = returnValue.toURI();
+                File f = new File(fileURI);
+                if (f.exists()) {
+                    return returnValue;
+                } else {
+                    return getResourceUrlCaseInsensitive(fileURI).toURL();
+                }
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(Context.class.getName()).log(Level.SEVERE, null, ex);
+                return returnValue;
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(Context.class.getName()).log(Level.SEVERE, null, ex);
+                return returnValue;
+            }
+        } else {
+            return returnValue;
+        }
+    }
+
+    private URL _getResourceURL(final URL dir, final String fileName) {
         try {
             final URL url;
             url = resolve(dir, fileName);
@@ -486,9 +557,9 @@ public class Context implements Serializable {
 
     /**
      * Converts Win32 filename requests into a URI, relative to the cwd as
-     * appropriate.  Converts all back-slashes to forward-slashes, and makes
-     * all accesses relative.
-     * 
+     * appropriate. Converts all back-slashes to forward-slashes, and makes all
+     * accesses relative.
+     *
      * @param fileName Input file name
      * @return
      */
@@ -498,8 +569,8 @@ public class Context implements Serializable {
 
     /**
      * Converts Win32 filename requests into a URI, relative to the cwd as
-     * appropriate.  Converts all back-slashes to forward-slashes if there are 
-     * no forward-slashes in fileName.  If backslashes exist, absolute references
+     * appropriate. Converts all back-slashes to forward-slashes if there are no
+     * forward-slashes in fileName. If backslashes exist, absolute references
      * are converted to relative references.
      *
      * @param fileName Input file name
