@@ -111,7 +111,7 @@ public class GuiCommand extends FunctionBase {
         }
     }
 
-    public static void chgdips(final Context context, final Operand v, final int vi) {
+    public static void chgdisp(final Context context, final Operand v, final int vi) {
 
         context.error(HSPError.UnsupportedOperation, "chgdisp");
 
@@ -938,6 +938,7 @@ public class GuiCommand extends FunctionBase {
         win.gwidth = w;
         win.gheight = h;
         win.galpha = alpha >= 256 ? 256 : alpha < 0 ? 0 : alpha;
+        // This isn't actually used for alpha-mask calculations!
         win.transColor = win.color;
 
     }

@@ -161,9 +161,9 @@ public class GraphicsRenderer {
 		case 4: {
 			final int srcA = win.galpha;
 
-			final int transR = win.transColor.getRed();
-			final int transG = win.transColor.getGreen();
-			final int transB = win.transColor.getBlue();
+			final int transR = win.color.getRed();
+			final int transG = win.color.getGreen();
+			final int transB = win.color.getBlue();
 
 			if (srcA == 256) {
 				for (int i = 0; i < byteCount; i += 3) {

@@ -55,7 +55,7 @@ public class DefaultRuntimeInfo implements RuntimeInfo {
 			"randomize", "noteunsel", "noteget", };
 
 	private static final String[] guiCommands = new String[] { "button",
-			"chgdips", "exec", "dialog", null, null, null, null, "mmload",
+			"chgdisp", "exec", "dialog", null, null, null, null, "mmload",
 			"mmplay", "mmstop", "mci", "pset", "pget", "syscolor", "mes", // <
 			// 0x10
 			"title", "pos", "circle", "cls", "font", "sysfont", "objsize",
