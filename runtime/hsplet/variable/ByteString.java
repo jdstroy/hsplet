@@ -384,7 +384,13 @@ public class ByteString implements Serializable {
     }
     
     public void dump(OutputStream out) throws IOException {
-        out.write(bytes, offset, length);
+        //out.write(bytes, offset, length);
+        for(int i = offset; i < length; i++) {
+            if (bytes[offset + i] == '\n' && (offset + i - 1 < 0 || bytes[offset + i - 1] != '\r')) {
+                out.write('\r');
+            }
+            out.write(bytes[offset + i]);
+        }
         out.flush();
     }
 }
