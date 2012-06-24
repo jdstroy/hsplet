@@ -57,21 +57,23 @@ public class QuickSort {
 	 */
 	private static void sortInt(final Operand target, final boolean sortmode) {
 
-		containers = new IntContainer[target.l0()];
+            IntContainer[] localContainer
+		 = new IntContainer[target.l0()];
+            containers = localContainer;
 		for(int i=0; i<target.l0(); i++) {
-			containers[i] = new IntContainer(target.toInt(i), i);
+			localContainer[i] = new IntContainer(target.toInt(i), i);
 		}
-		Arrays.sort(containers, new IntComparator());
+		Arrays.sort(localContainer, new IntComparator());
 
 		// 配列変数に結果を代入
 		if (sortmode) {
 			// 降順にソートする場合は順序を入れ替える
 			for(int i=0; i<target.l0(); i++) {
-				target.assign(target.l0() - i - 1, Scalar.fromValue(((IntContainer)containers[i]).value), 0);
+				target.assign(target.l0() - i - 1, Scalar.fromValue((localContainer[i]).value), 0);
 			}
 		} else {
 			for(int i=0; i<target.l0(); i++) {
-				target.assign(i, Scalar.fromValue(((IntContainer)containers[i]).value), 0);
+				target.assign(i, Scalar.fromValue((localContainer[i]).value), 0);
 			}
 		}
 	}
@@ -83,21 +85,22 @@ public class QuickSort {
 	 */
 	private static void sortDouble(final Operand target, final boolean sortmode) {
 
-		containers = new DoubleContainer[target.l0()];
+		DoubleContainer[] localContainers = new DoubleContainer[target.l0()];
+                containers = localContainers;
 		for(int i=0; i<target.l0(); i++) {
-			containers[i] = new DoubleContainer(target.toDouble(i), i);
+			localContainers[i] = new DoubleContainer(target.toDouble(i), i);
 		}
-		Arrays.sort(containers, new DoubleComparator());
+		Arrays.sort(localContainers, new DoubleComparator());
 
 		// 配列変数に結果を代入
 		if (sortmode) {
 			// 降順にソートする場合は順序を入れ替える
 			for(int i=0; i<target.l0(); i++) {
-				target.assign(target.l0() - i - 1, Scalar.fromValue(((DoubleContainer)containers[i]).value), 0);
+				target.assign(target.l0() - i - 1, Scalar.fromValue((localContainers[i]).value), 0);
 			}
 		} else {
 			for(int i=0; i<target.l0(); i++) {
-				target.assign(i, Scalar.fromValue(((DoubleContainer)containers[i]).value), 0);
+				target.assign(i, Scalar.fromValue((localContainers[i]).value), 0);
 			}
 		}
 	}
@@ -109,23 +112,25 @@ public class QuickSort {
 	 */
 	private static void sortByteString(final Operand target, final boolean sortmode) {
 
-		containers = new ByteStringContainer[target.l0()];
+            ByteStringContainer[] localContainers =
+                    new ByteStringContainer[target.l0()];
+            containers = localContainers;
 		for(int i=0; i<target.l0(); i++) {
 			// ByteStringクラスがCloneableでないのでStringクラスに変えたものを利用してインスタンスを生成する
-			containers[i] = new ByteStringContainer(
+			localContainers[i] = new ByteStringContainer(
 					new ByteString(target.toByteString(i).toString()), i);
 		}
-		Arrays.sort(containers, new ByteStringComparator());
+		Arrays.sort(localContainers, new ByteStringComparator());
 
 		// 配列変数に結果を代入
 		if (sortmode) {
 			// 降順にソートする場合は順序を入れ替える
 			for(int i=0; i<target.l0(); i++) {
-				target.assign(target.l0() - i - 1, Scalar.fromValue(((ByteStringContainer)containers[i]).value), 0);
+				target.assign(target.l0() - i - 1, Scalar.fromValue((localContainers[i]).value), 0);
 			}
 		} else {
 			for(int i=0; i<target.l0(); i++) {
-				target.assign(i, Scalar.fromValue(((ByteStringContainer)containers[i]).value), 0);
+				target.assign(i, Scalar.fromValue((localContainers[i]).value), 0);
 			}
 		}
 	}

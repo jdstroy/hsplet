@@ -2,8 +2,8 @@ package QuickSort.Comparator;
 
 import QuickSort.Container.*;
 
-public class IntComparator implements java.util.Comparator<Container> {
-	public int compare(final Container o1, final Container o2) {
-		return ((IntContainer)o1).value - ((IntContainer)o2).value;
+public class IntComparator implements java.util.Comparator<IntContainer> {
+	public int compare(final IntContainer o1, final IntContainer o2) {
+		return (o1).value - (o2).value;
 	}
 }
