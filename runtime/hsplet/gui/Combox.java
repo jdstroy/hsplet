@@ -24,7 +24,7 @@ import javax.swing.JComboBox;
  * @author Yuki
  * @version $Revision: 1.4 $, $Date: 2006/02/11 17:19:31 $
  */
-public class Combox extends JComboBox implements VolatileValueUpdater, HSPControl, ItemListener {
+public class Combox extends JComboBox<String> implements VolatileValueUpdater, HSPControl, ItemListener {
 
 	/** このクラスを含むソースファイルのバージョン文字列。 */
 	private static final String fileVersionID = "$Id: Combox.java,v 1.4 2006/02/11 17:19:31 Yuki Exp $";
