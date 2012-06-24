@@ -42,7 +42,7 @@ public class Context implements Serializable {
      */
     private static final long serialVersionUID = 4644182106732036912L;
     public Applet applet;
-    private Class runClass;
+    private Class<? extends RunnableCode> runClass;
     public final EventListener listener = new EventListener(this);
     public final boolean[] keyPressed = new boolean[1024];
     public int stickState = 0;
@@ -66,7 +66,7 @@ public class Context implements Serializable {
         return inputContexts;
     }
 
-    public void init(final Applet applet, final Class startClass) {
+    public void init(final Applet applet, final Class<? extends RunnableCode> startClass) {
 
         this.applet = applet;
         this.runClass = startClass;
@@ -102,7 +102,7 @@ public class Context implements Serializable {
                             runmore = false;
 
                             try {
-                                runnableCode = (RunnableCode) runClass.getConstructor(new Class[]{Context.class}).newInstance(new Object[]{Context.this});
+                                runnableCode = runClass.getConstructor(new Class[]{Context.class}).newInstance(new Object[]{Context.this});
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 throw new RuntimeException(e);
