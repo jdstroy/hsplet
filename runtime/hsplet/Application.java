@@ -115,7 +115,7 @@ public final class Application extends JFrame implements AppletStub,
 
         return new Application(startClass, width, height, debug, cmdline);
     }
-    private final Map<Object, Object> parameters = new HashMap();
+    private final Map<Object, Object> parameters = new HashMap<Object, Object>();
     private final Map<String, InputStream> streams = Collections.synchronizedMap(new HashMap<String, InputStream>());
     private final hsplet.Applet applet;
 
@@ -264,7 +264,7 @@ public final class Application extends JFrame implements AppletStub,
 
     public String getParameter(final String name) {
 
-        return (String) parameters.get(name);
+        return parameters.get(name).toString();
     }
 
     public void setStream(final String key, final InputStream stream) {
