@@ -208,7 +208,7 @@ public class GuiCommand extends FunctionBase {
                     case JFileChooser.APPROVE_OPTION:
                         context.stat.value = 1;
                         try {
-                            context.refstr.value.assign(chooser.getSelectedFile().toURL().toString());
+                            context.refstr.value.assign(chooser.getSelectedFile().toURI().toURL().toString());
                         } catch (MalformedURLException e) {
                             e.printStackTrace();
                         }
