@@ -39,7 +39,7 @@ public class Listbox extends JScrollPane implements VolatileValueUpdater, HSPCon
 	/** 変数インデックス */
 	private int vi;
 
-	private final JList list;
+	private final JList<String> list;
 
 	/**
 	 * オブジェクトを構築する。
@@ -50,7 +50,7 @@ public class Listbox extends JScrollPane implements VolatileValueUpdater, HSPCon
 	public Listbox(final Variable v, final int vi, final String[] items) {
 		super(VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_NEVER);
 
-		list = new JList(items);
+		list = new JList<String>(items);
 
 		list.setSelectedIndex(v.toInt(vi));
 
