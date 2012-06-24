@@ -51,7 +51,16 @@ public class Context implements Serializable {
     public int mouseX = 0;
     public int mouseY = 0;
     private final List<InputContext> inputContexts = new ArrayList<InputContext>();
-    private boolean tryAlternateCases = false;
+    private boolean tryAlternateCases;
+    public static final String ALTERNATE_CASES_PROPERTY_NAME = "org.yi.jdstroy.projects.hsplet.Context.config.tryAlternateCases";
+
+    public Context() {
+
+        tryAlternateCases = System.getProperties().
+                containsKey(ALTERNATE_CASES_PROPERTY_NAME)
+                && System.getProperties().get(ALTERNATE_CASES_PROPERTY_NAME).
+                toString().equalsIgnoreCase("true");
+    }
 
     public List<InputContext> getInputContexts() {
         return inputContexts;
