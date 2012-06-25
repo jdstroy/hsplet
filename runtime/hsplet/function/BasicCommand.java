@@ -456,7 +456,8 @@ public class BasicCommand extends FunctionBase {
             return;
         }
         try {
-            File sourceFile = new File(context.resolve(fileName));
+            URI file = context.resolve(fileName);
+            File sourceFile = new File(file);
 
             if (!sourceFile.exists()) {
                 context.error(HSPError.FileNotFound, fileName);

@@ -382,17 +382,31 @@ public class Context implements Serializable {
     }
 
     private URI getResourceUrlCaseInsensitive(final URI tryThis) {
+        Logger.getLogger(getClass().getName()).log(Level.INFO, 
+            "Context.getResourceUrlCaseInsensitive(\"{0}\")",
+            tryThis
+        );
+        
         File fileRoot = new File(tryThis);
+        boolean exists = fileRoot.exists();
+        if (exists) {
+            return tryThis;
+        }
+        
         Path pathRoot = fileRoot.toPath();
         LinkedList<Path> pathSegments = new LinkedList<Path>();
-        Path rootExists = pathRoot.getRoot();
-        for (Path p : pathRoot) {
-            if (p.toFile().exists()) {
-                rootExists = p;
-            } else {
-                pathSegments.add(p);
-            }
+        Path rootExists = pathRoot.toAbsolutePath();
+        while(rootExists != null && !rootExists.toFile().exists()) {
+            pathSegments.add(rootExists.getFileName());
+            rootExists = rootExists.getParent();
         }
+        // Once this is done, rootExists is either null or exists
+        // pathSegments contains all the paths that we're interested in.
+        
+        Logger.getLogger(getClass().getName()).log(Level.INFO, 
+            "rootExists = \"{0}\"",
+            rootExists
+        );
 
         // At this point, rootExists is either null or exists.
 
@@ -405,12 +419,16 @@ public class Context implements Serializable {
             while (!pathSegments.isEmpty()) {
                 // rootExists exists, and its parents exist.  Let's reconstruct the children.
 
-                List<File> children = Arrays.asList(rootExists.toFile().listFiles());
-                Path segment = pathSegments.poll();
+                List<File> children = Arrays.asList(newExistance.toFile().listFiles());
+                Path segment = pathSegments.pop();
                 inner:
                 for (File child : children) {
                     if (child.getName().equalsIgnoreCase(segment.toFile().getName())) {
                         newExistance = newExistance.resolve(child.getName());
+                        Logger.getLogger(getClass().getName()).log(Level.INFO, 
+                            "newExistance = \"{0}\"",
+                            newExistance
+                        );
                         continue outer;
                     }
                 }
@@ -574,11 +592,13 @@ public class Context implements Serializable {
      */
     public URI resolve(String fileName) throws URISyntaxException {
         URI resolved = resolve(curdir.toURI(), fileName);
-        if (tryAlternateCases) {
-            return getResourceUrlCaseInsensitive(resolved);
-        } else {
-            return resolved;
-        }
+        URI returnValue = tryAlternateCases ? 
+                getResourceUrlCaseInsensitive(resolved) : resolved;
+        Logger.getLogger(getClass().getName()).log(Level.INFO, 
+                "Context.resolve(\"{0}\") => \"{1}\"", new Object[] {
+                    fileName, returnValue
+        });
+        return returnValue;
     }
     
     /**
