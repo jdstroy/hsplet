@@ -49,7 +49,7 @@ public class elona extends FunctionBase {
      * @param dhi
      */
 
-    public void grotate2(@PEXInfo int source_window_id, int p2_x_coordinate,
+    public void grotate(@PEXInfo int source_window_id, int p2_x_coordinate,
             int p3_y_coordinate, double p4_rotation_angle_radians,
             //int p5_x_size, int p6_y_size
             final Operand dwv, final int dwi, final Operand dhv, final int dhi) {
@@ -93,7 +93,7 @@ public class elona extends FunctionBase {
         target.redraw(l, t, r - l, b - t);
     }
 
-    public synchronized void gsquare(final Bmscr win, final int[] dx, final int[] dy, final BufferedImage src,
+    public void gsquare(final Bmscr win, final int[] dx, final int[] dy, final BufferedImage src,
             final int[] sx, final int[] sy) {
 
         final BufferedImage dest = win.backImage;
@@ -279,13 +279,12 @@ public class elona extends FunctionBase {
 
         final int[] destPixelsFinal = destPixels;
         final int[] dOpt = new int[]{dx, dy, dw};
+        gcopy_line(win, destPixelsFinal, srcPixels, dOpt[2]);
         try {
             EventQueue.invokeAndWait(new Runnable() {
 
                 @Override
                 public void run() {
-
-                    gcopy_line(win, destPixelsFinal, srcPixels, dOpt[2]);
 
                     dr.setPixels(dOpt[0], dOpt[1], dOpt[2], 1, destPixelsFinal);
                 }
