@@ -46,9 +46,9 @@ public class hspext_ext extends FunctionBase {
 
         Component component = aplObjTarget;
         _apledit(component, destination, index, mode, rowIndex);
-        
+
     }
-    
+
     private void _apledit(Component component, Operand destination, int index, int mode, int rowIndex) {
         String text;
         if (JTextComponent.class.isInstance(component)) {
@@ -87,21 +87,23 @@ public class hspext_ext extends FunctionBase {
         }
         destination.assign(index, Scalar.fromValue(v), 0);
     }
-    
     private Component aplObjTarget = null;
 
-    public void aplobj(String objClassName, int a) {
-        try {
-            synchronized (aplSelTarget.getTreeLock()) {
-                aplObjTarget = aplSelTarget.getComponent(a);
+    public void aplobj(String objClassName, int index) {
+        Logger.getLogger(getClass().getName()).log(Level.INFO,
+                "aplobj requested classname {0}", objClassName);
+        synchronized (aplSelTarget.getTreeLock()) {
+            Component[] components = aplSelTarget.getComponents();
+            if (index < components.length && index >= 0) {
+                aplObjTarget = components[index];
                 context.stat.value = 0;
                 context.refstr.value.assign(aplObjTarget.getClass().getName());
+            } else {
+                Logger.getLogger(getClass().getName()).log(Level.WARNING,
+                        "aplobj requested invalid index {0}", index);
+                aplObjTarget = null;
+                context.stat.value = 1;
             }
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            Logger.getLogger(getClass().getName()).log(Level.WARNING,
-                    "aplobj requested invalid index", ex);
-            aplObjTarget = null;
-            context.stat.value = 1;
         }
     }
     private Window aplSelTarget = null;
@@ -129,7 +131,7 @@ public class hspext_ext extends FunctionBase {
     }
 
     public void ematan(Operand destination, int index, double x, double y) {
-        destination.add(index, Scalar.fromValue(Math.atan2(y, x)), 0);
+        destination.assign(index, Scalar.fromValue(Math.atan2(y, x)), 0);
     }
 
     /**
@@ -331,5 +333,4 @@ public class hspext_ext extends FunctionBase {
         x_width = toInt(xv, xvi, win.cx);
         y_height = toInt(yv, yvi, win.cy);
     }
-
 }
