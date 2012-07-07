@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 import javax.swing.text.JTextComponent;
 
 /*
@@ -58,12 +59,8 @@ public class hspext_ext extends FunctionBase {
             TextComponent tc = TextComponent.class.cast(component);
             text = tc.getText();
         } else if (Mesbox.class.isInstance(component)) {
-            synchronized (component.getTreeLock()) {
-                Mesbox inst = Mesbox.class.cast(component);
-                if (inst.getComponentCount() > 0) {
-                    _apledit(inst.getComponent(0), destination, index, mode, rowIndex);
-                }
-            }
+            Mesbox inst = Mesbox.class.cast(component);
+            _apledit(inst.getTextArea(), destination, index, mode, rowIndex);
             return;
         } else {
             return;
@@ -73,8 +70,15 @@ public class hspext_ext extends FunctionBase {
         switch (mode) {
             case 0: //get 1 byte
                 // http://usk.s16.xrea.com/hsp/hsphelp_eng/hsp255_eng/hsphelp/help_a.htm#s_apledit
-                v = text.getBytes()[destination.toInt(index)];
-                context.stat.value = 0; //?
+                byte[] textArr = text.getBytes();
+                int textIndex = destination.toInt(index);
+                if (textIndex < textArr.length && textIndex > 0) {
+                    v = textArr[textIndex];
+                    context.stat.value = 0; //?
+                } else {
+                    context.stat.value = 1; // fail?
+                    return;
+                }
                 break;
             case 1: //get number of rows
                 v = text.split("\n").length;
@@ -89,15 +93,35 @@ public class hspext_ext extends FunctionBase {
     }
     private Component aplObjTarget = null;
 
+    private static Component _safeParent(Component c) {
+        return (c == null) ? c : c.getParent();
+    }
+
     public void aplobj(String objClassName, int index) {
         Logger.getLogger(getClass().getName()).log(Level.INFO,
                 "aplobj requested classname {0}", objClassName);
+        hsplet.Applet applet = context.applet;
+        Component hspletWindow = _safeParent(_safeParent(_safeParent(applet)));
+        Window selectedWindow = aplSelTarget;
+        Component privateTarget;
+        if (hspletWindow != null) {
+            if (selectedWindow == hspletWindow) {
+                Logger.getLogger(getClass().getName()).log(Level.INFO,
+                        "Bypassing typical mechanism for aplobj; using HSPlet internal knowledge");
+                privateTarget = context.windows.get(context.activeWindow).controls.get(index).asComponent();
+                context.refstr.value.assign(privateTarget.getClass().getName());
+                aplObjTarget = privateTarget;
+                context.stat.value = 0;
+                return;
+            }
+        }
         synchronized (aplSelTarget.getTreeLock()) {
             Component[] components = aplSelTarget.getComponents();
             if (index < components.length && index >= 0) {
-                aplObjTarget = components[index];
+                privateTarget = components[index];
+                aplObjTarget = privateTarget;
                 context.stat.value = 0;
-                context.refstr.value.assign(aplObjTarget.getClass().getName());
+                context.refstr.value.assign(privateTarget.getClass().getName());
             } else {
                 Logger.getLogger(getClass().getName()).log(Level.WARNING,
                         "aplobj requested invalid index {0}", index);
@@ -121,7 +145,7 @@ public class hspext_ext extends FunctionBase {
                 }
             }
         }
-        if (startId < tempFrames.size()) {
+        if (startId < tempFrames.size() && startId >= 0) {
             aplSelTarget = tempFrames.get(startId);
             context.stat.value = 0;
         } else {

@@ -166,4 +166,8 @@ public class Mesbox extends JScrollPane implements VolatileValueUpdater, HSPCont
         super.addMouseMotionListener(l);
         text.addMouseMotionListener(l);
     }
+
+    public JTextArea getTextArea() {
+        return text;
+    }
 }
