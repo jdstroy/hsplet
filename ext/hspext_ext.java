@@ -2,12 +2,13 @@
 import hsplet.Context;
 import hsplet.function.FunctionBase;
 import hsplet.gui.Bmscr;
+import hsplet.gui.Mesbox;
 import hsplet.variable.Operand;
 import hsplet.variable.Scalar;
+import java.util.List;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.text.JTextComponent;
@@ -42,44 +43,51 @@ public class hspext_ext extends FunctionBase {
      * @param rowIndex
      */
     public void apledit(Operand destination, int index, int mode, int rowIndex) {
-        
+
         Component component = aplObjTarget;
+        _apledit(component, destination, index, mode, rowIndex);
         
+    }
+    
+    private void _apledit(Component component, Operand destination, int index, int mode, int rowIndex) {
+        String text;
         if (JTextComponent.class.isInstance(component)) {
             JTextComponent jtc = JTextComponent.class.cast(component);
-            switch(mode) {
-                case 0: //get 1 byte
-                    // http://usk.s16.xrea.com/hsp/hsphelp_eng/hsp255_eng/hsphelp/help_a.htm#s_apledit
-                    destination.assign(index, Scalar.fromValue(jtc.getText().getBytes()[destination.toInt(index)]), 0);
-                    context.stat.value = 0; //?
-                    return;
-                case 1: //get number of rows
-                    destination.assign(index, Scalar.fromValue(jtc.getText().split("\n").length), 0);
-                    return;
-                case 2: //get the number of characters in the line at rowIndex
-                    destination.assign(index, Scalar.fromValue(0), 0);
-                    return;
-            }
-            
+            text = jtc.getText();
         } else if (TextComponent.class.isInstance(component)) {
             TextComponent tc = TextComponent.class.cast(component);
-            switch(mode) {
-                case 0: //get 1 byte
-                    // http://usk.s16.xrea.com/hsp/hsphelp_eng/hsp255_eng/hsphelp/help_a.htm#s_apledit
-                    destination.assign(index, Scalar.fromValue(tc.getText().getBytes()[destination.toInt(index)]), 0);
-                    context.stat.value = 0; //?
-                    return;
-                case 1: //get number of rows
-                    destination.assign(index, Scalar.fromValue(tc.getText().split("\n").length), 0);
-                    return;
-                case 2: //get the number of characters in the line at rowIndex
-                    destination.assign(index, Scalar.fromValue(0), 0);
-                    return;
+            text = tc.getText();
+        } else if (Mesbox.class.isInstance(component)) {
+            synchronized (component.getTreeLock()) {
+                Mesbox inst = Mesbox.class.cast(component);
+                if (inst.getComponentCount() > 0) {
+                    _apledit(inst.getComponent(0), destination, index, mode, rowIndex);
+                }
             }
-            
+            return;
+        } else {
+            return;
         }
-        throw new UnsupportedOperationException("Not supported yet.");
+
+        int v;
+        switch (mode) {
+            case 0: //get 1 byte
+                // http://usk.s16.xrea.com/hsp/hsphelp_eng/hsp255_eng/hsphelp/help_a.htm#s_apledit
+                v = text.getBytes()[destination.toInt(index)];
+                context.stat.value = 0; //?
+                break;
+            case 1: //get number of rows
+                v = text.split("\n").length;
+                break;
+            case 2: //get the number of characters in the line at rowIndex
+                v = text.split("\n")[rowIndex].getBytes().length;
+                break;
+            default:
+                return;
+        }
+        destination.assign(index, Scalar.fromValue(v), 0);
     }
+    
     private Component aplObjTarget = null;
 
     public void aplobj(String objClassName, int a) {
@@ -323,4 +331,5 @@ public class hspext_ext extends FunctionBase {
         x_width = toInt(xv, xvi, win.cx);
         y_height = toInt(yv, yvi, win.cy);
     }
+
 }
