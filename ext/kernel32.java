@@ -21,9 +21,9 @@ import org.yi.jdstroy.commons.winapi.NTSTATUS;
  */
 public class kernel32 extends FunctionBase {
 
-    public static final int NT_STATUS_SUCCESS = 0, W32_STATUS_ZERO_FAIL = 0;
+    public static final int NT_STATUS_SUCCESS = 0, WIN32_CONSTANT_FALSE = 0;
     private Context context;
-    private int STATUS_DELETED = 1;
+    private int WIN32_CONSTANT_TRUE = 1;
 
     public kernel32(final Context context) {
         this.context = context;
@@ -64,12 +64,12 @@ public class kernel32 extends FunctionBase {
         try {
             File f = new File(context.resolve(fileName));
             if (!f.isDirectory()) {
-                return W32_STATUS_ZERO_FAIL;
+                return WIN32_CONSTANT_FALSE;
             }
-            return f.delete() ? STATUS_DELETED : W32_STATUS_ZERO_FAIL;
+            return f.delete() ? WIN32_CONSTANT_TRUE : WIN32_CONSTANT_FALSE;
         } catch (URISyntaxException ex) {
             Logger.getLogger(kernel32.class.getName()).log(Level.SEVERE, null, ex);
-            return W32_STATUS_ZERO_FAIL;
+            return WIN32_CONSTANT_FALSE;
         }
     }
 
