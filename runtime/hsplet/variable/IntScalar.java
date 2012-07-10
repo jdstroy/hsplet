@@ -2,6 +2,7 @@
  * $Id: IntScalar.java,v 1.2.4.1 2006/08/02 12:13:06 Yuki Exp $
  */
 package hsplet.variable;
+import hsplet.util.Conversion;
 
 /**
  * int の配列を表すクラス。
@@ -75,6 +76,16 @@ public class IntScalar extends Scalar {
 	public void dec(final int index) {
 
 		--value;
+	}
+
+	public void assign(final int index, final int newValue){
+		value = newValue;
+	}
+	public void assign(final int index, final double newValue){
+		value = (int)newValue;
+	}
+	public void assign(final int index, final String newValue){
+		value = Conversion.strtoi(newValue);;
 	}
 
 	//@Override

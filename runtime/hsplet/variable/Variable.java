@@ -117,7 +117,23 @@ public final class Variable extends Operand {
 	//@Override
 	public void dec(final int index) {
 
-		value.inc(index);
+		value.dec(index);
+	}
+
+	public void assign(final int index, final int newValue) {
+		if(getType() != Type.INTEGER)
+			value = new IntArray();
+		value.assign(index, newValue);
+	}
+	public void assign(final int index, final double newValue){
+		if(getType() != Type.DOUBLE)
+			value = new IntArray();
+		value.assign(index, newValue);
+	}
+	public void assign(final int index, final String newValue){
+		if(getType() != Type.STRING)
+			value = new IntArray();
+		value.assign(index, newValue);
 	}
 
 	//@Override

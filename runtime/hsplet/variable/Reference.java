@@ -106,6 +106,16 @@ public final class Reference extends Operand {
 		value.inc(index + base);
 	}
 
+	public void assign(final int index, final int newValue){
+		value.assign(index + base, newValue);
+	}
+	public void assign(final int index, final double newValue){
+		value.assign(index + base, newValue);
+	}
+	public void assign(final int index, final String newValue){
+		value.assign(index + base, newValue);
+	}
+
 	//@Override
 	public void assign(final int index, final Operand rhs, final int rhi) {
 

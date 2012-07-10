@@ -2,6 +2,7 @@
  * $Id: IntArray.java,v 1.2.4.1 2006/08/02 12:13:06 Yuki Exp $
  */
 package hsplet.variable;
+import hsplet.util.Conversion;
 
 /**
  * int の配列を表すクラス。
@@ -89,6 +90,25 @@ public final class IntArray extends Array {
     public void dec(final int index) {
 
         --values[index];
+    }
+
+    public void assign(final int index, final int newValue){
+        if (index >= values.length) {
+            expand(index);
+        }
+        values[index] = newValue;
+    }
+    public void assign(final int index, final double newValue){
+        if (index >= values.length) {
+            expand(index);
+        }
+        values[index] = (int)newValue;
+    }
+    public void assign(final int index, final String newValue){
+        if (index >= values.length) {
+            expand(index);
+        }
+        values[index] = Conversion.strtoi(newValue);;
     }
 
     @Override

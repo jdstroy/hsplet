@@ -219,6 +219,7 @@ public class DefaultRuntimeInfo implements RuntimeInfo {
 				return m;
 			}
 		}
+		System.out.println("Method name not found: "+name+" for "+(clazz==null?"null":clazz.getName()));
 		return null;
 	}
 

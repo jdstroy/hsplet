@@ -772,25 +772,25 @@ public class Compiler implements Opcodes, Serializable {
 
     private void createFields() {
 
-        cw.visitField(ACC_PRIVATE | ACC_FINAL, "context", contextDesc, null, null);
+        cw.visitField(ACC_PROTECTED | ACC_FINAL, "context", contextDesc, null, null);
 
         // 使用する変数を用意する。
         for (int i = 0; i < ax.header.variableCount; ++i) {
 
-            cw.visitField(ACC_PRIVATE | ACC_FINAL, "v" + i, varDesc, null, null);
+            cw.visitField(ACC_PROTECTED | ACC_FINAL, "v" + i, varDesc, null, null);
         }
 
         // 定数を用意する、毎回作っていたら遅い。
         for (int i = 0; i < literals.size(); ++i) {
             if (!useSuperClassConstants && !useLiteralsInArray) {
-                cw.visitField(ACC_PRIVATE | ACC_FINAL, "c" + i, literalDesc, null, null);
+                cw.visitField(ACC_PROTECTED | ACC_FINAL, "c" + i, literalDesc, null, null);
             }
         }
 
         // インスタンスが必要なライブラリを用意する。
         for (int i = 0; i < instancedLibraries.size(); ++i) {
 
-            cw.visitField(ACC_PRIVATE | ACC_FINAL, "l" + i, Type.getDescriptor((Class) instancedLibraries.get(i)),
+            cw.visitField(ACC_PROTECTED | ACC_FINAL, "l" + i, Type.getDescriptor((Class) instancedLibraries.get(i)),
                     null, null);
         }
     }
@@ -1161,7 +1161,7 @@ public class Compiler implements Opcodes, Serializable {
         return numExtraMethods++;
     }
     public MethodVisitor getExtraMV(String name, String signature) {
-        MethodVisitor mv=cw.visitMethod(ACC_PRIVATE, name, signature, null, new String[0]);
+        MethodVisitor mv=cw.visitMethod(ACC_PROTECTED, name, signature, null, new String[0]);
         return mv;
     }
     
@@ -1683,6 +1683,8 @@ public class Compiler implements Opcodes, Serializable {
 
         final Class libraryClass = runtime.getClassFor(ax, code);
         final Method method = runtime.getMethodFor(ax, code);
+        if(method==null)
+            throw new RuntimeException("No method found for "+code.type+" "+code.value);
         final String methodDesc = Type.getMethodDescriptor(method);
         //if(mv instanceof ScanOneVisitor)
         //    System.out.print(" "+method.getName()+methodDesc);
@@ -2803,7 +2805,7 @@ public class Compiler implements Opcodes, Serializable {
         int numMethods=0;
         int numMains=0;
         for(MyTreeThing labelGroup : labelGroups) {
-            MethodVisitor mv = cw.visitMethod(ACC_PRIVATE, "m" + numMethods++, "(I)"+FODesc, null, new String[0]);
+            MethodVisitor mv = cw.visitMethod(ACC_PROTECTED, "m" + numMethods++, "(I)"+FODesc, null, new String[0]);
 
             compileLocalVariables(mv);
 

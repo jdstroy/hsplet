@@ -89,6 +89,16 @@ public final class StringScalar extends Scalar {
 
 	}
 
+	public void assign(final int index, final int newValue){
+		value.assign(new ByteString(Integer.toString(newValue)));
+	}
+	public void assign(final int index, final double newValue){
+		value.assign(new ByteString(Double.toString(newValue)));
+	}
+	public void assign(final int index, final String newValue){
+		value.assign(new ByteString(newValue));
+	}
+
 	//@Override
 	public void assign(final int index, final Operand rhs, final int rhi) {
 

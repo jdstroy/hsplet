@@ -2,6 +2,7 @@
  * $Id: DoubleArray.java,v 1.2.4.1 2006/08/02 12:13:06 Yuki Exp $
  */
 package hsplet.variable;
+import hsplet.util.Conversion;
 
 /**
  * double の配列を表すクラス。
@@ -89,6 +90,25 @@ public final class DoubleArray extends Array {
     public void dec(final int index) {
 
         --values[index];
+    }
+
+    public void assign(final int index, final int newValue){
+        if (index >= values.length) {
+            expand(index);
+        }
+        values[index] = (double)newValue;
+    }
+    public void assign(final int index, final double newValue){
+        if (index >= values.length) {
+            expand(index);
+        }
+        values[index] = newValue;
+    }
+    public void assign(final int index, final String newValue){
+        if (index >= values.length) {
+            expand(index);
+        }
+        values[index] = Conversion.strtod(newValue);;
     }
 
     //@Override

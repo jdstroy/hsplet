@@ -269,6 +269,34 @@ public abstract class Operand implements Serializable {
 	 * @param rhs 代入元オブジェクト。
 	 * @param rhi 代入元要素番号。
 	 */
+	public abstract void assign(final int index, final int newValue);
+	public void assign(final int newValue)
+	{
+		assign(0, newValue);
+	}
+	public abstract void assign(final int index, final double newValue);
+	public void assign(final double newValue)
+	{
+		assign(0, newValue);
+	}
+	public abstract void assign(final int index, final String newValue);
+	public void assign(final String newValue)
+	{
+		assign(0, newValue);
+	}
+
+	public void assign(final int index, final Operand rhs)
+	{
+		assign(index, rhs, 0);
+	}
+	public void assign(final Operand rhs, final int rhi)
+	{
+		assign(0, rhs, rhi);
+	}
+	public void assign(final Operand rhs)
+	{
+		assign(0, rhs, 0);
+	}
 	public abstract void assign(final int index, final Operand rhs,
 			final int rhi);
 

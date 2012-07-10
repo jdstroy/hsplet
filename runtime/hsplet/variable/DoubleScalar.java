@@ -2,6 +2,7 @@
  * $Id: DoubleScalar.java,v 1.2.4.1 2006/08/02 12:13:06 Yuki Exp $
  */
 package hsplet.variable;
+import hsplet.util.Conversion;
 
 /**
  * double を表すクラス。
@@ -76,6 +77,16 @@ public final class DoubleScalar extends Scalar {
 	public void dec(final int index) {
 
 		--value;
+	}
+
+	public void assign(final int index, final int newValue){
+		value = (double)newValue;
+	}
+	public void assign(final int index, final double newValue){
+		value = newValue;
+	}
+	public void assign(final int index, final String newValue){
+		value = Conversion.strtod(newValue);
 	}
 
 	//@Override

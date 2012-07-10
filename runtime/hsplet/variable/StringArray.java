@@ -98,6 +98,25 @@ public final class StringArray extends Array {
 
 	}
 
+	public void assign(final int index, final int newValue){
+		if (index >= values.length) {
+			expand(index);
+		}
+		values[index].assign(new ByteString(Integer.toString(newValue)));
+	}
+	public void assign(final int index, final double newValue){
+		if (index >= values.length) {
+			expand(index);
+		}
+		values[index].assign(new ByteString(Double.toString(newValue)));
+	}
+	public void assign(final int index, final String newValue){
+		if (index >= values.length) {
+			expand(index);
+		}
+		values[index].assign(new ByteString(newValue));
+	}
+
 	//@Override
 	public void assign(final int index, final Operand rhs, final int rhi) {
 
