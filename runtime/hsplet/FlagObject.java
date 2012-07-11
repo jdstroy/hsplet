@@ -1,6 +1,6 @@
 package hsplet;
 
-import hsplet.variable.Operand;
+import hsplet.variable.*;
 
 /**
  * Provides control flow information to the runtime
@@ -37,7 +37,26 @@ public class FlagObject {
         return new FlagObject(O);
     }
 
-    // TODO: Confirm docs are correct - no uses of this were found
+    /**
+     * Java friendly version of above factory - takes Java natives instead of Operands
+     * @param val value to return
+     * @return a FlagObject that returns val
+     */
+    public static FlagObject getFlagObject(String val) {
+        return new FlagObject(Scalar.fromValue(val));
+    }
+    public static FlagObject getFlagObject(int val) {
+        return new FlagObject(Scalar.fromValue(val));
+    }
+    public static FlagObject getFlagObject(double val) {
+        return new FlagObject(Scalar.fromValue(val));
+    }
+    public static FlagObject getFlagObject() {
+        return emptyFlagObject;
+    }
+
+    // Currently unused - intended for gotos, but currently gotos are combined
+    // into methods and done directly in java bytecode
     /**
      * Factory method for setting a jump in HSPlet
      * @param i Label index to jump
