@@ -1,3 +1,18 @@
+/*
+ * Copyright 2012 John Stroy
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 import hsplet.Context;
 import hsplet.function.FunctionBase;
@@ -9,15 +24,14 @@ import java.util.List;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
 import javax.swing.text.JTextComponent;
+import org.yi.jdstroy.commons.EDTCallable;
 
-/*
- * To change this template, choose Tools | Templates and open the template in
- * the editor.
- */
 /**
  *
  * @author jdstroy
@@ -46,18 +60,38 @@ public class hspext_ext extends FunctionBase {
     public void apledit(Operand destination, int index, int mode, int rowIndex) {
 
         Component component = aplObjTarget;
-        _apledit(component, destination, index, mode, rowIndex);
+        try {
+            _apledit(component, destination, index, mode, rowIndex);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(hspext_ext.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ExecutionException ex) {
+            Logger.getLogger(hspext_ext.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 
-    private void _apledit(Component component, Operand destination, int index, int mode, int rowIndex) {
-        String text;
+    private void _apledit(Component component, Operand destination, int index, int mode, int rowIndex) throws InterruptedException, ExecutionException {
+
+        Future<String> textFuture;
+
         if (JTextComponent.class.isInstance(component)) {
-            JTextComponent jtc = JTextComponent.class.cast(component);
-            text = jtc.getText();
+            final JTextComponent jtc = JTextComponent.class.cast(component);
+            textFuture = EDTCallable.submitCallable(new Callable<String>() {
+
+                @Override
+                public String call() throws Exception {
+                    return jtc.getText();
+                }
+            });
         } else if (TextComponent.class.isInstance(component)) {
-            TextComponent tc = TextComponent.class.cast(component);
-            text = tc.getText();
+            final TextComponent tc = TextComponent.class.cast(component);
+            textFuture = EDTCallable.submitCallable(new Callable<String>() {
+
+                @Override
+                public String call() throws Exception {
+                    return tc.getText();
+                }
+            });
         } else if (Mesbox.class.isInstance(component)) {
             Mesbox inst = Mesbox.class.cast(component);
             _apledit(inst.getTextArea(), destination, index, mode, rowIndex);
@@ -65,6 +99,7 @@ public class hspext_ext extends FunctionBase {
         } else {
             return;
         }
+        String text = textFuture.get();
 
         int v;
         switch (mode) {
