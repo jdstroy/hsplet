@@ -4,21 +4,15 @@ import hsplet.PEXInfo;
 import hsplet.function.FunctionBase;
 import hsplet.function.GuiCommand;
 import hsplet.gui.Bmscr;
-import hsplet.gui.GraphicsRenderer;
 import hsplet.variable.Operand;
-import java.awt.AlphaComposite;
-import java.awt.Composite;
 import java.awt.EventQueue;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javolution.context.ArrayFactory;
-import javolution.context.ObjectFactory;
 
 /*
  * To change this template, choose Tools | Templates and open the template in
