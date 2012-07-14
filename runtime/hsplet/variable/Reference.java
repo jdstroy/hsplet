@@ -103,7 +103,7 @@ public final class Reference extends Operand {
 	//@Override
 	public void dec(final int index) {
 
-		value.inc(index + base);
+		value.dec(index + base);
 	}
 
 	public void assign(final int index, final int newValue){
