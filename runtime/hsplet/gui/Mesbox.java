@@ -10,10 +10,14 @@ import java.awt.event.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.Keymap;
 
 /**
  * mesbox コントロール。 <p> 内容が変更されたら変数を更新する。 </p>
@@ -40,6 +44,10 @@ public class Mesbox extends JScrollPane implements VolatileValueUpdater, HSPCont
      */
     private int vi;
     private final JTextArea text;
+    private static final Action NULL_ACTION = new AbstractAction() {
+        public void actionPerformed(ActionEvent e) {
+        }
+    };
 
     /**
      * オブジェクトを構築する。
@@ -54,7 +62,11 @@ public class Mesbox extends JScrollPane implements VolatileValueUpdater, HSPCont
         super(VERTICAL_SCROLLBAR_ALWAYS, hscroll ? HORIZONTAL_SCROLLBAR_ALWAYS : HORIZONTAL_SCROLLBAR_NEVER);
 
         text = new JTextArea(v.toString(vi));
-
+        Keymap km = text.getKeymap();
+        for (int i : new int[]{KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_DOWN}) {
+            KeyStroke ks = KeyStroke.getKeyStroke(i, InputEvent.SHIFT_DOWN_MASK);
+            km.addActionForKeyStroke(ks, NULL_ACTION);
+        }
         text.setEditable(editable);
 
         this.v = v.makeVolatile();
