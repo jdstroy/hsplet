@@ -119,7 +119,12 @@ public class hspext_ext extends FunctionBase {
                 v = text.split("\n").length;
                 break;
             case 2: //get the number of characters in the line at rowIndex
-                v = text.split("\n")[rowIndex].getBytes().length;
+                String[] rows = text.split("\n");
+                if (rowIndex < rows.length && 0 <= rowIndex) {
+                    v = rows[rowIndex].getBytes().length;
+                } else {
+                    v = text.getBytes().length;
+                }
                 break;
             default:
                 return;
