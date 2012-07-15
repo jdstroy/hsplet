@@ -49,8 +49,6 @@ public class Mesbox extends JScrollPane implements VolatileValueUpdater, HSPCont
         public void actionPerformed(ActionEvent e) {
         }
     };
-    private boolean preventShiftArrowSelectionChange = false;
-    public static final String SHIFT_ARROW_SELECTION_CHANGE_PROPERTY = "org.yi.jdstroy.projects.hsplet.gui.Mesbox.config.shiftArrowSelectionDisable";
 
     /**
      * オブジェクトを構築する。
@@ -61,25 +59,10 @@ public class Mesbox extends JScrollPane implements VolatileValueUpdater, HSPCont
      * @param hscroll 横スクロール可能かどうか。
      */
     public Mesbox(final Variable v, final int vi, boolean editable, boolean hscroll) {
-        this(v, vi, editable, hscroll, System.getProperties().
-                containsKey(SHIFT_ARROW_SELECTION_CHANGE_PROPERTY)
-                && System.getProperties().get(SHIFT_ARROW_SELECTION_CHANGE_PROPERTY).
-                toString().equalsIgnoreCase("true"));
-    }
-
-    public Mesbox(final Variable v, final int vi, boolean editable, boolean hscroll, boolean preventShiftArrowSelectionChange) {
         super(VERTICAL_SCROLLBAR_ALWAYS, hscroll ? HORIZONTAL_SCROLLBAR_ALWAYS : HORIZONTAL_SCROLLBAR_NEVER);
-
         text = new JTextArea(v.toString(vi));
+        text.setNavigationFilter(new NonNegativeNavigationFilter());
 
-        if (preventShiftArrowSelectionChange) {
-            Keymap km = text.getKeymap();
-
-            for (int i : new int[]{KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_DOWN}) {
-                KeyStroke ks = KeyStroke.getKeyStroke(i, InputEvent.SHIFT_DOWN_MASK);
-                km.addActionForKeyStroke(ks, NULL_ACTION);
-            }
-        }
         text.setEditable(editable);
 
         this.v = v.makeVolatile();
