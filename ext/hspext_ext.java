@@ -116,7 +116,7 @@ public class hspext_ext extends FunctionBase {
                 }
                 break;
             case 1: //get number of rows
-                v = text.split("\n").length;
+                v = text.split("\n").length + 1;
                 break;
             case 2: //get the number of characters in the line at rowIndex
                 String[] rows = text.split("\n");
@@ -146,7 +146,7 @@ public class hspext_ext extends FunctionBase {
         Component privateTarget;
         if (hspletWindow != null) {
             if (selectedWindow == hspletWindow) {
-                Logger.getLogger(getClass().getName()).log(Level.INFO,
+                Logger.getLogger(getClass().getName()).log(Level.FINER,
                         "Bypassing typical mechanism for aplobj; using HSPlet internal knowledge");
                 privateTarget = context.windows.get(context.activeWindow).controls.get(index).asComponent();
                 context.refstr.value.assign(privateTarget.getClass().getName());
