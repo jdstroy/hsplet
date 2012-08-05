@@ -1,21 +1,32 @@
+/*
+ * Copyright 2012 John Stroy
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 import hsplet.Context;
 import hsplet.function.FunctionBase;
-import hsplet.variable.ByteString;
 import hsplet.variable.Operand;
 import java.io.File;
 import java.net.URISyntaxException;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.yi.jdstroy.commons.winapi.NTSTATUS;
+import org.yi.jdstroy.commons.winapi.*;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 /**
+ * Win32 API - kernel32 API for HSPlet
  *
  * @author jdstroy
  */
@@ -23,29 +34,51 @@ public class kernel32 extends FunctionBase {
 
     public static final int NT_STATUS_SUCCESS = 0, WIN32_CONSTANT_FALSE = 0;
     private Context context;
+    private AtomicInteger lastHandle = new AtomicInteger();
     private int WIN32_CONSTANT_TRUE = 1;
+    private ObjectManager objectManager = new ObjectManager();
+    private ProcessContext processContext = new ProcessContext();
+    private int lastError = 0;
 
     public kernel32(final Context context) {
         this.context = context;
     }
 
     public int GetLastError() {
-
-        return 0;
+        return lastError;
     }
 
-    public int CreateMutex(Operand securityPointer, int index, int inherit, String lpcstr) {
-        Logger.getLogger(getClass().getName()).log(Level.FINE, "CreateMutex() called but not implemented - requesting \"{0}\"", lpcstr);
-        return NTSTATUS.STATUS_SUCCESS.value();
+    public int CreateMutex(Operand securityPointer, int index, int inherit, @LPCSTR String name) {
+        //Logger.getLogger(getClass().getName()).log(Level.FINE, "CreateMutex() called but not implemented - requesting \"{0}\"", name);
+        Logger.getLogger(getClass().getName()).log(Level.FINE, "CreateMutex() requesting \"{0}\"", name);
+
+        Semaphore semaphore = new Semaphore(1);
+        Semaphore currentObject = objectManager.putIfAbsent(name, semaphore, Semaphore.class);
+
+        if (currentObject == null) {
+            // Did not exist, has been put
+            int handle = processContext.add(semaphore);
+            return handle;
+        } else {
+            // Existed, open currentObject instead
+            if (Semaphore.class.isInstance(currentObject)) {
+                lastError = WinError.ERROR_ALREADY_EXISTS.value();
+                int handle = processContext.find(semaphore);
+                return handle;
+            } else {
+                // Not a semaphore
+                return Winbase.INVALID_HANDLE;
+            }
+        }
+
     }
 
     public int CreateMutexA(Operand securityPointer, int index, int inherit, String lpcstr) {
         return CreateMutex(securityPointer, index, inherit, lpcstr);
     }
-    private Map<Integer, Object> handleMap = new TreeMap<Integer, Object>();
 
     public int CloseHandle(int handle) {
-        handleMap.remove(handle);
+        processContext.remove(handle);
         return 1;
     }
 

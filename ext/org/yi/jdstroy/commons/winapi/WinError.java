@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.yi.jdstroy.commons.winapi;
 
 /**
  *
  * @author jdstroy
  */
-public enum NTSTATUS {
+public enum WinError {
 
-    STATUS_SUCCESS(0), 
-    STATUS_ACCESS_DENIED(0xc0000022),
+    ERROR_ALREADY_EXISTS(0xb7),
     ;
     private int value;
 
@@ -30,7 +30,7 @@ public enum NTSTATUS {
         return value;
     }
 
-    private NTSTATUS(int value) {
+    private WinError(int value) {
         this.value = value;
     }
 }

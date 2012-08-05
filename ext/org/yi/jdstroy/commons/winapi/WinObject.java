@@ -13,24 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.yi.jdstroy.commons.winapi;
+
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  *
  * @author jdstroy
  */
-public enum NTSTATUS {
+public class WinObject<T> {
 
-    STATUS_SUCCESS(0), 
-    STATUS_ACCESS_DENIED(0xc0000022),
-    ;
-    private int value;
-
-    public int value() {
-        return value;
+    public <U extends T> WinObject(U target) {
+        this.target = target;
     }
-
-    private NTSTATUS(int value) {
-        this.value = value;
+    
+    private T target;
+    private AtomicLong references = new AtomicLong();
+    
+    public T get() {
+        return target;
     }
 }
