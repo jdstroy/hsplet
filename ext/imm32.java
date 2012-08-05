@@ -1,18 +1,26 @@
+/*
+ * Copyright 2012 John Stroy
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 import hsplet.Context;
 import hsplet.HIMC;
 import hsplet.HWND;
-import java.awt.event.InputMethodEvent;
-import java.awt.event.InputMethodListener;
 import java.awt.im.InputContext;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.TreeMap;
-/*
- * To change this template, choose Tools | Templates and open the template in
- * the editor.
- */
 
 /**
  *
@@ -36,7 +44,7 @@ public class imm32 {
     public int ImmGetContext(@HWND int windowId) {
         List<InputContext> li = context.getInputContexts();
         int size = li.size();
-        for(int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) {
             if (li.get(i) == null) {
                 li.set(i, InputContext.getInstance());
                 return i;
