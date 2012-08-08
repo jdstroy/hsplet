@@ -88,7 +88,7 @@ public class hmm extends FunctionBase {
 
     public void DSINIT(int bmscr_window_id, int a, int b, int c) {
         if (bmscr_window_id < 0 || bmscr_window_id >= context.windows.size() || context.windows.get(bmscr_window_id) == null) {
-            context.error(HSPError.InvalidParameterValue, "grotate", "id==" + bmscr_window_id);
+            context.error(HSPError.InvalidParameterValue, "DSINIT", "id==" + bmscr_window_id);
         }
 
         final Bmscr target = context.windows.get(bmscr_window_id);
