@@ -7,6 +7,8 @@ import hsplet.Context;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequencer;
@@ -68,11 +70,13 @@ public class Music implements HSPMedia {
 	}
 
 	public void dispose() {
-
+            synchronized(mutex) {
 		if (sequencer.isOpen()) {
+                    
 			sequencer.stop();
 			sequencer.close();
-		}
+                }
+            }
 	}
 
 	final private Sequencer sequencer;
@@ -86,7 +90,7 @@ public class Music implements HSPMedia {
 	}
 
 	public void play() {
-
+            synchronized(mutex) {
 		if (!sequencer.isOpen()) {
 			return;
 		}
@@ -95,7 +99,9 @@ public class Music implements HSPMedia {
 
 		switch (mode) {
 		case 0:
+                    
 			sequencer.start();
+                    
 			return;
 		case 1:
 			new Thread() {
@@ -103,19 +109,20 @@ public class Music implements HSPMedia {
 				public void run() {
 
 					while (isPlaying()) {
+                                            synchronized(mutex) {
 						if (!sequencer.isOpen()) {
 							break;
 						}
 
 						setPosition(0);
 						sequencer.start();
-
+                                            }
 						try {
 							while (sequencer.isRunning()) {
 								Thread.sleep(100);
 							}
 						} catch (InterruptedException e) {
-							e.printStackTrace();
+							Logger.getLogger(Music.class.getName()).log(Level.SEVERE, null, e);
 						}
 
 					}
@@ -125,34 +132,41 @@ public class Music implements HSPMedia {
 			return;
 		case 2:
 			sequencer.start();
-
 			try {
 				while (sequencer.isRunning()) {
 					Thread.sleep(100);
 				}
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				Logger.getLogger(Music.class.getName()).
+                                        log(Level.SEVERE, null, e);
 			}
 			return;
 		}
+            }
 	}
 
 	public void stop() {
 
+            synchronized(mutex) {
 		if (sequencer.isOpen()) {
 			sequencer.stop();
 		}
 		playing = false;
+            }
 	}
 
 	public void setPosition(int value) {
 
+            synchronized(mutex) {
 		sequencer.setMicrosecondPosition(value * 1000L);
+            }
 	}
 
 	public int getPosition() {
 
 		return (int) (sequencer.getMicrosecondPosition() / 1000);
 	}
+        
+        private final Object mutex = new Object();
 
 }
