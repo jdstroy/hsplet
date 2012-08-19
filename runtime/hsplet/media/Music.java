@@ -99,11 +99,12 @@ public class Music implements HSPMedia {
 
 		switch (mode) {
 		case 0:
-                    
+                    // Play once, nonblocking
 			sequencer.start();
                     
 			return;
 		case 1:
+                    // Loop
 			new Thread() {
 
 				public void run() {
@@ -131,6 +132,7 @@ public class Music implements HSPMedia {
 			}.start();
 			return;
 		case 2:
+                    // Play once, blocking
 			sequencer.start();
 			try {
 				while (sequencer.isRunning()) {
