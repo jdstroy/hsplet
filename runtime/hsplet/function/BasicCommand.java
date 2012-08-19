@@ -714,47 +714,10 @@ public class BasicCommand extends FunctionBase {
 
         // 文字列型なら使用中のバッファが返ってくるはず。
         final ByteString note = context.note.toByteString(0);
-        try {
+        if (note.length() > 0) {
             note.set(0, (byte) 0);
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            FileInputStream fis = null;
-            try {
-                File f = new File(context.resolve(fileName));
-                fis = new FileInputStream(f);
-                long filesize = f.length();
-                if (filesize > Integer.MAX_VALUE) {
-                    throw new IOException("File size is too large to record exception.", ex);
-                }
-
-                ArrayList<Byte> contents = new ArrayList<Byte>((int) filesize);
-                for (int buff = fis.read(); buff != -1; buff = fis.read()) {
-                    contents.add(new Byte((byte) buff));
-                }
-                Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE,
-                        new XStream().toXML(
-                        new Object[]{
-                            fileName,
-                            context.resolve(fileName),
-                            contents,
-                            note,
-                        }),
-                        ex);
-                throw ex;
-            } catch (FileNotFoundException ex1) {
-                Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex1);
-            } catch (URISyntaxException ex1) {
-                Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex1);
-            } catch (IOException ex1) {
-                Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex1);
-            } finally {
-                try {
-                    fis.close();
-                } catch (IOException ex1) {
-                    Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex1);
-                }
-            }
         }
-
+        
         try {
             InputStream in = context.getResource(fileName);
 
