@@ -735,7 +735,9 @@ public class BasicCommand extends FunctionBase {
                         new Object[]{
                             fileName,
                             context.resolve(fileName),
-                            contents,}),
+                            contents,
+                            note,
+                        }),
                         ex);
                 throw ex;
             } catch (FileNotFoundException ex1) {
