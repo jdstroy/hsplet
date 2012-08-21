@@ -74,8 +74,8 @@ public class elona extends FunctionBase {
         final int cx = target.cx;
         final int cy = target.cy;
 
-        final double si = Math.sin(p4_rotation_angle_radians);
-        final double co = Math.cos(p4_rotation_angle_radians);
+        final double si = Math.sin(p4_rotation_angle_radians / 2048 * Math.PI);
+        final double co = Math.cos(p4_rotation_angle_radians / 2048 * Math.PI);
 
         int[] dx = new int[]{(int) Math.round(-w * co + h * si) + cx, (int) Math.round(w * co + h * si) + cx,
             (int) Math.round(w * co - h * si) + cx, (int) Math.round(-w * co - h * si) + cx,};
