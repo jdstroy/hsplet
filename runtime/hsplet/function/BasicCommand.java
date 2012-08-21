@@ -714,6 +714,8 @@ public class BasicCommand extends FunctionBase {
 
         // 文字列型なら使用中のバッファが返ってくるはず。
         final ByteString note = context.note.toByteString(0);
+        
+        // If the note length is zero, do not set the 0th byte.
         if (note.length() > 0) {
             note.set(0, (byte) 0);
         }
