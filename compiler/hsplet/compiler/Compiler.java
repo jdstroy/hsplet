@@ -2811,7 +2811,8 @@ public class Compiler implements Opcodes, Serializable {
 
             mv=new SubMethodAdapter(this, mv);
 
-            //NOTE: Hack for Elona to reduce method count. Reduce this number if it causes ClassFormatError: Invalid method Code length
+            //NOTE: Hack for Elona to reduce method count.
+            //Reduce this number or comment it out if compiler causes ClassFormatError: Invalid method Code length
             if(numMethods==1)
                 ((SubMethodAdapter)mv).maxSize=72000;
 
@@ -2832,9 +2833,9 @@ public class Compiler implements Opcodes, Serializable {
                 mv.visitVarInsn(ILOAD, 1);
                 mv.visitTableSwitchInsn(numMains, numMains + numTableLabels - 1, defaultLabel, tableLabels);
                 mv.visitLabel(defaultLabel);
+            } else if(mainLabels[0]!=labelGroup.first()) {
+                mv.visitJumpInsn(GOTO, allLabels[mainLabels[0].intValue()]);
             }
-            //A thought. There should be an else here for if the first mainLabel is not the first label.
-            //If so, mv.visitJumpInsn(GOTO, allLabels[mainLabels[0].intValue()]); ?
             numMains += numTableLabels;
             codeIndex = 0;
             int nextLabelStart;
