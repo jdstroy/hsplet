@@ -40,6 +40,7 @@ public class elona extends FunctionBase {
     public elona(final Context context) {
         this.context = context;
     }
+
     /**
      * grotate, elona style - do not let pixels reach 0,0,0 Not implemented
      * correctly.
@@ -53,7 +54,6 @@ public class elona extends FunctionBase {
      * @param dhv
      * @param dhi
      */
-
     public void grotate(@PEXInfo int source_window_id, int p2_x_coordinate,
             int p3_y_coordinate, double p4_rotation_angle_radians,
             //int p5_x_size, int p6_y_size
@@ -299,7 +299,7 @@ public class elona extends FunctionBase {
         } catch (InvocationTargetException ex) {
             Logger.getLogger(elona.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         ArrayFactory.INTS_FACTORY.recycle(srcPixels);
         ArrayFactory.INTS_FACTORY.recycle(destPixels);
 
@@ -308,7 +308,11 @@ public class elona extends FunctionBase {
     private void gcopy_line(final Bmscr win, final int[] destPixels, final int[] srcPixels, final int w) {
 
         final int byteCount = w * 3;
-
+        
+        for(int i = 0; i < byteCount; i++) {
+            srcPixels[i] = (srcPixels[i] == 0) ? 0 : 1;
+        }
+        
         switch (win.gmode) {
             case 0:
             case 1:
