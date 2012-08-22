@@ -309,10 +309,6 @@ public class elona extends FunctionBase {
 
         final int byteCount = w * 3;
         
-        for(int i = 0; i < byteCount; i++) {
-            srcPixels[i] = (srcPixels[i] == 0) ? 0 : 1;
-        }
-        
         switch (win.gmode) {
             case 0:
             case 1:
@@ -325,9 +321,9 @@ public class elona extends FunctionBase {
                 for (int i = 0; i < byteCount; i += 3) {
 
                     if (srcPixels[i] != 0 || srcPixels[i + 1] != 0 || srcPixels[i + 2] != 0) {
-                        destPixels[i] = srcPixels[i];
-                        destPixels[i + 1] = srcPixels[i + 1];
-                        destPixels[i + 2] = srcPixels[i + 2];
+                        destPixels[i] = destPixels[i] >> 2;
+                        destPixels[i + 1] = destPixels[i + 1] >> 2;
+                        destPixels[i + 2] = destPixels[i + 2] >> 2;
                     }
                 }
             }
