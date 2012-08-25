@@ -378,7 +378,12 @@ public class Context implements Serializable {
     }
     
     private static URI resolve(URI dir, String fileName) throws URISyntaxException {
-        return dir.resolve(new URI(((fileName.startsWith("\\")) ? fileName.substring(1) : fileName).replace('\\', '/')));
+        return dir.resolve(
+                new URI(null, null, null, // Use this constructor to escape characters correctly
+                -1, // port
+                ((fileName.startsWith("\\")) // Leading backslash results in rooted path
+                ? fileName.substring(1) : fileName).replace('\\', '/'), // path
+                null, null));
     }
 
     private URI getResourceUrlCaseInsensitive(final URI tryThis) {
