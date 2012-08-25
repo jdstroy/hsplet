@@ -374,7 +374,11 @@ public class Context implements Serializable {
     }
 
     private static URL resolve(URL dir, String fileName) throws URISyntaxException, MalformedURLException {
-        return dir.toURI().resolve(new URI(((fileName.startsWith("\\")) ? fileName.substring(1) : fileName).replace('\\', '/'))).toURL();
+        return dir.toURI().resolve(new URI(null, null, null, // Use this constructor to escape characters correctly
+                -1, // port
+                ((fileName.startsWith("\\")) // Leading backslash results in rooted path
+                ? fileName.substring(1) : fileName).replace('\\', '/'), // path
+                null, null)).toURL();
     }
 
     private static URI resolve(URI dir, String fileName) throws URISyntaxException {
