@@ -376,7 +376,7 @@ public class Context implements Serializable {
     private static URL resolve(URL dir, String fileName) throws URISyntaxException, MalformedURLException {
         return dir.toURI().resolve(new URI(((fileName.startsWith("\\")) ? fileName.substring(1) : fileName).replace('\\', '/'))).toURL();
     }
-    
+
     private static URI resolve(URI dir, String fileName) throws URISyntaxException {
         return dir.resolve(
                 new URI(null, null, null, // Use this constructor to escape characters correctly
@@ -387,31 +387,29 @@ public class Context implements Serializable {
     }
 
     private URI getResourceUrlCaseInsensitive(final URI tryThis) {
-        Logger.getLogger(getClass().getName()).log(Level.INFO, 
-            "Context.getResourceUrlCaseInsensitive(\"{0}\")",
-            tryThis
-        );
-        
+        Logger.getLogger(getClass().getName()).log(Level.INFO,
+                "Context.getResourceUrlCaseInsensitive(\"{0}\")",
+                tryThis);
+
         File fileRoot = new File(tryThis);
         boolean exists = fileRoot.exists();
         if (exists) {
             return tryThis;
         }
-        
+
         Path pathRoot = fileRoot.toPath();
         LinkedList<Path> pathSegments = new LinkedList<Path>();
         Path rootExists = pathRoot.toAbsolutePath();
-        while(rootExists != null && !rootExists.toFile().exists()) {
+        while (rootExists != null && !rootExists.toFile().exists()) {
             pathSegments.add(rootExists.getFileName());
             rootExists = rootExists.getParent();
         }
         // Once this is done, rootExists is either null or exists
         // pathSegments contains all the paths that we're interested in.
-        
-        Logger.getLogger(getClass().getName()).log(Level.INFO, 
-            "rootExists = \"{0}\"",
-            rootExists
-        );
+
+        Logger.getLogger(getClass().getName()).log(Level.INFO,
+                "rootExists = \"{0}\"",
+                rootExists);
 
         // At this point, rootExists is either null or exists.
 
@@ -430,10 +428,9 @@ public class Context implements Serializable {
                 for (File child : children) {
                     if (child.getName().equalsIgnoreCase(segment.toFile().getName())) {
                         newExistance = newExistance.resolve(child.getName());
-                        Logger.getLogger(getClass().getName()).log(Level.INFO, 
-                            "newExistance = \"{0}\"",
-                            newExistance
-                        );
+                        Logger.getLogger(getClass().getName()).log(Level.INFO,
+                                "newExistance = \"{0}\"",
+                                newExistance);
                         continue outer;
                     }
                 }
@@ -597,15 +594,15 @@ public class Context implements Serializable {
      */
     public URI resolve(String fileName) throws URISyntaxException {
         URI resolved = resolve(curdir.toURI(), fileName);
-        URI returnValue = tryAlternateCases ? 
-                getResourceUrlCaseInsensitive(resolved) : resolved;
-        Logger.getLogger(getClass().getName()).log(Level.INFO, 
-                "Context.resolve(\"{0}\") => \"{1}\"", new Object[] {
+        URI returnValue = tryAlternateCases
+                ? getResourceUrlCaseInsensitive(resolved) : resolved;
+        Logger.getLogger(getClass().getName()).log(Level.INFO,
+                "Context.resolve(\"{0}\") => \"{1}\"", new Object[]{
                     fileName, returnValue
-        });
+                });
         return returnValue;
     }
-    
+
     /**
      * Converts Win32 filename requests into a URI, relative to the cwd as
      * appropriate. Converts all back-slashes to forward-slashes if there are no
