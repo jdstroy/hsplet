@@ -4,6 +4,7 @@
 package hsplet.media;
 
 import hsplet.Context;
+import hsplet.media.midi.SequencerMultiplexer;
 import hsplet.util.Conversion;
 
 import java.io.Serializable;
@@ -12,6 +13,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
 
 /**
  * MCI コマンドを実装するクラス。
@@ -35,9 +40,16 @@ public class Mci implements Serializable {
 	 * @param context 実行しているコンテキスト。
 	 */
 	public Mci(final Context context) {
-
-		this.context = context;
+            this.context = context;
+            try {
+                this.sequenceMultiplexer = new SequencerMultiplexer(MidiSystem.getSequencer());
+            } catch (MidiUnavailableException ex) {
+                Logger.getLogger(Mci.class.getName()).log(Level.SEVERE, "MIDI is unavailable!", ex);
+            }
+            
 	}
+        
+        private SequencerMultiplexer sequenceMultiplexer;
 
 	private final Context context;
 
@@ -122,7 +134,7 @@ public class Mci implements Serializable {
 		} else if (fileName.toLowerCase().endsWith(".mid")) {
 
 			try {
-				media = new Music(context, fileName, mode);
+				media = new Music(context, fileName, mode, sequenceMultiplexer);
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}
@@ -137,7 +149,7 @@ public class Mci implements Serializable {
 		}
 		if (media == null) {
 			try {
-				media = new Music(context, fileName, mode);
+				media = new Music(context, fileName, mode, sequenceMultiplexer);
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}
