@@ -190,20 +190,6 @@ public class SequencerMultiplexer {
     }
 }
 
-enum SequencerPlaybackMode {
-
-    PlaybackOnceAsynchronous(0),
-    PlaybackRepeatAsynchronous(1),
-    PlaybackOnceSynchronous(2);
-    private int value;
-
-    SequencerPlaybackMode(int value) {
-        this.value = value;
-    }
-;
-
-}
-
 class MusicClip implements IMusicClip {
 
     private boolean playing;
