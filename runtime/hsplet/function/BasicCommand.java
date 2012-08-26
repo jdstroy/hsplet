@@ -419,6 +419,12 @@ public class BasicCommand extends FunctionBase {
                     for (int i = 0; i < size; i++) {
                         out.write(v.peek(vi, i));
                     }
+                    if (sizev == null // Only if the size is unspecified
+                            && v.getType() == Operand.Type.STRING // and the type is a string
+                            && "true".equals(System.getProperty("org.yi.jdstroy.hsplet.function.BasicCommand.bload.elona-workaround", "true") // and the WA is turned on
+                            )) {
+                        out.write(0);
+                    }
 
                 } catch (ArrayIndexOutOfBoundsException e) {
                     // 変数バッファオーバー
@@ -714,12 +720,12 @@ public class BasicCommand extends FunctionBase {
 
         // 文字列型なら使用中のバッファが返ってくるはず。
         final ByteString note = context.note.toByteString(0);
-        
+
         // If the note length is zero, do not set the 0th byte.
         if (note.length() > 0) {
             note.set(0, (byte) 0);
         }
-        
+
         try {
             InputStream in = context.getResource(fileName);
 
