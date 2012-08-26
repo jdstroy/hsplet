@@ -255,6 +255,7 @@ public class ByteString implements Serializable {
 
     public int indexOf(final ByteString sub, final int index) {
 
+        if(sub.length > 0)
         for (int i = index; i + sub.length <= length; ++i) {
 
             if (compareSub(i, sub) == 0) {
