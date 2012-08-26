@@ -42,7 +42,7 @@ public class ByteString implements Serializable {
      * @param text このオブジェクトの初期値になる文字列。
      */
     public ByteString(final String text) {
-        
+
         final ByteBuffer encoded = charset.encode(text);
         this.offset = 0;
         this.length = encoded.remaining();
@@ -73,17 +73,17 @@ public class ByteString implements Serializable {
      * の方が高速ですが、文字列を変更予定のときは true を指定してください。
      */
     public ByteString(final byte[] bytes, final int offset, final int length, final boolean uniqueBuffer) {
-        
+
         this.length = Math.min(length, calculateLength(bytes, offset));
-        
+
         if (uniqueBuffer) {
-            
+
             this.bytes = new byte[this.length + 256];
             this.offset = 0;
             System.arraycopy(bytes, offset, this.bytes, this.offset, this.length);
-            
+
         } else {
-            
+
             this.bytes = bytes;
             this.offset = offset;
         }
@@ -99,45 +99,45 @@ public class ByteString implements Serializable {
     public ByteString(final ByteString str, final boolean uniqueBuffer) {
         this(str.bytes, str.offset, str.length, uniqueBuffer);
     }
-    
+
     private static int calculateLength(final byte[] bytes, final int offset) {
-        
+
         for (int i = offset; i < bytes.length; ++i) {
             if (bytes[i] == 0) {
                 return i - offset;
             }
         }
-        
+
         return bytes.length - offset;
     }
-    
+
     public static ByteString concat(final ByteString lhs, final ByteString rhs) {
-        
+
         final byte[] newBytes = new byte[lhs.length + rhs.length + 1];
-        
+
         System.arraycopy(lhs.bytes, lhs.offset, newBytes, 0, lhs.length);
         System.arraycopy(rhs.bytes, rhs.offset, newBytes, lhs.length, rhs.length);
-        
+
         return new ByteString(newBytes, 0, lhs.length + rhs.length, false);
     }
-    
+
     public void append(final ByteString rhs) {
         replace(length, 0, rhs);
     }
 
     //@Override
     public String toString() {
-        
+
         return decode(ByteBuffer.wrap(bytes, offset, length)).toString();
     }
-    
+
     private CharBuffer decode(final ByteBuffer in) {
 
         // Java のそれはバグっているので自力でやる
 
         int n = (int) (in.remaining() * decorder.averageCharsPerByte() + 1);
         CharBuffer out = CharBuffer.allocate(n);
-        
+
         if (in.remaining() != 0) {
             decorder.reset();
             for (;;) {
@@ -147,7 +147,7 @@ public class ByteString implements Serializable {
                 } else {
                     cr = decorder.flush(out);
                 }
-                
+
                 if (cr.isUnderflow()) {
                     break;
                 }
@@ -168,47 +168,47 @@ public class ByteString implements Serializable {
 
     //@Overwrite
     public boolean equals(Object obj) {
-        
+
         if (obj instanceof ByteString) {
-            
+
             final ByteString rhs = (ByteString) obj;
-            
+
             if (rhs.length != length) {
                 return false;
             }
-            
+
             return compareTo(rhs) == 0;
         }
-        
+
         return super.equals(obj);
     }
-    
+
     public int compareTo(final ByteString rhs) {
-        
+
         final int ret = compareSub(0, rhs);
-        
+
         if (ret != 0) {
             return ret;
         }
-        
+
         if (rhs.length < length) {
             return 1;
         }
-        
+
         return 0;
     }
-    
+
     public int compareSub(final int index, final ByteString rhs) {
-        
+
         final byte[] lb = bytes;
         final int lo = offset + index;
         final byte[] rb = rhs.bytes;
         final int ro = rhs.offset;
-        
+
         final int l = Math.min(length - index, rhs.length);
-        
+
         for (int i = 0; i < l; ++i) {
-            
+
             if (lb[lo + i] != rb[ro + i]) {
                 return (lb[lo + i] > rb[ro + i] ? 1 : -1);
             }
@@ -218,7 +218,7 @@ public class ByteString implements Serializable {
         if (l < rhs.length) {
             return -1;
         }
-        
+
         return 0;
     }
 
@@ -228,21 +228,21 @@ public class ByteString implements Serializable {
      * @return length の値。
      */
     public int length() {
-        
+
         return this.length;
     }
-    
+
     public byte get(int index) {
-        
+
         try {
             return this.bytes[offset + index];
         } catch (Exception e) {
             return 0;
         }
     }
-    
+
     public void set(int index, byte b) {
-        
+
         bytes[offset + index] = b;
         if (index < length) {
             if (b == 0) {
@@ -252,22 +252,22 @@ public class ByteString implements Serializable {
             length = calculateLength(bytes, offset);
         }
     }
-    
+
     public int indexOf(final ByteString sub, final int index) {
-        
+
         for (int i = index; i + sub.length <= length; ++i) {
-            
+
             if (compareSub(i, sub) == 0) {
                 return i - index;
             }
-            
+
         }
-        
+
         return -1;
     }
-    
+
     public ByteString substring(int index, int count) {
-        
+
         if (index < 0) {
             count += index;
             index = 0;
@@ -275,58 +275,58 @@ public class ByteString implements Serializable {
         if (index >= length) {
             index = length;
         }
-        
+
         if (index + count >= length) {
             count = length - index;
         }
-        
+
         final byte[] b = new byte[count + 1];
         System.arraycopy(bytes, offset + index, b, 0, count);
         return new ByteString(b, 0, count, false);
     }
-    
+
     public void assign(final String string) {
-        
+
         assign(new ByteString(string));
-        
+
     }
-    
+
     public void assign(final ByteString string) {
-        
+
         replace(0, length, string);
     }
-    
+
     public void replace(final int index, final int length, final ByteString string) {
-        
+
         final int newLength = this.length + string.length - length;
         if (bytes.length < offset + newLength + 1) {
 
             // バッファの拡張が必要
 
             final byte[] newBytes = new byte[newLength + 1024];
-            
+
             System.arraycopy(bytes, offset, newBytes, 0, index);
             System.arraycopy(string.bytes, string.offset, newBytes, index, string.length);
             System.arraycopy(bytes, offset + index + length, newBytes, index + string.length, this.length
                     - (index + length));
-            
+
             bytes = newBytes;
             this.offset = 0;
             this.length = newLength;
         } else {
-            
+
             System.arraycopy(bytes, offset + index + length, bytes, offset + index + string.length, this.length
                     - (index + length));
             System.arraycopy(string.bytes, string.offset, bytes, offset + index, string.length);
-            
+
             bytes[offset + newLength] = 0;
             this.length = newLength;
         }
-        
+
     }
-    
+
     public int lineIndex(final int line) {
-        
+
         if (line < 0) {
             return length;
         } else {
@@ -343,9 +343,9 @@ public class ByteString implements Serializable {
             return index;
         }
     }
-    
+
     public int nextLineIndex(final int index) {
-        
+
         int nextIndex;
         for (nextIndex = index; nextIndex < length; ++nextIndex) {
             if (get(nextIndex) == '\n') {
@@ -355,7 +355,7 @@ public class ByteString implements Serializable {
         }
         return nextIndex;
     }
-    
+
     public int lineCount() {
         int lines = 0;
         for (int i = 0; i < length; i++) {
@@ -365,16 +365,16 @@ public class ByteString implements Serializable {
         }
         return lines;
     }
-    
+
     public String getLine(int index) {
-        
+
         int lineIndex = lineIndex(index);
         int lineLength = nextLineIndex(lineIndex) - lineIndex;
-        
+
         final ByteString string = substring(lineIndex, lineLength);
-        
+
         if (string.length() >= 1 && string.get(string.length() - 1) == '\n') {
-            
+
             string.set(string.length() - 1, (byte) 0);
             if (string.length() >= 1 && string.get(string.length() - 1) == '\r') {
                 string.set(string.length() - 1, (byte) 0);
@@ -382,10 +382,19 @@ public class ByteString implements Serializable {
         }
         return string.toString();
     }
-    
+
+    /**
+     * Dumps the contents of this ByteString instance to an OutputStream. If
+     * a newline is encountered without a carriage return, a carriage return 
+     * is written, trailed by the newline.
+     * @param out The receiver of the contents of this ByteString.
+     * @throws IOException if writing or flushing the OutputStream throws an
+     * IOException
+     */
     public void dump(OutputStream out) throws IOException {
         //out.write(bytes, offset, length);
-        for(int i = offset; i < length; i++) {
+        for (int i = offset; i < length; i++) {
+            // If you see a \n without a \r that preceeded it, write a \r
             if (bytes[offset + i] == '\n' && (offset + i - 1 < 0 || bytes[offset + i - 1] != '\r')) {
                 out.write('\r');
             }
