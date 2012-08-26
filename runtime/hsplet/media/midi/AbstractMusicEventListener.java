@@ -22,18 +22,18 @@ package hsplet.media.midi;
 public abstract class AbstractMusicEventListener implements MusicEventListener {
 
     @Override
-    public void beforeMusicStop(IMusicClip oldClip, IMusicClip newClip, SequencerMultiplexer sequencer) {
+    public void beforeMusicStop(MusicClip oldClip, MusicClip newClip, SequencerMultiplexer sequencer) {
     }
 
     @Override
-    public void onMusicStop(IMusicClip oldClip, IMusicClip newClip, SequencerMultiplexer sequencer) {
+    public void onMusicStop(MusicClip oldClip, MusicClip newClip, SequencerMultiplexer sequencer) {
     }
 
     @Override
-    public void onMusicPlay(IMusicClip oldClip, IMusicClip newClip, SequencerMultiplexer sequencer) {
+    public void onMusicPlay(MusicClip oldClip, MusicClip newClip, SequencerMultiplexer sequencer) {
     }
 
     @Override
-    public void beforeMusicPlay(IMusicClip oldClip, IMusicClip newClip, SequencerMultiplexer sequencer) {
+    public void beforeMusicPlay(MusicClip oldClip, MusicClip newClip, SequencerMultiplexer sequencer) {
     }
 }

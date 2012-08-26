@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiUnavailableException;
 
 /**
  *
@@ -27,15 +28,17 @@ import javax.sound.midi.InvalidMidiDataException;
 public class LoopMusicEventListener extends AbstractMusicEventListener {
 
     @Override
-    public void onMusicStop(IMusicClip oldClip, IMusicClip newClip, SequencerMultiplexer sequencer) {
-        try {
-            if (oldClip == newClip) {
+    public void onMusicStop(MusicClip oldClip, MusicClip newClip, SequencerMultiplexer sequencer) {
+        if (oldClip == newClip) {
+            try {
                 newClip.start();
+            } catch (IOException ex) {
+                Logger.getLogger(LoopMusicEventListener.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InvalidMidiDataException ex) {
+                Logger.getLogger(LoopMusicEventListener.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (MidiUnavailableException ex) {
+                Logger.getLogger(LoopMusicEventListener.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (IOException ex) {
-            Logger.getLogger(LoopMusicEventListener.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvalidMidiDataException ex) {
-            Logger.getLogger(LoopMusicEventListener.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

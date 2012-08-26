@@ -29,7 +29,5 @@ public interface IMusicClip {
 
     public void stop();
 
-    public CountDownLatch start() throws IOException, InvalidMidiDataException;
-
     public int getPosition();
 }
