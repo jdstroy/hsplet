@@ -248,7 +248,7 @@ public class BasicCommand extends FunctionBase {
                 subdir = cwd(context).toURI();
                 file_mask = new_mask;
             } else {
-                subdir = cwd(context).toURI().resolve(new_mask.substring(0, index));
+                subdir = context.resolve(new_mask.substring(0, index));
                 file_mask = new_mask.substring(index + 1, new_mask.length());
             }
             File[] dirlist = new File(subdir).listFiles(
