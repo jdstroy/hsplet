@@ -31,29 +31,29 @@ import javax.sound.midi.Sequencer;
  * @author jdstroy
  */
 public class SequencerMultiplexer {
-    
+
     public SequencerMultiplexer(Sequencer target) {
         this.target = target;
     }
-    
+
     private class Monitor implements Runnable {
-        
+
         private MusicClip myClip;
         private CountDownLatch gate = new CountDownLatch(1);
-        
+
         public Monitor(MusicClip myClip) {
             this.myClip = myClip;
         }
-        
+
         public CountDownLatch getCountDownLatch() {
             return gate;
         }
-        
+
         @Override
         public void run() {
-            
+
             boolean isMyClip = currentClip == myClip;
-            
+
             do {
                 while (target.isRunning() && isMyClip) {
                     isMyClip = currentClip == myClip;
@@ -66,19 +66,15 @@ public class SequencerMultiplexer {
                         }
                     }
                 }
-                if (myClip.isLoop() && !target.isRunning() && isMyClip) {
+                if (myClip.isLoop() && !target.isRunning()) {
                     try {
-                        myClip.start(SequencerPlaybackMode.PlaybackRepeatAsynchronous);
+                        SequencerMultiplexer.this.playConditional(myClip);
                     } catch (IOException ex) {
-                        Logger.getLogger(SequencerMultiplexer.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (InvalidMidiDataException ex) {
-                        Logger.getLogger(SequencerMultiplexer.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (MidiUnavailableException ex) {
                         Logger.getLogger(SequencerMultiplexer.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             } while (myClip.isLoop() && isMyClip);
-            
+
             gate.countDown();
             myClip.stop();
         }
@@ -87,29 +83,29 @@ public class SequencerMultiplexer {
     private Sequencer target;
     private MusicClip currentClip;
     private List<MusicEventListener> eventListeners = new ArrayList<MusicEventListener>();
-    
+
     public List<MusicEventListener> getEventListeners() {
         return eventListeners;
     }
-    
+
     public void setEventListeners(List<MusicEventListener> eventListeners) {
         this.eventListeners = eventListeners;
     }
-    
+
     public Sequencer getTarget() {
         return target;
     }
-    
+
     public void stop() {
         _stop(currentClip, null);
     }
-    
+
     @Override
     protected void finalize() throws Throwable {
         dispose();
         super.finalize();
     }
-    
+
     private void dispose() {
         synchronized (this) {
             if (target.isOpen()) {
@@ -130,11 +126,11 @@ public class SequencerMultiplexer {
         long value = target.getMicrosecondPosition() / 1000;
         return value > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) (value);
     }
-    
+
     private void _stop(MusicClip source, MusicClip destination) {
-        
+
         synchronized (this) {
-            
+
             try {
                 // Notify all of our listeners
                 for (MusicEventListener listener : eventListeners) {
@@ -157,23 +153,38 @@ public class SequencerMultiplexer {
             for (MusicEventListener listener : eventListeners) {
                 listener.onMusicStop(source, destination, this);
             }
-            
+
             this.currentClip = null;
         }
     }
-    
-    CountDownLatch play(MusicClip clip) throws InvalidMidiDataException, MidiUnavailableException, IOException {
-        
+
+    void playConditional(MusicClip clip) throws IOException {
         synchronized (this) {
-            
+            if (currentClip == clip) {
+                try {
+                    target.setSequence(clip.getInputStream());
+                } catch (Exception ex) {
+                    throw new IOException("Couldn't get MIDI input stream.", ex);
+                }
+                target.setMicrosecondPosition(0);
+                target.start();
+                clip.setPlaying(true);
+            }
+        }
+    }
+
+    CountDownLatch play(MusicClip clip) throws InvalidMidiDataException, MidiUnavailableException, IOException {
+
+        synchronized (this) {
+
             MusicClip oldClip = currentClip;
-            
+
             _stop(oldClip, clip);
-            
+
             for (MusicEventListener listener : eventListeners) {
                 listener.beforeMusicPlay(oldClip, clip, this);
             }
-            
+
             try {
                 if (!target.isOpen()) {
                     target.open();
@@ -198,27 +209,27 @@ public class SequencerMultiplexer {
                 Monitor m = new Monitor(clip);
                 monitor.submit(m);
                 return m.getCountDownLatch();
-                
+
             } catch (Exception ex) {
                 _stop(clip, null);
                 throw ex;
             } finally {
-                
+
                 for (MusicEventListener listener : eventListeners) {
                     listener.onMusicPlay(oldClip, clip, this);
                 }
             }
         }
     }
-    
+
     public IMusicClip getCurrentClip() {
         return currentClip;
     }
-    
+
     private void setCurrentClip(MusicClip currentClip) {
         this.currentClip = currentClip;
     }
-    
+
     public MusicClip newClip(Callable<InputStream> sequence) {
         return new MusicClip(this, sequence);
     }
