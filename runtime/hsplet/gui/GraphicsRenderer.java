@@ -338,9 +338,22 @@ public class GraphicsRenderer {
 				}
 
 			}
+                        try {
+                            EventQueue.invokeAndWait(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
 
-			// 一行分コピー
-			gsquare_line(win, dest, dxs, dys, src, sxs, sys);
+                                        // 一行分コピー
+                                        gsquare_line(win, dest, dxs, dys, src, sxs, sys);
+                                    }
+                                }
+                            ); 
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(GraphicsRenderer.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (InvocationTargetException ex) {
+                            Logger.getLogger(GraphicsRenderer.class.getName()).log(Level.SEVERE, null, ex);
+                        }
 		}
 	}
 
@@ -433,21 +446,9 @@ public class GraphicsRenderer {
 
                 final int[] destPixelsFinal = destPixels;
                 final int[] dOpt = new int[] { dx, dy, dw};
-        try {
-            EventQueue.invokeAndWait(new Runnable() {
-
-        @Override
-        public void run() {
-            
             gcopy_line(win, destPixelsFinal, srcPixels, dOpt[2]);
 
             dr.setPixels(dOpt[0], dOpt[1], dOpt[2], 1, destPixelsFinal);
-        }
-    }); } catch (InterruptedException ex) {
-            Logger.getLogger(GraphicsRenderer.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvocationTargetException ex) {
-            Logger.getLogger(GraphicsRenderer.class.getName()).log(Level.SEVERE, null, ex);
-        }
 		
 	}
 
