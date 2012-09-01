@@ -202,11 +202,17 @@ public class hspda extends FunctionBase {
 		}
 
 		context.stat.value = sameStringIndex;
-		try {
-			sortget.set(new Integer(objToInt(sortget.get(sameStringIndex))+1), sameStringIndex);
-		} catch (ArrayIndexOutOfBoundsException e) {
-			setElementAtEx(sortget, sameStringIndex, 1);
-		}
+                /*try {*/
+                    if (sameStringIndex < sortget.size() && objToInt(sortget.get(sameStringIndex))+1 < sortget.size()) {
+                        sortget.set(new Integer(objToInt(sortget.get(sameStringIndex))+1), sameStringIndex);
+                    } else {
+                        setElementAtEx(sortget, sameStringIndex, 1);
+                    }
+                /*} catch (ArrayIndexOutOfBoundsException e) {
+                        setElementAtEx(sortget, sameStringIndex, 1);
+                } catch (IndexOutOfBoundsException e) {
+                        setElementAtEx(sortget, sameStringIndex, 1);
+                }*/
 	}
 
 	/**
@@ -267,7 +273,7 @@ public class hspda extends FunctionBase {
 	 */
 	private static void setElementAtEx(final ArrayList<Integer> vector, final int index, final int value) {
 		vector.ensureCapacity(index + 1);
-		while (vector.size() <= index) {
+		while (vector.size() <= index + 1) {
 			vector.add(new Integer(0));
 		}
 		vector.set(new Integer(value), index);
