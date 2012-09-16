@@ -285,19 +285,24 @@ public class elona extends FunctionBase {
         final int[] destPixelsFinal = destPixels;
         final int[] dOpt = new int[]{dx, dy, dw};
         gcopy_line(win, destPixelsFinal, srcPixels, dOpt[2]);
-        try {
-            EventQueue.invokeAndWait(new Runnable() {
+        Runnable task = new Runnable() {
 
                 @Override
                 public void run() {
 
                     dr.setPixels(dOpt[0], dOpt[1], dOpt[2], 1, destPixelsFinal);
                 }
-            });
-        } catch (InterruptedException ex) {
-            Logger.getLogger(elona.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvocationTargetException ex) {
-            Logger.getLogger(elona.class.getName()).log(Level.SEVERE, null, ex);
+            };
+        if (EventQueue.isDispatchThread()) {
+            task.run();
+        } else {
+            try {
+                EventQueue.invokeAndWait(task);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(elona.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InvocationTargetException ex) {
+                Logger.getLogger(elona.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         ArrayFactory.INTS_FACTORY.recycle(srcPixels);
