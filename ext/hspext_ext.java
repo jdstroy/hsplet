@@ -18,6 +18,7 @@ import hsplet.Context;
 import hsplet.function.FunctionBase;
 import hsplet.gui.Bmscr;
 import hsplet.gui.Mesbox;
+import hsplet.variable.ByteString;
 import hsplet.variable.Operand;
 import hsplet.variable.Scalar;
 import java.util.List;
@@ -48,14 +49,20 @@ public class hspext_ext extends FunctionBase {
      * Gets information about an edit control selected through a call to aplobj
      * Writes information to numericTarget at index.
      *
-     * mode: 0 - The current cursor position. rowIndex is ignored. 1 - The
-     * number of lines. rowIndex is ignored. 2 - The number of characters in
-     * rowIndex.
+     * <div> <div>mode:</div> <ul> <li><div>0 - The current cursor position.
+     * rowIndex is ignored.</div></li> <li><div>1 - The number of lines.
+     * rowIndex is ignored.</div></li> <li><div>2 - The number of characters in
+     * rowIndex.</div></li> </ul> </div>
      *
-     * @param destination
-     * @param index
-     * @param mode
-     * @param rowIndex
+     * @param destination A writable Operand to which the result is assigned.
+     * @param index Index of
+     * <code>destination</code> to write
+     * @param mode Operational mode, specified as follows:<div> <ul> <li><div>0 - The
+     * current cursor position. rowIndex is ignored.</div></li> <li><div>1 - The
+     * number of lines. rowIndex is ignored.</div></li> <li><div>2 - The number
+     * of characters in rowIndex.</div></li> </ul> </div>
+     * @param rowIndex Only used if
+     * <code>mode == 2</code>; specifies the row to be counted
      */
     public void apledit(Operand destination, int index, int mode, int rowIndex) {
 
