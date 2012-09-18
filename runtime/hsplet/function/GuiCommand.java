@@ -106,7 +106,7 @@ public class GuiCommand extends FunctionBase {
             final Button obj = new Button(text, context, jump == null ? JumpStatement.Goto : jump, label);
 
             addObject(context, win, obj, new Dimension(win.owidth, win.oheight));
-            
+
             obj.setID(context.stat.value);
         }
     }
@@ -1476,9 +1476,17 @@ public class GuiCommand extends FunctionBase {
         win.redraw(l, t, r - l, b - t);
     }
 
-    public static void grotate(final Context context, final int id, final int sx, final int sy, final double angle,
+    public static void grotate(final Context context, final int id, int sx, int sy, final double angle,
             final Operand dwv, final int dwi, final Operand dhv, final int dhi) {
 
+        if (sx < 0) {
+            Logger.getLogger(GuiCommand.class.getName()).log(Level.WARNING, "grotate with negative sx = {0}, sx defaulting to 0", sx);
+            sx = 0;
+        }
+        if (sy < 0) {
+            Logger.getLogger(GuiCommand.class.getName()).log(Level.WARNING, "grotate with negative sy = {0}, sy defaulting to 0", sy);
+            sy = 0;
+        }
         final Bmscr win = (Bmscr) context.windows.get(context.targetWindow);
 
         final int dw = toInt(dwv, dwi, win.gwidth);
