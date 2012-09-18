@@ -39,13 +39,13 @@ public class ProgramCommand extends FunctionBase {
 			if(O!=null) switch(O.getType())
 			{
 				case Operand.Type.STRING:
-					context.refstr.value=O.toByteString(0);
+					context.refstr.value.assign(O.toByteString(0).toString());
 					break;
 				case Operand.Type.DOUBLE:
-					context.refdval.value=O.toDouble(0);
+					context.refdval.assign(O.toDouble(0));
 					break;
 				case Operand.Type.INTEGER:
-					context.stat.value=O.toInt(0);
+					context.stat.assign(O.toInt(0));
 					break;
 			}
 		} finally {
