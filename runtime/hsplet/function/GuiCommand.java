@@ -208,7 +208,7 @@ public class GuiCommand extends FunctionBase {
                     case JFileChooser.APPROVE_OPTION:
                         context.stat.value = 1;
                         try {
-                            context.refstr.value.assign(chooser.getSelectedFile().toURI().toURL().toString());
+                            context.refstr.assign(Scalar.fromValue(chooser.getSelectedFile().toURI().toURL().toString()));
                         } catch (MalformedURLException e) {
                             e.printStackTrace();
                         }
@@ -837,20 +837,32 @@ public class GuiCommand extends FunctionBase {
 
     public static void gcopy(final Context context, final int srcId, final int sx, final int sy, final Operand wv,
             final int wvi, final Operand hv, final int hvi) {
+        try {
+            if (srcId < 0 || srcId >= context.windows.size() || context.windows.get(srcId) == null) {
+                context.error(HSPError.InvalidParameterValue, "gcopy", "srcId==" + srcId);
+            }
 
-        if (srcId < 0 || srcId >= context.windows.size() || context.windows.get(srcId) == null) {
-            context.error(HSPError.InvalidParameterValue, "gcopy", "srcId==" + srcId);
+            final Bmscr win = (Bmscr) context.windows.get(context.targetWindow);
+            final Bmscr src = (Bmscr) context.windows.get(srcId);
+
+            final int w = toInt(wv, wvi, win.gwidth);
+            final int h = toInt(hv, hvi, win.gheight);
+
+            EventQueue.invokeAndWait(
+                new Runnable() {
+                @Override
+                    public void run() {
+                        GraphicsRenderer.gcopy(win, win.cx, win.cy, src.backImage, sx, sy, w, h);
+
+                        win.redraw(win.cx, win.cy, w, h);
+                    }
+                }
+            );
+        } catch (InterruptedException ex) {
+            Logger.getLogger(GuiCommand.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(GuiCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        final Bmscr win = (Bmscr) context.windows.get(context.targetWindow);
-        final Bmscr src = (Bmscr) context.windows.get(srcId);
-
-        final int w = toInt(wv, wvi, win.gwidth);
-        final int h = toInt(hv, hvi, win.gheight);
-
-        GraphicsRenderer.gcopy(win, win.cx, win.cy, src.backImage, sx, sy, w, h);
-
-        win.redraw(win.cx, win.cy, w, h);
 
     }
 
