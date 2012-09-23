@@ -6,11 +6,7 @@ package hsplet.function;
 import hsplet.Context;
 import hsplet.HSPError;
 import hsplet.Task;
-import hsplet.variable.DoubleArray;
-import hsplet.variable.IntArray;
-import hsplet.variable.Operand;
-import hsplet.variable.StringArray;
-import hsplet.variable.Variable;
+import hsplet.variable.*;
 
 /**
  * HSP のプログラム制御コマンド群。
@@ -39,7 +35,7 @@ public class ProgramCommand extends FunctionBase {
 			if(O!=null) switch(O.getType())
 			{
 				case Operand.Type.STRING:
-					context.refstr.value.assign(O.toByteString(0).toString());
+					context.refstr.assign(Scalar.fromValue(O.toByteString(0)));
 					break;
 				case Operand.Type.DOUBLE:
 					context.refdval.assign(O.toDouble(0));
@@ -47,6 +43,8 @@ public class ProgramCommand extends FunctionBase {
 				case Operand.Type.INTEGER:
 					context.stat.assign(O.toInt(0));
 					break;
+                                default:
+                                    assert false : "This should never happen!";
 			}
 		} finally {
 			--context.sublev.value;
@@ -61,14 +59,16 @@ public class ProgramCommand extends FunctionBase {
 			if(O!=null) switch(O.getType())
 			{
 				case Operand.Type.STRING:
-					context.refstr.assign(O.toByteString(0).toString());
+					context.refstr.assign(Scalar.fromValue(O.toByteString(0)));
 					break;
 				case Operand.Type.DOUBLE:
-					context.refdval.assign(O.toDouble(0));
+					context.refdval.assign(Scalar.fromValue(O.toDouble(0)));
 					break;
 				case Operand.Type.INTEGER:
-					context.stat.assign(O.toInt(0));
+					context.stat.assign(Scalar.fromValue(O.toInt(0)));
 					break;
+                                default:
+                                    assert false : "This should never happen!";
 			}
 			return;
 		} finally {
@@ -84,14 +84,16 @@ public class ProgramCommand extends FunctionBase {
 			if(O!=null) switch(O.getType())
 			{
 				case Operand.Type.STRING:
-					context.refstr.assign(O.toByteString(0).toString());
+					context.refstr.assign(Scalar.fromValue(O.toByteString(0)));
 					break;
 				case Operand.Type.DOUBLE:
-					context.refdval.assign(O.toDouble(0));
+					context.refdval.assign(Scalar.fromValue(O.toDouble(0)));
 					break;
 				case Operand.Type.INTEGER:
-					context.stat.assign(O.toInt(0));
+					context.stat.assign(Scalar.fromValue(O.toInt(0)));
 					break;
+                                default:
+                                    assert false : "This should never happen!";
 			} else {
 				context.error(HSPError.ReturnValueNotSpecified, "callVal", "label==" + label);
 			}
@@ -219,6 +221,8 @@ public class ProgramCommand extends FunctionBase {
 			((Variable) v).value = new StringArray(64, Math.max(1, l0), Math.max(1, l1), Math.max(1, l2), Math.max(1,
 					l3));
 			break;
+                default:
+                        assert false : "This should never happen!";
 
 		}
 
@@ -311,6 +315,8 @@ public class ProgramCommand extends FunctionBase {
 		case 65:
 			((Variable) v).value = context.refdval;
 			break;
+                default:
+                    assert false : "This should never happen!";
 		}
 	}
 
