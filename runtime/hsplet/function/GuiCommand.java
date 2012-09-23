@@ -1472,19 +1472,37 @@ public class GuiCommand extends FunctionBase {
         final double si = Math.sin(angle);
         final double co = Math.cos(angle);
 
-        int[] dx = new int[]{(int) (-w * co + h * si) + cx - 1, (int) (w * co + h * si) + cx - 1,
+        final int[] dx = new int[]{(int) (-w * co + h * si) + cx - 1, (int) (w * co + h * si) + cx - 1,
             (int) (w * co - h * si) + cx - 1, (int) (-w * co - h * si) + cx - 1,};
-        int[] dy = new int[]{(int) (-w * si - h * co) + cy - 1, (int) (w * si - h * co) + cy - 1,
+        final int[] dy = new int[]{(int) (-w * si - h * co) + cy - 1, (int) (w * si - h * co) + cy - 1,
             (int) (w * si + h * co) + cy - 1, (int) (-w * si + h * co) + cy - 1,};
+        try {
+            EventQueue.invokeAndWait(new Runnable() {
 
-        GraphicsRenderer.gsquare(win, dx, dy);
+                @Override
+                public void run() {
+                    GraphicsRenderer.gsquare(win, dx, dy);
+                }
+            });
 
-        final int l = Math.min(Math.min(Math.min(dx[0], dx[1]), dx[2]), dx[3]);
-        final int t = Math.min(Math.min(Math.min(dy[0], dy[1]), dy[2]), dy[3]);
-        final int r = Math.max(Math.max(Math.max(dx[0], dx[1]), dx[2]), dx[3]);
-        final int b = Math.max(Math.max(Math.max(dy[0], dy[1]), dy[2]), dy[3]);
+            final int l = Math.min(Math.min(Math.min(dx[0], dx[1]), dx[2]), dx[3]);
+            final int t = Math.min(Math.min(Math.min(dy[0], dy[1]), dy[2]), dy[3]);
+            final int r = Math.max(Math.max(Math.max(dx[0], dx[1]), dx[2]), dx[3]);
+            final int b = Math.max(Math.max(Math.max(dy[0], dy[1]), dy[2]), dy[3]);
 
-        win.redraw(l, t, r - l, b - t);
+            EventQueue.invokeAndWait(new Runnable() {
+
+                @Override
+                public void run() {
+                    win.redraw(l, t, r - l, b - t);
+                }
+            });
+
+        } catch (InterruptedException ex) {
+            Logger.getLogger(GuiCommand.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(GuiCommand.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public static void grotate(final Context context, final int id, int sx, int sy, final double angle,
