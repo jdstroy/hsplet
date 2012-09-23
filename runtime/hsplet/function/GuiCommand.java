@@ -849,15 +849,14 @@ public class GuiCommand extends FunctionBase {
             final int h = toInt(hv, hvi, win.gheight);
 
             EventQueue.invokeAndWait(
-                new Runnable() {
-                @Override
-                    public void run() {
-                        GraphicsRenderer.gcopy(win, win.cx, win.cy, src.backImage, sx, sy, w, h);
+                    new Runnable() {
 
-                        win.redraw(win.cx, win.cy, w, h);
-                    }
-                }
-            );
+                        @Override
+                        public void run() {
+                            GraphicsRenderer.gcopy(win, win.cx, win.cy, src.backImage, sx, sy, w, h);
+                            win.redraw(win.cx, win.cy, w, h);
+                        }
+                    });
         } catch (InterruptedException ex) {
             Logger.getLogger(GuiCommand.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvocationTargetException ex) {
