@@ -43,6 +43,7 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
+import org.yi.jdstroy.commons.EDTUtils;
 
 /**
  * HSP ÇÃägí£GUIÉRÉ}ÉìÉhåQÅB
@@ -747,7 +748,7 @@ public class GuiCommand extends FunctionBase {
             return;
         }
         try {
-            EventQueue.invokeAndWait(new Runnable() {
+            EDTUtils.invokeAndWait(new Runnable() {
 
                 @Override
                 public void run() {
@@ -791,7 +792,7 @@ public class GuiCommand extends FunctionBase {
                 break;
             case 1:
                 try {
-                    EventQueue.invokeAndWait(new Runnable() {
+                    EDTUtils.invokeAndWait(new Runnable() {
 
                         @Override
                         public void run() {
@@ -810,7 +811,7 @@ public class GuiCommand extends FunctionBase {
                 break;
             case 2:
                 try {
-                    EventQueue.invokeAndWait(new Runnable() {
+                    EDTUtils.invokeAndWait(new Runnable() {
 
                         @Override
                         public void run() {
@@ -848,7 +849,7 @@ public class GuiCommand extends FunctionBase {
             final int w = toInt(wv, wvi, win.gwidth);
             final int h = toInt(hv, hvi, win.gheight);
 
-            EventQueue.invokeAndWait(
+            EDTUtils.invokeAndWait(
                     new Runnable() {
 
                         @Override
@@ -1405,10 +1406,21 @@ public class GuiCommand extends FunctionBase {
         final int t = Math.min(y1, y2);
         final int r = Math.max(x1, x2) + 1;
         final int b = Math.max(y1, y2) + 1;
+        try {
+            EDTUtils.invokeAndWait(new Runnable() {
 
-        g.fillRect(l, t, r - l, b - t);
+                @Override
+                public void run() {
+                    g.fillRect(l, t, r - l, b - t);
+                    win.redraw(l, t, r - l, b - t);
+                }
+            });
+        } catch (InterruptedException ex) {
+            Logger.getLogger(GuiCommand.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(GuiCommand.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-        win.redraw(l, t, r - l, b - t);
     }
 
     public static void objprm(final Context context, final int id, final Operand v, final int vi) {
@@ -1439,6 +1451,8 @@ public class GuiCommand extends FunctionBase {
             case 2:
                 win.objfont = win.font;
                 break;
+            default:
+                assert false : "This should never happen!";
         }
 
     }
@@ -1477,7 +1491,7 @@ public class GuiCommand extends FunctionBase {
         final int[] dy = new int[]{(int) (-w * si - h * co) + cy - 1, (int) (w * si - h * co) + cy - 1,
             (int) (w * si + h * co) + cy - 1, (int) (-w * si + h * co) + cy - 1,};
         try {
-            EventQueue.invokeAndWait(new Runnable() {
+            EDTUtils.invokeAndWait(new Runnable() {
 
                 @Override
                 public void run() {
@@ -1490,7 +1504,7 @@ public class GuiCommand extends FunctionBase {
             final int r = Math.max(Math.max(Math.max(dx[0], dx[1]), dx[2]), dx[3]);
             final int b = Math.max(Math.max(Math.max(dy[0], dy[1]), dy[2]), dy[3]);
 
-            EventQueue.invokeAndWait(new Runnable() {
+            EDTUtils.invokeAndWait(new Runnable() {
 
                 @Override
                 public void run() {
