@@ -109,7 +109,7 @@ public class VolatileValue extends Operand {
 
         update();
 
-        value.inc(index);
+        value.dec(index);
     }
 
     public void assign(final int index, final int newValue){
