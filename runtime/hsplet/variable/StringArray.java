@@ -99,35 +99,38 @@ public final class StringArray extends Array {
 	}
 
 	public void assign(final int index, final int newValue){
-		if (index >= values.length) {
-			expand(index);
-		}
-		values[index].assign(new ByteString(Integer.toString(newValue)));
+            assign(index, Integer.toString(newValue));
 	}
 	public void assign(final int index, final double newValue){
-		if (index >= values.length) {
-			expand(index);
-		}
-		values[index].assign(new ByteString(Double.toString(newValue)));
+            assign(index, Double.toString(newValue));
 	}
+        
 	public void assign(final int index, final String newValue){
-		if (index >= values.length) {
-			expand(index);
-		}
-		values[index].assign(new ByteString(newValue));
+	    assign(index, new ByteString(newValue));
 	}
 
+        /**
+         * Canon assign() for StringArray.  Delegate all assignments to this method.
+         * Does not apply to assignAdd (for now).
+         * @param index
+         * @param newValue 
+         */
+        public void assign(final int index, final ByteString newValue){
+		if (index >= values.length) {
+			expand(index);
+		}
+		values[index].assign(newValue);
+	}
+        
 	//@Override
 	public void assign(final int index, final Operand rhs, final int rhi) {
-
-		if (index >= values.length) {
-			expand(index);
-		}
-		values[index].assign(rhs.toByteString(rhi));
+            assign(index, rhs.toByteString(rhi));
 	}
 
 	//@Override
 	public void assignAdd(final int index, final Operand rhs, final int rhi) {
+            // perhaps a safer way to do this:
+            //assign(index, ByteString.concat(toByteString(index), rhs.toByteString(rhi)));
 
 		if (index >= values.length) {
 			expand(index);

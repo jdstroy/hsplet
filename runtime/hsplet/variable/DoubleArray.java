@@ -93,80 +93,64 @@ public final class DoubleArray extends Array {
     }
 
     public void assign(final int index, final int newValue){
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] = (double)newValue;
+        assign(index, (double) newValue);
     }
+    
+    /**
+     * Canon assign() for DoubleArray.  Delegate all assignments to this method.
+     * @param index
+     * @param newValue 
+     */
+    @Override
     public void assign(final int index, final double newValue){
         if (index >= values.length) {
             expand(index);
         }
         values[index] = newValue;
     }
+    
     public void assign(final int index, final String newValue){
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] = Conversion.strtod(newValue);;
+        assign(index, Conversion.strtod(newValue));
     }
 
     //@Override
+    /**
+     * Assigns rhs.toDouble(index) to this.values[index].
+     * HSPlet implementation originally contained a try/catch which swallows 
+     * and prints all java.lang.Error thrown by calling expand.
+     * 
+     * See commit 1ef14301a36a for the original implementation.
+     * @param index
+     * @param rhs
+     * @param rhi 
+     */
     public void assign(final int index, final Operand rhs, final int rhi) {
-
-        if (index >= values.length) {
-            try {
-                expand(index);
-            } catch (Error e) {
-                e.printStackTrace();
-            }
-        }
-        values[index] = rhs.toDouble(rhi);
+        assign(index, rhs.toDouble(index));
     }
 
     //@Override
     public void assignAdd(final int index, final Operand rhs, final int rhi) {
-
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] += rhs.toDouble(rhi);
+        assign(index, toDouble(index) + rhs.toDouble(rhi));
     }
 
     //@Override
     public void assignSub(final int index, final Operand rhs, final int rhi) {
-
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] -= rhs.toDouble(rhi);
+        assign(index, toDouble(index) - rhs.toDouble(rhi));
     }
 
     //@Override
     public void assignMul(final int index, final Operand rhs, final int rhi) {
-
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] *= rhs.toDouble(rhi);
+        assign(index, toDouble(index) * rhs.toDouble(rhi));
     }
 
     //@Override
     public void assignDiv(final int index, final Operand rhs, final int rhi) {
-
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] /= rhs.toDouble(rhi);
+        assign(index, toDouble(index) / rhs.toDouble(rhi));
     }
 
     //@Override
     public void assignMod(final int index, final Operand rhs, final int rhi) {
-
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] %= rhs.toDouble(rhi);
+        assign(index, toDouble(index) % rhs.toDouble(rhi));
     }
 
     //@Override
@@ -327,42 +311,26 @@ public final class DoubleArray extends Array {
 
     @Override
     public void assignNe(int index, Operand rhs, int rhi) {
-
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] = (values[index] != rhs.toDouble(rhi)) ? 1.0 : 0.0;
+        assign(index, toDouble(index) != rhs.toDouble(index) ? 1.0 : 0.0);
     }
 
     @Override
     public void assignGt(int index, Operand rhs, int rhi) {
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] = (values[index] > rhs.toDouble(rhi)) ? 1.0 : 0.0;
+        assign(index, toDouble(index) > rhs.toDouble(index) ? 1.0 : 0.0);
     }
 
     @Override
     public void assignLt(int index, Operand rhs, int rhi) {
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] = (values[index] < rhs.toDouble(rhi)) ? 1.0 : 0.0;
+        assign(index, toDouble(index) < rhs.toDouble(index) ? 1.0 : 0.0);
     }
 
     @Override
     public void assignGtEq(int index, Operand rhs, int rhi) {
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] = (values[index] >= rhs.toDouble(rhi)) ? 1.0 : 0.0;
+        assign(index, toDouble(index) >= rhs.toDouble(index) ? 1.0 : 0.0);
     }
 
     @Override
     public void assignLtEq(int index, Operand rhs, int rhi) {
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] = (values[index] <= rhs.toDouble(rhi)) ? 1.0 : 0.0;
+        assign(index, toDouble(index) <= rhs.toDouble(index) ? 1.0 : 0.0);
     }
 }

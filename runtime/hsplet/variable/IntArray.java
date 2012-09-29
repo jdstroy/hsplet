@@ -92,6 +92,15 @@ public final class IntArray extends Array {
         --values[index];
     }
 
+    /**
+     * Attempt to assign newValue at index for this array.
+     * If the array dimensions cannot currently accommodate the specified index, 
+     * attempt to expand() the array to fit.
+     * 
+     * Canon assign() for DoubleArray.  Delegate all assignments to this method.
+     * @param index
+     * @param newValue 
+     */
     public void assign(final int index, final int newValue){
         if (index >= values.length) {
             expand(index);
@@ -99,116 +108,66 @@ public final class IntArray extends Array {
         values[index] = newValue;
     }
     public void assign(final int index, final double newValue){
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] = (int)newValue;
+        assign(index, (int) newValue);
     }
+    
     public void assign(final int index, final String newValue){
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] = Conversion.strtoi(newValue);;
+        assign(index, Conversion.strtoi(newValue));
     }
 
     @Override
     public void assign(final int index, final Operand rhs, final int rhi) {
-
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] = rhs.toInt(rhi);
+        assign(index, rhs.toInt(rhi));
     }
 
     @Override
     public void assignAdd(final int index, final Operand rhs, final int rhi) {
-
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] += rhs.toInt(rhi);
+        assign(index, toInt(index) + rhs.toInt(rhi));
     }
 
     @Override
     public void assignSub(final int index, final Operand rhs, final int rhi) {
-
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] -= rhs.toInt(rhi);
+        assign(index, toInt(index) - rhs.toInt(rhi));
     }
 
     @Override
     public void assignMul(final int index, final Operand rhs, final int rhi) {
-
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] *= rhs.toInt(rhi);
+        assign(index, toInt(index) * rhs.toInt(rhi));
     }
 
     @Override
     public void assignDiv(final int index, final Operand rhs, final int rhi) {
-
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] /= rhs.toInt(rhi);
+        assign(index, toInt(index) / rhs.toInt(rhi));
     }
 
     @Override
     public void assignMod(final int index, final Operand rhs, final int rhi) {
-
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] %= rhs.toInt(rhi);
+        assign(index, toInt(index) % rhs.toInt(rhi));
     }
 
     @Override
     public void assignAnd(final int index, final Operand rhs, final int rhi) {
-
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] &= rhs.toInt(rhi);
+        assign(index, toInt(index) & rhs.toInt(rhi));
     }
 
     @Override
     public void assignOr(final int index, final Operand rhs, final int rhi) {
-
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] |= rhs.toInt(rhi);
+        assign(index, toInt(index) | rhs.toInt(rhi));
     }
 
     @Override
     public void assignXor(final int index, final Operand rhs, final int rhi) {
-
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] ^= rhs.toInt(rhi);
+        assign(index, toInt(index) ^ rhs.toInt(rhi));
     }
 
     @Override
     public void assignSr(final int index, final Operand rhs, final int rhi) {
-
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] >>= rhs.toInt(rhi);
+        assign(index, toInt(index) >> rhs.toInt(rhi));
     }
 
     @Override
     public void assignSl(final int index, final Operand rhs, final int rhi) {
-
-        if (index >= values.length) {
-            expand(index);
-        }
-
-        values[index] <<= rhs.toInt(rhi);
+        assign(index, toInt(index) << rhs.toInt(rhi));
     }
 
     @Override
@@ -340,41 +299,26 @@ public final class IntArray extends Array {
 
     @Override
     public void assignNe(int index, Operand rhs, int rhi) {
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] = (values[index] != rhs.toInt(rhi)) ? 1 : 0;
+        assign(index, toInt(index) != rhs.toInt(rhi) ? 1 : 0);
     }
 
     @Override
     public void assignGt(int index, Operand rhs, int rhi) {
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] = (values[index] > rhs.toInt(rhi)) ? 1 : 0;
+        assign(index, toInt(index) > rhs.toInt(rhi) ? 1 : 0);
     }
 
     @Override
     public void assignLt(int index, Operand rhs, int rhi) {
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] = (values[index] < rhs.toInt(rhi)) ? 1 : 0;
+        assign(index, toInt(index) < rhs.toInt(rhi) ? 1 : 0);
     }
 
     @Override
     public void assignGtEq(int index, Operand rhs, int rhi) {
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] = (values[index] >= rhs.toInt(rhi)) ? 1 : 0;
+        assign(index, toInt(index) >= rhs.toInt(rhi) ? 1 : 0);
     }
 
     @Override
     public void assignLtEq(int index, Operand rhs, int rhi) {
-        if (index >= values.length) {
-            expand(index);
-        }
-        values[index] = (values[index] <= rhs.toInt(rhi)) ? 1 : 0;
+        assign(index, toInt(index) <= rhs.toInt(rhi) ? 1 : 0);
     }
 }
