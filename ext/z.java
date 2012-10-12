@@ -59,7 +59,7 @@ public class z extends FunctionBase {
                     "zOpen(\"{0}\") converted to zOpen(\"{1}\")", 
                     new Object[]{path, new_path});
             try {
-                handle.assign(index, Scalar.fromValue(serial), 0);
+                handle.assignRaw(index, Scalar.fromValue(serial), 0);
                 if (fileMode == 0) {
                     GZIPInputStream in = new GZIPInputStream(new FileInputStream(new File(new_path)));
                     inHandles.put(new Integer(serial), in);
@@ -70,12 +70,12 @@ public class z extends FunctionBase {
                 serial++;
             } catch (IOException ex) {
                 Logger.getLogger(z.class.getName()).log(Level.SEVERE, null, ex);
-                handle.assign(0, Scalar.fromValue(-1), 0);
+                handle.assignRaw(0, Scalar.fromValue(-1), 0);
                 return -1;
             }
         } catch (URISyntaxException ex) {
             Logger.getLogger(z.class.getName()).log(Level.SEVERE, null, ex);
-            handle.assign(0, Scalar.fromValue(-1), 0);
+            handle.assignRaw(0, Scalar.fromValue(-1), 0);
             return -1;
         }
         return 0;

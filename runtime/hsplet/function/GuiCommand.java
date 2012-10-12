@@ -979,7 +979,7 @@ public class GuiCommand extends FunctionBase {
          * KeyEvent.getKeyText(key), Boolean.toString(context.keyPressed[key]) }
          * );
          */
-        v.assign(vi, Scalar.fromValue(context.keyPressed[key] ? 1 : 0), 0);
+        v.assignRaw(vi, Scalar.fromValue(context.keyPressed[key] ? 1 : 0), 0);
 
     }
 
@@ -1468,7 +1468,7 @@ public class GuiCommand extends FunctionBase {
             context.stickTrigger = 0;
         }
 
-        v.assign(vi, Scalar.fromValue((context.stickState & notrigerMask) | (context.stickTrigger & ~notrigerMask)), 0);
+        v.assignRaw(vi, Scalar.fromValue((context.stickState & notrigerMask) | (context.stickTrigger & ~notrigerMask)), 0);
 
         context.stickTrigger = 0;
     }
@@ -1544,10 +1544,13 @@ public class GuiCommand extends FunctionBase {
         final double si = Math.sin(angle);
         final double co = Math.cos(angle);
 
+        // dx and dy contain x and y positions for each corner of the original image post-rotation.
+        // Top left, Top right, Bottom right, Bottom left
         int[] dx = new int[]{(int) Math.round(-w * co + h * si) + cx, (int) Math.round(w * co + h * si) + cx,
             (int) Math.round(w * co - h * si) + cx, (int) Math.round(-w * co - h * si) + cx,};
         int[] dy = new int[]{(int) Math.round(-w * si - h * co) + cy, (int) Math.round(w * si - h * co) + cy,
             (int) Math.round(w * si + h * co) + cy, (int) Math.round(-w * si + h * co) + cy,};
+        // I'm a little confused these use win.gwidth / gheight and not dw / dh
         int[] sxs = new int[]{sx, sx + win.gwidth - 1, sx + win.gwidth - 1, sx};
         int[] sys = new int[]{sy, sy, sy + win.gheight - 1, sy + win.gheight - 1};
 
@@ -1579,9 +1582,9 @@ public class GuiCommand extends FunctionBase {
 
         final Bmscr win = (Bmscr) context.windows.get(context.targetWindow);
 
-        final int[] dx = new int[]{dxs.toInt(dxi), dxs.toInt(dxi + 1), dxs.toInt(dxi + 2), dxs.toInt(dxi + 3)};
+        final int[] dx = new int[]{dxs.toIntRaw(dxi), dxs.toIntRaw(dxi + 1), dxs.toIntRaw(dxi + 2), dxs.toIntRaw(dxi + 3)};
 
-        final int[] dy = new int[]{dys.toInt(dyi), dys.toInt(dyi + 1), dys.toInt(dyi + 2), dys.toInt(dyi + 3)};
+        final int[] dy = new int[]{dys.toIntRaw(dyi), dys.toIntRaw(dyi + 1), dys.toIntRaw(dyi + 2), dys.toIntRaw(dyi + 3)};
 
         if (id >= 0) {
 
@@ -1599,9 +1602,9 @@ public class GuiCommand extends FunctionBase {
                 return;
             }
 
-            final int[] sx = new int[]{sxs.toInt(sxi), sxs.toInt(sxi + 1), sxs.toInt(sxi + 2), sxs.toInt(sxi + 3)};
+            final int[] sx = new int[]{sxs.toIntRaw(sxi), sxs.toIntRaw(sxi + 1), sxs.toIntRaw(sxi + 2), sxs.toIntRaw(sxi + 3)};
 
-            final int[] sy = new int[]{sys.toInt(syi), sys.toInt(syi + 1), sys.toInt(syi + 2), sys.toInt(syi + 3)};
+            final int[] sy = new int[]{sys.toIntRaw(syi), sys.toIntRaw(syi + 1), sys.toIntRaw(syi + 2), sys.toIntRaw(syi + 3)};
 
             GraphicsRenderer.gsquare(win, dx, dy, ((Bmscr) context.windows.get(id)).backImage, sx, sy);
         } else {

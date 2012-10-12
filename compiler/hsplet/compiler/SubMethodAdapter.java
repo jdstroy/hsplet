@@ -76,10 +76,13 @@ public class SubMethodAdapter extends SSMAdapter {
     private ArrayList<MyOpcode> opcodeList=new ArrayList<MyOpcode>();
     private ArrayList<PotentialSSM> potentialSSMs=new ArrayList<PotentialSSM>();
     private ArrayList<Mark> markList=new ArrayList<Mark>();
-    private ArrayList<Integer> stackTypes=new ArrayList<Integer>();
-    /*{
-        public boolean add(Integer I){System.out.println("Add "+(I.intValue()>baseStackType?getStackTypeDesc(I):I)); return super.add(I);}
-    };*/
+    private ArrayList<Integer> stackTypes=new ArrayList<Integer>()
+    /*
+    {
+        public boolean add(Integer I){System.out.println("Add "+(I.intValue()>=baseStackType?getStackTypeDesc(I):I)); return super.add(I);}
+    }
+    */
+    ;
     //private int stackSize=0;
     private int maxSizeSinceLastE=0;
     private boolean returnSinceLastE=false;
@@ -122,7 +125,6 @@ public class SubMethodAdapter extends SSMAdapter {
     /* Unused in submethods but exist in outputted code:
      * case NEW:
      * case RETURN:
-     * case ASTORE:
      */
     private int getMaxSize(int opcode) {
         switch(opcode) {
@@ -145,10 +147,12 @@ public class SubMethodAdapter extends SSMAdapter {
             case Opcodes.ICONST_4:
             case Opcodes.ICONST_5:
             case Opcodes.DUP:
+            case Opcodes.DUP2:
                 return 1;
             case Opcodes.ILOAD:
             case Opcodes.BIPUSH:
                 return 2;
+            case Opcodes.ASTORE:
             case Opcodes.ISTORE:
                 //after an ISTORE, wait till stack is empty to allow subroutine entrance/exits
                 waitTillStackClear=true;
@@ -207,12 +211,14 @@ public class SubMethodAdapter extends SSMAdapter {
             //case IINC:
             case Opcodes.ARETURN:
                 returnSinceLastE=true;
+                if(stackTypes.size()!=1) throw new RuntimeException("Stack is too large to do a return!");
             case Opcodes.TABLESWITCH:
             case Opcodes.IFNULL:
             case Opcodes.IFLE:
             case Opcodes.IFNE:
             case Opcodes.IFEQ:
             case Opcodes.POP:
+            case Opcodes.ASTORE:
             case Opcodes.ISTORE:
                 stackDecrease(1);
                 break;
@@ -220,11 +226,14 @@ public class SubMethodAdapter extends SSMAdapter {
                 stackDecrease(1);
                 stackTypes.add(getStackTypeInt(mo.otherData.toString()));
                 break;
-            case Opcodes.DUP: {
+            case Opcodes.DUP:
+            case Opcodes.DUP2: {
                 Integer type=stackTypes.get(stackTypes.size()-1);
                 stackDecrease(1);
                 stackTypes.add(type);
                 stackTypes.add(type);
+                if(mo.opcode == Opcodes.DUP2)
+                	stackTypes.add(type);
                 break;
             }
             case Opcodes.GETFIELD: {

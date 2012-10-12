@@ -290,6 +290,7 @@ public class GraphicsRenderer {
 			// 通る辺が複数ある場合（普通２本ある）、左のほうがdxs[0]、右のほうがdxs[1] にはいる。
 			// sxs/sys にはそのときのコピー元座標が入る
 
+			// y is the y of the destination picture to be drawn
 			dys[0] = dys[1] = y;
 			dxs[0] = 0x7FFFFFFF;
 			dxs[1] = -0x80000000;
@@ -322,6 +323,8 @@ public class GraphicsRenderer {
 				} else {
 					continue;
 				}
+				// x is the x position where the line between the two corners (i and j) of the original image
+				// intersects the 
 
 				// x　が小さいなら左辺
 				if (x < dxs[0]) {

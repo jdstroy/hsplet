@@ -60,7 +60,7 @@ public class Mesbox extends JScrollPane implements VolatileValueUpdater, HSPCont
      */
     public Mesbox(final Variable v, final int vi, boolean editable, boolean hscroll) {
         super(VERTICAL_SCROLLBAR_ALWAYS, hscroll ? HORIZONTAL_SCROLLBAR_ALWAYS : HORIZONTAL_SCROLLBAR_NEVER);
-        text = new JTextArea(v.toString(vi));
+        text = new JTextArea(v.toStringRaw(vi));
         text.setNavigationFilter(new NonNegativeNavigationFilter());
 
         text.setEditable(editable);
@@ -75,7 +75,7 @@ public class Mesbox extends JScrollPane implements VolatileValueUpdater, HSPCont
 
     public void update(final Operand value) {
 
-        value.assign(vi, Scalar.fromValue(text.getText().replace("\n", "\r\n")), 0);
+        value.assignRaw(vi, Scalar.fromValue(text.getText().replace("\n", "\r\n")), 0);
     }
 
     public Component asComponent() {
@@ -85,7 +85,7 @@ public class Mesbox extends JScrollPane implements VolatileValueUpdater, HSPCont
     public void setValue(Operand v, int vi) {
 
         final JTextArea component = text;
-        final String value = v.toString(vi);
+        final String value = v.toStringRaw(vi);
         try {
             EventQueue.invokeAndWait(new Runnable() {
 

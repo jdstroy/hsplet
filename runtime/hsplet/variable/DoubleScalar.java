@@ -39,214 +39,214 @@ public final class DoubleScalar extends Scalar {
 	}
 
 	//@Override
-	public String toString(final int index) {
+	public String toStringRaw(final int index) {
 
 		return Double.toString(value);
 	}
 
 	//@Override
-	public ByteString toByteString(final int index) {
+	public ByteString toByteStringRaw(final int index) {
 
 		return new ByteString(Double.toString(value));
 	}
 
 	//@Override
-	public int toInt(final int index) {
+	public int toIntRaw(final int index) {
 
 		return (int) value;
 	}
 
 	//@Override
-	public double toDouble(final int index) {
+	public double toDoubleRaw(final int index) {
 
 		return value;
 	}
 
 	//@Override
-	public Operand dup(int index) {
+	public Operand dupRaw(int index) {
 		return Scalar.fromValue(value);
 	}
 
 	//@Override
-	public void inc(final int index) {
+	public void incRaw(final int index) {
 
 		++value;
 	}
 
 	//@Override
-	public void dec(final int index) {
+	public void decRaw(final int index) {
 
 		--value;
 	}
 
-	public void assign(final int index, final int newValue){
+	public void assignRaw(final int index, final int newValue){
 		value = (double)newValue;
 	}
-	public void assign(final int index, final double newValue){
+	public void assignRaw(final int index, final double newValue){
 		value = newValue;
 	}
-	public void assign(final int index, final String newValue){
+	public void assignRaw(final int index, final String newValue){
 		value = Conversion.strtod(newValue);
 	}
 
 	//@Override
-	public void assign(final int index, final Operand rhs, final int rhi) {
+	public void assignRaw(final int index, final Operand rhs, final int rhi) {
 
-		value = rhs.toDouble(rhi);
+		value = rhs.toDoubleRaw(rhi);
 	}
 
 	//@Override
-	public void assignAdd(final int index, final Operand rhs, final int rhi) {
+	public void assignAddRaw(final int index, final Operand rhs, final int rhi) {
 
-		value += rhs.toDouble(rhi);
+		value += rhs.toDoubleRaw(rhi);
 	}
 
 	//@Override
-	public void assignSub(final int index, final Operand rhs, final int rhi) {
+	public void assignSubRaw(final int index, final Operand rhs, final int rhi) {
 
-		value -= rhs.toDouble(rhi);
+		value -= rhs.toDoubleRaw(rhi);
 	}
 
 	//@Override
-	public void assignMul(final int index, final Operand rhs, final int rhi) {
+	public void assignMulRaw(final int index, final Operand rhs, final int rhi) {
 
-		value *= rhs.toDouble(rhi);
+		value *= rhs.toDoubleRaw(rhi);
 	}
 
 	//@Override
-	public void assignDiv(final int index, final Operand rhs, final int rhi) {
+	public void assignDivRaw(final int index, final Operand rhs, final int rhi) {
 
-		value /= rhs.toDouble(rhi);
+		value /= rhs.toDoubleRaw(rhi);
 	}
 
 	//@Override
-	public void assignMod(final int index, final Operand rhs, final int rhi) {
+	public void assignModRaw(final int index, final Operand rhs, final int rhi) {
 
-		value %= rhs.toDouble(rhi);
+		value %= rhs.toDoubleRaw(rhi);
 	}
 
 	//@Override
-	public void assignAnd(final int index, final Operand rhs, final int rhi) {
+	public void assignAndRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("&=");
 	}
 
 	//@Override
-	public void assignOr(final int index, final Operand rhs, final int rhi) {
+	public void assignOrRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("|=");
 	}
 
 	//@Override
-	public void assignXor(final int index, final Operand rhs, final int rhi) {
+	public void assignXorRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("^=");
 	}
 
 	//@Override
-	public void assignSr(final int index, final Operand rhs, final int rhi) {
+	public void assignSrRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator(">>=");
 	}
 
 	//@Override
-	public void assignSl(final int index, final Operand rhs, final int rhi) {
+	public void assignSlRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("<<=");
 	}
 
 	//@Override
-	public Operand add(final int index, final Operand rhs, final int rhi) {
+	public Operand addRaw(final int index, final Operand rhs, final int rhi) {
 
-		return new DoubleScalar(value + rhs.toDouble(rhi));
+		return new DoubleScalar(value + rhs.toDoubleRaw(rhi));
 	}
 
 	//@Override
-	public Operand eq(final int index, final Operand rhs, final int rhi) {
+	public Operand eqRaw(final int index, final Operand rhs, final int rhi) {
 
-		return new IntScalar((value == rhs.toDouble(rhi)) ? 1 : 0);
+		return new IntScalar((value == rhs.toDoubleRaw(rhi)) ? 1 : 0);
 	}
 
 	//@Override
-	public Operand ne(final int index, final Operand rhs, final int rhi) {
+	public Operand neRaw(final int index, final Operand rhs, final int rhi) {
 
-		return new IntScalar((value != rhs.toDouble(rhi)) ? 1 : 0);
+		return new IntScalar((value != rhs.toDoubleRaw(rhi)) ? 1 : 0);
 	}
 
 	//@Override
-	public Operand gt(final int index, final Operand rhs, final int rhi) {
+	public Operand gtRaw(final int index, final Operand rhs, final int rhi) {
 
-		return new IntScalar((value > rhs.toDouble(rhi)) ? 1 : 0);
+		return new IntScalar((value > rhs.toDoubleRaw(rhi)) ? 1 : 0);
 	}
 
 	//@Override
-	public Operand lt(final int index, final Operand rhs, final int rhi) {
+	public Operand ltRaw(final int index, final Operand rhs, final int rhi) {
 
-		return new IntScalar((value < rhs.toDouble(rhi)) ? 1 : 0);
+		return new IntScalar((value < rhs.toDoubleRaw(rhi)) ? 1 : 0);
 	}
 
 	//@Override
-	public Operand ge(final int index, final Operand rhs, final int rhi) {
+	public Operand geRaw(final int index, final Operand rhs, final int rhi) {
 
-		return new IntScalar((value >= rhs.toDouble(rhi)) ? 1 : 0);
+		return new IntScalar((value >= rhs.toDoubleRaw(rhi)) ? 1 : 0);
 	}
 
 	//@Override
-	public Operand le(final int index, final Operand rhs, final int rhi) {
+	public Operand leRaw(final int index, final Operand rhs, final int rhi) {
 
-		return new IntScalar((value <= rhs.toDouble(rhi)) ? 1 : 0);
+		return new IntScalar((value <= rhs.toDoubleRaw(rhi)) ? 1 : 0);
 	}
 
 	//@Override
-	public Operand sub(final int index, final Operand rhs, final int rhi) {
+	public Operand subRaw(final int index, final Operand rhs, final int rhi) {
 
-		return new DoubleScalar(value - rhs.toDouble(rhi));
+		return new DoubleScalar(value - rhs.toDoubleRaw(rhi));
 	}
 
 	//@Override
-	public Operand mul(final int index, final Operand rhs, final int rhi) {
+	public Operand mulRaw(final int index, final Operand rhs, final int rhi) {
 
-		return new DoubleScalar(value * rhs.toDouble(rhi));
+		return new DoubleScalar(value * rhs.toDoubleRaw(rhi));
 	}
 
 	//@Override
-	public Operand div(final int index, final Operand rhs, final int rhi) {
+	public Operand divRaw(final int index, final Operand rhs, final int rhi) {
 
-		return new DoubleScalar(value / rhs.toDouble(rhi));
+		return new DoubleScalar(value / rhs.toDoubleRaw(rhi));
 	}
 
 	//@Override
-	public Operand mod(final int index, final Operand rhs, final int rhi) {
+	public Operand modRaw(final int index, final Operand rhs, final int rhi) {
 
-		return new DoubleScalar(value % rhs.toDouble(rhi));
+		return new DoubleScalar(value % rhs.toDoubleRaw(rhi));
 	}
 
 	//@Override
-	public Operand and(final int index, final Operand rhs, final int rhi) {
+	public Operand andRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("&");
 	}
 
 	//@Override
-	public Operand or(final int index, final Operand rhs, final int rhi) {
+	public Operand orRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("|");
 	}
 
 	//@Override
-	public Operand xor(final int index, final Operand rhs, final int rhi) {
+	public Operand xorRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("^");
 	}
 
 	//@Override
-	public Operand sl(final int index, final Operand rhs, final int rhi) {
+	public Operand slRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("<<");
 	}
 
 	//@Override
-	public Operand sr(final int index, final Operand rhs, final int rhi) {
+	public Operand srRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator(">>");
 	}
@@ -269,27 +269,27 @@ public final class DoubleScalar extends Scalar {
 	}
 
     @Override
-    public void assignNe(int index, Operand rhs, int rhi) {
-        value = (value != rhs.toDouble(rhi)) ? 1.0 : 0.0;
+    public void assignNeRaw(int index, Operand rhs, int rhi) {
+        value = (value != rhs.toDoubleRaw(rhi)) ? 1.0 : 0.0;
     }
 
     @Override
-    public void assignGt(int index, Operand rhs, int rhi) {
-        value = (value > rhs.toDouble(rhi)) ? 1.0 : 0.0;
+    public void assignGtRaw(int index, Operand rhs, int rhi) {
+        value = (value > rhs.toDoubleRaw(rhi)) ? 1.0 : 0.0;
     }
 
     @Override
-    public void assignLt(int index, Operand rhs, int rhi) {
-        value = (value < rhs.toDouble(rhi)) ? 1.0 : 0.0;
+    public void assignLtRaw(int index, Operand rhs, int rhi) {
+        value = (value < rhs.toDoubleRaw(rhi)) ? 1.0 : 0.0;
     }
 
     @Override
-    public void assignGtEq(int index, Operand rhs, int rhi) {
-        value = (value >= rhs.toDouble(rhi)) ? 1.0 : 0.0;
+    public void assignGtEqRaw(int index, Operand rhs, int rhi) {
+        value = (value >= rhs.toDoubleRaw(rhi)) ? 1.0 : 0.0;
     }
 
     @Override
-    public void assignLtEq(int index, Operand rhs, int rhi) {
-        value = (value <= rhs.toDouble(rhi)) ? 1.0 : 0.0;
+    public void assignLtEqRaw(int index, Operand rhs, int rhi) {
+        value = (value <= rhs.toDoubleRaw(rhi)) ? 1.0 : 0.0;
     }
 }

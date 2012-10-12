@@ -2,6 +2,8 @@
  * $Id: Operand.java,v 1.2.4.1 2006/08/02 12:13:06 Yuki Exp $
  */
 package hsplet.variable;
+import hsplet.Context;
+import hsplet.HSPError;
 
 import java.io.Serializable;
 
@@ -27,6 +29,10 @@ import java.io.Serializable;
  * @version $Revision: 1.2.4.1 $, $Date: 2006/08/02 12:13:06 $
  */
 public abstract class Operand implements Serializable {
+
+	/** Hackish way to have all Operands be able to refer to context.
+	 *  This is initialized in Applet.init(Class) */
+	public static Context context;
 
 	/** このクラスを含むソースファイルのバージョン文字列。 */
 	private static final String fileVersionID = "$Id: Operand.java,v 1.2.4.1 2006/08/02 12:13:06 Yuki Exp $";
@@ -62,6 +68,7 @@ public abstract class Operand implements Serializable {
 		/** データの型、用途は不明。 */
 		public static final int MODULE = 5;
 	}
+	public static int[] typeSizes = {Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, 8, 4, Integer.MAX_VALUE};
 
 	/**
 	 * データの型を取得する。
@@ -69,6 +76,11 @@ public abstract class Operand implements Serializable {
 	 * @return データの型。
 	 */
 	public abstract int getType();
+	
+	public Operand checkVar() {
+		context.error(HSPError.VariableNameNotSpecified, "", "Variable required.");
+		return this;
+	}
 
 	/**
 	 * 配列の一次元目の要素数を取得する。
@@ -76,6 +88,9 @@ public abstract class Operand implements Serializable {
 	 * @return 配列の一次元目の要素数。
 	 */
 	public abstract int l0();
+	public abstract int checkSize0(int size);
+	public abstract int checkResize0(int size);
+	public abstract void checkIncrementSize(int size);
 
 	/**
 	 * 配列の二次元目の要素数を取得する。
@@ -83,6 +98,8 @@ public abstract class Operand implements Serializable {
 	 * @return 配列の二次元目の要素数。
 	 */
 	public abstract int l1();
+	public abstract int checkSize1(int size);
+	public abstract int checkResize1(int size);
 
 	/**
 	 * 配列の三次元目の要素数を取得する。
@@ -90,6 +107,8 @@ public abstract class Operand implements Serializable {
 	 * @return 配列の三次元目の要素数。
 	 */
 	public abstract int l2();
+	public abstract int checkSize2(int size);
+	public abstract int checkResize2(int size);
 
 	/**
 	 * 配列の四次元目の要素数を取得する。
@@ -97,7 +116,11 @@ public abstract class Operand implements Serializable {
 	 * @return 配列の四次元目の要素数。
 	 */
 	public abstract int l3();
+	public abstract int checkSize3(int size);
+	public abstract int checkResize3(int size);
 
+	public abstract int getIndex(final int i0);
+	public abstract int getResizeIndex(final int i0);
 	/**
 	 * 二次元配列の、一次元に換算した要素のインデックスを取得する。
 	 * <p>
@@ -109,6 +132,7 @@ public abstract class Operand implements Serializable {
 	 * @return 一次元に換算した要素番号。
 	 */
 	public abstract int getIndex(final int i0, final int i1);
+	public abstract int getResizeIndex(final int i0, final int i1);
 
 	/**
 	 * 三次元配列の、一次元に換算した要素のインデックスを取得する。
@@ -122,6 +146,7 @@ public abstract class Operand implements Serializable {
 	 * @return 一次元に換算した要素番号。
 	 */
 	public abstract int getIndex(final int i0, final int i1, final int i2);
+	public abstract int getResizeIndex(final int i0, final int i1, final int i2);
 
 	/**
 	 * 四次元配列の、一次元に換算した要素のインデックスを取得する。
@@ -135,8 +160,8 @@ public abstract class Operand implements Serializable {
 	 * @param i3 四次元目のインデックス。
 	 * @return 一次元に換算した要素番号。
 	 */
-	public abstract int getIndex(final int i0, final int i1, final int i2,
-			final int i3);
+	public abstract int getIndex(final int i0, final int i1, final int i2, final int i3);
+	public abstract int getResizeIndex(final int i0, final int i1, final int i2, final int i3);
 
 	/**
 	 * このオブジェクトの文字列値を取得する。
@@ -147,9 +172,8 @@ public abstract class Operand implements Serializable {
 	 * @return オブジェクトの文字列値。
 	 */
 	//@Override
-	public final String toString() {
-
-		return toString(0);
+	public String toString() {
+		return toStringRaw(0);
 	}
 
 	/**
@@ -161,7 +185,19 @@ public abstract class Operand implements Serializable {
 	 * @param index 文字列値を取得する要素番号。
 	 * @return オブジェクトの文字列値。
 	 */
-	public abstract String toString(final int index);
+	public abstract String toStringRaw(final int index);
+	public String toString(final int i0) {
+		return toStringRaw(getIndex(i0));
+	}
+	public String toString(final int i0, final int i1) {
+		return toStringRaw(getIndex(i0, i1));
+	}
+	public String toString(final int i0, final int i1, final int i2) {
+		return toStringRaw(getIndex(i0, i1, i2));
+	}
+	public String toString(final int i0, final int i1, final int i2, final int i3) {
+		return toStringRaw(getIndex(i0, i1, i2, i3));
+	}
 
 	/**
 	 * このオブジェクトの文字列値を取得する。
@@ -172,7 +208,22 @@ public abstract class Operand implements Serializable {
 	 * @param index 文字列値を取得する要素番号。
 	 * @return オブジェクトの文字列値。
 	 */
-	public abstract ByteString toByteString(final int index);
+	public abstract ByteString toByteStringRaw(final int index);
+	public ByteString toByteString() {
+		return toByteStringRaw(0);
+	}
+	public ByteString toByteString(final int i0) {
+		return toByteStringRaw(getIndex(i0));
+	}
+	public ByteString toByteString(final int i0, final int i1) {
+		return toByteStringRaw(getIndex(i0, i1));
+	}
+	public ByteString toByteString(final int i0, final int i1, final int i2) {
+		return toByteStringRaw(getIndex(i0, i1, i2));
+	}
+	public ByteString toByteString(final int i0, final int i1, final int i2, final int i3) {
+		return toByteStringRaw(getIndex(i0, i1, i2, i3));
+	}
 
 	/**
 	 * このオブジェクトの整数値を取得する。
@@ -183,7 +234,22 @@ public abstract class Operand implements Serializable {
 	 * @param index 整数値を取得する要素番号。
 	 * @return オブジェクトの整数値。
 	 */
-	public abstract int toInt(final int index);
+	public abstract int toIntRaw(final int index);
+	public int toInt() {
+		return toIntRaw(0);
+	}
+	public int toInt(final int i0) {
+		return toIntRaw(getIndex(i0));
+	}
+	public int toInt(final int i0, final int i1) {
+		return toIntRaw(getIndex(i0, i1));
+	}
+	public int toInt(final int i0, final int i1, final int i2) {
+		return toIntRaw(getIndex(i0, i1, i2));
+	}
+	public int toInt(final int i0, final int i1, final int i2, final int i3) {
+		return toIntRaw(getIndex(i0, i1, i2, i3));
+	}
 
 	/**
 	 * このオブジェクトの小数値を取得する。
@@ -194,7 +260,22 @@ public abstract class Operand implements Serializable {
 	 * @param index 小数値を取得する要素番号。
 	 * @return オブジェクトの小数値。
 	 */
-	public abstract double toDouble(final int index);
+	public abstract double toDoubleRaw(final int index);
+	public double toDouble() {
+		return toDoubleRaw(0);
+	}
+	public double toDouble(final int i0) {
+		return toDoubleRaw(getIndex(i0));
+	}
+	public double toDouble(final int i0, final int i1) {
+		return toDoubleRaw(getIndex(i0, i1));
+	}
+	public double toDouble(final int i0, final int i1, final int i2) {
+		return toDoubleRaw(getIndex(i0, i1, i2));
+	}
+	public double toDouble(final int i0, final int i1, final int i2, final int i3) {
+		return toDoubleRaw(getIndex(i0, i1, i2, i3));
+	}
 
 	/**
 	 * オブジェクトへの参照を取得する。
@@ -223,45 +304,195 @@ public abstract class Operand implements Serializable {
 	 * @param index 複製されるようそのインデックス。
 	 * @return このオブジェクトの指定された要素を保持するオブジェクト。
 	 */
-	public abstract Operand dup(final int index);
+	public abstract Operand dupRaw(final int index);
+	public Operand dup() {
+		return dupRaw(0);
+	}
+	public Operand dup(final int i0) {
+		return dupRaw(getIndex(i0));
+	}
+	public Operand dup(final int i0, final int i1) {
+		return dupRaw(getIndex(i0, i1));
+	}
+	public Operand dup(final int i0, final int i1, final int i2) {
+		return dupRaw(getIndex(i0, i1, i2));
+	}
+	public Operand dup(final int i0, final int i1, final int i2, final int i3) {
+		return dupRaw(getIndex(i0, i1, i2, i3));
+	}
 
 	/**
 	 * オブジェクトの値をインクリメントする。
 	 * 
 	 * @param index インクリメントする要素番号。
 	 */
-	public abstract void inc(final int index);
+	public abstract void incRaw(final int index);
+	public void inc() {
+		incRaw(0);
+	}
+	public void inc(final int i0) {
+		incRaw(getIndex(i0));
+	}
+	public void inc(final int i0, final int i1) {
+		incRaw(getIndex(i0, i1));
+	}
+	public void inc(final int i0, final int i1, final int i2) {
+		incRaw(getIndex(i0, i1, i2));
+	}
+	public void inc(final int i0, final int i1, final int i2, final int i3) {
+		incRaw(getIndex(i0, i1, i2, i3));
+	}
 
 	/**
 	 * オブジェクトの値をデクリメントする。
 	 * 
 	 * @param index デクリメントする要素番号。
 	 */
-	public abstract void dec(final int index);
+	public abstract void decRaw(final int index);
+	public void dec() {
+		decRaw(0);
+	}
+	public void dec(final int i0) {
+		decRaw(getIndex(i0));
+	}
+	public void dec(final int i0, final int i1) {
+		decRaw(getIndex(i0, i1));
+	}
+	public void dec(final int i0, final int i1, final int i2) {
+		decRaw(getIndex(i0, i1, i2));
+	}
+	public void dec(final int i0, final int i1, final int i2, final int i3) {
+		decRaw(getIndex(i0, i1, i2, i3));
+	}
 
-        /*
-         * "assignNe", "assignGt", "assignLt", "assignGtEq", "assignLtEq",
-         */
-        /**
-         * assignNe - assign Not Equal
-         */
-        public abstract void assignNe(final int index, final Operand rhs, final int rhi);
-        /**
-         * assignNe - assign Greater Than
-         */
-        public abstract void assignGt(final int index, final Operand rhs, final int rhi);
-        /**
-         * assignNe - assign Less Than
-         */
-        public abstract void assignLt(final int index, final Operand rhs, final int rhi);
-        /**
-         * assignNe - assign Greater Than or Equal
-         */
-        public abstract void assignGtEq(final int index, final Operand rhs, final int rhi);
-        /**
-         * assignNe - assign Less Than or Equal
-         */
-        public abstract void assignLtEq(final int index, final Operand rhs, final int rhi);
+    /*
+     * "assignNe", "assignGt", "assignLt", "assignGtEq", "assignLtEq",
+     */
+    /**
+     * assignNe - assign Not Equal
+     */
+    public abstract void assignNeRaw(final int index, final Operand rhs, final int rhi);
+    public void assignNeRaw(final int index, final Operand rhs) {
+	    assignNeRaw(index, rhs, 0);
+    }
+	public void assignNe(final Operand rhs) {
+		assignNeRaw(0, rhs, 0);
+	}
+	public void assignNe(final Operand rhs, final int rhi) {
+		assignNeRaw(0, rhs, rhi);
+	}
+	public void assignNe(final int i0, final Operand rhs, final int rhi) {
+		assignNeRaw(getIndex(i0), rhs, rhi);
+	}
+	public void assignNe(final int i0, final int i1, final Operand rhs, final int rhi) {
+		assignNeRaw(getIndex(i0, i1), rhs, rhi);
+	}
+	public void assignNe(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		assignNeRaw(getIndex(i0, i1, i2), rhs, rhi);
+	}
+	public void assignNe(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		assignNeRaw(getIndex(i0, i1, i2, i3), rhs, rhi);
+	}
+    /**
+     * assignNe - assign Greater Than
+     */
+    public abstract void assignGtRaw(final int index, final Operand rhs, final int rhi);
+    public void assignGtRaw(final int index, final Operand rhs) {
+	    assignGtRaw(index, rhs, 0);
+    }
+	public void assignGt(final Operand rhs) {
+		assignGtRaw(0, rhs, 0);
+	}
+	public void assignGt(final Operand rhs, final int rhi) {
+		assignGtRaw(0, rhs, rhi);
+	}
+	public void assignGt(final int i0, final Operand rhs, final int rhi) {
+		assignGtRaw(getIndex(i0), rhs, rhi);
+	}
+	public void assignGt(final int i0, final int i1, final Operand rhs, final int rhi) {
+		assignGtRaw(getIndex(i0, i1), rhs, rhi);
+	}
+	public void assignGt(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		assignGtRaw(getIndex(i0, i1, i2), rhs, rhi);
+	}
+	public void assignGt(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		assignGtRaw(getIndex(i0, i1, i2, i3), rhs, rhi);
+	}
+    /**
+     * assignNe - assign Less Than
+     */
+    public abstract void assignLtRaw(final int index, final Operand rhs, final int rhi);
+    public void assignLtRaw(final int index, final Operand rhs) {
+	    assignLtRaw(index, rhs, 0);
+    }
+	public void assignLt(final Operand rhs) {
+		assignLtRaw(0, rhs, 0);
+	}
+	public void assignLt(final Operand rhs, final int rhi) {
+		assignLtRaw(0, rhs, rhi);
+	}
+	public void assignLt(final int i0, final Operand rhs, final int rhi) {
+		assignLtRaw(getIndex(i0), rhs, rhi);
+	}
+	public void assignLt(final int i0, final int i1, final Operand rhs, final int rhi) {
+		assignLtRaw(getIndex(i0, i1), rhs, rhi);
+	}
+	public void assignLt(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		assignLtRaw(getIndex(i0, i1, i2), rhs, rhi);
+	}
+	public void assignLt(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		assignLtRaw(getIndex(i0, i1, i2, i3), rhs, rhi);
+	}
+    /**
+     * assignNe - assign Greater Than or Equal
+     */
+    public abstract void assignGtEqRaw(final int index, final Operand rhs, final int rhi);
+    public void assignGtEqRaw(final int index, final Operand rhs) {
+	    assignGtEqRaw(index, rhs, 0);
+    }
+	public void assignGtEq(final Operand rhs) {
+		assignGtEqRaw(0, rhs, 0);
+	}
+	public void assignGtEq(final Operand rhs, final int rhi) {
+		assignGtEqRaw(0, rhs, rhi);
+	}
+	public void assignGtEq(final int i0, final Operand rhs, final int rhi) {
+		assignGtEqRaw(getIndex(i0), rhs, rhi);
+	}
+	public void assignGtEq(final int i0, final int i1, final Operand rhs, final int rhi) {
+		assignGtEqRaw(getIndex(i0, i1), rhs, rhi);
+	}
+	public void assignGtEq(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		assignGtEqRaw(getIndex(i0, i1, i2), rhs, rhi);
+	}
+	public void assignGtEq(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		assignGtEqRaw(getIndex(i0, i1, i2, i3), rhs, rhi);
+	}
+    /**
+     * assignNe - assign Less Than or Equal
+     */
+    public abstract void assignLtEqRaw(final int index, final Operand rhs, final int rhi);
+    public void assignLtEqRaw(final int index, final Operand rhs) {
+	    assignLtEqRaw(index, rhs, 0);
+    }
+	public void assignLtEq(final Operand rhs) {
+		assignLtEqRaw(0, rhs, 0);
+	}
+	public void assignLtEq(final Operand rhs, final int rhi) {
+		assignLtEqRaw(0, rhs, rhi);
+	}
+	public void assignLtEq(final int i0, final Operand rhs, final int rhi) {
+		assignLtEqRaw(getIndex(i0), rhs, rhi);
+	}
+	public void assignLtEq(final int i0, final int i1, final Operand rhs, final int rhi) {
+		assignLtEqRaw(getIndex(i0, i1), rhs, rhi);
+	}
+	public void assignLtEq(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		assignLtEqRaw(getIndex(i0, i1, i2), rhs, rhi);
+	}
+	public void assignLtEq(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		assignLtEqRaw(getIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 	/**
 	 * 代入を行う。
 	 * 
@@ -269,36 +500,77 @@ public abstract class Operand implements Serializable {
 	 * @param rhs 代入元オブジェクト。
 	 * @param rhi 代入元要素番号。
 	 */
-	public abstract void assign(final int index, final int newValue);
-	public void assign(final int newValue)
-	{
-		assign(0, newValue);
+	public abstract void assignRaw(final int index, final int newValue);
+	public void assign(final int newValue) {
+		assignRaw(0, newValue);
 	}
-	public abstract void assign(final int index, final double newValue);
-	public void assign(final double newValue)
-	{
-		assign(0, newValue);
+	public void assign(final int i0, final int newValue) {
+		assignRaw(getResizeIndex(i0), newValue);
 	}
-	public abstract void assign(final int index, final String newValue);
-	public void assign(final String newValue)
-	{
-		assign(0, newValue);
+	public void assign(final int i0, final int i1, final int newValue) {
+		assignRaw(getResizeIndex(i0, i1), newValue);
+	}
+	public void assign(final int i0, final int i1, final int i2, final int newValue) {
+		assignRaw(getResizeIndex(i0, i1, i2), newValue);
+	}
+	public void assign(final int i0, final int i1, final int i2, final int i3, final int newValue) {
+		assignRaw(getResizeIndex(i0, i1, i2, i3), newValue);
+	}
+	public abstract void assignRaw(final int index, final double newValue);
+	public void assign(final double newValue) {
+		assignRaw(0, newValue);
+	}
+	public void assign(final int i0, final double newValue) {
+		assignRaw(getResizeIndex(i0), newValue);
+	}
+	public void assign(final int i0, final int i1, final double newValue) {
+		assignRaw(getResizeIndex(i0, i1), newValue);
+	}
+	public void assign(final int i0, final int i1, final int i2, final double newValue) {
+		assignRaw(getResizeIndex(i0, i1, i2), newValue);
+	}
+	public void assign(final int i0, final int i1, final int i2, final int i3, final double newValue) {
+		assignRaw(getResizeIndex(i0, i1, i2, i3), newValue);
+	}
+	public abstract void assignRaw(final int index, final String newValue);
+	public void assign(final String newValue) {
+		assignRaw(0, newValue);
+	}
+	public void assign(final int i0, final String newValue) {
+		assignRaw(getResizeIndex(i0), newValue);
+	}
+	public void assign(final int i0, final int i1, final String newValue) {
+		assignRaw(getResizeIndex(i0, i1), newValue);
+	}
+	public void assign(final int i0, final int i1, final int i2, final String newValue) {
+		assignRaw(getResizeIndex(i0, i1, i2), newValue);
+	}
+	public void assign(final int i0, final int i1, final int i2, final int i3, final String newValue) {
+		assignRaw(getResizeIndex(i0, i1, i2, i3), newValue);
 	}
 
-	public void assign(final int index, final Operand rhs)
-	{
-		assign(index, rhs, 0);
+	public abstract void assignRaw(final int index, final Operand rhs, final int rhi);
+	public void assignRaw(final int index, final Operand rhs) {
+		assignRaw(index, rhs, 0);
 	}
-	public void assign(final Operand rhs, final int rhi)
-	{
-		assign(0, rhs, rhi);
+	public void assign(final Operand rhs) {
+		assignRaw(0, rhs, 0);
 	}
-	public void assign(final Operand rhs)
-	{
-		assign(0, rhs, 0);
+	public void assign(final Operand rhs, final int rhi) {
+		assignRaw(0, rhs, rhi);
 	}
-	public abstract void assign(final int index, final Operand rhs,
-			final int rhi);
+	public void assign(final int i0, final Operand rhs, final int rhi) {
+		assignRaw(getResizeIndex(i0), rhs, rhi);
+	}
+	public void assign(final int i0, final int i1, final Operand rhs, final int rhi) {
+		assignRaw(getResizeIndex(i0, i1), rhs, rhi);
+	}
+	public void assign(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		assignRaw(getResizeIndex(i0, i1, i2), rhs, rhi);
+	}
+	public void assign(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		assignRaw(getResizeIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * 加算代入を行う。
@@ -307,8 +579,28 @@ public abstract class Operand implements Serializable {
 	 * @param rhs 代入元オブジェクト。
 	 * @param rhi 代入元要素番号。
 	 */
-	public abstract void assignAdd(final int index, final Operand rhs,
-			final int rhi);
+	public abstract void assignAddRaw(final int index, final Operand rhs, final int rhi);
+    public void assignAddRaw(final int index, final Operand rhs) {
+	    assignAddRaw(index, rhs, 0);
+    }
+	public void assignAdd(final Operand rhs) {
+		assignAddRaw(0, rhs, 0);
+	}
+	public void assignAdd(final Operand rhs, final int rhi) {
+		assignAddRaw(0, rhs, rhi);
+	}
+	public void assignAdd(final int i0, final Operand rhs, final int rhi) {
+		assignAddRaw(getResizeIndex(i0), rhs, rhi);
+	}
+	public void assignAdd(final int i0, final int i1, final Operand rhs, final int rhi) {
+		assignAddRaw(getResizeIndex(i0, i1), rhs, rhi);
+	}
+	public void assignAdd(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		assignAddRaw(getResizeIndex(i0, i1, i2), rhs, rhi);
+	}
+	public void assignAdd(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		assignAddRaw(getResizeIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * 減算代入を行う。
@@ -317,8 +609,28 @@ public abstract class Operand implements Serializable {
 	 * @param rhs 代入元オブジェクト。
 	 * @param rhi 代入元要素番号。
 	 */
-	public abstract void assignSub(final int index, final Operand rhs,
-			final int rhi);
+	public abstract void assignSubRaw(final int index, final Operand rhs, final int rhi);
+    public void assignSubRaw(final int index, final Operand rhs) {
+	    assignSubRaw(index, rhs, 0);
+    }
+	public void assignSub(final Operand rhs) {
+		assignSubRaw(0, rhs, 0);
+	}
+	public void assignSub(final Operand rhs, final int rhi) {
+		assignSubRaw(0, rhs, rhi);
+	}
+	public void assignSub(final int i0, final Operand rhs, final int rhi) {
+		assignSubRaw(getResizeIndex(i0), rhs, rhi);
+	}
+	public void assignSub(final int i0, final int i1, final Operand rhs, final int rhi) {
+		assignSubRaw(getResizeIndex(i0, i1), rhs, rhi);
+	}
+	public void assignSub(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		assignSubRaw(getResizeIndex(i0, i1, i2), rhs, rhi);
+	}
+	public void assignSub(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		assignSubRaw(getResizeIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * 乗算代入を行う。
@@ -327,8 +639,28 @@ public abstract class Operand implements Serializable {
 	 * @param rhs 代入元オブジェクト。
 	 * @param rhi 代入元要素番号。
 	 */
-	public abstract void assignMul(final int index, final Operand rhs,
-			final int rhi);
+	public abstract void assignMulRaw(final int index, final Operand rhs, final int rhi);
+    public void assignMulRaw(final int index, final Operand rhs) {
+	    assignMulRaw(index, rhs, 0);
+    }
+	public void assignMul(final Operand rhs) {
+		assignMulRaw(0, rhs, 0);
+	}
+	public void assignMul(final Operand rhs, final int rhi) {
+		assignMulRaw(0, rhs, rhi);
+	}
+	public void assignMul(final int i0, final Operand rhs, final int rhi) {
+		assignMulRaw(getResizeIndex(i0), rhs, rhi);
+	}
+	public void assignMul(final int i0, final int i1, final Operand rhs, final int rhi) {
+		assignMulRaw(getResizeIndex(i0, i1), rhs, rhi);
+	}
+	public void assignMul(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		assignMulRaw(getResizeIndex(i0, i1, i2), rhs, rhi);
+	}
+	public void assignMul(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		assignMulRaw(getResizeIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * 除算代入を行う。
@@ -337,8 +669,28 @@ public abstract class Operand implements Serializable {
 	 * @param rhs 代入元オブジェクト。
 	 * @param rhi 代入元要素番号。
 	 */
-	public abstract void assignDiv(final int index, final Operand rhs,
-			final int rhi);
+	public abstract void assignDivRaw(final int index, final Operand rhs, final int rhi);
+    public void assignDivRaw(final int index, final Operand rhs) {
+	    assignDivRaw(index, rhs, 0);
+    }
+	public void assignDiv(final Operand rhs) {
+		assignDivRaw(0, rhs, 0);
+	}
+	public void assignDiv(final Operand rhs, final int rhi) {
+		assignDivRaw(0, rhs, rhi);
+	}
+	public void assignDiv(final int i0, final Operand rhs, final int rhi) {
+		assignDivRaw(getResizeIndex(i0), rhs, rhi);
+	}
+	public void assignDiv(final int i0, final int i1, final Operand rhs, final int rhi) {
+		assignDivRaw(getResizeIndex(i0, i1), rhs, rhi);
+	}
+	public void assignDiv(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		assignDivRaw(getResizeIndex(i0, i1, i2), rhs, rhi);
+	}
+	public void assignDiv(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		assignDivRaw(getResizeIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * 剰余代入を行う。
@@ -347,8 +699,28 @@ public abstract class Operand implements Serializable {
 	 * @param rhs 代入元オブジェクト。
 	 * @param rhi 代入元要素番号。
 	 */
-	public abstract void assignMod(final int index, final Operand rhs,
-			final int rhi);
+	public abstract void assignModRaw(final int index, final Operand rhs, final int rhi);
+    public void assignModRaw(final int index, final Operand rhs) {
+	    assignModRaw(index, rhs, 0);
+    }
+	public void assignMod(final Operand rhs) {
+		assignModRaw(0, rhs, 0);
+	}
+	public void assignMod(final Operand rhs, final int rhi) {
+		assignModRaw(0, rhs, rhi);
+	}
+	public void assignMod(final int i0, final Operand rhs, final int rhi) {
+		assignModRaw(getResizeIndex(i0), rhs, rhi);
+	}
+	public void assignMod(final int i0, final int i1, final Operand rhs, final int rhi) {
+		assignModRaw(getResizeIndex(i0, i1), rhs, rhi);
+	}
+	public void assignMod(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		assignModRaw(getResizeIndex(i0, i1, i2), rhs, rhi);
+	}
+	public void assignMod(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		assignModRaw(getResizeIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * ビット論理積代入を行う。
@@ -357,8 +729,28 @@ public abstract class Operand implements Serializable {
 	 * @param rhs 代入元オブジェクト。
 	 * @param rhi 代入元要素番号。
 	 */
-	public abstract void assignAnd(final int index, final Operand rhs,
-			final int rhi);
+	public abstract void assignAndRaw(final int index, final Operand rhs, final int rhi);
+    public void assignAndRaw(final int index, final Operand rhs) {
+	    assignAndRaw(index, rhs, 0);
+    }
+	public void assignAnd(final Operand rhs) {
+		assignAndRaw(0, rhs, 0);
+	}
+	public void assignAnd(final Operand rhs, final int rhi) {
+		assignAndRaw(0, rhs, rhi);
+	}
+	public void assignAnd(final int i0, final Operand rhs, final int rhi) {
+		assignAndRaw(getResizeIndex(i0), rhs, rhi);
+	}
+	public void assignAnd(final int i0, final int i1, final Operand rhs, final int rhi) {
+		assignAndRaw(getResizeIndex(i0, i1), rhs, rhi);
+	}
+	public void assignAnd(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		assignAndRaw(getResizeIndex(i0, i1, i2), rhs, rhi);
+	}
+	public void assignAnd(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		assignAndRaw(getResizeIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * ビット論理和代入を行う。
@@ -367,8 +759,28 @@ public abstract class Operand implements Serializable {
 	 * @param rhs 代入元オブジェクト。
 	 * @param rhi 代入元要素番号。
 	 */
-	public abstract void assignOr(final int index, final Operand rhs,
-			final int rhi);
+	public abstract void assignOrRaw(final int index, final Operand rhs, final int rhi);
+    public void assignOrRaw(final int index, final Operand rhs) {
+	    assignOrRaw(index, rhs, 0);
+    }
+	public void assignOr(final Operand rhs) {
+		assignOrRaw(0, rhs, 0);
+	}
+	public void assignOr(final Operand rhs, final int rhi) {
+		assignOrRaw(0, rhs, rhi);
+	}
+	public void assignOr(final int i0, final Operand rhs, final int rhi) {
+		assignOrRaw(getResizeIndex(i0), rhs, rhi);
+	}
+	public void assignOr(final int i0, final int i1, final Operand rhs, final int rhi) {
+		assignOrRaw(getResizeIndex(i0, i1), rhs, rhi);
+	}
+	public void assignOr(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		assignOrRaw(getResizeIndex(i0, i1, i2), rhs, rhi);
+	}
+	public void assignOr(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		assignOrRaw(getResizeIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * ビット排他論理和代入を行う。
@@ -377,8 +789,28 @@ public abstract class Operand implements Serializable {
 	 * @param rhs 代入元オブジェクト。
 	 * @param rhi 代入元要素番号。
 	 */
-	public abstract void assignXor(final int index, final Operand rhs,
-			final int rhi);
+	public abstract void assignXorRaw(final int index, final Operand rhs, final int rhi);
+    public void assignXorRaw(final int index, final Operand rhs) {
+	    assignXorRaw(index, rhs, 0);
+    }
+	public void assignXor(final Operand rhs) {
+		assignXorRaw(0, rhs, 0);
+	}
+	public void assignXor(final Operand rhs, final int rhi) {
+		assignXorRaw(0, rhs, rhi);
+	}
+	public void assignXor(final int i0, final Operand rhs, final int rhi) {
+		assignXorRaw(getResizeIndex(i0), rhs, rhi);
+	}
+	public void assignXor(final int i0, final int i1, final Operand rhs, final int rhi) {
+		assignXorRaw(getResizeIndex(i0, i1), rhs, rhi);
+	}
+	public void assignXor(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		assignXorRaw(getResizeIndex(i0, i1, i2), rhs, rhi);
+	}
+	public void assignXor(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		assignXorRaw(getResizeIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * 右ビットシフト代入を行う。
@@ -387,8 +819,28 @@ public abstract class Operand implements Serializable {
 	 * @param rhs 代入元オブジェクト。
 	 * @param rhi 代入元要素番号。
 	 */
-	public abstract void assignSr(final int index, final Operand rhs,
-			final int rhi);
+	public abstract void assignSrRaw(final int index, final Operand rhs, final int rhi);
+    public void assignSrRaw(final int index, final Operand rhs) {
+	    assignSrRaw(index, rhs, 0);
+    }
+	public void assignSr(final Operand rhs) {
+		assignSrRaw(0, rhs, 0);
+	}
+	public void assignSr(final Operand rhs, final int rhi) {
+		assignSrRaw(0, rhs, rhi);
+	}
+	public void assignSr(final int i0, final Operand rhs, final int rhi) {
+		assignSrRaw(getResizeIndex(i0), rhs, rhi);
+	}
+	public void assignSr(final int i0, final int i1, final Operand rhs, final int rhi) {
+		assignSrRaw(getResizeIndex(i0, i1), rhs, rhi);
+	}
+	public void assignSr(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		assignSrRaw(getResizeIndex(i0, i1, i2), rhs, rhi);
+	}
+	public void assignSr(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		assignSrRaw(getResizeIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * 左ビットシフト代入を行う。
@@ -397,8 +849,28 @@ public abstract class Operand implements Serializable {
 	 * @param rhs 代入元オブジェクト。
 	 * @param rhi 代入元要素番号。
 	 */
-	public abstract void assignSl(final int index, final Operand rhs,
-			final int rhi);
+	public abstract void assignSlRaw(final int index, final Operand rhs, final int rhi);
+    public void assignSlRaw(final int index, final Operand rhs) {
+	    assignSlRaw(index, rhs, 0);
+    }
+	public void assignSl(final Operand rhs) {
+		assignSlRaw(0, rhs, 0);
+	}
+	public void assignSl(final Operand rhs, final int rhi) {
+		assignSlRaw(0, rhs, rhi);
+	}
+	public void assignSl(final int i0, final Operand rhs, final int rhi) {
+		assignSlRaw(getResizeIndex(i0), rhs, rhi);
+	}
+	public void assignSl(final int i0, final int i1, final Operand rhs, final int rhi) {
+		assignSlRaw(getResizeIndex(i0, i1), rhs, rhi);
+	}
+	public void assignSl(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		assignSlRaw(getResizeIndex(i0, i1, i2), rhs, rhi);
+	}
+	public void assignSl(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		assignSlRaw(getResizeIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * 加算を行う。
@@ -408,8 +880,25 @@ public abstract class Operand implements Serializable {
 	 * @param rhi 右オペランドの要素番号。
 	 * @return 演算結果。
 	 */
-	public abstract Operand add(final int index, final Operand rhs,
-			final int rhi);
+	public abstract Operand addRaw(final int index, final Operand rhs, final int rhi);
+	public Operand add(final Operand rhs) {
+		return addRaw(0, rhs, 0);
+	}
+	public Operand add(final Operand rhs, final int rhi) {
+		return addRaw(0, rhs, rhi);
+	}
+	public Operand add(final int i0, final Operand rhs, final int rhi) {
+		return addRaw(getIndex(i0), rhs, rhi);
+	}
+	public Operand add(final int i0, final int i1, final Operand rhs, final int rhi) {
+		return addRaw(getIndex(i0, i1), rhs, rhi);
+	}
+	public Operand add(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		return addRaw(getIndex(i0, i1, i2), rhs, rhi);
+	}
+	public Operand add(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		return addRaw(getIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * 減算を行う。
@@ -419,8 +908,25 @@ public abstract class Operand implements Serializable {
 	 * @param rhi 右オペランドの要素番号。
 	 * @return 演算結果。
 	 */
-	public abstract Operand sub(final int index, final Operand rhs,
-			final int rhi);
+	public abstract Operand subRaw(final int index, final Operand rhs, final int rhi);
+	public Operand sub(final Operand rhs) {
+		return subRaw(0, rhs, 0);
+	}
+	public Operand sub(final Operand rhs, final int rhi) {
+		return subRaw(0, rhs, rhi);
+	}
+	public Operand sub(final int i0, final Operand rhs, final int rhi) {
+		return subRaw(getIndex(i0), rhs, rhi);
+	}
+	public Operand sub(final int i0, final int i1, final Operand rhs, final int rhi) {
+		return subRaw(getIndex(i0, i1), rhs, rhi);
+	}
+	public Operand sub(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		return subRaw(getIndex(i0, i1, i2), rhs, rhi);
+	}
+	public Operand sub(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		return subRaw(getIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * 乗算を行う。
@@ -430,8 +936,25 @@ public abstract class Operand implements Serializable {
 	 * @param rhi 右オペランドの要素番号。
 	 * @return 演算結果。
 	 */
-	public abstract Operand mul(final int index, final Operand rhs,
-			final int rhi);
+	public abstract Operand mulRaw(final int index, final Operand rhs, final int rhi);
+	public Operand mul(final Operand rhs) {
+		return mulRaw(0, rhs, 0);
+	}
+	public Operand mul(final Operand rhs, final int rhi) {
+		return mulRaw(0, rhs, rhi);
+	}
+	public Operand mul(final int i0, final Operand rhs, final int rhi) {
+		return mulRaw(getIndex(i0), rhs, rhi);
+	}
+	public Operand mul(final int i0, final int i1, final Operand rhs, final int rhi) {
+		return mulRaw(getIndex(i0, i1), rhs, rhi);
+	}
+	public Operand mul(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		return mulRaw(getIndex(i0, i1, i2), rhs, rhi);
+	}
+	public Operand mul(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		return mulRaw(getIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * 除算を行う。
@@ -441,8 +964,25 @@ public abstract class Operand implements Serializable {
 	 * @param rhi 右オペランドの要素番号。
 	 * @return 演算結果。
 	 */
-	public abstract Operand div(final int index, final Operand rhs,
-			final int rhi);
+	public abstract Operand divRaw(final int index, final Operand rhs, final int rhi);
+	public Operand div(final Operand rhs) {
+		return divRaw(0, rhs, 0);
+	}
+	public Operand div(final Operand rhs, final int rhi) {
+		return divRaw(0, rhs, rhi);
+	}
+	public Operand div(final int i0, final Operand rhs, final int rhi) {
+		return divRaw(getIndex(i0), rhs, rhi);
+	}
+	public Operand div(final int i0, final int i1, final Operand rhs, final int rhi) {
+		return divRaw(getIndex(i0, i1), rhs, rhi);
+	}
+	public Operand div(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		return divRaw(getIndex(i0, i1, i2), rhs, rhi);
+	}
+	public Operand div(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		return divRaw(getIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * 剰余を求める。
@@ -452,8 +992,25 @@ public abstract class Operand implements Serializable {
 	 * @param rhi 右オペランドの要素番号。
 	 * @return 演算結果。
 	 */
-	public abstract Operand mod(final int index, final Operand rhs,
-			final int rhi);
+	public abstract Operand modRaw(final int index, final Operand rhs, final int rhi);
+	public Operand mod(final Operand rhs) {
+		return modRaw(0, rhs, 0);
+	}
+	public Operand mod(final Operand rhs, final int rhi) {
+		return modRaw(0, rhs, rhi);
+	}
+	public Operand mod(final int i0, final Operand rhs, final int rhi) {
+		return modRaw(getIndex(i0), rhs, rhi);
+	}
+	public Operand mod(final int i0, final int i1, final Operand rhs, final int rhi) {
+		return modRaw(getIndex(i0, i1), rhs, rhi);
+	}
+	public Operand mod(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		return modRaw(getIndex(i0, i1, i2), rhs, rhi);
+	}
+	public Operand mod(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		return modRaw(getIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * ビット論理積を求める。
@@ -463,8 +1020,25 @@ public abstract class Operand implements Serializable {
 	 * @param rhi 右オペランドの要素番号。
 	 * @return 演算結果。
 	 */
-	public abstract Operand and(final int index, final Operand rhs,
-			final int rhi);
+	public abstract Operand andRaw(final int index, final Operand rhs, final int rhi);
+	public Operand and(final Operand rhs) {
+		return andRaw(0, rhs, 0);
+	}
+	public Operand and(final Operand rhs, final int rhi) {
+		return andRaw(0, rhs, rhi);
+	}
+	public Operand and(final int i0, final Operand rhs, final int rhi) {
+		return andRaw(getIndex(i0), rhs, rhi);
+	}
+	public Operand and(final int i0, final int i1, final Operand rhs, final int rhi) {
+		return andRaw(getIndex(i0, i1), rhs, rhi);
+	}
+	public Operand and(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		return andRaw(getIndex(i0, i1, i2), rhs, rhi);
+	}
+	public Operand and(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		return andRaw(getIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * ビット論理和を求める。
@@ -474,7 +1048,25 @@ public abstract class Operand implements Serializable {
 	 * @param rhi 右オペランドの要素番号。
 	 * @return 演算結果。
 	 */
-	public abstract Operand or(final int index, final Operand rhs, final int rhi);
+	public abstract Operand orRaw(final int index, final Operand rhs, final int rhi);
+	public Operand or(final Operand rhs) {
+		return orRaw(0, rhs, 0);
+	}
+	public Operand or(final Operand rhs, final int rhi) {
+		return orRaw(0, rhs, rhi);
+	}
+	public Operand or(final int i0, final Operand rhs, final int rhi) {
+		return orRaw(getIndex(i0), rhs, rhi);
+	}
+	public Operand or(final int i0, final int i1, final Operand rhs, final int rhi) {
+		return orRaw(getIndex(i0, i1), rhs, rhi);
+	}
+	public Operand or(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		return orRaw(getIndex(i0, i1, i2), rhs, rhi);
+	}
+	public Operand or(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		return orRaw(getIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * ビット排他論理和を求める。
@@ -484,8 +1076,25 @@ public abstract class Operand implements Serializable {
 	 * @param rhi 右オペランドの要素番号。
 	 * @return 演算結果。
 	 */
-	public abstract Operand xor(final int index, final Operand rhs,
-			final int rhi);
+	public abstract Operand xorRaw(final int index, final Operand rhs, final int rhi);
+	public Operand xor(final Operand rhs) {
+		return xorRaw(0, rhs, 0);
+	}
+	public Operand xor(final Operand rhs, final int rhi) {
+		return xorRaw(0, rhs, rhi);
+	}
+	public Operand xor(final int i0, final Operand rhs, final int rhi) {
+		return xorRaw(getIndex(i0), rhs, rhi);
+	}
+	public Operand xor(final int i0, final int i1, final Operand rhs, final int rhi) {
+		return xorRaw(getIndex(i0, i1), rhs, rhi);
+	}
+	public Operand xor(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		return xorRaw(getIndex(i0, i1, i2), rhs, rhi);
+	}
+	public Operand xor(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		return xorRaw(getIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * 右ビットシフトを行う。
@@ -495,7 +1104,25 @@ public abstract class Operand implements Serializable {
 	 * @param rhi 右オペランドの要素番号。
 	 * @return 演算結果。
 	 */
-	public abstract Operand sl(final int index, final Operand rhs, final int rhi);
+	public abstract Operand slRaw(final int index, final Operand rhs, final int rhi);
+	public Operand sl(final Operand rhs) {
+		return slRaw(0, rhs, 0);
+	}
+	public Operand sl(final Operand rhs, final int rhi) {
+		return slRaw(0, rhs, rhi);
+	}
+	public Operand sl(final int i0, final Operand rhs, final int rhi) {
+		return slRaw(getIndex(i0), rhs, rhi);
+	}
+	public Operand sl(final int i0, final int i1, final Operand rhs, final int rhi) {
+		return slRaw(getIndex(i0, i1), rhs, rhi);
+	}
+	public Operand sl(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		return slRaw(getIndex(i0, i1, i2), rhs, rhi);
+	}
+	public Operand sl(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		return slRaw(getIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * 左ビットシフトを行う。
@@ -505,7 +1132,25 @@ public abstract class Operand implements Serializable {
 	 * @param rhi 右オペランドの要素番号。
 	 * @return 演算結果。
 	 */
-	public abstract Operand sr(final int index, final Operand rhs, final int rhi);
+	public abstract Operand srRaw(final int index, final Operand rhs, final int rhi);
+	public Operand sr(final Operand rhs) {
+		return srRaw(0, rhs, 0);
+	}
+	public Operand sr(final Operand rhs, final int rhi) {
+		return srRaw(0, rhs, rhi);
+	}
+	public Operand sr(final int i0, final Operand rhs, final int rhi) {
+		return srRaw(getIndex(i0), rhs, rhi);
+	}
+	public Operand sr(final int i0, final int i1, final Operand rhs, final int rhi) {
+		return srRaw(getIndex(i0, i1), rhs, rhi);
+	}
+	public Operand sr(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		return srRaw(getIndex(i0, i1, i2), rhs, rhi);
+	}
+	public Operand sr(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		return srRaw(getIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * ==比較を行う。
@@ -515,7 +1160,25 @@ public abstract class Operand implements Serializable {
 	 * @param rhi 右オペランドの要素番号。
 	 * @return 演算結果。
 	 */
-	public abstract Operand eq(final int index, final Operand rhs, final int rhi);
+	public abstract Operand eqRaw(final int index, final Operand rhs, final int rhi);
+	public Operand eq(final Operand rhs) {
+		return eqRaw(0, rhs, 0);
+	}
+	public Operand eq(final Operand rhs, final int rhi) {
+		return eqRaw(0, rhs, rhi);
+	}
+	public Operand eq(final int i0, final Operand rhs, final int rhi) {
+		return eqRaw(getIndex(i0), rhs, rhi);
+	}
+	public Operand eq(final int i0, final int i1, final Operand rhs, final int rhi) {
+		return eqRaw(getIndex(i0, i1), rhs, rhi);
+	}
+	public Operand eq(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		return eqRaw(getIndex(i0, i1, i2), rhs, rhi);
+	}
+	public Operand eq(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		return eqRaw(getIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * !=比較を行う。
@@ -525,7 +1188,25 @@ public abstract class Operand implements Serializable {
 	 * @param rhi 右オペランドの要素番号。
 	 * @return 演算結果。
 	 */
-	public abstract Operand ne(final int index, final Operand rhs, final int rhi);
+	public abstract Operand neRaw(final int index, final Operand rhs, final int rhi);
+	public Operand ne(final Operand rhs) {
+		return neRaw(0, rhs, 0);
+	}
+	public Operand ne(final Operand rhs, final int rhi) {
+		return neRaw(0, rhs, rhi);
+	}
+	public Operand ne(final int i0, final Operand rhs, final int rhi) {
+		return neRaw(getIndex(i0), rhs, rhi);
+	}
+	public Operand ne(final int i0, final int i1, final Operand rhs, final int rhi) {
+		return neRaw(getIndex(i0, i1), rhs, rhi);
+	}
+	public Operand ne(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		return neRaw(getIndex(i0, i1, i2), rhs, rhi);
+	}
+	public Operand ne(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		return neRaw(getIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * &gt;比較を行う。
@@ -535,7 +1216,25 @@ public abstract class Operand implements Serializable {
 	 * @param rhi 右オペランドの要素番号。
 	 * @return 演算結果。
 	 */
-	public abstract Operand gt(final int index, final Operand rhs, final int rhi);
+	public abstract Operand gtRaw(final int index, final Operand rhs, final int rhi);
+	public Operand gt(final Operand rhs) {
+		return gtRaw(0, rhs, 0);
+	}
+	public Operand gt(final Operand rhs, final int rhi) {
+		return gtRaw(0, rhs, rhi);
+	}
+	public Operand gt(final int i0, final Operand rhs, final int rhi) {
+		return gtRaw(getIndex(i0), rhs, rhi);
+	}
+	public Operand gt(final int i0, final int i1, final Operand rhs, final int rhi) {
+		return gtRaw(getIndex(i0, i1), rhs, rhi);
+	}
+	public Operand gt(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		return gtRaw(getIndex(i0, i1, i2), rhs, rhi);
+	}
+	public Operand gt(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		return gtRaw(getIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * &lt;比較を行う。
@@ -545,7 +1244,25 @@ public abstract class Operand implements Serializable {
 	 * @param rhi 右オペランドの要素番号。
 	 * @return 演算結果。
 	 */
-	public abstract Operand lt(final int index, final Operand rhs, final int rhi);
+	public abstract Operand ltRaw(final int index, final Operand rhs, final int rhi);
+	public Operand lt(final Operand rhs) {
+		return ltRaw(0, rhs, 0);
+	}
+	public Operand lt(final Operand rhs, final int rhi) {
+		return ltRaw(0, rhs, rhi);
+	}
+	public Operand lt(final int i0, final Operand rhs, final int rhi) {
+		return ltRaw(getIndex(i0), rhs, rhi);
+	}
+	public Operand lt(final int i0, final int i1, final Operand rhs, final int rhi) {
+		return ltRaw(getIndex(i0, i1), rhs, rhi);
+	}
+	public Operand lt(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		return ltRaw(getIndex(i0, i1, i2), rhs, rhi);
+	}
+	public Operand lt(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		return ltRaw(getIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * &gt;=比較を行う。
@@ -555,7 +1272,25 @@ public abstract class Operand implements Serializable {
 	 * @param rhi 右オペランドの要素番号。
 	 * @return 演算結果。
 	 */
-	public abstract Operand ge(final int index, final Operand rhs, final int rhi);
+	public abstract Operand geRaw(final int index, final Operand rhs, final int rhi);
+	public Operand ge(final Operand rhs) {
+		return geRaw(0, rhs, 0);
+	}
+	public Operand ge(final Operand rhs, final int rhi) {
+		return geRaw(0, rhs, rhi);
+	}
+	public Operand ge(final int i0, final Operand rhs, final int rhi) {
+		return geRaw(getIndex(i0), rhs, rhi);
+	}
+	public Operand ge(final int i0, final int i1, final Operand rhs, final int rhi) {
+		return geRaw(getIndex(i0, i1), rhs, rhi);
+	}
+	public Operand ge(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		return geRaw(getIndex(i0, i1, i2), rhs, rhi);
+	}
+	public Operand ge(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		return geRaw(getIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * &lt;=比較を行う。
@@ -565,7 +1300,25 @@ public abstract class Operand implements Serializable {
 	 * @param rhi 右オペランドの要素番号。
 	 * @return 演算結果。
 	 */
-	public abstract Operand le(final int index, final Operand rhs, final int rhi);
+	public abstract Operand leRaw(final int index, final Operand rhs, final int rhi);
+	public Operand le(final Operand rhs) {
+		return leRaw(0, rhs, 0);
+	}
+	public Operand le(final Operand rhs, final int rhi) {
+		return leRaw(0, rhs, rhi);
+	}
+	public Operand le(final int i0, final Operand rhs, final int rhi) {
+		return leRaw(getIndex(i0), rhs, rhi);
+	}
+	public Operand le(final int i0, final int i1, final Operand rhs, final int rhi) {
+		return leRaw(getIndex(i0, i1), rhs, rhi);
+	}
+	public Operand le(final int i0, final int i1, final int i2, final Operand rhs, final int rhi) {
+		return leRaw(getIndex(i0, i1, i2), rhs, rhi);
+	}
+	public Operand le(final int i0, final int i1, final int i2, final int i3, final Operand rhs, final int rhi) {
+		return leRaw(getIndex(i0, i1, i2, i3), rhs, rhi);
+	}
 
 	/**
 	 * オブジェクトのバイトを取得する。
@@ -584,6 +1337,31 @@ public abstract class Operand implements Serializable {
 	 * @param value 設定する値。
 	 */
 	public abstract void poke(int index, int offset, byte value);
+
+	/*
+	 * TODO: Type-clipping.
+	 * New method needed for every assign-operand group (int index, int type, Operand O)
+	 * Call something like below on the Operand? More complicated than that though, math largely depends on type.
+	 */
+	/*
+	public Operand clipToType(int vartype) {
+		int myType=getType();
+		done:
+		if(vartype!=myType)
+		{
+			int clipTo=typeSizes[vartype];
+			int mySize=typeSizes[myType];
+			if(mySize <= clipTo) break done;
+			
+			switch(myType)
+			{
+				//TODO
+			}
+		}
+		return this;
+		
+	}
+	*/
 
 	/**
 	 * サポートされない演算子が使用されたときに例外を発生させる。

@@ -289,6 +289,8 @@ public class Compiler implements Opcodes, Serializable {
     }
     public static final String ODesc = Type.getDescriptor(Object.class);
     public static final String OIName = Type.getInternalName(Object.class);
+    public static final String stringDesc = Type.getDescriptor(String.class);
+    public static final String stringIName = Type.getInternalName(String.class);
     public static final String FODesc = Type.getDescriptor(FlagObject.class);
     public static final String FOIName = Type.getInternalName(FlagObject.class);
     public static final String contextDesc = Type.getDescriptor(Context.class);
@@ -305,9 +307,11 @@ public class Compiler implements Opcodes, Serializable {
     private static final int thisIndex = 0;
     private static final int jumpLabelIndex = 1; // int
     private static final int contextIndex = 2; // contextType
-    private static final int assignOffsetIndex = 3; // int
-    private static final int literalsIndex = 4; // Scalar[]
+    private static final int literalsIndex = 3; // Scalar[]
+    private static final int assignOffsetIndex = 4; // int
     private static final int localsStart = 5;
+    private static int localsEnd = localsStart;
+    private int localsStack = localsEnd;
     private List<CommonObjectContainer> commonLiteralsList = new ArrayList<CommonObjectContainer>();
     private ClassVisitor cw, superClassWriter;
     private String inputName;
@@ -720,6 +724,8 @@ public class Compiler implements Opcodes, Serializable {
         commonLiteralsList.add(new CommonObjectContainer(new Integer(6), idx++));
         commonLiteralsList.add(new CommonObjectContainer(new Integer(13), idx++));
         commonLiteralsList.add(new CommonObjectContainer(new Integer(100), idx++));
+        localsEnd = idx;
+        localsStack = localsEnd;
 
         for (CommonObjectContainer o : commonLiteralsList) {
             if (!literals.contains(o.o)) {
@@ -760,10 +766,10 @@ public class Compiler implements Opcodes, Serializable {
                 for (int i = 0; i < 8; ++i) {
                     bits |= (b[o + i] & 0xFFL) << 8 * i;
                 }
-                return new Double(Double.longBitsToDouble(bits));
+                return Double.valueOf(Double.longBitsToDouble(bits));
 
             case ByteCode.Code.Type.INum:
-                return new Integer(code.value);
+                return Integer.valueOf(code.value);
             default:
                 return null;
         }
@@ -1325,96 +1331,297 @@ public class Compiler implements Opcodes, Serializable {
         "assignMod", "assignAnd", "assignOr", "assignXor", "assign", "assignNe", "assignGt", "assignLt", "assignGtEq", "assignLtEq", "assignSr",
         "assignSl"};
     private static final String[] unaryOperators = new String[]{"inc", "dec"};
+    private static final String[] assignOperatorsRaw;
+    static{
+        assignOperatorsRaw=new String[assignOperators.length];
+        for(int i=0;i<assignOperators.length;i++) {
+            assignOperatorsRaw[i]=assignOperators[i]+"Raw";
+        }
+    }
+    private static final String[] unaryOperatorsRaw;
+    static{
+        unaryOperatorsRaw=new String[unaryOperators.length];
+        for(int i=0;i<unaryOperators.length;i++) {
+            unaryOperatorsRaw[i]=unaryOperators[i]+"Raw";
+        }
+    }
 
+    private boolean moduleCommandDetected=false;
     private void compileAssignment(final MethodVisitor mv) {
 
-        final boolean prevEnableVariableOptimization = enableVariableOptimization;
+        boolean lastValue=false;
+        
+        //final boolean prevEnableVariableOptimization = enableVariableOptimization;
 
         // 演算子を先読みして最適化を有効にする。
         // {
         int index = codeIndex;
 
-        if (ax.codes[codeIndex].type == Code.Type.Var) {
-            compileVariable(EmptyVisitor.mv);
-        } else {
-            compileParameter(EmptyVisitor.mv);
+        moduleCommandDetected=false;
+        codeIndex++;
+        int numArgs=countArrayArguments();
+        if (numArgs > 4) {
+            throw new RuntimeException("Too many array index values, proper behavior not supported!");
         }
+        
+        boolean modInArgs=moduleCommandDetected;
+        moduleCommandDetected=false;
+        
+        //skip the assignmenttype
+        codeIndex++;
+        
+        int numValues=0;
+        while(codeIndex < ax.codes.length && !ax.codes[codeIndex].newLine) {
+            compileExpression(EmptyVisitor.mv, false);
+            numValues++;
+        }
+        boolean modInValues=moduleCommandDetected;
 
-        enableVariableOptimization |= ax.codes[codeIndex].value != 8;
+        //enableVariableOptimization |= ax.codes[codeIndex].value != 8;
 
         codeIndex = index;
 
         // }
 
-        if (ax.codes[codeIndex].type == Code.Type.Var) {
-            compileVariable(mv);
+        if (ax.codes[codeIndex].type == Code.Type.Struct) {
+            compileParameterPart(mv, true);
         } else {
-            compileParameter(mv);
+            compileVariablePart(mv);
         }
-
-        // 代入の右辺は常に最適化が有効
-        enableVariableOptimization = true;
-
-        final Code code = ax.codes[codeIndex++];
-
-        if (codeIndex < ax.codes.length && !ax.codes[codeIndex].newLine) {
-
-            // 代入演算子
-
-            String name = assignOperators[code.value];
-
-            index = codeIndex;
-            compileExpression(EmptyVisitor.mv);
-            boolean lastCommand = (codeIndex >= ax.codes.length || ax.codes[codeIndex].newLine);
-            codeIndex = index;
-
-            if(lastCommand) {
-                compileExpression(mv);
-                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(I" + opeDesc + "I)V");
-            } else {
-                mv.visitVarInsn(ISTORE, assignOffsetIndex);
-    
-                do {
-    
-                    mv.visitInsn(DUP);
-                    mv.visitVarInsn(ILOAD, assignOffsetIndex);
-                    mv.visitIincInsn(assignOffsetIndex, 1);
-                    compileExpression(mv);
-                    mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(I" + opeDesc + "I)V");
-    
-                    index = codeIndex;
-                    compileExpression(EmptyVisitor.mv);
-                    lastCommand = (codeIndex >= ax.codes.length || ax.codes[codeIndex].newLine);
-                    codeIndex = index;
-    
-                } while (!lastCommand);
-    
-                mv.visitVarInsn(ILOAD, assignOffsetIndex);
-                compileExpression(mv);
-                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(I" + opeDesc + "I)V");
+        
+        // TODO: More thorough checking in case the variable is in the values and resizing may affect things
+        // test(4) = test(3) : test(0,5) = length2(test)
+        /* 6 options now (2 * 3):
+         *  2: Zero or One values (meaning only one write to the variable), or more
+         *  3: No module commands, Module commands in arguments(and possibly values), Module commands in values only
+         */
+        if((!modInArgs) && (!modInValues)) {
+            if(numValues<=1)
+                compileAssignEfficient(mv, numArgs, numValues);
+            else
+                compileAssignEfficientMultiple(mv, numArgs, numValues);
+        } else if(modInArgs) {
+            if(numValues<=1)
+                compileAssignFull(mv, numArgs, numValues);
+            else
+                compileAssignFullMultiple(mv, numArgs, numValues);
+        } else {
+            if(numValues<=1)
+                compileAssignMixed(mv, numArgs, numValues);
+            else
+                compileAssignMixedMultiple(mv, numArgs, numValues);
+        }
+    }
+    private void compileAssignEfficient(final MethodVisitor mv, int numArgs, int numValues) {
+        compileArrayIndexEfficient(mv, numArgs);
+        if(numValues==1) {
+            String name = assignOperators[ax.codes[codeIndex++].value];
+            compileExpression(mv, false);
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "("+"IIII".substring(0,numArgs)+opeDesc+"I)V");
+        } else {
+            String name = unaryOperators[ax.codes[codeIndex++].value];
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "("+"IIII".substring(0,numArgs)+")V");
+        }
+    }
+    private void duplicateLastItem(MethodVisitor mv, int times) {
+        if(times > 0) {
+            mv.visitInsn(DUP);
+            times--;
+            while(times > 1) {
+                mv.visitInsn(DUP2);
+                times -= 2;
             }
-    
-        } else {
-    
-            // 単項演算子
-    
-            String name = unaryOperators[code.value];
-    
-            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(I)V");
-    
+            if(times > 0) {
+                mv.visitInsn(DUP);
+            }
         }
+    }
+    private void compileAssignEfficientMultiple(final MethodVisitor mv, int numArgs, int numValues) {
+        mv.visitInsn(DUP);
+
+        compileRawArgumentEfficient(mv, numArgs);
+        
+        int rawIndex = localsStack++;
+        mv.visitVarInsn(ISTORE, rawIndex);
+        mv.visitVarInsn(ILOAD, rawIndex);
+        
+        String name = assignOperatorsRaw[ax.codes[codeIndex++].value];
+
+        compileExpression(mv, false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(I" + opeDesc + "I)V");
+
+        if(name != assignOperatorsRaw[8]) {
+            tooManyParametersError(mv);
+        } else {
+            numValues--;
+            duplicateLastItem(mv, 2*(numValues) - 1);
+
+            while(numValues > 0) {
+                mv.visitIincInsn(rawIndex, 1);
+
+                mv.visitVarInsn(ILOAD, rawIndex);
+                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "checkIncrementSize", "(I)V");
+
+                mv.visitVarInsn(ILOAD, rawIndex);
+                compileExpression(mv, false);
+                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(I" + opeDesc + "I)V");
+
+                numValues--;
+            }
+        }
+
+        localsStack--;
+    }
+    private void compileAssignFull(final MethodVisitor mv, int numArgs, int numValues) {
+        //TODO: Implement type-clipping, then uncomment out commented lines in this method
+        int thisVariable=localsStack++;
+        mv.visitVarInsn(ASTORE, thisVariable);
+        mv.visitVarInsn(ALOAD, thisVariable);
+
+        compileArrayFull(mv, numArgs, thisVariable, true);
+        codeIndex++;
+        
+        //mv.visitVarInsn(ALOAD, thisVariable);
+        //mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "getType", "()I");
+        localsStack--;
+        
+        String name = assignOperatorsRaw[ax.codes[codeIndex++].value];
+        compileExpression(mv, true);
+        
+        //mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(II" + opeDesc + ")V");
+        //TODO: Remove/Comment out below line when type-clipping is implemented
+        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(I" + opeDesc + ")V");
+    }
+    private void compileAssignFullMultiple(final MethodVisitor mv, int numArgs, int numValues) {
+        //TODO: Implement type-clipping, then uncomment out commented lines in this method
+        int thisVariable=localsStack++;
+        mv.visitVarInsn(ASTORE, thisVariable);
+
+        compileArrayFull(mv, numArgs, thisVariable, true);
+        codeIndex++;
+
+        int rawIndex = localsStack++;
+        mv.visitVarInsn(ISTORE, rawIndex);
+
+        //mv.visitVarInsn(ALOAD, thisVariable);
+        //mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "getType", "()I");
+        
+        //int varType = localsStack++;
+        //mv.visitVarInsn(ISTORE, varType);
+
+        //finishAssignFullMultiple(mv, numValues, thisVariable, rawIndex, varType);
+        //TODO: Remove/Comment out below line when type-clipping is implemented
+        finishAssignFullMultiple(mv, numValues, thisVariable, rawIndex);
+        
+        localsStack--;
+        localsStack--;
+        //localsStack--;
+    }
     
-        enableVariableOptimization = prevEnableVariableOptimization;
-    
+    //TODO: Implement type-clipping, then uncomment out commented lines in this method
+    //private void compileAssignFullSecond(final MethodVisitor mv, int numValues, int thisVariable, int rawIndex, int varType) {
+    private void finishAssignFullMultiple(final MethodVisitor mv, int numValues, int thisVariable, int rawIndex) {
+        mv.visitVarInsn(ALOAD, thisVariable);
+        mv.visitVarInsn(ILOAD, rawIndex);
+        //mv.visitVarInsn(ILOAD, varType);
+
+        String name = assignOperatorsRaw[ax.codes[codeIndex++].value];
+        compileExpression(mv, true);
+        //mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(II" + opeDesc + ")V");
+        //TODO: Remove/Comment out below line when type-clipping is implemented
+        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(I" + opeDesc + ")V");
+
+        if(name != assignOperatorsRaw[8]) {
+            tooManyParametersError(mv);
+        } else {
+            numValues--;
+
+            while(numValues > 0) {
+                mv.visitIincInsn(rawIndex, 1);
+
+                mv.visitVarInsn(ALOAD, thisVariable);
+                mv.visitVarInsn(ILOAD, rawIndex);
+                //mv.visitVarInsn(ILOAD, varType);
+
+                compileExpression(mv, true);
+
+                mv.visitVarInsn(ALOAD, thisVariable);
+                mv.visitVarInsn(ILOAD, rawIndex);
+                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "checkIncrementSize", "(I)V");
+
+                //mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(II" + opeDesc + ")V");
+                //TODO: Remove/Comment out below line when type-clipping is implemented
+                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(I" + opeDesc + ")V");
+
+                numValues--;
+            }
+        }
+    }
+    private void compileAssignMixed(final MethodVisitor mv, int numArgs, int numValues) {
+        //TODO: Implement type-clipping, then uncomment out commented lines in this method
+        //mv.visitInsn(DUP);
+
+        compileRawArgumentEfficient(mv, numArgs);
+
+        //mv.visitInsn(SWAP);
+
+        //mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "getType", "()I");
+
+        String name = assignOperatorsRaw[ax.codes[codeIndex++].value];
+        compileExpression(mv, true);
+        //mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(II" + opeDesc + ")V");
+        //TODO: Remove/Comment out below line when type-clipping is implemented
+        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(I" + opeDesc + ")V");
+    }
+    private void compileAssignMixedMultiple(final MethodVisitor mv, int numArgs, int numValues) {
+        //TODO: Implement type-clipping, then uncomment out commented lines in this method
+        //mv.visitInsn(DUP);
+        //mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "getType", "()I");
+
+        compileRawArgumentEfficient(mv, numArgs);
+
+        int rawIndex = localsStack++;
+        mv.visitVarInsn(ISTORE, rawIndex);
+        //int varType = localsStack++;
+        //mv.visitVarInsn(ISTORE, varType);
+        int thisVariable = localsStack++;
+        mv.visitVarInsn(ASTORE, thisVariable);
+
+        //finishAssignFullMultiple(mv, numValues, thisVariable, rawIndex, varType);
+        //TODO: Remove/Comment out below line when type-clipping is implemented
+        finishAssignFullMultiple(mv, numValues, thisVariable, rawIndex);
+
+        localsStack--;
+        localsStack--;
+        //localsStack--;
     }
 
+    private void tooManyParametersError(final MethodVisitor mv) {
+        mv.visitVarInsn(ALOAD, contextIndex);
+        pushInteger(16, mv);    //HSPError.ParameetersTooMany
+        efficientLDC(mv, "");
+        efficientLDC(mv, "Too many parameters");
+        mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "error", "(I" + stringDesc + stringDesc +")V");
+    }
+
+    //Converts multiple array arguments to a raw Operand argument
+    private void compileRawArgumentEfficient(final MethodVisitor mv, int numArgs) {
+        if(numArgs > 0) {
+            mv.visitInsn(DUP);
+            compileArrayIndexEfficient(mv, numArgs);
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "getResizeIndex", "("+"IIII".substring(0,numArgs)+")I");
+        } else {
+            mv.visitInsn(ICONST_0);
+        }
+
+    }
     private void compileVariableFastLoad(final MethodVisitor mv, final int varIndex) {
         if (commonVariable(varIndex)) {
             mv.visitVarInsn(ALOAD, getVariableLocalIndex(varIndex));
         }
     }
 
-    private void compileVariable(final MethodVisitor mv) {
+    private void compileVariablePart(final MethodVisitor mv) {
 
         final Code code = ax.codes[codeIndex++];
 
@@ -1429,17 +1636,125 @@ public class Compiler implements Opcodes, Serializable {
             mv.visitFieldInsn(GETFIELD, classIName, "v" + code.value, varDesc);
         }
 
-        if (enableVariableOptimization) {
-            mv.visitFieldInsn(GETFIELD, varIName, "value", opeDesc);
-        }
         //if(mv instanceof ScanOneVisitor)
         //    System.out.print(" compVar "+code.value);
+    }
+    private void compileVariable(final MethodVisitor mv, boolean toDirectValue) {
 
-        compileArrayIndex(mv);
+        final Code code = ax.codes[codeIndex++];
 
+        if (collectStats) {
+            varsStats[code.value]++;
+        }
+
+        if (commonVarsInLocals && commonVariable(code.value)) {
+            compileVariableFastLoad(mv, code.value);
+        } else {
+            mv.visitVarInsn(ALOAD, thisIndex);
+            mv.visitFieldInsn(GETFIELD, classIName, "v" + code.value, varDesc);
+        }
+
+        //if(mv instanceof ScanOneVisitor)
+        //    System.out.print(" compVar "+code.value);
+        
+        compileArrayIndex(mv, toDirectValue);
     }
 
-    private void compileArrayIndex(final MethodVisitor mv) {
+    //This does not back up codeIndex, the calling method must do that itself.
+    private int countArrayArguments() {
+        int paramCount = 0;
+        if (codeIndex < ax.codes.length && ax.codes[codeIndex].type == Code.Type.Mark
+                && ax.codes[codeIndex].value == '(') {
+
+            ++codeIndex;
+            do {
+                ++paramCount;
+                compileExpression(EmptyVisitor.mv, false);
+            } while (codeIndex < ax.codes.length
+                    && !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')'));
+            ++codeIndex;
+
+        }
+        return paramCount;
+    }
+    //Very simple version. Evaluates and puts on the stack arguments for array indexes,
+    //and moves codeIndex past paranthesis
+    private void compileArrayIndexEfficient(final MethodVisitor mv, int paramCount) {
+
+        //if(mv instanceof ScanOneVisitor)
+        //    System.out.print("[");
+        if (codeIndex < ax.codes.length && ax.codes[codeIndex].type == Code.Type.Mark
+                && ax.codes[codeIndex].value == '(') {
+
+            ++codeIndex;
+
+            while(paramCount-- > 0) {
+                compileExpression(mv, false);
+                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toIntRaw", "(I)I");
+            }
+
+            ++codeIndex;
+
+        }
+        //if(mv instanceof ScanOneVisitor)
+        //    System.out.print("]");
+    }
+    /*
+     * Before calling, should be inside the () for a variable that contains module commands.
+     * Evalutes the insides of the () and leaves the ) as the current codeIndex. Results in the
+     * correct rawIndex being put on the stack.
+     */
+    private void compileArrayFull(final MethodVisitor mv, int paramIndex, int thisVariable, boolean resize) {
+        
+        mv.visitVarInsn(ALOAD, thisVariable);
+        compileExpression(mv, false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toIntRaw", "(I)I");
+        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, resize?"checkResize0":"checkSize0", "(I)I");
+        
+        if(paramIndex > 1) {
+            mv.visitVarInsn(ALOAD, thisVariable);
+            compileExpression(mv, false);
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toIntRaw", "(I)I");
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, resize?"checkResize1":"checkSize1", "(I)I");
+
+            mv.visitVarInsn(ALOAD, thisVariable);
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "l0", "()I");
+
+            if(paramIndex > 2) {
+                mv.visitInsn(SWAP);
+
+                mv.visitVarInsn(ALOAD, thisVariable);
+                compileExpression(mv, false);
+                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toIntRaw", "(I)I");
+                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, resize?"checkResize2":"checkSize2", "(I)I");
+
+                mv.visitVarInsn(ALOAD, thisVariable);
+                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "l1", "()I");
+
+                if(paramIndex > 3) {
+                    mv.visitInsn(SWAP);
+
+                    mv.visitVarInsn(ALOAD, thisVariable);
+                    compileExpression(mv, false);
+                    mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toIntRaw", "(I)I");
+                    mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, resize?"checkResize3":"checkSize3", "(I)I");
+
+                    mv.visitVarInsn(ALOAD, thisVariable);
+                    mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "l2", "()I");
+                    
+                    mv.visitInsn(IMUL);
+                    mv.visitInsn(IADD);
+                }
+                
+                mv.visitInsn(IMUL);
+                mv.visitInsn(IADD);
+            }
+            
+            mv.visitInsn(IMUL);
+            mv.visitInsn(IADD);
+        }
+    }
+    private void compileArrayIndex(final MethodVisitor mv, boolean toDirectValue) {
 
         int paramCount = 0;
         //if(mv instanceof ScanOneVisitor)
@@ -1451,33 +1766,42 @@ public class Compiler implements Opcodes, Serializable {
 
             final int index = codeIndex;
 
-            compileExpression(EmptyVisitor.mv);
-
-            final boolean moreThan2Dim = (codeIndex < ax.codes.length && !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')'));
+            boolean oldMCD = moduleCommandDetected;
+            moduleCommandDetected = false;
+            do {
+                compileExpression(EmptyVisitor.mv, false);
+                paramCount++;
+            } while (codeIndex < ax.codes.length && !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')'));
+            boolean newMCD = moduleCommandDetected;
+            moduleCommandDetected |= oldMCD;
 
             codeIndex = index;
 
-            if (!moreThan2Dim) {
+            if(newMCD) {
+                //toDirectValue can be assumed to be true.
+                int thisVariable=localsStack++;
+                mv.visitVarInsn(ASTORE, thisVariable);
+                mv.visitVarInsn(ALOAD, thisVariable);
 
-                compileExpression(mv);
-                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+                compileArrayFull(mv, paramCount, thisVariable, false);
 
+                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "dupRaw", "(I)" + opeDesc);
+                localsStack--;
             } else {
-                mv.visitInsn(DUP);
+                if(!toDirectValue)
+                    mv.visitInsn(DUP);
 
-                // 配列要素アクセス
-
-                do {
-                    ++paramCount;
-
-                    compileExpression(mv);
-                    mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
-
-                } while (codeIndex < ax.codes.length
-                        && !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')'));
-
-                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "getIndex", "(" + "IIII".substring(0, paramCount) + ")I");
-
+                int count=0;
+                while (count < paramCount) {
+                    compileExpression(mv, false);
+                    mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toIntRaw", "(I)I");
+                    count++;
+                }
+                
+                if(toDirectValue)
+                    mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "dup", "(" + "IIII".substring(0, paramCount) + ")" + opeDesc);
+                else
+                    mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "getIndex", "(" + "IIII".substring(0, paramCount) + ")I");
             }
 
             ++codeIndex;
@@ -1485,7 +1809,10 @@ public class Compiler implements Opcodes, Serializable {
         } else {
 
             // 配列アクセスじゃないときはインデックスは 0 固定。
-            mv.visitInsn(ICONST_0);
+            if(toDirectValue)
+                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "dup", "()" + opeDesc);
+            else
+                mv.visitInsn(ICONST_0);
         }
         //if(mv instanceof ScanOneVisitor)
         //    System.out.print("]");
@@ -1493,38 +1820,40 @@ public class Compiler implements Opcodes, Serializable {
 
     private boolean maySkipLabel=false;
     private int compileExpression(final MethodVisitor mv) {
+        return compileExpression(mv, false);
+    }
+    private int compileExpression(final MethodVisitor mv, boolean toDirectValue) {
 
         // 先読みして最適化を有効化、トークンが二つ以上ある（演算される）時は有効。
         // {
 
-        final boolean prevEnableVariableOptimization = enableVariableOptimization;
+        //final boolean prevEnableVariableOptimization = enableVariableOptimization;
 
-        final int index = codeIndex;
+        //final int index = codeIndex;
 
-        compileToken(EmptyVisitor.mv);
+        //compileToken(EmptyVisitor.mv, false);
 
-        enableVariableOptimization |= (codeIndex < ax.codes.length
-                && !(ax.codes[codeIndex].type == Code.Type.Mark && (ax.codes[codeIndex].value == ')' || ax.codes[codeIndex].value == '?')) && !(ax.codes[codeIndex].newLine | ax.codes[codeIndex].comma));
+        //enableVariableOptimization |= (codeIndex < ax.codes.length && !(ax.codes[codeIndex].type == Code.Type.Mark && (ax.codes[codeIndex].value == ')' || ax.codes[codeIndex].value == '?')) && !(ax.codes[codeIndex].newLine | ax.codes[codeIndex].comma));
 
-        codeIndex = index;
+        //codeIndex = index;
 
         // }
 
         int i=0;
         do {
 
-            i+=compileToken(mv);
+            i+=compileToken(mv, toDirectValue);
 
         } while (codeIndex < ax.codes.length
                 && !(ax.codes[codeIndex].type == Code.Type.Mark && (ax.codes[codeIndex].value == ')' || ax.codes[codeIndex].value == '?'))
                 && !(ax.codes[codeIndex].newLine | ax.codes[codeIndex].comma));
 
-        enableVariableOptimization = prevEnableVariableOptimization;
+        //enableVariableOptimization = prevEnableVariableOptimization;
 
         return i;
     }
 
-    private int compileToken(final MethodVisitor mv) {
+    private int compileToken(final MethodVisitor mv, boolean toDirectValue) {
 
         // トークンはリテラル・変数・演算子・関数呼び出しと決まっている。
         //if(mv instanceof ScanOneVisitor)
@@ -1533,7 +1862,7 @@ public class Compiler implements Opcodes, Serializable {
         int added=0;
         switch (ax.codes[codeIndex].type) {
             case ByteCode.Code.Type.Mark:
-                compileOperator(mv);
+                compileOperator(mv, toDirectValue);
                 added=-1;
                 break;
             case ByteCode.Code.Type.INum:
@@ -1544,58 +1873,68 @@ public class Compiler implements Opcodes, Serializable {
                 }
             case ByteCode.Code.Type.String:
             case ByteCode.Code.Type.DNum:
-                compileLiteral(mv);
+                compileLiteral(mv, toDirectValue);
                 added=1;
                 break;
             case ByteCode.Code.Type.Struct:
-                compileParameter(mv);
+                compileParameter(mv, toDirectValue);
                 added=1;
                 break;
             case ByteCode.Code.Type.Label:
-                compileLabel(mv);
+                compileLabel(mv, toDirectValue);
                 added=1;
                 break;
             case ByteCode.Code.Type.Var:
-                compileVariable(mv);
+                compileVariable(mv, toDirectValue);
                 added=1;
                 break;
             case ByteCode.Code.Type.ExtSysVar:
-                compileGuiSystmVariable(mv);
+                compileGuiSystmVariable(mv, toDirectValue);
                 added=1;
                 break;
             case ByteCode.Code.Type.ModCmd:
-                compileModuleCommand(mv, true);
+                compileModuleCommand(mv, true, toDirectValue);
                 added=1;
                 break;
             case ByteCode.Code.Type.IntFunc:
-                compileFunction(mv);
+                compileFunction(mv, toDirectValue);
                 added=1;
                 break;
             case ByteCode.Code.Type.SysVar:
-                compileSystemVariable(mv);
+                compileSystemVariable(mv, toDirectValue);
                 added=1;
                 break;
+            //Is this case legal? ProgCmd's don't do anything to the stack..
+            /*
+            //This happens in elona..? It doesn't appear in axDisasm.txt. Wait, false alarm, looks like compiler is messing up.
             case ByteCode.Code.Type.ProgCmd:
                 compileProgramCommand(mv);
                 //added=0;
                 break;
+            */
             case ByteCode.Code.Type.DllFunc:
-                compileDllFunction(mv);
+                compileDllFunction(mv, toDirectValue);
                 added=1;
                 break;
             case ByteCode.Code.Type.DllCtrl:
-                compileDllFunction(mv);
+                compileDllFunction(mv, toDirectValue);
                 added=1;
                 break;
 
             default:
-                throw new RuntimeException("命令コード " + ax.codes[codeIndex].type + " は解釈できません。");
+                StringBuilder context=new StringBuilder("Invalid token type: " + ax.codes[codeIndex].type + ", Context: ");
+                int rewind=20;
+                codeIndex-=rewind;
+                for(int i=0;i<rewind+5;i++)
+                	context.append(ax.codes[codeIndex].type+"("+ax.codes[codeIndex++].value+"), ");
+                throw new RuntimeException(context.toString());
+                //throw new RuntimeException("命令コード " + ax.codes[codeIndex].type + " は解釈できません。");
         }
         return added;
     }
     private boolean skipToInt = false;
 
-    private void compileLabel(final MethodVisitor mv) {
+    private void compileLabel(final MethodVisitor mv, boolean toDirectValue) {
 
         final Code code = ax.codes[codeIndex++];
 
@@ -1617,31 +1956,42 @@ public class Compiler implements Opcodes, Serializable {
         }
         mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromLabel", "(I)" + literalDesc);
 
-        mv.visitInsn(ICONST_0);
+        if(!toDirectValue)
+            mv.visitInsn(ICONST_0);
     }
     private static final String[] binaryOperators = new String[]{"add", "sub", "mul", "div", "mod", "and", "or",
         "xor", "eq", "ne", "gt", "lt", "ge", "le", "sr", "sl"};
-
-    private void compileOperator(final MethodVisitor mv) {
-
-        final Code code = ax.codes[codeIndex++];
-
-        final String name = binaryOperators[code.value];
-
-        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, name, "(I" + opeDesc + "I)" + opeDesc);
-
-        mv.visitInsn(ICONST_0);
+    private static final String[] binaryOperatorsRaw;
+    static{
+        binaryOperatorsRaw=new String[binaryOperators.length];
+        for(int i=0;i<binaryOperators.length;i++) {
+            binaryOperatorsRaw[i]=binaryOperators[i]+"Raw";
+        }
     }
 
-    private void compileLiteral(final MethodVisitor mv) {
+    private void compileOperator(final MethodVisitor mv, boolean toDirectValue) {
 
         final Code code = ax.codes[codeIndex++];
 
-        compileLiteral(mv, literalValueOf(code));
+        //final String name = binaryOperators[code.value];
+        
+        if(toDirectValue) {
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, binaryOperators[code.value], "(" + opeDesc + ")" + opeDesc);
+        } else {
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, binaryOperatorsRaw[code.value], "(I" + opeDesc + "I)" + opeDesc);
+            mv.visitInsn(ICONST_0);
+        }
+    }
+
+    private void compileLiteral(final MethodVisitor mv, boolean toDirectValue) {
+
+        final Code code = ax.codes[codeIndex++];
+
+        compileLiteral(mv, literalValueOf(code), toDirectValue);
     }
     private final Integer zero = new Integer(0);
 
-    private void compileLiteral(final MethodVisitor mv, final Object o) {
+    private void compileLiteral(final MethodVisitor mv, final Object o, boolean toDirectValue) {
 
         int index = literals.indexOf(o);
 
@@ -1650,10 +2000,29 @@ public class Compiler implements Opcodes, Serializable {
         }
         getLiteralByIndex(mv, index);
 
-        mv.visitInsn(ICONST_0);
+        if(!toDirectValue)
+            mv.visitInsn(ICONST_0);
     }
 
-    private void compileParameter(final MethodVisitor mv) {
+    private void compileParameterPart(final MethodVisitor mv, boolean verifyVariable) {
+
+        final Code code = ax.codes[codeIndex++];
+
+        if (collectStats) {
+            paramsStats[code.value]++;
+        }
+
+        mv.visitVarInsn(ALOAD, contextIndex);
+        pushInteger(functionParamFix[code.value], mv);
+        mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "getArgument", "(I)"+opeDesc);
+
+        if(verifyVariable)
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "checkVar", "()"+opeDesc);
+        //if(mv instanceof ScanOneVisitor)
+        //    System.out.print(" Parameter "+code.value);
+    }
+
+    private void compileParameter(final MethodVisitor mv, boolean toDirectValue) {
 
         final Code code = ax.codes[codeIndex++];
 
@@ -1668,16 +2037,19 @@ public class Compiler implements Opcodes, Serializable {
         //if(mv instanceof ScanOneVisitor)
         //    System.out.print(" Parameter "+code.value);
 
-        compileArrayIndex(mv);
+        compileArrayIndex(mv, toDirectValue);
 
     }
 
-    private void compileGuiSystmVariable(final MethodVisitor mv) {
+    private void compileGuiSystmVariable(final MethodVisitor mv, boolean toDirectValue) {
 
-        compileInvocation(mv, true, true);
+        compileInvocation(mv, true, true, toDirectValue);
     }
 
     private void compileInvocation(final MethodVisitor mv, boolean bracket, final boolean hasresult) {
+        compileInvocation(mv, bracket, hasresult, false);
+    }
+    private void compileInvocation(final MethodVisitor mv, boolean bracket, final boolean hasresult, boolean toDirectValue) {
 
         final Code code = ax.codes[codeIndex++];
 
@@ -1757,7 +2129,10 @@ public class Compiler implements Opcodes, Serializable {
 
             }
 
-            mv.visitInsn(ICONST_0);
+            if(toDirectValue)
+                mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "dup", "()" + opeDesc);
+            else
+                mv.visitInsn(ICONST_0);
 
         } else {
 
@@ -1832,7 +2207,7 @@ public class Compiler implements Opcodes, Serializable {
 
                 if (!omitted) {
                     maySkipLabel=type.equals(Integer.TYPE);
-                    int numVals=compileExpression(mv);
+                    int numVals=compileExpression(mv, false);
                     
                     while(true) {
                         if (skipToInt) {
@@ -1849,19 +2224,19 @@ public class Compiler implements Opcodes, Serializable {
     
                         } else if (type.equals(Integer.TYPE)) {
     
-                            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+                            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toIntRaw", "(I)I");
     
                         } else if (type.equals(Double.TYPE)) {
     
-                            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toDouble", "(I)D");
+                            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toDoubleRaw", "(I)D");
     
                         } else if (type.equals(ByteString.class)) {
     
-                            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toByteString", "(I)" + Type.getDescriptor(type));
+                            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toByteStringRaw", "(I)" + Type.getDescriptor(type));
     
                         } else if (type.equals(String.class)) {
     
-                            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toString", "(I)"
+                            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toStringRaw", "(I)"
                                     + Type.getDescriptor(String.class));
     
                         } else {
@@ -1913,12 +2288,15 @@ public class Compiler implements Opcodes, Serializable {
         while (!noeatparam && codeIndex < ax.codes.length && !(ax.codes[codeIndex].newLine)
                 && !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')')) {
 
-            compileExpression(EmptyVisitor.mv);
+            compileExpression(EmptyVisitor.mv, false);
 
         }
     }
 
     private void compileModuleCommand(final MethodVisitor mv, final boolean hasresult) {
+        compileModuleCommand(mv, hasresult, false);
+    }
+    private void compileModuleCommand(final MethodVisitor mv, final boolean hasresult, boolean toDirectValue) {
 
         final Code code = ax.codes[codeIndex++];
         final Method method = runtime.getMethodFor(ax, code, hasresult ? "callVal" : "call");
@@ -1964,7 +2342,8 @@ public class Compiler implements Opcodes, Serializable {
 
             } else {
 
-                mv.visitInsn(ICONST_0);
+                if(!toDirectValue)
+                    mv.visitInsn(ICONST_0);
 
             }
 
@@ -2042,13 +2421,14 @@ public class Compiler implements Opcodes, Serializable {
 
             if (!omitted) {
 
-                compileExpression(mv);
+                compileExpression(mv, false);
 
                 switch (type) {
                     case 1: // var
                     case -1: // local variable
                     case -3: // single variable
                     {
+                        //TODO: The Operand made by this should throw an error on getIndex (but array variable below should not)
                         mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "ref", "(I)" + opeDesc);
                     }
                     break;
@@ -2063,7 +2443,7 @@ public class Compiler implements Opcodes, Serializable {
                     case 2: // string
                     {
 
-                        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toByteString", "(I)"
+                        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toByteStringRaw", "(I)"
                                 + Type.getDescriptor(ByteString.class));
 
                         mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "("
@@ -2072,14 +2452,14 @@ public class Compiler implements Opcodes, Serializable {
                     break;
                     case 3: // dnum
                     {
-                        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toDouble", "(I)D");
+                        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toDoubleRaw", "(I)D");
 
                         mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "(D)" + literalDesc);
                     }
                     break;
                     case 4: // inum
                     {
-                        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+                        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toIntRaw", "(I)I");
 
                         mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "(I)" + literalDesc);
 
@@ -2134,19 +2514,19 @@ public class Compiler implements Opcodes, Serializable {
         while (codeIndex < ax.codes.length && !(ax.codes[codeIndex].newLine)
                 && !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')')) {
 
-            compileExpression(EmptyVisitor.mv);
+            compileExpression(EmptyVisitor.mv, false);
 
         }
     }
 
-    private void compileFunction(final MethodVisitor mv) {
+    private void compileFunction(final MethodVisitor mv, boolean toDirectValue) {
 
-        compileInvocation(mv, true, true);
+        compileInvocation(mv, true, true, toDirectValue);
     }
     private static final String[] systemVariables = new String[]{"system", "hspstat", "hspver", "stat", "cnt", "err",
         "strsize", "looplev", "sublev", "iparam", "wparam", "lparam", "refstr", "refdval"};
 
-    private void compileSystemVariable(final MethodVisitor mv) {
+    private void compileSystemVariable(final MethodVisitor mv, boolean toDirectValue) {
 
         final Code code = ax.codes[codeIndex++];
 
@@ -2162,7 +2542,10 @@ public class Compiler implements Opcodes, Serializable {
 
         mv.visitFieldInsn(GETFIELD, contextIName, field.getName(), Type.getDescriptor(field.getType()));
 
-        mv.visitInsn(ICONST_0);
+        if(toDirectValue)
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "dup", "()" + opeDesc);
+        else
+            mv.visitInsn(ICONST_0);
     }
     private final String[] progCmdCodeTypes = new String[]{
         "goto",
@@ -2297,9 +2680,9 @@ public class Compiler implements Opcodes, Serializable {
 
         if (codeIndex < ax.codes.length && !ax.codes[codeIndex].newLine) {
 
-            compileExpression(mv);
+            compileExpression(mv, false);
 
-            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "dup", "(I)" + opeDesc);
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "dupRaw", "(I)" + opeDesc);
 
         } else {
 
@@ -2325,9 +2708,9 @@ public class Compiler implements Opcodes, Serializable {
         // loop count
         if (codeIndex < ax.codes.length && !ax.codes[codeIndex].newLine) {
 
-            compileExpression(mv);
+            compileExpression(mv, false);
 
-            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toIntRaw", "(I)I");
 
         } else {
 
@@ -2337,9 +2720,9 @@ public class Compiler implements Opcodes, Serializable {
         // initial cnt
         if (codeIndex < ax.codes.length && !ax.codes[codeIndex].newLine) {
 
-            compileExpression(mv);
+            compileExpression(mv, false);
 
-            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toIntRaw", "(I)I");
 
         } else {
             mv.visitInsn(ICONST_0);
@@ -2428,9 +2811,9 @@ public class Compiler implements Opcodes, Serializable {
         // next cnt
         if (codeIndex < ax.codes.length && !ax.codes[codeIndex].newLine) {
 
-            compileExpression(mv);
+            compileExpression(mv, false);
 
-            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+            mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toIntRaw", "(I)I");
 
             mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "nextLoop", "(I)Z");
 
@@ -2513,7 +2896,7 @@ public class Compiler implements Opcodes, Serializable {
 
         mv.visitVarInsn(ALOAD, contextIndex);
 
-        compileExpression(mv);
+        compileExpression(mv, false);
 
         // 配列要素は無視
         mv.visitInsn(POP);
@@ -2544,16 +2927,16 @@ public class Compiler implements Opcodes, Serializable {
         final Code code = ax.codes[codeIndex++];
 
         // 変数の値
-        compileExpression(mv);
-        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+        compileExpression(mv, false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toIntRaw", "(I)I");
 
         // モード
-        compileExpression(mv);
-        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+        compileExpression(mv, false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toIntRaw", "(I)I");
 
         // 基準値
-        compileExpression(mv);
-        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+        compileExpression(mv, false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toIntRaw", "(I)I");
 
         mv.visitInsn(SWAP);
 
@@ -2691,9 +3074,9 @@ public class Compiler implements Opcodes, Serializable {
 
     }
 
-    private void compileDllFunction(final MethodVisitor mv) {
+    private void compileDllFunction(final MethodVisitor mv, boolean toDirectValue) {
 
-        compileInvocation(mv, true, true);
+        compileInvocation(mv, true, true, toDirectValue);
 
     }
 
@@ -2736,9 +3119,9 @@ public class Compiler implements Opcodes, Serializable {
         final int offset = ax.codes[codeIndex++].value;
         final int base = ax.codes[codeIndex].offset;
 
-        compileExpression(mv);
+        compileExpression(mv, false);
 
-        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toInt", "(I)I");
+        mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toIntRaw", "(I)I");
 
         final KLabel existingLabel = (KLabel) labels.get(new Integer(base + offset));
         if (existingLabel != null) {

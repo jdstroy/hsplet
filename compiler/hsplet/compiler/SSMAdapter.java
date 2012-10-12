@@ -69,6 +69,7 @@ public class SSMAdapter extends MethodAdapter {
             case Opcodes.ARETURN:
             case Opcodes.POP:
             case Opcodes.DUP:
+            case Opcodes.DUP2:
             case Opcodes.IADD:
             case Opcodes.IMUL:
             case Opcodes.AALOAD:
@@ -109,6 +110,7 @@ public class SSMAdapter extends MethodAdapter {
                 mv.visitTableSwitchInsn(((Integer)data[0]).intValue(), o.intData, L, (KLabel[])data[2]);
                 break;
             }
+            case Opcodes.ASTORE:
             case Opcodes.ISTORE:
             case Opcodes.ALOAD:
             case Opcodes.ILOAD:

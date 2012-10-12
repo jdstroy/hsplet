@@ -36,6 +36,12 @@ public class OpcodeIndexAsLineMethodAdapter extends CodeOpcodeCounter {
     }
 
     @Override
+    public void visitFieldInsn(int var, String owner, String name, String desc) {
+        insertDebugLine();
+        super.visitFieldInsn(var, owner, name, desc);
+    }
+
+    @Override
     public void visitIincInsn(int var, int increment) {
         insertDebugLine();
         super.visitIincInsn(var, increment);

@@ -70,7 +70,7 @@ public class Button extends javax.swing.JButton implements ActionListener, HSPCo
 
 	public void setValue(Operand v, int vi) {
 
-		setLabel(v.toString(vi));
+		setLabel(v.toStringRaw(vi));
 	}
 
 }

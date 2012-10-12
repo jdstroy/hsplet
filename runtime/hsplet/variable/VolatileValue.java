@@ -44,319 +44,389 @@ public class VolatileValue extends Operand {
     }
 
     //@Override
-    public String toString(final int index) {
+    public String toStringRaw(final int index) {
 
         update();
-        return value.toString(index);
+        return value.toStringRaw(index);
     }
 
     //@Override
-    public ByteString toByteString(final int index) {
+    public ByteString toByteStringRaw(final int index) {
 
         update();
-        return value.toByteString(index);
+        return value.toByteStringRaw(index);
     }
 
     //@Override
-    public int toInt(final int index) {
+    public int toIntRaw(final int index) {
 
         update();
 
-        return value.toInt(index);
+        return value.toIntRaw(index);
     }
 
     //@Override
-    public double toDouble(final int index) {
+    public double toDoubleRaw(final int index) {
 
         update();
 
-        return value.toDouble(index);
+        return value.toDoubleRaw(index);
     }
 
     //@Override
-    public Operand dup(int index) {
-        return value.dup(index);
+    public Operand dupRaw(int index) {
+        update();
+        return value.dupRaw(index);
+    }
+
+    public void checkIncrementSize(int size) {
+        update();
+        value.checkIncrementSize(size);
+    }
+    public int checkSize0(int size) {
+        update();
+        return value.checkSize0(size);
+    }
+    public int checkSize1(int size) {
+        update();
+        return value.checkSize1(size);
+    }
+    public int checkSize2(int size) {
+        update();
+        return value.checkSize2(size);
+    }
+    public int checkSize3(int size) {
+        update();
+        return value.checkSize3(size);
+    }
+	public int checkResize0(int size) {
+        update();
+        return value.checkResize0(size);
+	}
+	public int checkResize1(int size) {
+        update();
+        return value.checkResize1(size);
+	}
+	public int checkResize2(int size) {
+        update();
+        return value.checkResize2(size);
+	}
+	public int checkResize3(int size) {
+        update();
+        return value.checkResize3(size);
+	}
+    //@Override
+    public int getIndex(final int i0) {
+        update();
+        return value.getIndex(i0);
     }
 
     //@Override
     public int getIndex(final int i0, final int i1) {
-
+        update();
         return value.getIndex(i0, i1);
     }
 
     //@Override
     public int getIndex(final int i0, final int i1, final int i2) {
-
+        update();
         return value.getIndex(i0, i1, i2);
     }
 
     //@Override
     public int getIndex(final int i0, final int i1, final int i2, final int i3) {
-
+        update();
         return value.getIndex(i0, i1, i2, i3);
     }
 
     //@Override
-    public void inc(final int index) {
-
+    public int getResizeIndex(final int i0) {
         update();
-
-        value.inc(index);
+        return value.getResizeIndex(i0);
     }
 
     //@Override
-    public void dec(final int index) {
-
+    public int getResizeIndex(final int i0, final int i1) {
         update();
-
-        value.dec(index);
-    }
-
-    public void assign(final int index, final int newValue){
-        value.assign(index, newValue);
-    }
-    public void assign(final int index, final double newValue){
-        value.assign(index, newValue);
-    }
-    public void assign(final int index, final String newValue){
-        value.assign(index, newValue);
+        return value.getResizeIndex(i0, i1);
     }
 
     //@Override
-    public void assign(final int index, final Operand rhs, final int rhi) {
-
-        value.assign(index, rhs, rhi);
+    public int getResizeIndex(final int i0, final int i1, final int i2) {
+        update();
+        return value.getResizeIndex(i0, i1, i2);
     }
 
     //@Override
-    public void assignAdd(final int index, final Operand rhs, final int rhi) {
-
+    public int getResizeIndex(final int i0, final int i1, final int i2, final int i3) {
         update();
-
-        value.assignAdd(index, rhs, rhi);
+        return value.getResizeIndex(i0, i1, i2, i3);
     }
 
     //@Override
-    public void assignSub(final int index, final Operand rhs, final int rhi) {
+    public void incRaw(final int index) {
 
         update();
 
-        value.assignSub(index, rhs, rhi);
+        value.incRaw(index);
     }
 
     //@Override
-    public void assignMul(final int index, final Operand rhs, final int rhi) {
+    public void decRaw(final int index) {
 
         update();
 
-        value.assignMul(index, rhs, rhi);
+        value.decRaw(index);
+    }
+
+    public void assignRaw(final int index, final int newValue){
+        update();
+        value.assignRaw(index, newValue);
+    }
+    public void assignRaw(final int index, final double newValue){
+        update();
+        value.assignRaw(index, newValue);
+    }
+    public void assignRaw(final int index, final String newValue){
+        update();
+        value.assignRaw(index, newValue);
     }
 
     //@Override
-    public void assignDiv(final int index, final Operand rhs, final int rhi) {
-
+    public void assignRaw(final int index, final Operand rhs, final int rhi) {
         update();
-
-        value.assignDiv(index, rhs, rhi);
+        value.assignRaw(index, rhs, rhi);
     }
 
     //@Override
-    public void assignMod(final int index, final Operand rhs, final int rhi) {
+    public void assignAddRaw(final int index, final Operand rhs, final int rhi) {
 
         update();
 
-        value.assignMod(index, rhs, rhi);
+        value.assignAddRaw(index, rhs, rhi);
     }
 
     //@Override
-    public void assignAnd(final int index, final Operand rhs, final int rhi) {
+    public void assignSubRaw(final int index, final Operand rhs, final int rhi) {
 
         update();
 
-        value.assignAnd(index, rhs, rhi);
+        value.assignSubRaw(index, rhs, rhi);
     }
 
     //@Override
-    public void assignOr(final int index, final Operand rhs, final int rhi) {
+    public void assignMulRaw(final int index, final Operand rhs, final int rhi) {
 
         update();
 
-        value.assignOr(index, rhs, rhi);
+        value.assignMulRaw(index, rhs, rhi);
     }
 
     //@Override
-    public void assignXor(final int index, final Operand rhs, final int rhi) {
+    public void assignDivRaw(final int index, final Operand rhs, final int rhi) {
 
         update();
 
-        value.assignXor(index, rhs, rhi);
+        value.assignDivRaw(index, rhs, rhi);
     }
 
     //@Override
-    public void assignSr(final int index, final Operand rhs, final int rhi) {
+    public void assignModRaw(final int index, final Operand rhs, final int rhi) {
 
         update();
 
-        value.assignSr(index, rhs, rhi);
+        value.assignModRaw(index, rhs, rhi);
     }
 
     //@Override
-    public void assignSl(final int index, final Operand rhs, final int rhi) {
+    public void assignAndRaw(final int index, final Operand rhs, final int rhi) {
 
         update();
 
-        value.assignSl(index, rhs, rhi);
+        value.assignAndRaw(index, rhs, rhi);
     }
 
     //@Override
-    public Operand eq(final int index, final Operand rhs, final int rhi) {
+    public void assignOrRaw(final int index, final Operand rhs, final int rhi) {
 
         update();
 
-        return value.eq(index, rhs, rhi);
+        value.assignOrRaw(index, rhs, rhi);
     }
 
     //@Override
-    public Operand ne(final int index, final Operand rhs, final int rhi) {
+    public void assignXorRaw(final int index, final Operand rhs, final int rhi) {
 
         update();
 
-        return value.ne(index, rhs, rhi);
+        value.assignXorRaw(index, rhs, rhi);
     }
 
     //@Override
-    public Operand gt(final int index, final Operand rhs, final int rhi) {
+    public void assignSrRaw(final int index, final Operand rhs, final int rhi) {
 
         update();
 
-        return value.gt(index, rhs, rhi);
+        value.assignSrRaw(index, rhs, rhi);
     }
 
     //@Override
-    public Operand lt(final int index, final Operand rhs, final int rhi) {
+    public void assignSlRaw(final int index, final Operand rhs, final int rhi) {
 
         update();
 
-        return value.lt(index, rhs, rhi);
+        value.assignSlRaw(index, rhs, rhi);
     }
 
     //@Override
-    public Operand ge(final int index, final Operand rhs, final int rhi) {
+    public Operand eqRaw(final int index, final Operand rhs, final int rhi) {
 
         update();
 
-        return value.ge(index, rhs, rhi);
+        return value.eqRaw(index, rhs, rhi);
     }
 
     //@Override
-    public Operand le(final int index, final Operand rhs, final int rhi) {
+    public Operand neRaw(final int index, final Operand rhs, final int rhi) {
 
         update();
 
-        return value.le(index, rhs, rhi);
+        return value.neRaw(index, rhs, rhi);
     }
 
     //@Override
-    public Operand add(final int index, final Operand rhs, final int rhi) {
+    public Operand gtRaw(final int index, final Operand rhs, final int rhi) {
 
         update();
 
-        return value.add(index, rhs, rhi);
+        return value.gtRaw(index, rhs, rhi);
     }
 
     //@Override
-    public Operand sub(final int index, final Operand rhs, final int rhi) {
+    public Operand ltRaw(final int index, final Operand rhs, final int rhi) {
 
         update();
 
-        return value.sub(index, rhs, rhi);
+        return value.ltRaw(index, rhs, rhi);
     }
 
     //@Override
-    public Operand mul(final int index, final Operand rhs, final int rhi) {
+    public Operand geRaw(final int index, final Operand rhs, final int rhi) {
 
         update();
 
-        return value.mul(index, rhs, rhi);
+        return value.geRaw(index, rhs, rhi);
     }
 
     //@Override
-    public Operand div(final int index, final Operand rhs, final int rhi) {
+    public Operand leRaw(final int index, final Operand rhs, final int rhi) {
 
         update();
 
-        return value.div(index, rhs, rhi);
+        return value.leRaw(index, rhs, rhi);
     }
 
     //@Override
-    public Operand mod(final int index, final Operand rhs, final int rhi) {
+    public Operand addRaw(final int index, final Operand rhs, final int rhi) {
 
         update();
 
-        return value.mod(index, rhs, rhi);
+        return value.addRaw(index, rhs, rhi);
     }
 
     //@Override
-    public Operand and(final int index, final Operand rhs, final int rhi) {
+    public Operand subRaw(final int index, final Operand rhs, final int rhi) {
 
         update();
 
-        return value.and(index, rhs, rhi);
+        return value.subRaw(index, rhs, rhi);
     }
 
     //@Override
-    public Operand or(final int index, final Operand rhs, final int rhi) {
+    public Operand mulRaw(final int index, final Operand rhs, final int rhi) {
 
         update();
 
-        return value.or(index, rhs, rhi);
+        return value.mulRaw(index, rhs, rhi);
     }
 
     //@Override
-    public Operand xor(final int index, final Operand rhs, final int rhi) {
+    public Operand divRaw(final int index, final Operand rhs, final int rhi) {
 
         update();
 
-        return value.xor(index, rhs, rhi);
+        return value.divRaw(index, rhs, rhi);
     }
 
     //@Override
-    public Operand sl(final int index, final Operand rhs, final int rhi) {
+    public Operand modRaw(final int index, final Operand rhs, final int rhi) {
 
         update();
 
-        return value.sl(index, rhs, rhi);
+        return value.modRaw(index, rhs, rhi);
     }
 
     //@Override
-    public Operand sr(final int index, final Operand rhs, final int rhi) {
+    public Operand andRaw(final int index, final Operand rhs, final int rhi) {
 
         update();
 
-        return value.sr(index, rhs, rhi);
+        return value.andRaw(index, rhs, rhi);
+    }
+
+    //@Override
+    public Operand orRaw(final int index, final Operand rhs, final int rhi) {
+
+        update();
+
+        return value.orRaw(index, rhs, rhi);
+    }
+
+    //@Override
+    public Operand xorRaw(final int index, final Operand rhs, final int rhi) {
+
+        update();
+
+        return value.xorRaw(index, rhs, rhi);
+    }
+
+    //@Override
+    public Operand slRaw(final int index, final Operand rhs, final int rhi) {
+
+        update();
+
+        return value.slRaw(index, rhs, rhi);
+    }
+
+    //@Override
+    public Operand srRaw(final int index, final Operand rhs, final int rhi) {
+
+        update();
+
+        return value.srRaw(index, rhs, rhi);
     }
 
     //@Override
     public int l0() {
-
+        update();
         return value.l0();
     }
 
     //@Override
     public int l1() {
-
+        update();
         return value.l1();
     }
 
     //@Override
     public int l2() {
-
+        update();
         return value.l2();
     }
 
     //@Override
     public int l3() {
-
+        update();
         return value.l3();
     }
 
@@ -390,32 +460,32 @@ public class VolatileValue extends Operand {
     }
 
     @Override
-    public void assignNe(int index, Operand rhs, int rhi) {
+    public void assignNeRaw(int index, Operand rhs, int rhi) {
         update();
-        value.assignNe(index, rhs, rhi);
+        value.assignNeRaw(index, rhs, rhi);
     }
 
     @Override
-    public void assignGt(int index, Operand rhs, int rhi) {
+    public void assignGtRaw(int index, Operand rhs, int rhi) {
         update();
-        value.assignGt(index, rhs, rhi);
+        value.assignGtRaw(index, rhs, rhi);
     }
 
     @Override
-    public void assignLt(int index, Operand rhs, int rhi) {
+    public void assignLtRaw(int index, Operand rhs, int rhi) {
         update();
-        value.assignLt(index, rhs, rhi);
+        value.assignLtRaw(index, rhs, rhi);
     }
 
     @Override
-    public void assignGtEq(int index, Operand rhs, int rhi) {
+    public void assignGtEqRaw(int index, Operand rhs, int rhi) {
         update();
-        value.assignGtEq(index, rhs, rhi);
+        value.assignGtEqRaw(index, rhs, rhi);
     }
 
     @Override
-    public void assignLtEq(int index, Operand rhs, int rhi) {
+    public void assignLtEqRaw(int index, Operand rhs, int rhi) {
         update();
-        value.assignLtEq(index, rhs, rhi);
+        value.assignLtEqRaw(index, rhs, rhi);
     }
 }

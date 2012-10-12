@@ -543,7 +543,13 @@ public class Context implements Serializable {
                     + (message != null && message.length() != 0 ? "\r\n" + message : ""));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            java.lang.StackTraceElement[] s = (java.lang.StackTraceElement[]) e.getStackTrace();
+            java.lang.StringBuilder str = new java.lang.StringBuilder();
+            for (int i = 0; i < s.length; i++) {
+                str.append("\n   ").append(s[i].getClassName()).append(": ").append(s[i].getMethodName()).append("(").append(s[i].getFileName()).append(": ").append(s[i].getLineNumber()).append(")");
+            }
+            System.out.println("Error:" + e + "\r\n" + str.toString());
         }
 
         err.value = error;

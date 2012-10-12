@@ -24,7 +24,7 @@ public class FunctionBase {
     if (v == null) {
       return ifnull;
     } else {
-      return v.toInt(vi);
+      return v.toIntRaw(vi);
     }
   }
 
@@ -33,7 +33,7 @@ public class FunctionBase {
     if (v == null) {
       return ifnull;
     } else {
-      return v.toByteString(vi).toString();
+      return v.toByteStringRaw(vi).toString();
     }
   }
 
@@ -42,7 +42,7 @@ public class FunctionBase {
     if (v == null) {
       return ifnull;
     } else {
-      return v.toDouble(vi);
+      return v.toDoubleRaw(vi);
     }
   }
 

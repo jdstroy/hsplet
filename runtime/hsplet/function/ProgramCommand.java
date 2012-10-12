@@ -35,13 +35,13 @@ public class ProgramCommand extends FunctionBase {
 			if(O!=null) switch(O.getType())
 			{
 				case Operand.Type.STRING:
-					context.refstr.assign(Scalar.fromValue(O.toByteString(0)));
+					context.refstr.assign(Scalar.fromValue(O.toByteStringRaw(0)));
 					break;
 				case Operand.Type.DOUBLE:
-					context.refdval.assign(O.toDouble(0));
+					context.refdval.assign(O.toDoubleRaw(0));
 					break;
 				case Operand.Type.INTEGER:
-					context.stat.assign(O.toInt(0));
+					context.stat.assign(O.toIntRaw(0));
 					break;
                                 default:
                                     assert false : "This should never happen!";
@@ -59,13 +59,13 @@ public class ProgramCommand extends FunctionBase {
 			if(O!=null) switch(O.getType())
 			{
 				case Operand.Type.STRING:
-					context.refstr.assign(Scalar.fromValue(O.toByteString(0)));
+					context.refstr.assign(Scalar.fromValue(O.toByteStringRaw(0)));
 					break;
 				case Operand.Type.DOUBLE:
-					context.refdval.assign(Scalar.fromValue(O.toDouble(0)));
+					context.refdval.assign(O.toDoubleRaw(0));
 					break;
 				case Operand.Type.INTEGER:
-					context.stat.assign(Scalar.fromValue(O.toInt(0)));
+					context.stat.assign(O.toIntRaw(0));
 					break;
                                 default:
                                     assert false : "This should never happen!";
@@ -84,13 +84,13 @@ public class ProgramCommand extends FunctionBase {
 			if(O!=null) switch(O.getType())
 			{
 				case Operand.Type.STRING:
-					context.refstr.assign(Scalar.fromValue(O.toByteString(0)));
+					context.refstr.assign(Scalar.fromValue(O.toByteStringRaw(0)));
 					break;
 				case Operand.Type.DOUBLE:
-					context.refdval.assign(Scalar.fromValue(O.toDouble(0)));
+					context.refdval.assign(O.toDoubleRaw(0));
 					break;
 				case Operand.Type.INTEGER:
-					context.stat.assign(Scalar.fromValue(O.toInt(0)));
+					context.stat.assign(O.toIntRaw(0));
 					break;
                                 default:
                                     assert false : "This should never happen!";
@@ -184,8 +184,16 @@ public class ProgramCommand extends FunctionBase {
 			context.error(HSPError.ParameterTypeMismatch, "dim", "typeof( v )==" + v.getClass().getName());
 			return;
 		}
+		if(vi != 0) {
+			context.error(HSPError.InvalidFormOfArray, "dim", "Bad array expression");
+			return;
+		}
+		if (l0<0 || l1<0 || l2<0 || l3<0) {
+			context.error(HSPError.InvalidParameterValue, "dim", "Illegal function call");
+			return;
+		}
 
-		((Variable) v).value = new IntArray(Math.max(1, l0), Math.max(1, l1), Math.max(1, l2), Math.max(1, l3));
+		((Variable) v).value = new IntArray(Math.max(1, l0), l1, l2, l3);
 
 	}
 
@@ -196,9 +204,16 @@ public class ProgramCommand extends FunctionBase {
 			context.error(HSPError.ParameterTypeMismatch, "sdim", "typeof( v )==" + v.getClass().getName());
 			return;
 		}
+		if(vi != 0) {
+			context.error(HSPError.InvalidFormOfArray, "dim", "Bad array expression");
+			return;
+		}
+		if (l0<0 || l1<0 || l2<0 || l3<0) {
+			context.error(HSPError.InvalidParameterValue, "dim", "Illegal function call");
+			return;
+		}
 
-		((Variable) v).value = new StringArray(toInt(lengthv, lengthvi, 64), Math.max(1, l0), Math.max(1, l1), Math
-				.max(1, l2), Math.max(1, l3));
+		((Variable) v).value = new StringArray(toInt(lengthv, lengthvi, 64), Math.max(1, l0), l1, l2, l3);
 
 	}
 
@@ -209,17 +224,24 @@ public class ProgramCommand extends FunctionBase {
 			context.error(HSPError.ParameterTypeMismatch, "dimtype", "typeof( v )==" + v.getClass().getName());
 			return;
 		}
+		if(vi != 0) {
+			context.error(HSPError.InvalidFormOfArray, "dim", "Bad array expression");
+			return;
+		}
+		if (l0<0 || l1<0 || l2<0 || l3<0) {
+			context.error(HSPError.InvalidParameterValue, "dim", "Illegal function call");
+			return;
+		}
 
 		switch (type) {
 		case Operand.Type.INTEGER:
-			((Variable) v).value = new IntArray(Math.max(1, l0), Math.max(1, l1), Math.max(1, l2), Math.max(1, l3));
+			((Variable) v).value = new IntArray(Math.max(1, l0), l1, l2, l3);
 			break;
 		case Operand.Type.DOUBLE:
-			((Variable) v).value = new DoubleArray(Math.max(1, l0), Math.max(1, l1), Math.max(1, l2), Math.max(1, l3));
+			((Variable) v).value = new DoubleArray(Math.max(1, l0), l1, l2, l3);
 			break;
 		case Operand.Type.STRING:
-			((Variable) v).value = new StringArray(64, Math.max(1, l0), Math.max(1, l1), Math.max(1, l2), Math.max(1,
-					l3));
+			((Variable) v).value = new StringArray(64, Math.max(1, l0), l1, l2, l3);
 			break;
                 default:
                         assert false : "This should never happen!";
@@ -232,6 +254,10 @@ public class ProgramCommand extends FunctionBase {
 
 		if (!(v instanceof Variable)) {
 			context.error(HSPError.ParameterTypeMismatch, "dup", "typeof( v )==" + v.getClass().getName());
+			return;
+		}
+		if(vi != 0) {
+			context.error(HSPError.InvalidFormOfArray, "dim", "Bad array expression");
 			return;
 		}
 

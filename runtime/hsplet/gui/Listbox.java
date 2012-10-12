@@ -52,7 +52,7 @@ public class Listbox extends JScrollPane implements VolatileValueUpdater, HSPCon
 
 		list = new JList<String>(items);
 
-		list.setSelectedIndex(v.toInt(vi));
+		list.setSelectedIndex(v.toIntRaw(vi));
 
 		this.v = v.makeVolatile();
 		this.vi = vi;
@@ -75,14 +75,14 @@ public class Listbox extends JScrollPane implements VolatileValueUpdater, HSPCon
 
 		switch (v.getType()) {
 		case Operand.Type.INTEGER:
-			list.setSelectedIndex(v.toInt(vi));
+			list.setSelectedIndex(v.toIntRaw(vi));
 			break;
 		default:
 			final int selection = list.getSelectedIndex();
 
 			removeAll();
 
-			list.setListData(v.toString(vi).split("\\r?\\n"));
+			list.setListData(v.toStringRaw(vi).split("\\r?\\n"));
 
 			list.setSelectedIndex(selection < list.getModel().getSize() ? selection : -1);
 		}

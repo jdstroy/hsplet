@@ -45,7 +45,7 @@ public class Chkbox extends JCheckBox implements VolatileValueUpdater, HSPContro
 	 * @param vi 状態を保持する変数のインデックス。
 	 */
 	public Chkbox(final String text, final Variable v, final int vi) {
-		super(text, v.toInt(vi) != 0);
+		super(text, v.toIntRaw(vi) != 0);
 
 		this.v = v.makeVolatile();
 		this.vi = vi;
@@ -56,7 +56,7 @@ public class Chkbox extends JCheckBox implements VolatileValueUpdater, HSPContro
 
 	public void update(final Operand value) {
 
-		value.assign(vi, Scalar.fromValue(isSelected() ? 1 : 0), 0);
+		value.assignRaw(vi, Scalar.fromValue(isSelected() ? 1 : 0), 0);
 	}
 
 	public Component asComponent() {
@@ -65,7 +65,7 @@ public class Chkbox extends JCheckBox implements VolatileValueUpdater, HSPContro
 
 	public void setValue(Operand v, int vi) {
 
-		setSelected(v.toInt(vi) != 0);
+		setSelected(v.toIntRaw(vi) != 0);
 
 		this.v.updaters.add(this);
 	}

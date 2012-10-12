@@ -85,6 +85,8 @@ public final class Applet extends JApplet implements HSPScreen {
 	 */
 	public void init(final Class codeClass) {
 
+		hsplet.variable.Operand.context = context;
+
 		context.init(this, codeClass);
 
 		info.init(getBackground(), getSize());

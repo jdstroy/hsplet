@@ -390,7 +390,7 @@ public class BasicCommand extends FunctionBase {
             if (sizev == null) {
                 switch (v.getType()) {
                     case Operand.Type.STRING:
-                        defaultSize = v.toByteString(vi).length();
+                        defaultSize = v.toByteStringRaw(vi).length();
                         break;
                     case Operand.Type.INTEGER:
                         defaultSize = defaultSize * 4;
@@ -506,7 +506,7 @@ public class BasicCommand extends FunctionBase {
 
         if (sv != null && sv.getType() == Operand.Type.STRING) {
 
-            final ByteString s = sv.toByteString(svi);
+            final ByteString s = sv.toByteStringRaw(svi);
 
             for (int i = 0; i < s.length(); ++i) {
 
@@ -569,7 +569,7 @@ public class BasicCommand extends FunctionBase {
                 break;
             }
         }
-        v.assign(vi, Scalar.fromValue(str.substring(offset, length)), 0);
+        v.assignRaw(vi, Scalar.fromValue(str.substring(offset, length)), 0);
     }
 
     public static void chdpm(final Context context, final Operand v, final int vi) {
@@ -664,7 +664,7 @@ public class BasicCommand extends FunctionBase {
         final int line = toInt(linev, linei, -1);
 
         // 文字列型なら使用中のバッファが返ってくるはず。
-        final ByteString note = context.note.toByteString(0);
+        final ByteString note = context.note.toByteStringRaw(0);
 
         int lineIndex = note.lineIndex(line);
         int lineLength = note.nextLineIndex(lineIndex) - lineIndex;
@@ -700,7 +700,7 @@ public class BasicCommand extends FunctionBase {
     public static void notedel(final Context context, final int line) {
 
         // 文字列型なら使用中のバッファが返ってくるはず。
-        final ByteString note = context.note.toByteString(0);
+        final ByteString note = context.note.toByteStringRaw(0);
 
         int lineIndex = note.lineIndex(line);
         int lineLength = note.nextLineIndex(lineIndex) - lineIndex;
@@ -719,7 +719,7 @@ public class BasicCommand extends FunctionBase {
         final int offset = 0;
 
         // 文字列型なら使用中のバッファが返ってくるはず。
-        final ByteString note = context.note.toByteString(0);
+        final ByteString note = context.note.toByteStringRaw(0);
 
         // If the note length is zero, do not set the 0th byte.
         if (note.length() > 0) {
@@ -791,7 +791,7 @@ public class BasicCommand extends FunctionBase {
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(new File(context.resolve(filename)));
-            context.note.toByteString(0).dump(out);
+            context.note.toByteStringRaw(0).dump(out);
         } catch (URISyntaxException ex) {
             Logger.getLogger(BasicCommand.class.getName()).log(Level.SEVERE, null, ex);
             context.error(HSPError.FileNotFound, "notesave");
@@ -831,7 +831,7 @@ public class BasicCommand extends FunctionBase {
         }
 
         // 文字列型なら使用中のバッファが返ってくるはず。
-        final ByteString note = context.note.toByteString(0);
+        final ByteString note = context.note.toByteStringRaw(0);
 
         int lineIndex = note.lineIndex(line);
         int lineLength = note.nextLineIndex(lineIndex) - lineIndex;
@@ -845,6 +845,6 @@ public class BasicCommand extends FunctionBase {
                 string.set(string.length() - 1, (byte) 0);
             }
         }
-        v.assign(vi, Scalar.fromValue(string), 0);
+        v.assignRaw(vi, Scalar.fromValue(string), 0);
     }
 }

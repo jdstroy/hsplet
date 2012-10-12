@@ -261,7 +261,7 @@ public class hmm extends FunctionBase {
      * @return
      */
     public int HMMBITON(Operand target, int index, int position) {
-        target.assignOr(index, Scalar.fromValue(1 << (position)), 0);
+        target.assignOrRaw(index, Scalar.fromValue(1 << (position)), 0);
         return 1;
     }
 
@@ -273,7 +273,7 @@ public class hmm extends FunctionBase {
      * @return
      */
     public int HMMBITOFF(Operand target, int index, int position) {
-        target.assignAnd(index, Scalar.fromValue(~(1 << (position))), 0);
+        target.assignAndRaw(index, Scalar.fromValue(~(1 << (position))), 0);
         return 1;
     }
 
@@ -285,6 +285,6 @@ public class hmm extends FunctionBase {
      * @return
      */
     public int HMMBITCHECK(Operand target, int index, int position) {
-        return ((target.toInt(index) >> position) & 1);
+        return ((target.toIntRaw(index) >> position) & 1);
     }
 }

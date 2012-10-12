@@ -194,7 +194,7 @@ public class BasicFunction extends FunctionBase {
         switch (type) {
             case 0: // notemax
             {
-                final ByteString note = context.note.toByteString(0);
+                final ByteString note = context.note.toByteStringRaw(0);
                 if (note.length() == 0) {
                     return 0;
                 }
@@ -209,7 +209,7 @@ public class BasicFunction extends FunctionBase {
                 return lineCount;
             }
             case 1: // notesize
-                return context.note.toByteString(0).length();
+                return context.note.toByteStringRaw(0).length();
             default:
                 context.error(HSPError.InvalidParameterValue, "noteinfo", "type==" + type);
                 return 0;
@@ -311,16 +311,16 @@ public class BasicFunction extends FunctionBase {
             switch (v.getType()) {
                 case Operand.Type.INTEGER:
                 case Operand.Type.LABEL:
-                    return Formatter.format(format, new Integer(v.toInt(vi)));
+                    return Formatter.format(format, new Integer(v.toIntRaw(vi)));
                 case Operand.Type.DOUBLE:
-                    return Formatter.format(format, new Double(v.toDouble(vi)));
+                    return Formatter.format(format, new Double(v.toDoubleRaw(vi)));
                 case Operand.Type.STRING:
-                    return Formatter.format(format, v.toByteString(vi));
+                    return Formatter.format(format, v.toByteStringRaw(vi));
                 default:
                     return format;
             }
         } catch (Exception e) {
-            context.error(HSPError.InvalidParameterValue, "strf", "format=" + format + ", v=" + v.toString(vi));
+            context.error(HSPError.InvalidParameterValue, "strf", "format=" + format + ", v=" + v.toStringRaw(vi));
             Logger.getLogger(BasicFunction.class.getName()).log(Level.SEVERE, null, e);
             return format;
         } catch (Throwable e) {

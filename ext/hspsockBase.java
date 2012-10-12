@@ -179,7 +179,7 @@ public abstract class hspsockBase extends FunctionBase {
 			return 1;
 		}
 
-		final int length = buf.toByteString(bufi).length();
+		final int length = buf.toByteStringRaw(bufi).length();
 
 		return sockputb(buf, bufi, 0, length, id) == length ? 0 : 1;
 	}

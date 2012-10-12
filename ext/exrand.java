@@ -55,7 +55,7 @@ public class exrand extends FunctionBase implements Serializable {
         double tc = r.nextDouble();
 	if (max < 0) return 3;
         int value = (int) (tc * (double)max);
-        destination.assign(index, Scalar.fromValue(value), 0);
+        destination.assignRaw(index, Scalar.fromValue(value), 0);
 	return 0;
     }
 }

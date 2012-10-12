@@ -25,7 +25,7 @@ public final class IntArray extends Array {
      */
     public IntArray() {
 
-        this(16, 1, 1, 1);
+        this(1, 0, 0, 0);
     }
 
     /**
@@ -42,7 +42,17 @@ public final class IntArray extends Array {
     public IntArray(final int l0, final int l1, final int l2, final int l3) {
 
         super(l0, l1, l2, l3);
-        values = new int[l0 * l1 * l2 * l3];
+		int size=l0;
+		if(l1>0) {
+			size *= l1;
+			if(l2>0) {
+				size*=l2;
+				if(l3>0) {
+					size*=l3;
+				}
+			}
+		}
+        values = new int[size];
     }
 
     @Override
@@ -52,231 +62,205 @@ public final class IntArray extends Array {
     }
 
     @Override
-    public String toString(final int index) {
+    public String toStringRaw(final int index) {
 
         return Integer.toString(values[index]);
     }
 
     @Override
-    public ByteString toByteString(final int index) {
+    public ByteString toByteStringRaw(final int index) {
 
         return new ByteString(Integer.toString(values[index]));
     }
 
     @Override
-    public int toInt(final int index) {
+    public int toIntRaw(final int index) {
 
         return values[index];
     }
 
     @Override
-    public double toDouble(final int index) {
+    public double toDoubleRaw(final int index) {
 
         return values[index];
     }
 
     @Override
-    public Operand dup(int index) {
+    public Operand dupRaw(int index) {
         return Scalar.fromValue(values[index]);
     }
 
     @Override
-    public void inc(final int index) {
+    public void incRaw(final int index) {
 
         ++values[index];
     }
 
     @Override
-    public void dec(final int index) {
+    public void decRaw(final int index) {
 
         --values[index];
     }
 
-    /**
-     * Attempt to assign newValue at index for this array.
-     * If the array dimensions cannot currently accommodate the specified index, 
-     * attempt to expand() the array to fit.
-     * 
-     * Canon assign() for DoubleArray.  Delegate all assignments to this method.
-     * @param index
-     * @param newValue 
-     */
-    public void assign(final int index, final int newValue){
-        if (index >= values.length) {
-            expand(index);
-        }
+    public void assignRaw(final int index, final int newValue){
         values[index] = newValue;
     }
-    public void assign(final int index, final double newValue){
-        assign(index, (int) newValue);
+    public void assignRaw(final int index, final double newValue){
+        values[index] = (int)newValue;
     }
-    
-    public void assign(final int index, final String newValue){
-        assign(index, Conversion.strtoi(newValue));
-    }
-
-    @Override
-    public void assign(final int index, final Operand rhs, final int rhi) {
-        assign(index, rhs.toInt(rhi));
+    public void assignRaw(final int index, final String newValue){
+        values[index] = Conversion.strtoi(newValue);;
     }
 
     @Override
-    public void assignAdd(final int index, final Operand rhs, final int rhi) {
-        assign(index, toInt(index) + rhs.toInt(rhi));
+    public void assignRaw(final int index, final Operand rhs, final int rhi) {
+        values[index] = rhs.toIntRaw(rhi);
     }
 
     @Override
-    public void assignSub(final int index, final Operand rhs, final int rhi) {
-        assign(index, toInt(index) - rhs.toInt(rhi));
+    public void assignAddRaw(final int index, final Operand rhs, final int rhi) {
+        values[index] += rhs.toIntRaw(rhi);
     }
 
     @Override
-    public void assignMul(final int index, final Operand rhs, final int rhi) {
-        assign(index, toInt(index) * rhs.toInt(rhi));
+    public void assignSubRaw(final int index, final Operand rhs, final int rhi) {
+        values[index] -= rhs.toIntRaw(rhi);
     }
 
     @Override
-    public void assignDiv(final int index, final Operand rhs, final int rhi) {
-        assign(index, toInt(index) / rhs.toInt(rhi));
+    public void assignMulRaw(final int index, final Operand rhs, final int rhi) {
+        values[index] *= rhs.toIntRaw(rhi);
     }
 
     @Override
-    public void assignMod(final int index, final Operand rhs, final int rhi) {
-        assign(index, toInt(index) % rhs.toInt(rhi));
+    public void assignDivRaw(final int index, final Operand rhs, final int rhi) {
+        values[index] /= rhs.toIntRaw(rhi);
     }
 
     @Override
-    public void assignAnd(final int index, final Operand rhs, final int rhi) {
-        assign(index, toInt(index) & rhs.toInt(rhi));
+    public void assignModRaw(final int index, final Operand rhs, final int rhi) {
+        values[index] %= rhs.toIntRaw(rhi);
     }
 
     @Override
-    public void assignOr(final int index, final Operand rhs, final int rhi) {
-        assign(index, toInt(index) | rhs.toInt(rhi));
+    public void assignAndRaw(final int index, final Operand rhs, final int rhi) {
+        values[index] &= rhs.toIntRaw(rhi);
     }
 
     @Override
-    public void assignXor(final int index, final Operand rhs, final int rhi) {
-        assign(index, toInt(index) ^ rhs.toInt(rhi));
+    public void assignOrRaw(final int index, final Operand rhs, final int rhi) {
+        values[index] |= rhs.toIntRaw(rhi);
     }
 
     @Override
-    public void assignSr(final int index, final Operand rhs, final int rhi) {
-        assign(index, toInt(index) >> rhs.toInt(rhi));
+    public void assignXorRaw(final int index, final Operand rhs, final int rhi) {
+        values[index] ^= rhs.toIntRaw(rhi);
     }
 
     @Override
-    public void assignSl(final int index, final Operand rhs, final int rhi) {
-        assign(index, toInt(index) << rhs.toInt(rhi));
+    public void assignSrRaw(final int index, final Operand rhs, final int rhi) {
+        values[index] >>= rhs.toIntRaw(rhi);
     }
 
     @Override
-    public void expand(final int index) {
-
-        super.expand(index);
-
-        final int[] newValues = new int[l0 * l1 * l2 * l3];
-
-        System.arraycopy(values, 0, newValues, 0, values.length);
-
-        values = newValues;
-
+    public void assignSlRaw(final int index, final Operand rhs, final int rhi) {
+        values[index] <<= rhs.toIntRaw(rhi);
     }
 
     @Override
-    public Operand add(final int index, final Operand rhs, final int rhi) {
+    public Operand addRaw(final int index, final Operand rhs, final int rhi) {
 
-        return Scalar.fromValue(values[index] + rhs.toInt(rhi));
+        return Scalar.fromValue(values[index] + rhs.toIntRaw(rhi));
     }
 
     @Override
-    public Operand eq(final int index, final Operand rhs, final int rhi) {
+    public Operand eqRaw(final int index, final Operand rhs, final int rhi) {
 
-        return Scalar.fromValue((values[index] == rhs.toInt(rhi)) ? 1 : 0);
+        return Scalar.fromValue((values[index] == rhs.toIntRaw(rhi)) ? 1 : 0);
     }
 
     @Override
-    public Operand ne(final int index, final Operand rhs, final int rhi) {
+    public Operand neRaw(final int index, final Operand rhs, final int rhi) {
 
-        return Scalar.fromValue((values[index] != rhs.toInt(rhi)) ? 1 : 0);
+        return Scalar.fromValue((values[index] != rhs.toIntRaw(rhi)) ? 1 : 0);
     }
 
     @Override
-    public Operand gt(final int index, final Operand rhs, final int rhi) {
+    public Operand gtRaw(final int index, final Operand rhs, final int rhi) {
 
-        return Scalar.fromValue((values[index] > rhs.toInt(rhi)) ? 1 : 0);
+        return Scalar.fromValue((values[index] > rhs.toIntRaw(rhi)) ? 1 : 0);
     }
 
     @Override
-    public Operand lt(final int index, final Operand rhs, final int rhi) {
+    public Operand ltRaw(final int index, final Operand rhs, final int rhi) {
 
-        return Scalar.fromValue((values[index] < rhs.toInt(rhi)) ? 1 : 0);
+        return Scalar.fromValue((values[index] < rhs.toIntRaw(rhi)) ? 1 : 0);
     }
 
     @Override
-    public Operand ge(final int index, final Operand rhs, final int rhi) {
+    public Operand geRaw(final int index, final Operand rhs, final int rhi) {
 
-        return Scalar.fromValue((values[index] >= rhs.toInt(rhi)) ? 1 : 0);
+        return Scalar.fromValue((values[index] >= rhs.toIntRaw(rhi)) ? 1 : 0);
     }
 
     @Override
-    public Operand le(final int index, final Operand rhs, final int rhi) {
+    public Operand leRaw(final int index, final Operand rhs, final int rhi) {
 
-        return Scalar.fromValue((values[index] <= rhs.toInt(rhi)) ? 1 : 0);
+        return Scalar.fromValue((values[index] <= rhs.toIntRaw(rhi)) ? 1 : 0);
     }
 
     @Override
-    public Operand sub(final int index, final Operand rhs, final int rhi) {
+    public Operand subRaw(final int index, final Operand rhs, final int rhi) {
 
-        return Scalar.fromValue(values[index] - rhs.toInt(rhi));
+        return Scalar.fromValue(values[index] - rhs.toIntRaw(rhi));
     }
 
     @Override
-    public Operand mul(final int index, final Operand rhs, final int rhi) {
+    public Operand mulRaw(final int index, final Operand rhs, final int rhi) {
 
-        return Scalar.fromValue(values[index] * rhs.toInt(rhi));
+        return Scalar.fromValue(values[index] * rhs.toIntRaw(rhi));
     }
 
     @Override
-    public Operand div(final int index, final Operand rhs, final int rhi) {
+    public Operand divRaw(final int index, final Operand rhs, final int rhi) {
 
-        return Scalar.fromValue(values[index] / rhs.toInt(rhi));
+        return Scalar.fromValue(values[index] / rhs.toIntRaw(rhi));
     }
 
     @Override
-    public Operand mod(final int index, final Operand rhs, final int rhi) {
+    public Operand modRaw(final int index, final Operand rhs, final int rhi) {
 
-        return Scalar.fromValue(values[index] % rhs.toInt(rhi));
+        return Scalar.fromValue(values[index] % rhs.toIntRaw(rhi));
     }
 
     @Override
-    public Operand and(final int index, final Operand rhs, final int rhi) {
+    public Operand andRaw(final int index, final Operand rhs, final int rhi) {
 
-        return Scalar.fromValue(values[index] & rhs.toInt(rhi));
+        return Scalar.fromValue(values[index] & rhs.toIntRaw(rhi));
     }
 
     @Override
-    public Operand or(final int index, final Operand rhs, final int rhi) {
+    public Operand orRaw(final int index, final Operand rhs, final int rhi) {
 
-        return Scalar.fromValue(values[index] | rhs.toInt(rhi));
+        return Scalar.fromValue(values[index] | rhs.toIntRaw(rhi));
     }
 
     @Override
-    public Operand xor(final int index, final Operand rhs, final int rhi) {
+    public Operand xorRaw(final int index, final Operand rhs, final int rhi) {
 
-        return Scalar.fromValue(values[index] ^ rhs.toInt(rhi));
+        return Scalar.fromValue(values[index] ^ rhs.toIntRaw(rhi));
     }
 
     @Override
-    public Operand sl(final int index, final Operand rhs, final int rhi) {
+    public Operand slRaw(final int index, final Operand rhs, final int rhi) {
 
-        return Scalar.fromValue(values[index] << rhs.toInt(rhi));
+        return Scalar.fromValue(values[index] << rhs.toIntRaw(rhi));
     }
 
     @Override
-    public Operand sr(final int index, final Operand rhs, final int rhi) {
+    public Operand srRaw(final int index, final Operand rhs, final int rhi) {
 
-        return Scalar.fromValue(values[index] >> rhs.toInt(rhi));
+        return Scalar.fromValue(values[index] >> rhs.toIntRaw(rhi));
     }
 
     @Override
@@ -298,27 +282,48 @@ public final class IntArray extends Array {
     }
 
     @Override
-    public void assignNe(int index, Operand rhs, int rhi) {
-        assign(index, toInt(index) != rhs.toInt(rhi) ? 1 : 0);
+    public void assignNeRaw(int index, Operand rhs, int rhi) {
+        values[index] = (values[index] != rhs.toIntRaw(rhi)) ? 1 : 0;
     }
 
     @Override
-    public void assignGt(int index, Operand rhs, int rhi) {
-        assign(index, toInt(index) > rhs.toInt(rhi) ? 1 : 0);
+    public void assignGtRaw(int index, Operand rhs, int rhi) {
+        values[index] = (values[index] > rhs.toIntRaw(rhi)) ? 1 : 0;
     }
 
     @Override
-    public void assignLt(int index, Operand rhs, int rhi) {
-        assign(index, toInt(index) < rhs.toInt(rhi) ? 1 : 0);
+    public void assignLtRaw(int index, Operand rhs, int rhi) {
+        values[index] = (values[index] < rhs.toIntRaw(rhi)) ? 1 : 0;
     }
 
     @Override
-    public void assignGtEq(int index, Operand rhs, int rhi) {
-        assign(index, toInt(index) >= rhs.toInt(rhi) ? 1 : 0);
+    public void assignGtEqRaw(int index, Operand rhs, int rhi) {
+        values[index] = (values[index] >= rhs.toIntRaw(rhi)) ? 1 : 0;
     }
 
     @Override
-    public void assignLtEq(int index, Operand rhs, int rhi) {
-        assign(index, toInt(index) <= rhs.toInt(rhi) ? 1 : 0);
+    public void assignLtEqRaw(int index, Operand rhs, int rhi) {
+        values[index] = (values[index] <= rhs.toIntRaw(rhi)) ? 1 : 0;
     }
+
+	//@Override
+	public void expandToIndexes() {
+
+		int size=l0;
+		if(l1>0) {
+			size *= l1;
+			if(l2>0) {
+				size*=l2;
+				if(l3>0) {
+					size*=l3;
+				}
+			}
+		}
+
+		final int[] newValues = new int[size];
+
+		System.arraycopy(values, 0, newValues, 0, values.length);
+
+		values = newValues;
+	}
 }

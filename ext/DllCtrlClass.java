@@ -42,7 +42,7 @@ public class DllCtrlClass extends FunctionBase {
      * @return Externally-usable Unicode string
      */
     public String cnvwtos(Operand source, int index) {
-        return source.toByteString(index).toString();
+        return source.toByteStringRaw(index).toString();
     }
 
     public int comevdisp(Operand p1, int ip2) {
@@ -62,7 +62,7 @@ public class DllCtrlClass extends FunctionBase {
      * @return unknown
      */
     public void cnvstow(Operand target, int index, String source) {
-        target.assign(index, Scalar.fromValue(source), 0);
+        target.assignRaw(index, Scalar.fromValue(source), 0);
     }
 
     public int axobj(Operand p1, int ip1, String name, int value1, int value2) {

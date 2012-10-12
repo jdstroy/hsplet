@@ -69,11 +69,11 @@ public class QuickSort {
 		if (sortmode) {
 			// 降順にソートする場合は順序を入れ替える
 			for(int i=0; i<target.l0(); i++) {
-				target.assign(target.l0() - i - 1, Scalar.fromValue((localContainer[i]).value), 0);
+				target.assignRaw(target.l0() - i - 1, Scalar.fromValue((localContainer[i]).value), 0);
 			}
 		} else {
 			for(int i=0; i<target.l0(); i++) {
-				target.assign(i, Scalar.fromValue((localContainer[i]).value), 0);
+				target.assignRaw(i, Scalar.fromValue((localContainer[i]).value), 0);
 			}
 		}
 	}
@@ -96,11 +96,11 @@ public class QuickSort {
 		if (sortmode) {
 			// 降順にソートする場合は順序を入れ替える
 			for(int i=0; i<target.l0(); i++) {
-				target.assign(target.l0() - i - 1, Scalar.fromValue((localContainers[i]).value), 0);
+				target.assignRaw(target.l0() - i - 1, Scalar.fromValue((localContainers[i]).value), 0);
 			}
 		} else {
 			for(int i=0; i<target.l0(); i++) {
-				target.assign(i, Scalar.fromValue((localContainers[i]).value), 0);
+				target.assignRaw(i, Scalar.fromValue((localContainers[i]).value), 0);
 			}
 		}
 	}
@@ -126,11 +126,11 @@ public class QuickSort {
 		if (sortmode) {
 			// 降順にソートする場合は順序を入れ替える
 			for(int i=0; i<target.l0(); i++) {
-				target.assign(target.l0() - i - 1, Scalar.fromValue((localContainers[i]).value), 0);
+				target.assignRaw(target.l0() - i - 1, Scalar.fromValue((localContainers[i]).value), 0);
 			}
 		} else {
 			for(int i=0; i<target.l0(); i++) {
-				target.assign(i, Scalar.fromValue((localContainers[i]).value), 0);
+				target.assignRaw(i, Scalar.fromValue((localContainers[i]).value), 0);
 			}
 		}
 	}

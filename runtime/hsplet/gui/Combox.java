@@ -50,7 +50,7 @@ public class Combox extends JComboBox<String> implements VolatileValueUpdater, H
 			addItem(items[i]);
 		}
 
-		setSelectedIndex(v.toInt(vi));
+		setSelectedIndex(v.toIntRaw(vi));
 
 		this.v = v.makeVolatile();
 		this.vi = vi;
@@ -66,14 +66,14 @@ public class Combox extends JComboBox<String> implements VolatileValueUpdater, H
 
 		switch (v.getType()) {
 		case Operand.Type.INTEGER:
-			setSelectedIndex(v.toInt(vi));
+			setSelectedIndex(v.toIntRaw(vi));
 			break;
 		default:
 			final int selection = getSelectedIndex();
 
 			removeAll();
 
-			final String[] items = v.toString(vi).split("\\r?\\n");
+			final String[] items = v.toStringRaw(vi).split("\\r?\\n");
 			for (int i = 0; i < items.length; ++i) {
 				addItem(items[i]);
 			}
@@ -86,7 +86,7 @@ public class Combox extends JComboBox<String> implements VolatileValueUpdater, H
 
 	public void update(Operand value) {
 
-		value.assign(vi, Scalar.fromValue(getSelectedIndex()), 0);
+		value.assignRaw(vi, Scalar.fromValue(getSelectedIndex()), 0);
 	}
 
 	public void itemStateChanged(ItemEvent e) {

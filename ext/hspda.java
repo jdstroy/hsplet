@@ -31,9 +31,9 @@ public class hspda extends FunctionBase {
         }
         if (index < 0 || sortget.size() <= index) {
             // 未定義の範囲の場合、 エラーにはならず、常に0が返る
-            op.assign(oi, Scalar.fromValue(0), 0);
+            op.assignRaw(oi, Scalar.fromValue(0), 0);
         } else {
-            op.assign(oi, Scalar.fromValue(objToInt(sortget.get(index))), 0);
+            op.assignRaw(oi, Scalar.fromValue(objToInt(sortget.get(index))), 0);
         }
     }
 
@@ -92,10 +92,10 @@ public class hspda extends FunctionBase {
     public static void sortnote(final Context context, Operand op, final int oi, final int sortmode) {
 
         // 文字列lineを改行で区切ってsaへ代入する
-        String s[] = op.toString(oi).split("\\r\\n|\\n", -1);
-        StringArray sa = new StringArray(64, s.length, 1, 1, 1);
+        String s[] = op.toStringRaw(oi).split("\\r\\n|\\n", -1);
+        StringArray sa = new StringArray(64, s.length, 0, 0, 0);
         for (int i = 0; i < s.length; i++) {
-            sa.assign(i, Scalar.fromValue(s[i]), 0);
+            sa.assignRaw(i, Scalar.fromValue(s[i]), 0);
         }
 
         // ソートの実施
@@ -106,13 +106,13 @@ public class hspda extends FunctionBase {
 
         // bsからsへ代入
         for (int i = 0; i < s.length; i++) {
-            s[i] = sa.toString(i);
+            s[i] = sa.toStringRaw(i);
         }
 
         // 改行区切りに変換
-        op.assign(oi, Scalar.fromValue(Arrays.toString(s).replaceAll("\\[|\\]", "").replaceAll(", ", "\r\n")), 0);
+        op.assignRaw(oi, Scalar.fromValue(Arrays.toString(s).replaceAll("\\[|\\]", "").replaceAll(", ", "\r\n")), 0);
         // 最後に空行を追加（HSP3.1の仕様）
-        op.assignAdd(oi, Scalar.fromValue("\r\n"), 0);
+        op.assignAddRaw(oi, Scalar.fromValue("\r\n"), 0);
     }
 
     /**
@@ -132,7 +132,7 @@ public class hspda extends FunctionBase {
 
         try {
             // 文字列line内の半角カンマを改行に変換してoへ代入
-            op.assign(0, Scalar.fromValue(target.toString().replaceAll(",", "\n")), 0);
+            op.assignRaw(0, Scalar.fromValue(target.toString().replaceAll(",", "\n")), 0);
             context.stat.value = 0;
         } catch (Exception e) {
             context.stat.value = 1;
@@ -158,7 +158,7 @@ public class hspda extends FunctionBase {
             String s[] = target.toString().split(",");
             // Operandに格納する
             for (int i = 0; i < Math.min(s.length, op.l0()); i++) {
-                op.assign(i, Scalar.fromValue(s[i]), 0);
+                op.assignRaw(i, Scalar.fromValue(s[i]), 0);
             }
             context.stat.value = 0;
         } catch (Exception e) {
@@ -210,8 +210,8 @@ public class hspda extends FunctionBase {
         if (sameStringIndex < 0) {
             // 含まれていないならば最後の列に加える
             sameStringIndex = -sameStringIndex - 1;
-            xNote.assignAdd(0, Scalar.fromValue(str), 0);
-            xNote.assignAdd(0, Scalar.fromValue("\r\n"), 0);
+            xNote.assignAddRaw(0, Scalar.fromValue(str), 0);
+            xNote.assignAddRaw(0, Scalar.fromValue("\r\n"), 0);
         }
 
         context.stat.value = sameStringIndex;
@@ -243,7 +243,7 @@ public class hspda extends FunctionBase {
                 next = 0,
                 lineLength = 0,
                 lineNumber = 0;
-        ByteString xnote = xNote.toByteString(0);
+        ByteString xnote = xNote.toByteStringRaw(0);
 
         while (start < xnote.length()) {
             next = xnote.nextLineIndex(start);
@@ -406,7 +406,7 @@ public class hspda extends FunctionBase {
             keywords[i] = new ByteString(s[i]);
         }
 
-        ByteString csv = csvSel.toByteString(0);
+        ByteString csv = csvSel.toByteStringRaw(0);
 
         int csvIndex = 0,
                 serchedLine = 0;
@@ -470,10 +470,10 @@ public class hspda extends FunctionBase {
                     while (header.length() < 6) {
                         header = ByteString.concat(zero, header);
                     }
-                    csvRes.assignAdd(0, Scalar.fromValue("#".concat(header.toString())), 0);
+                    csvRes.assignAddRaw(0, Scalar.fromValue("#".concat(header.toString())), 0);
                 }
-                csvRes.assignAdd(0, Scalar.fromValue(line), 0);
-                csvRes.assignAdd(0, Scalar.fromValue("\r\n"), 0);
+                csvRes.assignAddRaw(0, Scalar.fromValue(line), 0);
+                csvRes.assignAddRaw(0, Scalar.fromValue("\r\n"), 0);
             }
             serchedLine++;
             csvIndex += lineLength;
@@ -516,12 +516,12 @@ public class hspda extends FunctionBase {
 
     public static void rndf_get(final Operand o, final int oi) {
 
-        o.assign(oi, Scalar.fromValue(randomGenerator.nextDouble()), 0);
+        o.assignRaw(oi, Scalar.fromValue(randomGenerator.nextDouble()), 0);
     }
 
     public static void rndf_geti(final Operand o, final int oi, final int limit) {
 
-        o.assign(oi, Scalar.fromValue(randomGenerator.nextInt(limit)), 0);
+        o.assignRaw(oi, Scalar.fromValue(randomGenerator.nextInt(limit)), 0);
     }
 
     // -------------------------------------------

@@ -54,12 +54,12 @@ public class hspini extends FunctionBase implements Serializable {
 
 		if (value == null || value.length() == 0) {
 
-			v.assign(vi, Scalar.fromValue(defaultValue), 0);
+			v.assignRaw(vi, Scalar.fromValue(defaultValue), 0);
 			return 0;
 
 		} else {
 
-			v.assign(vi, Scalar.fromValue(Conversion.strtoi(value)), 0);
+			v.assignRaw(vi, Scalar.fromValue(Conversion.strtoi(value)), 0);
 			return 1;
 		}
 
@@ -73,7 +73,7 @@ public class hspini extends FunctionBase implements Serializable {
 			return 0;
 		} else {
 
-			v.assign(vi, Scalar.fromValue(value), 0);
+			v.assignRaw(vi, Scalar.fromValue(value), 0);
 			return 1;
 		}
 	}

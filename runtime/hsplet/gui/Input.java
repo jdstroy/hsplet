@@ -102,7 +102,7 @@ public class Input extends JTextField implements VolatileValueUpdater, HSPContro
 
 		});
 		
-		this.setText(v.toByteString(vi).toString());
+		this.setText(v.toByteStringRaw(vi).toString());
 		this.v = v.makeVolatile();
 		this.vi = vi;
 
@@ -115,7 +115,7 @@ public class Input extends JTextField implements VolatileValueUpdater, HSPContro
 
 	public void setValue(Operand v, int vi) {
 
-		setText(v.toString(vi));
+		setText(v.toStringRaw(vi));
 
 		this.v.updaters.add(this);
 	}
@@ -123,13 +123,13 @@ public class Input extends JTextField implements VolatileValueUpdater, HSPContro
 	public void update(Operand value) {
 		switch (value.getType()) {
 		case Operand.Type.INTEGER:
-			value.assign(vi, Scalar.fromValue(Conversion.strtoi(getText())), 0);
+			value.assignRaw(vi, Scalar.fromValue(Conversion.strtoi(getText())), 0);
 			break;
 		case Operand.Type.DOUBLE:
-			value.assign(vi, Scalar.fromValue(Conversion.strtod(getText())), 0);
+			value.assignRaw(vi, Scalar.fromValue(Conversion.strtod(getText())), 0);
 			break;
 		default:
-			value.assign(vi, Scalar.fromValue(getText()), 0);
+			value.assignRaw(vi, Scalar.fromValue(getText()), 0);
 			break;
 
 		}

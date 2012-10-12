@@ -113,7 +113,7 @@ public class hspext_ext extends FunctionBase {
             case 0: //get 1 byte
                 // http://usk.s16.xrea.com/hsp/hsphelp_eng/hsp255_eng/hsphelp/help_a.htm#s_apledit
                 byte[] textArr = text.getBytes();
-                int textIndex = destination.toInt(index);
+                int textIndex = destination.toIntRaw(index);
                 if (textIndex < textArr.length && textIndex > 0) {
                     v = textArr[textIndex];
                     context.stat.value = 0; //?
@@ -136,7 +136,7 @@ public class hspext_ext extends FunctionBase {
             default:
                 return;
         }
-        destination.assign(index, Scalar.fromValue(v), 0);
+        destination.assignRaw(index, Scalar.fromValue(v), 0);
     }
     private Component aplObjTarget = null;
 
@@ -202,7 +202,7 @@ public class hspext_ext extends FunctionBase {
     }
 
     public void ematan(Operand destination, int index, double x, double y) {
-        destination.assign(index, Scalar.fromValue(Math.atan2(y, x)), 0);
+        destination.assignRaw(index, Scalar.fromValue(Math.atan2(y, x)), 0);
     }
 
     /**

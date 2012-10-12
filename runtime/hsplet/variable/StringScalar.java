@@ -50,217 +50,218 @@ public final class StringScalar extends Scalar {
 	}
 
 	//@Override
-	public String toString(final int index) {
+	public String toStringRaw(final int index) {
 
 		return value.toString();
 	}
 
 	//@Override
-	public ByteString toByteString(final int index) {
+	public ByteString toByteStringRaw(final int index) {
 
 		return value;
 	}
 
 	//@Override
-	public int toInt(final int index) {
+	public int toIntRaw(final int index) {
 
 		return Conversion.strtoi(value.toString());
 	}
 
 	//@Override
-	public double toDouble(final int index) {
+	public double toDoubleRaw(final int index) {
 
 		return Conversion.strtod(value.toString());
 	}
 	
 
 	//@Override
-	public Operand dup(int index) {
+	public Operand dupRaw(int index) {
 		return Scalar.fromValue(value);
 	}
 
 	//@Override
-	public void inc(final int index) {
-
+	public void incRaw(final int index) {
+		value.append(new ByteString("1"));
 	}
 
 	//@Override
-	public void dec(final int index) {
+	public void decRaw(final int index) {
 
+		throw unsupportedOperator("-=");
 	}
 
-	public void assign(final int index, final int newValue){
+	public void assignRaw(final int index, final int newValue){
 		value.assign(new ByteString(Integer.toString(newValue)));
 	}
-	public void assign(final int index, final double newValue){
+	public void assignRaw(final int index, final double newValue){
 		value.assign(new ByteString(Double.toString(newValue)));
 	}
-	public void assign(final int index, final String newValue){
+	public void assignRaw(final int index, final String newValue){
 		value.assign(new ByteString(newValue));
 	}
 
 	//@Override
-	public void assign(final int index, final Operand rhs, final int rhi) {
+	public void assignRaw(final int index, final Operand rhs, final int rhi) {
 
-		value.assign(rhs.toByteString(rhi));
+		value.assign(rhs.toByteStringRaw(rhi));
 	}
 
 	//@Override
-	public void assignAdd(final int index, final Operand rhs, final int rhi) {
+	public void assignAddRaw(final int index, final Operand rhs, final int rhi) {
 
-		value.append(rhs.toByteString(rhi));
+		value.append(rhs.toByteStringRaw(rhi));
 	}
 
 	//@Override
-	public void assignSub(final int index, final Operand rhs, final int rhi) {
+	public void assignSubRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("-=");
 	}
 
 	//@Override
-	public void assignMul(final int index, final Operand rhs, final int rhi) {
+	public void assignMulRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("*=");
 	}
 
 	//@Override
-	public void assignDiv(final int index, final Operand rhs, final int rhi) {
+	public void assignDivRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("/=");
 	}
 
 	//@Override
-	public void assignMod(final int index, final Operand rhs, final int rhi) {
+	public void assignModRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("%=");
 	}
 
 	//@Override
-	public void assignAnd(final int index, final Operand rhs, final int rhi) {
+	public void assignAndRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("&=");
 	}
 
 	//@Override
-	public void assignOr(final int index, final Operand rhs, final int rhi) {
+	public void assignOrRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("|=");
 	}
 
 	//@Override
-	public void assignXor(final int index, final Operand rhs, final int rhi) {
+	public void assignXorRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("^=");
 	}
 
 	//@Override
-	public void assignSr(final int index, final Operand rhs, final int rhi) {
+	public void assignSrRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator(">>=");
 	}
 
 	//@Override
-	public void assignSl(final int index, final Operand rhs, final int rhi) {
+	public void assignSlRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("<<=");
 	}
 
 	//@Override
-	public Operand add(final int index, final Operand rhs, final int rhi) {
+	public Operand addRaw(final int index, final Operand rhs, final int rhi) {
 
-		return new StringScalar(ByteString.concat(value, rhs.toByteString(rhi)));
+		return new StringScalar(ByteString.concat(value, rhs.toByteStringRaw(rhi)));
 	}
 
 	//@Override
-	public Operand eq(final int index, final Operand rhs, final int rhi) {
+	public Operand eqRaw(final int index, final Operand rhs, final int rhi) {
 
-		return new IntScalar(value.equals(rhs.toByteString(rhi)) ? 1: 0);
+		return new IntScalar(value.equals(rhs.toByteStringRaw(rhi)) ? 1: 0);
 	}
 
 	//@Override
-	public Operand ne(final int index, final Operand rhs, final int rhi) {
+	public Operand neRaw(final int index, final Operand rhs, final int rhi) {
 
-		return new IntScalar(value.compareTo(rhs.toByteString(rhi)));
+		return new IntScalar(value.compareTo(rhs.toByteStringRaw(rhi)));
 	}
 
 	//@Override
-	public Operand gt(final int index, final Operand rhs, final int rhi) {
+	public Operand gtRaw(final int index, final Operand rhs, final int rhi) {
 
-		return new IntScalar((value.compareTo(rhs.toByteString(rhi)) > 0) ? 1
+		return new IntScalar((value.compareTo(rhs.toByteStringRaw(rhi)) > 0) ? 1
 				: 0);
 	}
 
 	//@Override
-	public Operand lt(final int index, final Operand rhs, final int rhi) {
+	public Operand ltRaw(final int index, final Operand rhs, final int rhi) {
 
-		return new IntScalar((value.compareTo(rhs.toByteString(rhi)) < 0) ? 1
+		return new IntScalar((value.compareTo(rhs.toByteStringRaw(rhi)) < 0) ? 1
 				: 0);
 	}
 
 	//@Override
-	public Operand ge(final int index, final Operand rhs, final int rhi) {
+	public Operand geRaw(final int index, final Operand rhs, final int rhi) {
 
-		return new IntScalar((value.compareTo(rhs.toByteString(rhi)) >= 0) ? 1
+		return new IntScalar((value.compareTo(rhs.toByteStringRaw(rhi)) >= 0) ? 1
 				: 0);
 	}
 
 	//@Override
-	public Operand le(final int index, final Operand rhs, final int rhi) {
+	public Operand leRaw(final int index, final Operand rhs, final int rhi) {
 
-		return new IntScalar((value.compareTo(rhs.toByteString(rhi)) <= 0) ? 1
+		return new IntScalar((value.compareTo(rhs.toByteStringRaw(rhi)) <= 0) ? 1
 				: 0);
 	}
 
 	//@Override
-	public Operand sub(final int index, final Operand rhs, final int rhi) {
+	public Operand subRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("-");
 	}
 
 	//@Override
-	public Operand mul(final int index, final Operand rhs, final int rhi) {
+	public Operand mulRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("*");
 	}
 
 	//@Override
-	public Operand div(final int index, final Operand rhs, final int rhi) {
+	public Operand divRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("/");
 	}
 
 	//@Override
-	public Operand mod(final int index, final Operand rhs, final int rhi) {
+	public Operand modRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("%");
 	}
 
 	//@Override
-	public Operand and(final int index, final Operand rhs, final int rhi) {
+	public Operand andRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("&");
 	}
 
 	//@Override
-	public Operand or(final int index, final Operand rhs, final int rhi) {
+	public Operand orRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("|");
 	}
 
 	//@Override
-	public Operand xor(final int index, final Operand rhs, final int rhi) {
+	public Operand xorRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("^");
 	}
 
 	//@Override
-	public Operand sl(final int index, final Operand rhs, final int rhi) {
+	public Operand slRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator("<<");
 	}
 
 	//@Override
-	public Operand sr(final int index, final Operand rhs, final int rhi) {
+	public Operand srRaw(final int index, final Operand rhs, final int rhi) {
 
 		throw unsupportedOperator(">>");
 	}
@@ -279,27 +280,27 @@ public final class StringScalar extends Scalar {
 	}
 
     @Override
-    public void assignNe(int index, Operand rhs, int rhi) {
+    public void assignNeRaw(int index, Operand rhs, int rhi) {
         throw unsupportedOperator("= !=");
     }
 
     @Override
-    public void assignGt(int index, Operand rhs, int rhi) {
+    public void assignGtRaw(int index, Operand rhs, int rhi) {
         throw unsupportedOperator("= >=");
     }
 
     @Override
-    public void assignLt(int index, Operand rhs, int rhi) {
+    public void assignLtRaw(int index, Operand rhs, int rhi) {
         throw unsupportedOperator("= <=");
     }
 
     @Override
-    public void assignGtEq(int index, Operand rhs, int rhi) {
+    public void assignGtEqRaw(int index, Operand rhs, int rhi) {
         throw unsupportedOperator("= >=");
     }
 
     @Override
-    public void assignLtEq(int index, Operand rhs, int rhi) {
+    public void assignLtEqRaw(int index, Operand rhs, int rhi) {
         throw unsupportedOperator("= <=");
     }
 }
