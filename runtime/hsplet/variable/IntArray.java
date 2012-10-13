@@ -300,13 +300,21 @@ public final class IntArray extends Array {
     @Override
     public void expandToIndexes() {
 
-        int size = l0;
-        if (l1 > 0) {
-            size *= l1;
-            if (l2 > 0) {
-                size *= l2;
-                if (l3 > 0) {
-                    size *= l3;
+        /*
+         * Micro-optimization: cache field access to locals on this call. Has a
+         * nice side-effect of making code less brittle with threads and
+         * reentrancy.
+         */
+
+        int ld0 = l0, ld1 = l1, ld2 = l2, ld3 = l3;
+
+        int size = ld0;
+        if (ld1 > 0) {
+            size *= ld1;
+            if (ld2 > 0) {
+                size *= ld2;
+                if (ld3 > 0) {
+                    size *= ld3;
                 }
             }
         }
