@@ -14,6 +14,8 @@ import hsplet.HSPError;
  * @version $Revision: 1.2 $, $Date: 2006/01/13 20:32:12 $
  */
 public abstract class Array extends Operand {
+    
+    public int MAX_DIMENSION_INDEX = 4;
 
   /** このクラスを含むソースファイルのバージョン文字列。 */
   private static final String fileVersionID = "$Id: Array.java,v 1.2 2006/01/13 20:32:12 Yuki Exp $";
