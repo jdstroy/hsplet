@@ -79,6 +79,15 @@ public final class IntArray extends Array {
     }
 
     @Override
+    /**
+     * Retrieves the integer value at the offset
+     * <code>index</code> of the array.
+     *
+     * This is the canonical form for toIntRaw() on this class. Delegate all
+     * accesses to <code>toIntRaw(final int index)</code>.
+     * 
+     * @param index The offset from the base of the array.
+     */
     public int toIntRaw(final int index) {
 
         return values[index];
@@ -98,15 +107,25 @@ public final class IntArray extends Array {
     @Override
     public void incRaw(final int index) {
 
-        ++values[index];
+        assign(index, toIntRaw(index) + 1);
     }
 
     @Override
     public void decRaw(final int index) {
 
-        --values[index];
+        assign(index, toIntRaw(index) - 1);
     }
 
+    /**
+     * Sets the integer value at the offset
+     * <code>index</code> of the array to <code>newValue</code>.
+     *
+     * This is the canonical form for assignRaw() on this class. Delegate all
+     * mutations to <code>assignRaw(final int index, final int newValue)</code>.
+     * 
+     * @param index The offset from the base of the array.
+     * @param newValue the value to be stored at offset <code>index</code>.
+     */
     public void assignRaw(final int index, final int newValue) {
         values[index] = newValue;
     }
@@ -257,18 +276,16 @@ public final class IntArray extends Array {
     @Override
     public byte peek(int index, int offset) {
 
-        return (byte) (values[index + offset / 4] >> (offset % 4 * 8));
+        return (byte) (toIntRaw(index + offset / 4) >> (offset % 4 * 8));
     }
 
     @Override
     public void poke(int index, int offset, byte value) {
-
-        int bits = values[index + offset / 4];
-
+        int bits = toIntRaw(index + offset / 4);
         bits &= ~(0xFF << (offset % 4 * 8));
         bits |= (value & 0xFF) << (offset % 4 * 8);
 
-        values[index + offset / 4] = bits;
+        assignRaw(index + offset / 4, bits);
 
     }
 
