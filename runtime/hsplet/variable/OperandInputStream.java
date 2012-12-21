@@ -28,7 +28,8 @@ public class OperandInputStream extends InputStream implements Cloneable {
 		index = 0;
 	}
 
-	public Object clone() {
+    @Override
+	public OperandInputStream clone() {
 		return new OperandInputStream(o, oi, base, size);
 	}
 
