@@ -33,6 +33,18 @@ public abstract class Operand implements Serializable {
 	/** Hackish way to have all Operands be able to refer to context.
 	 *  This is initialized in Applet.init(Class) */
 	public static Context context;
+
+        protected void error(int error, String command) {
+            getContext().error(error, command);
+        }
+
+        protected void error(int error, String command, String message) {
+            getContext().error(error, command, message);
+        }
+        
+        protected Context getContext() {
+            return context;
+        }
         
         protected static final Scalar UNITY = Scalar.fromValue(1);
 
