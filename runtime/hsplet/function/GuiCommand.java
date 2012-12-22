@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -128,10 +129,13 @@ public class GuiCommand extends FunctionBase {
         }
 
         try {
-            final URL url = new URL(context.curdir, fileName);
+            final URL url = context.resolve(fileName).toURL();
             context.showPage(url, command == null || command.length() == 0 ? "_blank" : command);
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(GuiCommand.class.getName()).log(Level.SEVERE, "exec given a malformed URI", ex);
+            context.error(HSPError.ErrorOnExecution, "exec", fileName);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            Logger.getLogger(GuiCommand.class.getName()).log(Level.SEVERE, "exec given a malformed URL", e);
             context.error(HSPError.ErrorOnExecution, "exec", fileName);
         }
 

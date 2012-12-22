@@ -24,6 +24,10 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import org.yi.jdstroy.hsplet.Configuration;
+import org.yi.jdstroy.hsplet.io.IFileSystemTranslator;
+import org.yi.jdstroy.hsplet.io.IdentityFileSystemTranslator;
+import org.yi.jdstroy.hsplet.io.UriDecodeTranslator;
 
 /**
  * HSPLet の実行されているコンテキストを表すクラス。 <p> システム変数などを含む。 </p>
@@ -54,8 +58,26 @@ public class Context implements Serializable {
     private boolean tryAlternateCases;
     public static final String ALTERNATE_CASES_PROPERTY_NAME = "org.yi.jdstroy.projects.hsplet.Context.config.tryAlternateCases";
 
+    private IFileSystemTranslator fsTranslator;
     public Context() {
-
+        this(Configuration.getDefaultConfiguration());
+    }
+    
+    public Context(Configuration hspletConfiguration) {
+        Class<? extends IFileSystemTranslator> fst = hspletConfiguration.getFileSystemTranslatorClass();
+        try {
+            fsTranslator = fst.newInstance();
+        } catch (InstantiationException ex) {
+            Logger.getLogger(Context.class.getName()).log(Level.SEVERE, "Failed to instantiate a IFileSystemTranslator", ex);
+            fsTranslator = new IdentityFileSystemTranslator();
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(Context.class.getName()).log(Level.SEVERE, "Failed to instantiate a IFileSystemTranslator", ex);
+            fsTranslator = new IdentityFileSystemTranslator();
+        }
+        _init();
+    }
+    
+    private void _init() {
         tryAlternateCases = System.getProperties().
                 containsKey(ALTERNATE_CASES_PROPERTY_NAME)
                 && System.getProperties().get(ALTERNATE_CASES_PROPERTY_NAME).
@@ -315,6 +337,10 @@ public class Context implements Serializable {
         argumentStack.removeLast();
     }
 
+    public IFileSystemTranslator getFileSystemTranslator() {
+        return fsTranslator;
+    }
+
     public static final class OnEvent {
 
         public boolean enabled;
@@ -359,7 +385,7 @@ public class Context implements Serializable {
 
         if (fileName.startsWith("MEM:")) {
 
-            return (InputStream) memfile.clone();
+            return memfile.clone();
         }
 
         try {

@@ -10,9 +10,16 @@ import hsplet.variable.Operand;
 import hsplet.variable.Scalar;
 import java.awt.IllegalComponentStateException;
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.yi.jdstroy.hsplet.io.IFileSystemTranslator;
+import org.yi.jdstroy.hsplet.io.UriDecodeTranslator;
+import org.yi.jdstroy.hsplet.io.UriFileSystemTranslator;
 
 /**
  * HSP ÇÃägí£GUIä÷êîåQÅB
@@ -184,12 +191,34 @@ public class GuiFunction extends FunctionBase {
     }
 
     public static String dirinfo(final Context context, final int type) {
-
+        IFileSystemTranslator fst;
         switch (type) {
             case 0:
-                return context.curdir.toString();
+                fst = context.getFileSystemTranslator();
+                try {
+                    return new UriFileSystemTranslator(fst).toHSP(context.curdir.toURI());
+                } catch (URISyntaxException ex) {
+                    context.error(HSPError.SystemError, "dirinfo", ex.toString());
+                    Logger.getLogger(GuiFunction.class.getName()).log(Level.SEVERE, null, ex);
+                    return context.curdir.toString();
+                } catch (IOException ex) {
+                    Logger.getLogger(GuiFunction.class.getName()).log(Level.SEVERE, null, ex);
+                    context.error(HSPError.SystemError, "dirinfo", ex.toString());
+                    return context.curdir.toString();
+                }
             case 1:
-                return context.exedir.toString();
+                fst = context.getFileSystemTranslator();
+                try {
+                    return new UriFileSystemTranslator(fst).toHSP(context.exedir.toURI());
+                } catch (IOException ex) {
+                    Logger.getLogger(GuiFunction.class.getName()).log(Level.SEVERE, null, ex);
+                    context.error(HSPError.SystemError, "dirinfo", ex.toString());
+                    return context.exedir.toString();
+                } catch (URISyntaxException ex) {
+                    Logger.getLogger(GuiFunction.class.getName()).log(Level.SEVERE, null, ex);
+                    context.error(HSPError.SystemError, "dirinfo", ex.toString());
+                    return context.exedir.toString();
+                }
             case 4:
                 return context.cmdline;
             default:
