@@ -33,6 +33,8 @@ public abstract class Operand implements Serializable {
 	/** Hackish way to have all Operands be able to refer to context.
 	 *  This is initialized in Applet.init(Class) */
 	public static Context context;
+        
+        protected static final Scalar UNITY = Scalar.fromValue(1);
 
 	/** このクラスを含むソースファイルのバージョン文字列。 */
 	private static final String fileVersionID = "$Id: Operand.java,v 1.2.4.1 2006/08/02 12:13:06 Yuki Exp $";
