@@ -107,13 +107,13 @@ public final class IntArray extends Array {
     @Override
     public void incRaw(final int index) {
 
-        assignRaw(index, toIntRaw(index) + 1);
+        assignAddRaw(index, UNITY);
     }
 
     @Override
     public void decRaw(final int index) {
 
-        assignRaw(index, toIntRaw(index) - 1);
+        assignSubRaw(index, UNITY);
     }
 
     /**
