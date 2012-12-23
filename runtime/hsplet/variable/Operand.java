@@ -92,7 +92,7 @@ public abstract class Operand implements Serializable {
 	public abstract int getType();
 	
 	public Operand checkVar() {
-		context.error(HSPError.VariableNameNotSpecified, "", "Variable required.");
+		error(HSPError.VariableNameNotSpecified, "", "Variable required.");
 		return this;
 	}
 

@@ -107,75 +107,75 @@ public abstract class Scalar extends Operand {
 	public void checkIncrementSize(int size) {
 	}
 	public int checkSize0(int size) {
-		context.error(7, "", "Array overflow");
+		error(7, "", "Array overflow");
 		return size;
 	}
 	public int checkSize1(int size) {
-		context.error(7, "", "Array overflow");
+		error(7, "", "Array overflow");
 		return size;
 	}
 	public int checkSize2(int size) {
-		context.error(7, "", "Array overflow");
+		error(7, "", "Array overflow");
 		return size;
 	}
 	public int checkSize3(int size) {
-		context.error(7, "", "Array overflow");
+		error(7, "", "Array overflow");
 		return size;
 	}
 	public int checkResize0(int size) {
-		context.error(7, "", "Array overflow");
+		error(7, "", "Array overflow");
 		return size;
 	}
 	public int checkResize1(int size) {
-		context.error(7, "", "Array overflow");
+		error(7, "", "Array overflow");
 		return size;
 	}
 	public int checkResize2(int size) {
-		context.error(7, "", "Array overflow");
+		error(7, "", "Array overflow");
 		return size;
 	}
 	public int checkResize3(int size) {
-		context.error(7, "", "Array overflow");
+		error(7, "", "Array overflow");
 		return size;
 	}
 	public int getIndex(final int i0) {
 		if(i0 != 0)
-			context.error(7, "", "Array overflow");
+			error(7, "", "Array overflow");
 		return 0;
 	}
 	public int getIndex(final int i0, final int i1) {
 		if(i0 != 0 || i1 != 0)
-			context.error(7, "", "Array overflow");
+			error(7, "", "Array overflow");
 		return 0;
 	}
 	public int getIndex(final int i0, final int i1, final int i2) {
 		if(i0 != 0 || i1 != 0 || i2 != 0)
-			context.error(7, "", "Array overflow");
+			error(7, "", "Array overflow");
 		return 0;
 	}
 	public int getIndex(final int i0, final int i1, final int i2, final int i3) {
 		if(i0 != 0 || i1 != 0 || i2 != 0 || i3 != 0)
-			context.error(7, "", "Array overflow");
+			error(7, "", "Array overflow");
 		return 0;
 	}
 	public int getResizeIndex(final int i0) {
 		if(i0 != 0)
-			context.error(7, "", "Array overflow");
+			error(7, "", "Array overflow");
 		return 0;
 	}
 	public int getResizeIndex(final int i0, final int i1) {
 		if(i0 != 0 || i1 != 0)
-			context.error(7, "", "Array overflow");
+			error(7, "", "Array overflow");
 		return 0;
 	}
 	public int getResizeIndex(final int i0, final int i1, final int i2) {
 		if(i0 != 0 || i1 != 0 || i2 != 0)
-			context.error(7, "", "Array overflow");
+			error(7, "", "Array overflow");
 		return 0;
 	}
 	public int getResizeIndex(final int i0, final int i1, final int i2, final int i3) {
 		if(i0 != 0 || i1 != 0 || i2 != 0 || i3 != 0)
-			context.error(7, "", "Array overflow");
+			error(7, "", "Array overflow");
 		return 0;
 	}
 

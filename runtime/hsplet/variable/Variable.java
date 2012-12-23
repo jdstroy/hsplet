@@ -188,7 +188,7 @@ public final class Variable extends Operand {
 	public void assignRaw(final int index, final int newValue) {
 		if(value.getType() != Type.INTEGER) {
 			if(index != 0) {
-				context.error(HSPError.AssignToDifferentType, "", "Invalid type of array");
+				error(HSPError.AssignToDifferentType, "", "Invalid type of array");
 				return;
 			}
 			value = new IntArray();
@@ -198,7 +198,7 @@ public final class Variable extends Operand {
 	public void assignRaw(final int index, final double newValue){
 		if(value.getType() != Type.DOUBLE) {
 			if(index != 0) {
-				context.error(HSPError.AssignToDifferentType, "", "Invalid type of array");
+				error(HSPError.AssignToDifferentType, "", "Invalid type of array");
 				return;
 			}
 			value = new DoubleArray();
@@ -208,7 +208,7 @@ public final class Variable extends Operand {
 	public void assignRaw(final int index, final String newValue){
 		if(value.getType() != Type.STRING) {
 			if(index != 0) {
-				context.error(HSPError.AssignToDifferentType, "", "Invalid type of array");
+				error(HSPError.AssignToDifferentType, "", "Invalid type of array");
 				return;
 			}
 			value = new StringArray();
@@ -222,7 +222,7 @@ public final class Variable extends Operand {
 		// å^Ç™à·Ç§ë„ì¸ÅAèâä˙âªÇ≥ÇÍÇÈ
 		if (value.getType() != rhs.getType()) {
 			if(index != 0) {
-				context.error(HSPError.AssignToDifferentType, "", "Invalid type of array");
+				error(HSPError.AssignToDifferentType, "", "Invalid type of array");
 				return;
 			}
 			switch (rhs.getType()) {
