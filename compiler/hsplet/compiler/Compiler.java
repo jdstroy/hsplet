@@ -3,6 +3,7 @@
  */
 package hsplet.compiler;
 
+import com.sun.org.apache.bcel.internal.generic.INVOKEVIRTUAL;
 import hsplet.FlagObject;
 import hsplet.Context;
 import hsplet.RunnableCode;
@@ -24,10 +25,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,6 +53,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
+import org.yi.jdstroy.hsplet.compiler.interop.Out;
 
 /**
  * axファイルをコンパイルするクラス。
@@ -3516,6 +3520,32 @@ public class Compiler implements Opcodes, Serializable {
             mv.visitEnd();
         }
         return count;
+    }
+    
+    private List<Boolean> isMarkedOut(Method method) {
+        List<Boolean> isOut = new ArrayList<Boolean>();
+        
+        /*
+         * If any parameters contains Operand or a child class of Operand, we 
+         * need to check if @Out is declared.
+         */
+        
+            Annotation[][] paramAnnotations = method.getParameterAnnotations();
+            for(int i = 0; i < paramAnnotations.length; i++ ) {
+                Annotation[] paramAnnotation = paramAnnotations[i];
+                
+                Boolean b = Boolean.FALSE;
+                inner:
+                for(Annotation annotation : paramAnnotation) {
+                    if (Out.class.isAssignableFrom(annotation.getClass())){ 
+                        b = Boolean.TRUE;
+                        break inner;
+                    }
+                }
+                isOut.add(b);
+            }
+        
+            return isOut;
     }
 }
 
