@@ -7,6 +7,7 @@ import hsplet.Context;
 import hsplet.HSPError;
 import hsplet.Task;
 import hsplet.variable.*;
+import org.yi.jdstroy.hsplet.compiler.interop.Out;
 
 /**
  * HSP のプログラム制御コマンド群。
@@ -177,7 +178,7 @@ public class ProgramCommand extends FunctionBase {
 		}
 	}
 
-	public static void dim(final Context context, final Operand v, final int vi, final int l0, final int l1,
+	public static void dim(final Context context, @Out final Operand v, final int vi, final int l0, final int l1,
 			final int l2, final int l3) {
 
 		if (!(v instanceof Variable)) {
@@ -197,7 +198,7 @@ public class ProgramCommand extends FunctionBase {
 
 	}
 
-	public static void sdim(final Context context, final Operand v, final int vi, final Operand lengthv,
+	public static void sdim(final Context context, @Out final Operand v, final int vi, final Operand lengthv,
 			final int lengthvi, final int l0, final int l1, final int l2, final int l3) {
 
 		if (!(v instanceof Variable)) {
@@ -205,11 +206,11 @@ public class ProgramCommand extends FunctionBase {
 			return;
 		}
 		if(vi != 0) {
-			context.error(HSPError.InvalidFormOfArray, "dim", "Bad array expression");
+			context.error(HSPError.InvalidFormOfArray, "sdim", "Bad array expression");
 			return;
 		}
 		if (l0<0 || l1<0 || l2<0 || l3<0) {
-			context.error(HSPError.InvalidParameterValue, "dim", "Illegal function call");
+			context.error(HSPError.InvalidParameterValue, "sdim", "Illegal function call");
 			return;
 		}
 
@@ -217,7 +218,7 @@ public class ProgramCommand extends FunctionBase {
 
 	}
 
-	public static void dimtype(final Context context, final Operand v, final int vi, final int type, final int l0,
+	public static void dimtype(final Context context, @Out final Operand v, final int vi, final int type, final int l0,
 			final int l1, final int l2, final int l3) {
 
 		if (!(v instanceof Variable)) {
@@ -225,11 +226,11 @@ public class ProgramCommand extends FunctionBase {
 			return;
 		}
 		if(vi != 0) {
-			context.error(HSPError.InvalidFormOfArray, "dim", "Bad array expression");
+			context.error(HSPError.InvalidFormOfArray, "dimtype", "Bad array expression");
 			return;
 		}
 		if (l0<0 || l1<0 || l2<0 || l3<0) {
-			context.error(HSPError.InvalidParameterValue, "dim", "Illegal function call");
+			context.error(HSPError.InvalidParameterValue, "dimtype", "Illegal function call");
 			return;
 		}
 
@@ -250,14 +251,14 @@ public class ProgramCommand extends FunctionBase {
 
 	}
 
-	public static void dup(final Context context, final Operand v, final int vi, final Operand v2, final int v2i) {
+	public static void dup(final Context context, @Out final Operand v, final int vi, @Out final Operand v2, final int v2i) {
 
 		if (!(v instanceof Variable)) {
 			context.error(HSPError.ParameterTypeMismatch, "dup", "typeof( v )==" + v.getClass().getName());
 			return;
 		}
 		if(vi != 0) {
-			context.error(HSPError.InvalidFormOfArray, "dim", "Bad array expression");
+			context.error(HSPError.InvalidFormOfArray, "dup", "Bad array expression");
 			return;
 		}
 
@@ -326,10 +327,14 @@ public class ProgramCommand extends FunctionBase {
 		context.error(HSPError.UnsupportedOperation, "alloc");
 	}
 
-	public static void mref(final Context context, final Operand v, final int vi, final int type) {
+	public static void mref(final Context context, @Out final Operand v, final int vi, final int type) {
 
 		if (!(v instanceof Variable)) {
 			context.error(HSPError.ParameterTypeMismatch, "mref", "typeof( v )==" + v.getClass().getName());
+			return;
+		}
+		if(vi != 0) {
+			context.error(HSPError.InvalidFormOfArray, "mref", "Bad array expression");
 			return;
 		}
 

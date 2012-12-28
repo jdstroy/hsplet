@@ -1823,6 +1823,34 @@ public class Compiler implements Opcodes, Serializable {
     }
 
     private boolean maySkipLabel=false;
+	private int compileExpressionAlt(final MethodVisitor mv, final List<Boolean> isOut, int startingIndex) {
+        int i=0;
+		boolean first = true;
+        do {
+
+			//SPECIAL CASE: Functions that pre-emptively expand the arguments supplied to it.
+			//TODO: Write some logging code for this, I sort of wonder if ALL ByteCode.Code.Type.Var will autoexpand
+			//if they reach this point.
+			if(first && isOut.get(startingIndex+i) && (ax.codes[codeIndex].type == ByteCode.Code.Type.Var)) {
+                compileVariablePart(mv);
+				int saveIndex = codeIndex;
+				int numArgs = countArrayArguments();
+				codeIndex = saveIndex;
+				compileRawArgumentEfficient(mv, numArgs);
+                i++;
+			} else {
+				i+=compileToken(mv, false);
+			}
+			first = false;
+
+        } while (codeIndex < ax.codes.length
+                && !(ax.codes[codeIndex].type == Code.Type.Mark && (ax.codes[codeIndex].value == ')' || ax.codes[codeIndex].value == '?'))
+                && !(ax.codes[codeIndex].newLine | ax.codes[codeIndex].comma));
+
+        //enableVariableOptimization = prevEnableVariableOptimization;
+
+        return i;
+	}
     private int compileExpression(final MethodVisitor mv) {
         return compileExpression(mv, false);
     }
@@ -2058,9 +2086,10 @@ public class Compiler implements Opcodes, Serializable {
         final Code code = ax.codes[codeIndex++];
 
         final Class libraryClass = runtime.getClassFor(ax, code);
-        final Method method = runtime.getMethodFor(ax, code);
-        if(method==null)
+        final MethodInformation mInfo = runtime.getMethodFor(ax, code);
+        if(mInfo==null)
             throw new RuntimeException("No method found for "+code.type+" "+code.value);
+		final Method method = mInfo.method;
         final String methodDesc = Type.getMethodDescriptor(method);
         //if(mv instanceof ScanOneVisitor)
         //    System.out.print(" "+method.getName()+methodDesc);
@@ -2093,7 +2122,7 @@ public class Compiler implements Opcodes, Serializable {
             ++codeIndex; // ( ‚ð“Ç‚Ý”ò‚Î‚·B
         }
 
-        compileInvocationParameters(mv, method, noeatparam);
+        compileInvocationParameters(mv, mInfo, noeatparam);
 
         if (bracket) {
 
@@ -2160,9 +2189,10 @@ public class Compiler implements Opcodes, Serializable {
 
     }
 
-    private void compileInvocationParameters(final MethodVisitor mv, final Method method, final boolean noeatparam) {
+    private void compileInvocationParameters(final MethodVisitor mv, final MethodInformation mInfo, final boolean noeatparam) {
 
         boolean firstParam = true;
+		final Method method = mInfo.method;
 
         for (int paramIndex = 0; paramIndex < method.getParameterTypes().length; ++paramIndex) {
 
@@ -2211,7 +2241,11 @@ public class Compiler implements Opcodes, Serializable {
 
                 if (!omitted) {
                     maySkipLabel=type.equals(Integer.TYPE);
-                    int numVals=compileExpression(mv, false);
+                    int numVals;
+					if(mInfo.isAnyOut)
+						numVals=compileExpressionAlt(mv, mInfo.isOut, paramIndex);
+					else
+						numVals=compileExpression(mv, false);
                     
                     while(true) {
                         if (skipToInt) {
@@ -2303,7 +2337,8 @@ public class Compiler implements Opcodes, Serializable {
     private void compileModuleCommand(final MethodVisitor mv, final boolean hasresult, boolean toDirectValue) {
 
         final Code code = ax.codes[codeIndex++];
-        final Method method = runtime.getMethodFor(ax, code, hasresult ? "callVal" : "call");
+        final MethodInformation mInfo = runtime.getMethodFor(ax, code, hasresult ? "callVal" : "call");
+		final Method method = mInfo.method;
         final String methodDesc = Type.getMethodDescriptor(method);
         //if(mv instanceof ScanOneVisitor)
         //    System.out.print(" "+method.getName()+methodDesc);
@@ -3520,32 +3555,6 @@ public class Compiler implements Opcodes, Serializable {
             mv.visitEnd();
         }
         return count;
-    }
-    
-    private List<Boolean> isMarkedOut(Method method) {
-        List<Boolean> isOut = new ArrayList<Boolean>();
-        
-        /*
-         * If any parameters contains Operand or a child class of Operand, we 
-         * need to check if @Out is declared.
-         */
-        
-            Annotation[][] paramAnnotations = method.getParameterAnnotations();
-            for(int i = 0; i < paramAnnotations.length; i++ ) {
-                Annotation[] paramAnnotation = paramAnnotations[i];
-                
-                Boolean b = Boolean.FALSE;
-                inner:
-                for(Annotation annotation : paramAnnotation) {
-                    if (Out.class.isAssignableFrom(annotation.getClass())){ 
-                        b = Boolean.TRUE;
-                        break inner;
-                    }
-                }
-                isOut.add(b);
-            }
-        
-            return isOut;
     }
 }
 

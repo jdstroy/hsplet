@@ -10,8 +10,13 @@ import hsplet.function.GuiCommand;
 import hsplet.function.GuiFunction;
 import hsplet.function.ProgramCommand;
 import hsplet.variable.ByteString;
+import java.lang.annotation.Annotation;
+import org.yi.jdstroy.hsplet.compiler.interop.Out;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * デフォルトのラインタイム情報。
@@ -129,19 +134,57 @@ public class DefaultRuntimeInfo implements RuntimeInfo {
 		}
 	}
 
-	public Method getMethodFor(final ByteCode ax, final Code code, final String name) {
+    private List<Boolean> isMarkedOut(Method method) {
+        List<Boolean> isOut = new ArrayList<Boolean>();
+        
+        /*
+         * If any parameters contains Operand or a child class of Operand, we 
+         * need to check if @Out is declared.
+         */
+        
+            Annotation[][] paramAnnotations = method.getParameterAnnotations();
+            for(int i = 0; i < paramAnnotations.length; i++ ) {
+                Annotation[] paramAnnotation = paramAnnotations[i];
+                
+                Boolean b = Boolean.FALSE;
+                inner:
+                for(Annotation annotation : paramAnnotation) {
+                    if (Out.class.isAssignableFrom(annotation.getClass())){ 
+                        b = Boolean.TRUE;
+                        break inner;
+                    }
+                }
+                isOut.add(b);
+            }
+        
+            return isOut;
+    }
+
+	protected HashMap<Class, HashMap<String, MethodInformation>> cachedMethods = new HashMap();
+
+	public MethodInformation getMethodFor(final ByteCode ax, final Code code, final String name) {
 		final Class clazz = getClassFor(ax, code);
+		HashMap<String, MethodInformation> theseMethods = cachedMethods.get(clazz);
+		MethodInformation cachedInfo;
+		if(theseMethods == null) {
+			theseMethods = new HashMap();
+			cachedMethods.put(clazz, theseMethods);
+		} else if((cachedInfo = theseMethods.get(name)) != null) {
+			return cachedInfo;
+		}
 		final Method[] methods = clazz.getMethods();
 		
 		for( int i = 0; i<methods.length; ++i ){
 			final Method m = methods[i];
 			if (m.getName().equals(name)) {
-				return m;
+				MethodInformation mInfo = new MethodInformation(m, isMarkedOut(m));
+				theseMethods.put(name, mInfo);
+				return mInfo;
 			}
 		}
 		return null;
 	}
-	public Method getMethodFor(final ByteCode ax, final Code code) {
+	public MethodInformation getMethodFor(final ByteCode ax, final Code code) {
 
 		final Class clazz = getClassFor(ax, code);
 		final String name;
@@ -211,16 +254,26 @@ public class DefaultRuntimeInfo implements RuntimeInfo {
 			throw new RuntimeException("命令タイプ " + code.type);
 		}
 
+		HashMap<String, MethodInformation> theseMethods = cachedMethods.get(clazz);
+		MethodInformation cachedInfo;
+		if(theseMethods == null) {
+			theseMethods = new HashMap();
+			cachedMethods.put(clazz, theseMethods);
+		} else if((cachedInfo = theseMethods.get(name)) != null) {
+			return cachedInfo;
+		}
 		final Method[] methods = clazz.getMethods();
 		
 		for( int i = 0; i<methods.length; ++i ){
 			final Method m = methods[i];
 			if (m.getName().equals(name)) {
-				return m;
+				MethodInformation mInfo = new MethodInformation(m, isMarkedOut(m));
+				theseMethods.put(name, mInfo);
+				return mInfo;
 			}
 		}
-		System.out.println("Method name not found: "+name+" for "+(clazz==null?"null":clazz.getName()));
 		return null;
+
 	}
 
 }

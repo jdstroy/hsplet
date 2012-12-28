@@ -36,8 +36,8 @@ public interface RuntimeInfo extends Serializable {
 	 * @param code 命令コード。
 	 * @return 実行するメソッド。
 	 */
-	public Method getMethodFor(final ByteCode ax, final ByteCode.Code code);
+	public MethodInformation getMethodFor(final ByteCode ax, final ByteCode.Code code);
 
 	//Compiler provides the name, runtimeinfo gets the actual method
-	public Method getMethodFor(final ByteCode ax, final ByteCode.Code code, final String name);
+	public MethodInformation getMethodFor(final ByteCode ax, final ByteCode.Code code, final String name);
 }

@@ -13,6 +13,7 @@ import hsplet.variable.OperandInputStream;
 import hsplet.variable.Scalar;
 import hsplet.variable.StringArray;
 import hsplet.variable.Variable;
+import org.yi.jdstroy.hsplet.compiler.interop.Out;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -277,7 +278,7 @@ public class BasicCommand extends FunctionBase {
         }
     }
 
-    public static void bload(final Context context, final String fileName, final Operand v, final int vi,
+    public static void bload(final Context context, final String fileName, @Out final Operand v, final int vi,
             final Operand sizev, final int sizevi, final int offset) {
 
         if (fileName == null) {
@@ -368,7 +369,7 @@ public class BasicCommand extends FunctionBase {
 
     }
 
-    public static void bsave(final Context context, final String fileName, final Operand v, final int vi,
+    public static void bsave(final Context context, final String fileName, @Out final Operand v, final int vi,
             final Operand sizev, final int sizevi, final int offset) {
         FileOutputStream out = null;
 
@@ -485,7 +486,7 @@ public class BasicCommand extends FunctionBase {
 
     }
 
-    public static void memfile(final Context context, final Operand v, final int vi, final int base, final int size) {
+    public static void memfile(final Context context, @Out final Operand v, final int vi, final int base, final int size) {
 
         if (v == null) {
             context.error(HSPError.ParameterCannotBeOmitted, "memfile", "v");
@@ -496,7 +497,7 @@ public class BasicCommand extends FunctionBase {
 
     }
 
-    public static void poke(final Context context, final Operand v, final int vi, final int index, final Operand sv,
+    public static void poke(final Context context, @Out final Operand v, final int vi, final int index, final Operand sv,
             final int svi) {
 
         if (v == null) {
@@ -518,7 +519,7 @@ public class BasicCommand extends FunctionBase {
         }
     }
 
-    public static void wpoke(final Context context, final Operand v, final int vi, final int index, final int word) {
+    public static void wpoke(final Context context, @Out final Operand v, final int vi, final int index, final int word) {
 
         if (v == null) {
             context.error(HSPError.ParameterCannotBeOmitted, "wpoke", "v");
@@ -529,7 +530,7 @@ public class BasicCommand extends FunctionBase {
         v.poke(vi, index + 1, (byte) ((word >> 8) & 0xFF));
     }
 
-    public static void lpoke(final Context context, final Operand v, final int vi, final int index, final int dword) {
+    public static void lpoke(final Context context, @Out final Operand v, final int vi, final int index, final int dword) {
 
         if (v == null) {
             context.error(HSPError.ParameterCannotBeOmitted, "lpoke", "v");
@@ -542,7 +543,7 @@ public class BasicCommand extends FunctionBase {
         v.poke(vi, index + 3, (byte) ((dword >> 24) & 0xFF));
     }
 
-    public static void getstr(final Context context, final Operand v, final int vi, final ByteString str,
+    public static void getstr(final Context context, final @Out Operand v, final int vi, final @Out Operand strOp, final int stri,
             final int offset, final int separator) {
 
         if (v == null) {
@@ -550,10 +551,11 @@ public class BasicCommand extends FunctionBase {
             return;
         }
 
-        if (str == null) {
-            context.error(HSPError.ParameterCannotBeOmitted, "getstr", "str");
+        if (strOp == null) {
+            context.error(HSPError.ParameterCannotBeOmitted, "getstr", "strOp");
             return;
         }
+		final ByteString str = strOp.toByteStringRaw(stri);
 
         int length;
         for (length = 0; offset + length < str.length(); ++length) {
@@ -630,7 +632,7 @@ public class BasicCommand extends FunctionBase {
 
     }
 
-    public static void notesel(final Context context, final Operand v, final int vi) {
+    public static void notesel(final Context context, @Out final Operand v, final int vi) {
 
         if (v == null) {
             context.error(HSPError.ParameterCannotBeOmitted, "notesel", "v");
@@ -823,7 +825,7 @@ public class BasicCommand extends FunctionBase {
         }
     }
 
-    public static void noteget(final Context context, final Operand v, final int vi, final int line) {
+    public static void noteget(final Context context, @Out final Operand v, final int vi, final int line) {
 
         if (v == null) {
             context.error(HSPError.ParameterCannotBeOmitted, "noteget", "v");

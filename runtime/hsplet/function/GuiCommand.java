@@ -21,6 +21,7 @@ import hsplet.media.HSPMedia;
 import hsplet.variable.Operand;
 import hsplet.variable.Scalar;
 import hsplet.variable.Variable;
+import org.yi.jdstroy.hsplet.compiler.interop.Out;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -976,7 +977,7 @@ public class GuiCommand extends FunctionBase {
         g.setColor(win.color);
     }
 
-    public static void getkey(final Context context, final Operand v, final int vi, final int key) {
+    public static void getkey(final Context context, @Out final Operand v, final int vi, final int key) {
         /*
          * Logger.getLogger(GuiCommand.class.getName()).log(Level.FINEST,
          * "getKey: Request = {0}, Response = {1}", new Object[] {
@@ -987,7 +988,7 @@ public class GuiCommand extends FunctionBase {
 
     }
 
-    public static void chkbox(final Context context, final String text, final Operand v, final int vi) {
+    public static void chkbox(final Context context, final String text, @Out final Operand v, final int vi) {
 
         if (text == null) {
             context.error(HSPError.ParameterCannotBeOmitted, "chkbox", "text");
@@ -1009,7 +1010,7 @@ public class GuiCommand extends FunctionBase {
         }
     }
 
-    public static void listbox(final Context context, final Operand v, final int vi, final int height,
+    public static void listbox(final Context context, @Out final Operand v, final int vi, final int height,
             final String items) {
 
         if (v == null) {
@@ -1037,7 +1038,7 @@ public class GuiCommand extends FunctionBase {
         }
     }
 
-    public static void combox(final Context context, final Operand v, final int vi, final int height, final String items) {
+    public static void combox(final Context context, @Out final Operand v, final int vi, final int height, final String items) {
 
         if (v == null) {
             context.error(HSPError.ParameterCannotBeOmitted, "combox", "v");
@@ -1066,7 +1067,7 @@ public class GuiCommand extends FunctionBase {
         }
     }
 
-    public static void input(final Context context, final Operand v, final int vi, final Operand wv, final int wvi,
+    public static void input(final Context context, @Out final Operand v, final int vi, final Operand wv, final int wvi,
             final Operand hv, final int hvi, final int length) {
 
         if (v == null) {
@@ -1096,7 +1097,7 @@ public class GuiCommand extends FunctionBase {
         }
     }
 
-    public static void mesbox(final Context context, final Operand v, final int vi, final Operand wv, final int wvi,
+    public static void mesbox(final Context context, @Out final Operand v, final int vi, final Operand wv, final int wvi,
             final Operand hv, final int hvi, final Operand typev, final int typevi) {
 
         if (v == null) {
@@ -1461,7 +1462,7 @@ public class GuiCommand extends FunctionBase {
 
     }
 
-    public static void stick(final Context context, final Operand v, final int vi, final int notrigerMask) {
+    public static void stick(final Context context, @Out final Operand v, final int vi, final int notrigerMask) {
 
         if (v == null) {
             context.error(HSPError.ParameterCannotBeOmitted, "stick", "v");
