@@ -543,6 +543,22 @@ public class BasicCommand extends FunctionBase {
         v.poke(vi, index + 3, (byte) ((dword >> 24) & 0xFF));
     }
 
+    /**
+     * Assigns to v[vi] the substring of strOp starting at offset + stri up to
+     * the first instance of separator, ASCII NUL ("\0"), or "\r\n". The length
+     * of the new string (in v[vi]) can be found through context.strsize.
+     *
+     * @param context The caller's Context
+     * @param v The destination buffer
+     * @param vi The offset of the destination buffer
+     * @param strOp The string from which substrings are selected
+     * @param stri The offset from strOp which represents the start of the
+     * string.
+     * @param offset The offset from which to start the search
+     * @param separator The character code for the separator. For the default
+     * separators of "\0" and "\r\n" only, use a value less than 0 or greater
+     * than 0xff.
+     */
     public static void getstr(final Context context, final @Out Operand v, final int vi, final @Out Operand strOp, final int stri,
             final int offset, final int separator) {
 
@@ -562,11 +578,11 @@ public class BasicCommand extends FunctionBase {
             final int ch = str.get(offset + length) & 0xFF;
             if (ch == 0 || ch == '\r' || ch == separator) {
                 if (ch == 0) {
-                    context.strsize.value = length;
+                    context.strsize.assign(length);
                 } else if (ch == '\r' && (str.get(offset + length + 1) & 0xFF) == '\n') {
-                    context.strsize.value = length + 2;
+                    context.strsize.assign(length + 2);
                 } else {
-                    context.strsize.value = length + 1;
+                    context.strsize.assign(length + 1);
                 }
                 break;
             }
