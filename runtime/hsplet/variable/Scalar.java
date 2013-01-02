@@ -16,7 +16,7 @@ package hsplet.variable;
  * @version $Revision: 1.3 $, $Date: 2006/02/11 18:00:37 $
  */
 public abstract class Scalar extends Operand {
-
+    
 	/** このクラスを含むソースファイルのバージョン文字列。 */
 	private static final String fileVersionID = "$Id: Scalar.java,v 1.3 2006/02/11 18:00:37 Yuki Exp $";
 
@@ -29,6 +29,7 @@ public abstract class Scalar extends Operand {
 		}
 	}
 
+        public static final Scalar UNITY = Scalar.fromValue(1);
 	/**
 	 * 特定の値をあらわすオブジェクトを取得する。
 	 * <p>
