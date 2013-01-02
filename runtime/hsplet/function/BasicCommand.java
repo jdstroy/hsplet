@@ -545,8 +545,10 @@ public class BasicCommand extends FunctionBase {
 
     /**
      * Assigns to v[vi] the substring of strOp starting at offset + stri up to
-     * the first instance of separator, ASCII NUL ("\0"), or "\r\n". The length
-     * of the new string (in v[vi]) can be found through context.strsize.
+     * the first instance of separator, ASCII NUL ("\0"), or "\r\n". 
+     * context.strsize will be assigned 0 upon reaching the end index of the 
+     * strOp[stri] string; otherwise, it will contain the length of the output 
+     * string in v[vi].
      *
      * @param context The caller's Context
      * @param v The destination buffer
@@ -573,21 +575,32 @@ public class BasicCommand extends FunctionBase {
         }
 		final ByteString str = strOp.toByteStringRaw(stri);
 
-        int length;
-        for (length = 0; offset + length < str.length(); ++length) {
-            final int ch = str.get(offset + length) & 0xFF;
-            if (ch == 0 || ch == '\r' || ch == separator) {
-                if (ch == 0) {
-                    context.strsize.assign(length);
-                } else if (ch == '\r' && (str.get(offset + length + 1) & 0xFF) == '\n') {
-                    context.strsize.assign(length + 2);
-                } else {
-                    context.strsize.assign(length + 1);
-                }
-                break;
+        // Objective: Find the first character which matches the separator from
+        // offset.
+        if (offset >= str.length()) {
+            context.strsize.assign(0);
+            v.assign(vi, "");
+            return;
+        }
+        
+        for (int where = offset; where < str.length(); where++) {
+            int ch = str.get(where) & 0xff;
+            int outLength = where - offset;
+            if (ch == 0 // ASCII NUL 
+                    || ch == separator) {
+                context.strsize.assign(outLength + 1);
+                v.assign(vi, str.substring(offset, outLength).toString());
+                return;
+            } else if (((ch == '\r') && ((str.get(where + 1) & 0xff) == '\n')) ) {
+                // if "\r\n"
+                context.strsize.assign(outLength + 2);
+                v.assign(vi, str.substring(offset, outLength).toString());
+                return;
             }
         }
-        v.assignRaw(vi, Scalar.fromValue(str.substring(offset, length)), 0);
+        int outLength = str.length() - offset;
+        context.strsize.assign(outLength);
+        v.assign(vi, str.substring(offset, outLength).toString());
     }
 
     public static void chdpm(final Context context, final Operand v, final int vi) {
