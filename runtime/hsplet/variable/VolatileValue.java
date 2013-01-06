@@ -449,10 +449,10 @@ public class VolatileValue extends Operand {
 
     private void update() {
 
-        if (updaters.size() != 0) {
+        if (!updaters.isEmpty()) {
 
-            for (final Iterator i = updaters.iterator(); i.hasNext();) {
-                ((VolatileValueUpdater) i.next()).update(value);
+            for (final Iterator<VolatileValueUpdater> i = updaters.iterator(); i.hasNext();) {
+                i.next().update(value);
             }
 
             updaters.clear();
