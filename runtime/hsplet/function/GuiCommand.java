@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Level;
@@ -130,8 +131,24 @@ public class GuiCommand extends FunctionBase {
         }
 
         try {
-            final URL url = context.resolve(fileName).toURL();
-            context.showPage(url, command == null || command.length() == 0 ? "_blank" : command);
+            final URI uri = context.resolve(fileName);
+            final URL url = uri.toURL();
+            if (Desktop.isDesktopSupported()) {
+                Desktop d = Desktop.getDesktop();
+                try {
+                    d.open(new File(uri));
+                } catch (SecurityException | IllegalArgumentException | UnsupportedOperationException | IOException ex) {
+                    Logger.getLogger(GuiCommand.class.getName()).log(Level.WARNING, new StringBuilder("Couldn't open file").append(uri).toString(), ex);
+                    try {
+                        d.browse(uri);
+                    } catch (IOException ex1) {
+                        Logger.getLogger(GuiCommand.class.getName()).log(Level.SEVERE, new StringBuilder("Couldn't browse to file").append(uri).toString(), ex1);
+                        context.showPage(url, command == null || command.length() == 0 ? "_blank" : command);
+                    }
+                }
+            } else {
+                context.showPage(url, command == null || command.length() == 0 ? "_blank" : command);
+            }
         } catch (URISyntaxException ex) {
             Logger.getLogger(GuiCommand.class.getName()).log(Level.SEVERE, "exec given a malformed URI", ex);
             context.error(HSPError.ErrorOnExecution, "exec", fileName);
