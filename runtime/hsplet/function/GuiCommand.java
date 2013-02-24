@@ -27,6 +27,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -205,7 +207,6 @@ public class GuiCommand extends FunctionBase {
 
                 if (text != null && !text.equals("*")) {
                     chooser.setFileFilter(new FileFilter() {
-
                         //@Override
                         public boolean accept(final File f) {
 
@@ -250,7 +251,6 @@ public class GuiCommand extends FunctionBase {
                 final JColorChooser chooser = new JColorChooser(win.color);
 
                 JDialog dialog = JColorChooser.createDialog(parent, title, true, chooser, new ActionListener() {
-
                     public void actionPerformed(ActionEvent e) {
 
                         win.color = chooser.getColor();
@@ -771,7 +771,6 @@ public class GuiCommand extends FunctionBase {
         }
         try {
             EDTUtils.invokeAndWait(new Runnable() {
-
                 @Override
                 public void run() {
                     if (win.contents != null) {
@@ -815,7 +814,6 @@ public class GuiCommand extends FunctionBase {
             case 1:
                 try {
                     EDTUtils.invokeAndWait(new Runnable() {
-
                         @Override
                         public void run() {
 
@@ -834,7 +832,6 @@ public class GuiCommand extends FunctionBase {
             case 2:
                 try {
                     EDTUtils.invokeAndWait(new Runnable() {
-
                         @Override
                         public void run() {
                             if (win.component != null) {
@@ -873,7 +870,6 @@ public class GuiCommand extends FunctionBase {
 
             EDTUtils.invokeAndWait(
                     new Runnable() {
-
                         @Override
                         public void run() {
                             GraphicsRenderer.gcopy(win, win.cx, win.cy, src.backImage, sx, sy, w, h);
@@ -888,6 +884,21 @@ public class GuiCommand extends FunctionBase {
 
     }
 
+    /**
+     * Copy and scale source image from source window to destination window.
+     *
+     * @param context HSPlet context
+     * @param dw Destination width
+     * @param dh Destination height
+     * @param srcId Source Window ID
+     * @param sx x-coordinate relative to source window
+     * @param sy y-coordinate relative to source window
+     * @param wv Width variable of source image
+     * @param wvi Index within width variable
+     * @param hv Height of source image
+     * @param hvi Index within height variable
+     * @param mode Enable high-quality rendering and anti-aliasing (on when 1)
+     */
     public static void gzoom(final Context context, final int dw, final int dh, final int srcId, final int sx,
             final int sy, final Operand wv, final int wvi, final Operand hv, final int hvi, final int mode) {
 
@@ -897,6 +908,7 @@ public class GuiCommand extends FunctionBase {
 
         final Bmscr win = (Bmscr) context.windows.get(context.targetWindow);
         final Bmscr src = (Bmscr) context.windows.get(srcId);
+        final Graphics2D winBackGraphics = win.backGraphics;
 
         int dx = win.cx;
         int dy = win.cy;
@@ -904,8 +916,8 @@ public class GuiCommand extends FunctionBase {
         int sw = toInt(wv, wvi, win.gwidth);
         int sh = toInt(hv, hvi, win.gheight);
 
-        final Object oldAntiAliasing = win.backGraphics.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-        final Object oldRenering = win.backGraphics.getRenderingHint(RenderingHints.KEY_RENDERING);
+        final Object oldAntiAliasing = winBackGraphics.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+        final Object oldRenering = winBackGraphics.getRenderingHint(RenderingHints.KEY_RENDERING);
 
         final boolean runningOnMac = System.getProperty("os.name").toLowerCase().startsWith("mac os x");
 
@@ -929,15 +941,24 @@ public class GuiCommand extends FunctionBase {
         } else {
 
             if (mode == 1) {
-                win.backGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                win.backGraphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                winBackGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                winBackGraphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
             }
 
-            win.backGraphics.drawImage(src.backImage, dx, dy, dx + dw, dy + dh, sx, sy, sx + sw, sy + sh, null);
+            final BufferedImage input;
+            /* drawImage doesn't work quite right when the image is itself; the 
+             * source data is overwritten before it is read. */
 
-            win.backGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, oldAntiAliasing);
-            win.backGraphics.setRenderingHint(RenderingHints.KEY_RENDERING, oldRenering);
+            if (win.backImage == src.backImage) {
+                input = org.yi.jdstroy.commons.BufferedImageUtils.copy(src.backImage);
+            } else {
+                input = src.backImage;
+            }
 
+            winBackGraphics.drawImage(input, dx, dy, dx + dw, dy + dh, sx, sy, sx + sw, sy + sh, null);
+
+            winBackGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, oldAntiAliasing);
+            winBackGraphics.setRenderingHint(RenderingHints.KEY_RENDERING, oldRenering);
         }
 
         win.redraw(win.cx, win.cy, Math.abs(dw), Math.abs(dh));
@@ -1430,7 +1451,6 @@ public class GuiCommand extends FunctionBase {
         final int b = Math.max(y1, y2) + 1;
         try {
             EDTUtils.invokeAndWait(new Runnable() {
-
                 @Override
                 public void run() {
                     g.fillRect(l, t, r - l, b - t);
@@ -1514,7 +1534,6 @@ public class GuiCommand extends FunctionBase {
             (int) (w * si + h * co) + cy - 1, (int) (-w * si + h * co) + cy - 1,};
         try {
             EDTUtils.invokeAndWait(new Runnable() {
-
                 @Override
                 public void run() {
                     GraphicsRenderer.gsquare(win, dx, dy);
@@ -1527,7 +1546,6 @@ public class GuiCommand extends FunctionBase {
             final int b = Math.max(Math.max(Math.max(dy[0], dy[1]), dy[2]), dy[3]);
 
             EDTUtils.invokeAndWait(new Runnable() {
-
                 @Override
                 public void run() {
                     win.redraw(l, t, r - l, b - t);
