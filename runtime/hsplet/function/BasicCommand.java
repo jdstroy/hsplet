@@ -3,7 +3,6 @@
  */
 package hsplet.function;
 
-import com.thoughtworks.xstream.XStream;
 import hsplet.Context;
 import hsplet.HSPError;
 import hsplet.variable.ByteString;
@@ -23,7 +22,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
