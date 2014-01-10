@@ -3,8 +3,6 @@
  */
 package hsplet.function;
 
-import com.braju.format.Format;
-
 /**
  * strf を実装するクラス。
  * <p>実際には hb16 に処理を丸投げする。
@@ -22,6 +20,6 @@ public class Formatter {
 	 * @return 書式化された文字列。
 	 */
 	public static String format(final String format, final Object param) {
-		return Format.sprintf(format, new Object[] { param });
+		return jodd.format.Printf.str(format, new Object[] { param });
 	}
 }
