@@ -2,95 +2,95 @@
                                      HSPLet
 ================================================================================
 
-�ڎ�
+目次
 
- 1. �T�v
- 2. �g����
- 3. ���쌠
- 4. �g�p����
- 5. �����
- 6. �ӎ�
+ 1. 概要
+ 2. 使い方
+ 3. 著作権
+ 4. 使用条件
+ 5. 動作環境
+ 6. 謝辞
 
 
- 1. �T�v
+ 1. 概要
 
-HSPLet �̓C���^�[�v���^�������� HSP �� Java �ɂ�郉���^�C���̎����ł��B
-HSPLet ���g�p���邱�Ƃł��Ȃ��̍쐬���� HSP �v���O������ JRE 1.4 ���T�|�[�g����S�Ă̊��œ��삷��悤�ɂȂ�܂��B
+HSPLet はインタープリタ方式言語 HSP の Java によるランタイムの実装です。
+HSPLet を使用することであなたの作成した HSP プログラムが JRE 1.4 をサポートする全ての環境で動作するようになります。
 
- 2. �g����
+ 2. 使い方
  
-�t�@�C���\���͈ȉ��̂悤�ɂȂ��Ă��܂��B
+ファイル構成は以下のようになっています。
 
 +- root/
-    +- readme.txt   ���̃t�@�C��
-    +- history.txt  �X�V����
+    +- readme.txt   このファイル
+    +- history.txt  更新履歴
     |
-    +- hsplet.jar   HSPLet �̖{��
+    +- hsplet.jar   HSPLet の本体
     |
-    +- letutil.hsp  HSPLet �ƈꏏ�Ɏg�p����ƕ֗��ȃw�b�_�t�@�C��
+    +- letutil.hsp  HSPLet と一緒に使用すると便利なヘッダファイル
     |
-    +- compiler.exe �R���p�C�����N�����郉���`��
-    +- compiler.jar �R���p�C���{��
-    +- sample-template.html HTML�������̃e���v���[�g�̃T���v��
+    +- compiler.exe コンパイラを起動するランチャ
+    +- compiler.jar コンパイラ本体
+    +- sample-template.html HTML生成時のテンプレートのサンプル
     |
-    +- src.zip      HSPLet �̃\�[�X���ꎮ�����Ă��܂�
+    +- src.zip      HSPLet のソースが一式入っています
     |
-    +- lib/         �R���p�C���̎��s�ɕK�v�ȃ��C�u����
+    +- lib/         コンパイラの実行に必要なライブラリ
     |
-    +- ext/         �g�����C�u����
+    +- ext/         拡張ライブラリ
     |
-    +- doc/         �h�L�������g(���߃T�|�[�g�󋵂Ȃ�)
+    +- doc/         ドキュメント(命令サポート状況など)
     |
-    +- sample/      �ȒP�ȃT���v��
+    +- sample/      簡単なサンプル
     |
-    +- demo/        �ȒP�ȃf��
+    +- demo/        簡単なデモ
   
   
-��{�I�Ȍ������͈ȉ��̂Ƃ���ł��B
+基本的な遣い方は以下のとおりです。
  
- a. compiler.exe ���N��
- b. �p�b�N�t�@�C���� *.ax ��ǉ��i�܂��͊����� PACKFILE ��I���j
- c. �R���p�C���{�^��������
- d. *.html ��\������
+ a. compiler.exe を起動
+ b. パックファイルに *.ax を追加（または既存の PACKFILE を選択）
+ c. コンパイルボタンを押す
+ d. *.html を表示する
 
-�ڂ����g������ doc �t�H���_�̒��� index.html ���Q�Ƃ��Ă��������B
+詳しい使い方は doc フォルダの中の index.html を参照してください。
 
- 3. ���쌠
+ 3. 著作権
 
-HSPLet 3.0 �̒��쌠�͎R�c �Y��(Yuki)�ɋA�����܂��B
-�I���W�i���� HSPLet �� http://www.group-finity.com/ �������\�ł��B
+HSPLet 3.0 の著作権は山田 雄己(Yuki)に帰属します。
+オリジナルの HSPLet は http://www.group-finity.com/ から入手可能です。
 
-ASM�AJavaLayer�AJava printf�ABrowserLauncher2 �̒��쌠�Ǝg�p�����ɂ��Ă͂��ꂼ�� lib �t�H���_����
-asm-2.2-LICENSE.txt�Ajl1.0-LICENSE.txt�Ahb16-LICENSE.txt�ABrowserLauncher2-LICENSE.txt ��ǂ�ł��������B
+ASM、JavaLayer、Java printf、BrowserLauncher2 の著作権と使用条件についてはそれぞれ lib フォルダ内の
+asm-2.2-LICENSE.txt、jl1.0-LICENSE.txt、hb16-LICENSE.txt、BrowserLauncher2-LICENSE.txt を読んでください。
 
-JavaLayer �� BrowserLauncher2 �̊��S�ȃ\�[�X�v���O������ lib �t�H���_���� jl1.0-src.zip�ABrowserLauncher2-10rc4-src.zip 
-���Ɋ܂܂�Ă��܂��B
+JavaLayer と BrowserLauncher2 の完全なソースプログラムは lib フォルダ内の jl1.0-src.zip、BrowserLauncher2-10rc4-src.zip 
+内に含まれています。
 
-HSPLet �R���p�C�����g�p���ăR���p�C�����ꂽ�v���O�����̒��쌠�́A
-�e�\�[�X�v���O�����̍�҂ɋA�����܂��B
+HSPLet コンパイラを使用してコンパイルされたプログラムの著作権は、
+各ソースプログラムの作者に帰属します。
 
- 4. �g�p����
+ 4. 使用条件
 
-���R�ɉ������A���R�ɔz�z���Ă��������B
-�����Ǒ��ɔ�����s�ׁA�@���ɔ�����s�ׂ͂��ꂮ����s��Ȃ��悤�ɂ��Ă��������B
+自由に改造し、自由に配布してください。
+公序良俗に反する行為、法律に反する行為はくれぐれも行わないようにしてください。
 
- 5. �����
+ 5. 動作環境
 
-JRE 1.4 ���C���X�g�[������Ă�����œ��삵�܂��B
+JRE 1.4 がインストールされている環境で動作します。
  
-compiler.exe �� Windows ���ŊȒP�ɃR���p�C�����N�����邽�߂�exe�ł��B
+compiler.exe は Windows 環境で簡単にコンパイラを起動するためのexeです。
  
- 6. �ӎ��i���K���j
+ 6. 謝辞（順適当）
 
-��l�ō���Ă���悤�ł��Ĉ�l�ł͌����č��Ȃ��̂��I�����C���\�t�g�ł��B
-HSPLet�������̕��X�̂����͂̂������ō������ɑ��݂��Ă��܂��B
-���̏���؂�Ă���\���グ�܂��B
+一人で作っているようでいて一人では決して作れないのがオンラインソフトです。
+HSPLetも多くの方々のご協力のおかげで今ここに存在しています。
+この場を借りてお礼申し上げます。
 
-sprocket����A���ɂ��܂���AArue����͐���̂�������������Ă���܂����B
+sprocketさん、おにたまさん、Arueさんは製作のきっかけを作ってくれました。
  
-USK����ASchwalbe����AShark++����Aharupoko����AArue����͊eOS�ł̓���m�F�ɋ��͂��Ă���܂����B
+USKさん、Schwalbeさん、Shark++さん、harupokoさん、Arueさんは各OSでの動作確認に協力してくれました。
 
-Arue����Asprocket����A��삳��A�q����Ah����A��[����A�����Y����A�Ȃ��ł���A���܂���Aeller����͕s��̔����ɋ��͂��Ă���܂����B
+Arueさん、sprocketさん、川野さん、倉さん、hさん、んーさん、七資産さん、なたでさん、くまさん、ellerさんは不具合の発見に協力してくれました。
 
-���ɂ�����񍐂����Ă��ꂽ��������͂��ł������[���̋L�^���c���Ă��Ȃ����ߊm�F�ł��܂���B
-�S������̂�����͂��Ђ��\���o���������B
+他にも動作報告をしてくれた方が居るはずですがメールの記録が残っていないため確認できません。
+心当たりのある方はぜひお申し出ください。
