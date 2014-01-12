@@ -4,22 +4,22 @@
 package hsplet.variable;
 
 /**
- * ƒ‰ƒxƒ‹‚ğ‚ ‚ç‚í‚·ƒIƒyƒ‰ƒ“ƒhB
+ * ãƒ©ãƒ™ãƒ«ã‚’ã‚ã‚‰ã‚ã™ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã€‚
  * @author Yuki
  * @version $Revision: 1.2 $, $Date: 2006/01/13 20:32:12 $
  */
 public class Label extends IntScalar {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: Label.java,v 1.2 2006/01/13 20:32:12 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = 6798195317537227773L;
 
 	/**
-	 * ’l‚ğw’è‚µ‚ÄƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
+	 * å€¤ã‚’æŒ‡å®šã—ã¦ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
 	 * 
-	 * @param value ‰Šú’lB
+	 * @param value åˆæœŸå€¤ã€‚
 	 */
 	public Label(final int value) {
 

@@ -16,9 +16,9 @@ import java.awt.event.ItemListener;
 import javax.swing.JCheckBox;
 
 /**
- * ƒ`ƒFƒbƒNƒ{ƒbƒNƒXB
+ * ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹ã€‚
  * <p>
- * ƒNƒŠƒbƒN‚³‚ê‚½‚ç•Ï”‚ğXV‚·‚éB
+ * ã‚¯ãƒªãƒƒã‚¯ã•ã‚ŒãŸã‚‰å¤‰æ•°ã‚’æ›´æ–°ã™ã‚‹ã€‚
  * </p>
  * 
  * @author Yuki
@@ -26,23 +26,23 @@ import javax.swing.JCheckBox;
  */
 public class Chkbox extends JCheckBox implements VolatileValueUpdater, HSPControl, ItemListener {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: Chkbox.java,v 1.4 2006/02/27 15:52:05 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = 6258069283313905933L;
 
-	/** •Ï” */
+	/** å¤‰æ•° */
 	private VolatileValue v;
 
-	/** •Ï”ƒCƒ“ƒfƒbƒNƒX */
+	/** å¤‰æ•°ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ */
 	private int vi;
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
-	 * @param text ƒ`ƒFƒbƒNƒ{ƒbƒNƒX‚ÌƒeƒLƒXƒgB
-	 * @param v ó‘Ô‚ğ•Û‚·‚é•Ï”B
-	 * @param vi ó‘Ô‚ğ•Û‚·‚é•Ï”‚ÌƒCƒ“ƒfƒbƒNƒXB
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
+	 * @param text ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹ã®ãƒ†ã‚­ã‚¹ãƒˆã€‚
+	 * @param v çŠ¶æ…‹ã‚’ä¿æŒã™ã‚‹å¤‰æ•°ã€‚
+	 * @param vi çŠ¶æ…‹ã‚’ä¿æŒã™ã‚‹å¤‰æ•°ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã€‚
 	 */
 	public Chkbox(final String text, final Variable v, final int vi) {
 		super(text, v.toIntRaw(vi) != 0);

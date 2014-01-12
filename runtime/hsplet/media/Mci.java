@@ -19,9 +19,9 @@ import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 
 /**
- * MCI ƒRƒ}ƒ“ƒh‚ğÀ‘•‚·‚éƒNƒ‰ƒXB
+ * MCI ã‚³ãƒãƒ³ãƒ‰ã‚’å®Ÿè£…ã™ã‚‹ã‚¯ãƒ©ã‚¹ã€‚
  * <p>
- * ¡Œã‹‘å‚É‚È‚Á‚½‚ç•Êƒ‰ƒCƒuƒ‰ƒŠ‚É•ª‚¯‚é‚©‚àB
+ * ä»Šå¾Œå·¨å¤§ã«ãªã£ãŸã‚‰åˆ¥ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã«åˆ†ã‘ã‚‹ã‹ã‚‚ã€‚
  * </p>
  * 
  * @author Yuki
@@ -29,15 +29,15 @@ import javax.sound.midi.MidiUnavailableException;
  */
 public class Mci implements Serializable {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: Mci.java,v 1.6 2006/02/05 10:08:14 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = -3044829753912949031L;
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
-	 * @param context Às‚µ‚Ä‚¢‚éƒRƒ“ƒeƒLƒXƒgB
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
+	 * @param context å®Ÿè¡Œã—ã¦ã„ã‚‹ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã€‚
 	 */
 	public Mci(final Context context) {
             this.context = context;
@@ -56,8 +56,8 @@ public class Mci implements Serializable {
 	private Map<String, HSPMedia> medias = new HashMap<String, HSPMedia>();
 
 	/**
-	 * mci ƒRƒ}ƒ“ƒh‚ğÀs‚·‚éB
-	 * @param command Às‚·‚éƒRƒ}ƒ“ƒh•¶š—ñB
+	 * mci ã‚³ãƒãƒ³ãƒ‰ã‚’å®Ÿè¡Œã™ã‚‹ã€‚
+	 * @param command å®Ÿè¡Œã™ã‚‹ã‚³ãƒãƒ³ãƒ‰æ–‡å­—åˆ—ã€‚
 	 */
 	public void exec(final String command) {
 
@@ -83,7 +83,7 @@ public class Mci implements Serializable {
 		} else if (firstWord.equalsIgnoreCase("close")) {
 			close(commands);
 		} else {
-			throw new UnsupportedOperationException("mci –½—ß " + command + " ‚ÍƒTƒ|[ƒg‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB");
+			throw new UnsupportedOperationException("mci å‘½ä»¤ " + command + " ã¯ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
 		}
 
 	}
@@ -114,11 +114,11 @@ public class Mci implements Serializable {
 	}
 
 	/**
-	 * ƒƒfƒBƒA‚ğƒI[ƒvƒ“‚·‚éB
-	 * @param fileName ƒtƒ@ƒCƒ‹–¼B
-	 * @param mode ƒI[ƒvƒ“ƒ‚[ƒhB
-	 * @return ŠJ‚©‚ê‚½ƒƒfƒBƒAB
-	 * @throws Exception ŠJ‚¯‚È‚©‚Á‚½‚Æ‚«B
+	 * ãƒ¡ãƒ‡ã‚£ã‚¢ã‚’ã‚ªãƒ¼ãƒ—ãƒ³ã™ã‚‹ã€‚
+	 * @param fileName ãƒ•ã‚¡ã‚¤ãƒ«åã€‚
+	 * @param mode ã‚ªãƒ¼ãƒ—ãƒ³ãƒ¢ãƒ¼ãƒ‰ã€‚
+	 * @return é–‹ã‹ã‚ŒãŸãƒ¡ãƒ‡ã‚£ã‚¢ã€‚
+	 * @throws Exception é–‹ã‘ãªã‹ã£ãŸã¨ãã€‚
 	 */
 	public HSPMedia open(final String fileName, final int mode) throws Exception {
 
@@ -180,7 +180,7 @@ public class Mci implements Serializable {
 
 		if (prop.equalsIgnoreCase("time")) {
 
-			// TODO time İ’è
+			// TODO time è¨­å®š
 		}
 	}
 
@@ -299,7 +299,7 @@ public class Mci implements Serializable {
 	}
 
 	/**
-	 * g—p‚µ‚Ä‚¢‚éƒŠƒ\[ƒX‚ğ”jŠü‚·‚éB
+	 * ä½¿ç”¨ã—ã¦ã„ã‚‹ãƒªã‚½ãƒ¼ã‚¹ã‚’ç ´æ£„ã™ã‚‹ã€‚
 	 */
 	public void dispose() {
 

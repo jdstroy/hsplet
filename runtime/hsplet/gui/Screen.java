@@ -12,25 +12,25 @@ import java.awt.event.ComponentEvent;
 import javax.swing.JFrame;
 
 /**
- * screen ƒEƒBƒ“ƒhƒEB
+ * screen ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã€‚
  * 
  * @author Yuki
  * @version $Revision: 1.5 $, $Date: 2006/01/21 12:48:16 $
  */
 public class Screen extends JFrame implements HSPScreen {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: Screen.java,v 1.5 2006/01/21 12:48:16 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = 8282094332529368460L;
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
-	 * @param bufferSize ƒoƒbƒtƒ@ƒTƒCƒYB
-	 * @param mode ƒ‚[ƒhB
-	 * @param location ¶ãÀ•WB
-	 * @param size •\¦ƒTƒCƒYB
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
+	 * @param bufferSize ãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã€‚
+	 * @param mode ãƒ¢ãƒ¼ãƒ‰ã€‚
+	 * @param location å·¦ä¸Šåº§æ¨™ã€‚
+	 * @param size è¡¨ç¤ºã‚µã‚¤ã‚ºã€‚
 	 */
 	public Screen(final Dimension bufferSize, final int mode,
 			final Point location, final Dimension size) {

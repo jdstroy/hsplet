@@ -8,21 +8,21 @@ import hsplet.HSPError;
 import java.io.Serializable;
 
 /**
- * HSP ‚ÌƒIƒyƒ‰ƒ“ƒh‚ğ‚ ‚ç‚í‚·Šî’êƒNƒ‰ƒXB
+ * HSP ã®ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã‚’ã‚ã‚‰ã‚ã™åŸºåº•ã‚¯ãƒ©ã‚¹ã€‚
  * <p>
- * HSP ‚Åg—p‚·‚é•Ï”E’è”E‰‰ZŒ‹‰Ê‚Í‚·‚×‚Ä‚±‚ÌƒNƒ‰ƒX‚ğŒp³‚·‚éB
+ * HSP ã§ä½¿ç”¨ã™ã‚‹å¤‰æ•°ãƒ»å®šæ•°ãƒ»æ¼”ç®—çµæœã¯ã™ã¹ã¦ã“ã®ã‚¯ãƒ©ã‚¹ã‚’ç¶™æ‰¿ã™ã‚‹ã€‚
  * </p>
- * ƒIƒyƒ‰ƒ“ƒh‚Íå‚É
+ * ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã¯ä¸»ã«
  * <ul>
- * <li>”z—ñ‚ÌƒCƒ“ƒfƒbƒNƒX‚©‚çƒIƒtƒZƒbƒg‚ğæ“¾‚·‚éƒƒ\ƒbƒhB</li>
- * <li>Java ‚ÌƒvƒŠƒ~ƒeƒBƒu‚â•¶š—ñ‚É•ÏŠ·‚·‚éƒƒ\ƒbƒhB</li>
- * <li>‘ã“üE•ÏXŒn‰‰Zqƒƒ\ƒbƒhB</li>
- * <li>“ñ€‰‰Zqƒƒ\ƒbƒhB</li>
- * <li>ƒf[ƒ^‚ÌƒoƒCƒg‚Ö‚Ì’¼ÚƒAƒNƒZƒXƒƒ\ƒbƒhB</li>
+ * <li>é…åˆ—ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‹ã‚‰ã‚ªãƒ•ã‚»ãƒƒãƒˆã‚’å–å¾—ã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰ã€‚</li>
+ * <li>Java ã®ãƒ—ãƒªãƒŸãƒ†ã‚£ãƒ–ã‚„æ–‡å­—åˆ—ã«å¤‰æ›ã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰ã€‚</li>
+ * <li>ä»£å…¥ãƒ»å¤‰æ›´ç³»æ¼”ç®—å­ãƒ¡ã‚½ãƒƒãƒ‰ã€‚</li>
+ * <li>äºŒé …æ¼”ç®—å­ãƒ¡ã‚½ãƒƒãƒ‰ã€‚</li>
+ * <li>ãƒ‡ãƒ¼ã‚¿ã®ãƒã‚¤ãƒˆã¸ã®ç›´æ¥ã‚¢ã‚¯ã‚»ã‚¹ãƒ¡ã‚½ãƒƒãƒ‰ã€‚</li>
  * </ul>
- * ‚©‚ç¬‚éB
+ * ã‹ã‚‰æˆã‚‹ã€‚
  * <p>
- * ‚Ù‚Æ‚ñ‚Ç‚Ìƒƒ\ƒbƒh‚ª abstract ‚È‚Ì‚ÅAŒp³‚µ‚½ƒNƒ‰ƒX‚Í“KØ‚É‚±‚ê‚ğÀ‘•‚·‚éB
+ * ã»ã¨ã‚“ã©ã®ãƒ¡ã‚½ãƒƒãƒ‰ãŒ abstract ãªã®ã§ã€ç¶™æ‰¿ã—ãŸã‚¯ãƒ©ã‚¹ã¯é©åˆ‡ã«ã“ã‚Œã‚’å®Ÿè£…ã™ã‚‹ã€‚
  * </p>
  * 
  * @author Yuki
@@ -46,7 +46,7 @@ public abstract class Operand implements Serializable {
             return context;
         }
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: Operand.java,v 1.2.4.1 2006/08/02 12:13:06 Yuki Exp $";
 	protected static int allErrorIndex=1;
 	protected int errorIndex=0;
@@ -56,36 +56,36 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ƒf[ƒ^‚ÌŒ^B
+	 * ãƒ‡ãƒ¼ã‚¿ã®å‹ã€‚
 	 * 
 	 * @author Yuki
 	 */
 	public static final class Type {
 
-		/** ƒf[ƒ^‚ÌŒ^A–¢g—pB */
+		/** ãƒ‡ãƒ¼ã‚¿ã®å‹ã€æœªä½¿ç”¨ã€‚ */
 		public static final int UNKNOWN = 0;
 
-		/** ƒf[ƒ^‚ÌŒ^Aƒ‰ƒxƒ‹‚ğ•\‚·’è”B */
+		/** ãƒ‡ãƒ¼ã‚¿ã®å‹ã€ãƒ©ãƒ™ãƒ«ã‚’è¡¨ã™å®šæ•°ã€‚ */
 		public static final int LABEL = 1;
 
-		/** ƒf[ƒ^‚ÌŒ^A•¶š—ñ‚ğ•\‚·’è”B */
+		/** ãƒ‡ãƒ¼ã‚¿ã®å‹ã€æ–‡å­—åˆ—ã‚’è¡¨ã™å®šæ•°ã€‚ */
 		public static final int STRING = 2;
 
-		/** ƒf[ƒ^‚ÌŒ^A¬”‚ğ•\‚·’è”B */
+		/** ãƒ‡ãƒ¼ã‚¿ã®å‹ã€å°æ•°ã‚’è¡¨ã™å®šæ•°ã€‚ */
 		public static final int DOUBLE = 3;
 
-		/** ƒf[ƒ^‚ÌŒ^A®”‚ğ•\‚·’è”B */
+		/** ãƒ‡ãƒ¼ã‚¿ã®å‹ã€æ•´æ•°ã‚’è¡¨ã™å®šæ•°ã€‚ */
 		public static final int INTEGER = 4;
 
-		/** ƒf[ƒ^‚ÌŒ^A—p“r‚Í•s–¾B */
+		/** ãƒ‡ãƒ¼ã‚¿ã®å‹ã€ç”¨é€”ã¯ä¸æ˜ã€‚ */
 		public static final int MODULE = 5;
 	}
 	public static int[] typeSizes = {Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, 8, 4, Integer.MAX_VALUE};
 
 	/**
-	 * ƒf[ƒ^‚ÌŒ^‚ğæ“¾‚·‚éB
+	 * ãƒ‡ãƒ¼ã‚¿ã®å‹ã‚’å–å¾—ã™ã‚‹ã€‚
 	 * 
-	 * @return ƒf[ƒ^‚ÌŒ^B
+	 * @return ãƒ‡ãƒ¼ã‚¿ã®å‹ã€‚
 	 */
 	public abstract int getType();
 	
@@ -95,9 +95,9 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ”z—ñ‚ÌˆêŸŒ³–Ú‚Ì—v‘f”‚ğæ“¾‚·‚éB
+	 * é…åˆ—ã®ä¸€æ¬¡å…ƒç›®ã®è¦ç´ æ•°ã‚’å–å¾—ã™ã‚‹ã€‚
 	 * 
-	 * @return ”z—ñ‚ÌˆêŸŒ³–Ú‚Ì—v‘f”B
+	 * @return é…åˆ—ã®ä¸€æ¬¡å…ƒç›®ã®è¦ç´ æ•°ã€‚
 	 */
 	public abstract int l0();
 	public abstract int checkSize0(int size);
@@ -105,27 +105,27 @@ public abstract class Operand implements Serializable {
 	public abstract void checkIncrementSize(int size);
 
 	/**
-	 * ”z—ñ‚Ì“ñŸŒ³–Ú‚Ì—v‘f”‚ğæ“¾‚·‚éB
+	 * é…åˆ—ã®äºŒæ¬¡å…ƒç›®ã®è¦ç´ æ•°ã‚’å–å¾—ã™ã‚‹ã€‚
 	 * 
-	 * @return ”z—ñ‚Ì“ñŸŒ³–Ú‚Ì—v‘f”B
+	 * @return é…åˆ—ã®äºŒæ¬¡å…ƒç›®ã®è¦ç´ æ•°ã€‚
 	 */
 	public abstract int l1();
 	public abstract int checkSize1(int size);
 	public abstract int checkResize1(int size);
 
 	/**
-	 * ”z—ñ‚ÌOŸŒ³–Ú‚Ì—v‘f”‚ğæ“¾‚·‚éB
+	 * é…åˆ—ã®ä¸‰æ¬¡å…ƒç›®ã®è¦ç´ æ•°ã‚’å–å¾—ã™ã‚‹ã€‚
 	 * 
-	 * @return ”z—ñ‚ÌOŸŒ³–Ú‚Ì—v‘f”B
+	 * @return é…åˆ—ã®ä¸‰æ¬¡å…ƒç›®ã®è¦ç´ æ•°ã€‚
 	 */
 	public abstract int l2();
 	public abstract int checkSize2(int size);
 	public abstract int checkResize2(int size);
 
 	/**
-	 * ”z—ñ‚ÌlŸŒ³–Ú‚Ì—v‘f”‚ğæ“¾‚·‚éB
+	 * é…åˆ—ã®å››æ¬¡å…ƒç›®ã®è¦ç´ æ•°ã‚’å–å¾—ã™ã‚‹ã€‚
 	 * 
-	 * @return ”z—ñ‚ÌlŸŒ³–Ú‚Ì—v‘f”B
+	 * @return é…åˆ—ã®å››æ¬¡å…ƒç›®ã®è¦ç´ æ•°ã€‚
 	 */
 	public abstract int l3();
 	public abstract int checkSize3(int size);
@@ -134,54 +134,54 @@ public abstract class Operand implements Serializable {
 	public abstract int getIndex(final int i0);
 	public abstract int getResizeIndex(final int i0);
 	/**
-	 * “ñŸŒ³”z—ñ‚ÌAˆêŸŒ³‚ÉŠ·Z‚µ‚½—v‘f‚ÌƒCƒ“ƒfƒbƒNƒX‚ğæ“¾‚·‚éB
+	 * äºŒæ¬¡å…ƒé…åˆ—ã®ã€ä¸€æ¬¡å…ƒã«æ›ç®—ã—ãŸè¦ç´ ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’å–å¾—ã™ã‚‹ã€‚
 	 * <p>
-	 * HSPLet 3.0 ‚Å‚Í‚‘¬‰»‚Ì‚½‚ß‚É”z—ñ‚Í‚·‚×‚ÄˆêŸŒ³‚ÅŠÇ—‚³‚ê‚éB “ñŸŒ³ˆÈã‚ÌƒCƒ“ƒfƒbƒNƒX‚Í—v‘f”‚ğŒ³‚ÉˆêŸŒ³‚ÉŠ·Z‚µ‚Ä‚©‚çˆ—‚³‚ê‚éB
+	 * HSPLet 3.0 ã§ã¯é«˜é€ŸåŒ–ã®ãŸã‚ã«é…åˆ—ã¯ã™ã¹ã¦ä¸€æ¬¡å…ƒã§ç®¡ç†ã•ã‚Œã‚‹ã€‚ äºŒæ¬¡å…ƒä»¥ä¸Šã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã¯è¦ç´ æ•°ã‚’å…ƒã«ä¸€æ¬¡å…ƒã«æ›ç®—ã—ã¦ã‹ã‚‰å‡¦ç†ã•ã‚Œã‚‹ã€‚
 	 * </p>
 	 * 
-	 * @param i0 ˆêŸŒ³–Ú‚ÌƒCƒ“ƒfƒbƒNƒXB
-	 * @param i1 “ñŸŒ³–Ú‚ÌƒCƒ“ƒfƒbƒNƒXB
-	 * @return ˆêŸŒ³‚ÉŠ·Z‚µ‚½—v‘f”Ô†B
+	 * @param i0 ä¸€æ¬¡å…ƒç›®ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã€‚
+	 * @param i1 äºŒæ¬¡å…ƒç›®ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã€‚
+	 * @return ä¸€æ¬¡å…ƒã«æ›ç®—ã—ãŸè¦ç´ ç•ªå·ã€‚
 	 */
 	public abstract int getIndex(final int i0, final int i1);
 	public abstract int getResizeIndex(final int i0, final int i1);
 
 	/**
-	 * OŸŒ³”z—ñ‚ÌAˆêŸŒ³‚ÉŠ·Z‚µ‚½—v‘f‚ÌƒCƒ“ƒfƒbƒNƒX‚ğæ“¾‚·‚éB
+	 * ä¸‰æ¬¡å…ƒé…åˆ—ã®ã€ä¸€æ¬¡å…ƒã«æ›ç®—ã—ãŸè¦ç´ ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’å–å¾—ã™ã‚‹ã€‚
 	 * <p>
-	 * HSPLet 3.0 ‚Å‚Í‚‘¬‰»‚Ì‚½‚ß‚É”z—ñ‚Í‚·‚×‚ÄˆêŸŒ³‚ÅŠÇ—‚³‚ê‚éB “ñŸŒ³ˆÈã‚ÌƒCƒ“ƒfƒbƒNƒX‚Í—v‘f”‚ğŒ³‚ÉˆêŸŒ³‚ÉŠ·Z‚µ‚Ä‚©‚çˆ—‚³‚ê‚éB
+	 * HSPLet 3.0 ã§ã¯é«˜é€ŸåŒ–ã®ãŸã‚ã«é…åˆ—ã¯ã™ã¹ã¦ä¸€æ¬¡å…ƒã§ç®¡ç†ã•ã‚Œã‚‹ã€‚ äºŒæ¬¡å…ƒä»¥ä¸Šã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã¯è¦ç´ æ•°ã‚’å…ƒã«ä¸€æ¬¡å…ƒã«æ›ç®—ã—ã¦ã‹ã‚‰å‡¦ç†ã•ã‚Œã‚‹ã€‚
 	 * </p>
 	 * 
-	 * @param i0 ˆêŸŒ³–Ú‚ÌƒCƒ“ƒfƒbƒNƒXB
-	 * @param i1 “ñŸŒ³–Ú‚ÌƒCƒ“ƒfƒbƒNƒXB
-	 * @param i2 OŸŒ³–Ú‚ÌƒCƒ“ƒfƒbƒNƒXB
-	 * @return ˆêŸŒ³‚ÉŠ·Z‚µ‚½—v‘f”Ô†B
+	 * @param i0 ä¸€æ¬¡å…ƒç›®ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã€‚
+	 * @param i1 äºŒæ¬¡å…ƒç›®ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã€‚
+	 * @param i2 ä¸‰æ¬¡å…ƒç›®ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã€‚
+	 * @return ä¸€æ¬¡å…ƒã«æ›ç®—ã—ãŸè¦ç´ ç•ªå·ã€‚
 	 */
 	public abstract int getIndex(final int i0, final int i1, final int i2);
 	public abstract int getResizeIndex(final int i0, final int i1, final int i2);
 
 	/**
-	 * lŸŒ³”z—ñ‚ÌAˆêŸŒ³‚ÉŠ·Z‚µ‚½—v‘f‚ÌƒCƒ“ƒfƒbƒNƒX‚ğæ“¾‚·‚éB
+	 * å››æ¬¡å…ƒé…åˆ—ã®ã€ä¸€æ¬¡å…ƒã«æ›ç®—ã—ãŸè¦ç´ ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’å–å¾—ã™ã‚‹ã€‚
 	 * <p>
-	 * HSPLet 3.0 ‚Å‚Í‚‘¬‰»‚Ì‚½‚ß‚É”z—ñ‚Í‚·‚×‚ÄˆêŸŒ³‚ÅŠÇ—‚³‚ê‚éB “ñŸŒ³ˆÈã‚ÌƒCƒ“ƒfƒbƒNƒX‚Í—v‘f”‚ğŒ³‚ÉˆêŸŒ³‚ÉŠ·Z‚µ‚Ä‚©‚çˆ—‚³‚ê‚éB
+	 * HSPLet 3.0 ã§ã¯é«˜é€ŸåŒ–ã®ãŸã‚ã«é…åˆ—ã¯ã™ã¹ã¦ä¸€æ¬¡å…ƒã§ç®¡ç†ã•ã‚Œã‚‹ã€‚ äºŒæ¬¡å…ƒä»¥ä¸Šã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã¯è¦ç´ æ•°ã‚’å…ƒã«ä¸€æ¬¡å…ƒã«æ›ç®—ã—ã¦ã‹ã‚‰å‡¦ç†ã•ã‚Œã‚‹ã€‚
 	 * </p>
 	 * 
-	 * @param i0 ˆêŸŒ³–Ú‚ÌƒCƒ“ƒfƒbƒNƒXB
-	 * @param i1 “ñŸŒ³–Ú‚ÌƒCƒ“ƒfƒbƒNƒXB
-	 * @param i2 OŸŒ³–Ú‚ÌƒCƒ“ƒfƒbƒNƒXB
-	 * @param i3 lŸŒ³–Ú‚ÌƒCƒ“ƒfƒbƒNƒXB
-	 * @return ˆêŸŒ³‚ÉŠ·Z‚µ‚½—v‘f”Ô†B
+	 * @param i0 ä¸€æ¬¡å…ƒç›®ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã€‚
+	 * @param i1 äºŒæ¬¡å…ƒç›®ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã€‚
+	 * @param i2 ä¸‰æ¬¡å…ƒç›®ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã€‚
+	 * @param i3 å››æ¬¡å…ƒç›®ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã€‚
+	 * @return ä¸€æ¬¡å…ƒã«æ›ç®—ã—ãŸè¦ç´ ç•ªå·ã€‚
 	 */
 	public abstract int getIndex(final int i0, final int i1, final int i2, final int i3);
 	public abstract int getResizeIndex(final int i0, final int i1, final int i2, final int i3);
 
 	/**
-	 * ‚±‚ÌƒIƒuƒWƒFƒNƒg‚Ì•¶š—ñ’l‚ğæ“¾‚·‚éB
+	 * ã“ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æ–‡å­—åˆ—å€¤ã‚’å–å¾—ã™ã‚‹ã€‚
 	 * <p>
-	 * ‚±‚ÌƒIƒuƒWƒFƒNƒg‚ÌŒ^‚ª•¶š—ñ‚¶‚á‚È‚¢‚Æ‚«‚Í•ÏŠ·‚ªs‚í‚ê‚éB
+	 * ã“ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å‹ãŒæ–‡å­—åˆ—ã˜ã‚ƒãªã„ã¨ãã¯å¤‰æ›ãŒè¡Œã‚ã‚Œã‚‹ã€‚
 	 * </p>
 	 * 
-	 * @return ƒIƒuƒWƒFƒNƒg‚Ì•¶š—ñ’lB
+	 * @return ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æ–‡å­—åˆ—å€¤ã€‚
 	 */
 	//@Override
 	public String toString() {
@@ -189,13 +189,13 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ‚±‚ÌƒIƒuƒWƒFƒNƒg‚Ì•¶š—ñ’l‚ğæ“¾‚·‚éB
+	 * ã“ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æ–‡å­—åˆ—å€¤ã‚’å–å¾—ã™ã‚‹ã€‚
 	 * <p>
-	 * ‚±‚ÌƒIƒuƒWƒFƒNƒg‚ÌŒ^‚ª•¶š—ñ‚¶‚á‚È‚¢‚Æ‚«‚Í•ÏŠ·‚ªs‚í‚ê‚éB
+	 * ã“ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å‹ãŒæ–‡å­—åˆ—ã˜ã‚ƒãªã„ã¨ãã¯å¤‰æ›ãŒè¡Œã‚ã‚Œã‚‹ã€‚
 	 * </p>
 	 * 
-	 * @param index •¶š—ñ’l‚ğæ“¾‚·‚é—v‘f”Ô†B
-	 * @return ƒIƒuƒWƒFƒNƒg‚Ì•¶š—ñ’lB
+	 * @param index æ–‡å­—åˆ—å€¤ã‚’å–å¾—ã™ã‚‹è¦ç´ ç•ªå·ã€‚
+	 * @return ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æ–‡å­—åˆ—å€¤ã€‚
 	 */
 	public abstract String toStringRaw(final int index);
 	public String toString(final int i0) {
@@ -212,13 +212,13 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ‚±‚ÌƒIƒuƒWƒFƒNƒg‚Ì•¶š—ñ’l‚ğæ“¾‚·‚éB
+	 * ã“ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æ–‡å­—åˆ—å€¤ã‚’å–å¾—ã™ã‚‹ã€‚
 	 * <p>
-	 * ‚±‚ÌƒIƒuƒWƒFƒNƒg‚ÌŒ^‚ª•¶š—ñ‚¶‚á‚È‚¢‚Æ‚«‚Í•ÏŠ·‚ªs‚í‚ê‚éB
+	 * ã“ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å‹ãŒæ–‡å­—åˆ—ã˜ã‚ƒãªã„ã¨ãã¯å¤‰æ›ãŒè¡Œã‚ã‚Œã‚‹ã€‚
 	 * </p>
 	 * 
-	 * @param index •¶š—ñ’l‚ğæ“¾‚·‚é—v‘f”Ô†B
-	 * @return ƒIƒuƒWƒFƒNƒg‚Ì•¶š—ñ’lB
+	 * @param index æ–‡å­—åˆ—å€¤ã‚’å–å¾—ã™ã‚‹è¦ç´ ç•ªå·ã€‚
+	 * @return ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æ–‡å­—åˆ—å€¤ã€‚
 	 */
 	public abstract ByteString toByteStringRaw(final int index);
 	public ByteString toByteString() {
@@ -238,13 +238,13 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ‚±‚ÌƒIƒuƒWƒFƒNƒg‚Ì®”’l‚ğæ“¾‚·‚éB
+	 * ã“ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æ•´æ•°å€¤ã‚’å–å¾—ã™ã‚‹ã€‚
 	 * <p>
-	 * ‚±‚ÌƒIƒuƒWƒFƒNƒg‚ÌŒ^‚ª®”‚¶‚á‚È‚¢‚Æ‚«‚Í•ÏŠ·‚ªs‚í‚ê‚éB
+	 * ã“ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å‹ãŒæ•´æ•°ã˜ã‚ƒãªã„ã¨ãã¯å¤‰æ›ãŒè¡Œã‚ã‚Œã‚‹ã€‚
 	 * </p>
 	 * 
-	 * @param index ®”’l‚ğæ“¾‚·‚é—v‘f”Ô†B
-	 * @return ƒIƒuƒWƒFƒNƒg‚Ì®”’lB
+	 * @param index æ•´æ•°å€¤ã‚’å–å¾—ã™ã‚‹è¦ç´ ç•ªå·ã€‚
+	 * @return ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æ•´æ•°å€¤ã€‚
 	 */
 	public abstract int toIntRaw(final int index);
 	public int toInt() {
@@ -264,13 +264,13 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ‚±‚ÌƒIƒuƒWƒFƒNƒg‚Ì¬”’l‚ğæ“¾‚·‚éB
+	 * ã“ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å°æ•°å€¤ã‚’å–å¾—ã™ã‚‹ã€‚
 	 * <p>
-	 * ‚±‚ÌƒIƒuƒWƒFƒNƒg‚ÌŒ^‚ª¬”‚¶‚á‚È‚¢‚Æ‚«‚Í•ÏŠ·‚ªs‚í‚ê‚éB
+	 * ã“ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å‹ãŒå°æ•°ã˜ã‚ƒãªã„ã¨ãã¯å¤‰æ›ãŒè¡Œã‚ã‚Œã‚‹ã€‚
 	 * </p>
 	 * 
-	 * @param index ¬”’l‚ğæ“¾‚·‚é—v‘f”Ô†B
-	 * @return ƒIƒuƒWƒFƒNƒg‚Ì¬”’lB
+	 * @param index å°æ•°å€¤ã‚’å–å¾—ã™ã‚‹è¦ç´ ç•ªå·ã€‚
+	 * @return ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å°æ•°å€¤ã€‚
 	 */
 	public abstract double toDoubleRaw(final int index);
 	public double toDouble() {
@@ -290,16 +290,16 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚Ö‚ÌQÆ‚ğæ“¾‚·‚éB
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¸ã®å‚ç…§ã‚’å–å¾—ã™ã‚‹ã€‚
 	 * <p>
-	 * ‚±‚Ìƒƒ\ƒbƒh‚©‚ç•Ô‚³‚ê‚éƒIƒuƒWƒFƒNƒg‚Í‚±‚ÌƒIƒuƒWƒFƒNƒg‚Ìw’è‚³‚ê‚½—v‘f‚ğQÆ‚µ‚Ä‚¢‚éB QÆƒIƒuƒWƒFƒNƒg‚Ì’l‚ğ•ÏX‚µ‚½‚èA‚±‚ÌƒIƒuƒWƒFƒNƒg‚Ì’l‚ğ•ÏX‚·‚é‚Æ‚¨Œİ‚¢‚É”½‰f‚³‚ê‚éB
+	 * ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã‹ã‚‰è¿”ã•ã‚Œã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¯ã“ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æŒ‡å®šã•ã‚ŒãŸè¦ç´ ã‚’å‚ç…§ã—ã¦ã„ã‚‹ã€‚ å‚ç…§ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å€¤ã‚’å¤‰æ›´ã—ãŸã‚Šã€ã“ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å€¤ã‚’å¤‰æ›´ã™ã‚‹ã¨ãŠäº’ã„ã«åæ˜ ã•ã‚Œã‚‹ã€‚
 	 * </p>
 	 * <p>
-	 * ˆø”‚Ì’l‚É‚æ‚Á‚Ä‚Í‚±‚ÌƒIƒuƒWƒFƒNƒg©g‚ª•Ô‚³‚ê‚é‰Â”\«‚à‚ ‚éB
+	 * å¼•æ•°ã®å€¤ã«ã‚ˆã£ã¦ã¯ã“ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆè‡ªèº«ãŒè¿”ã•ã‚Œã‚‹å¯èƒ½æ€§ã‚‚ã‚ã‚‹ã€‚
 	 * </p>
 	 * 
-	 * @param index —v‘f”Ô†B
-	 * @return ‚±‚ÌƒIƒuƒWƒFƒNƒg‚Ö‚ÌQÆB
+	 * @param index è¦ç´ ç•ªå·ã€‚
+	 * @return ã“ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¸ã®å‚ç…§ã€‚
 	 */
 	public Operand ref(final int index) {
 
@@ -312,9 +312,9 @@ public abstract class Operand implements Serializable {
 	}
 	
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚Ì•¡»‚ğæ“¾‚·‚éB
-	 * @param index •¡»‚³‚ê‚é‚æ‚¤‚»‚ÌƒCƒ“ƒfƒbƒNƒXB
-	 * @return ‚±‚ÌƒIƒuƒWƒFƒNƒg‚Ìw’è‚³‚ê‚½—v‘f‚ğ•Û‚·‚éƒIƒuƒWƒFƒNƒgB
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®è¤‡è£½ã‚’å–å¾—ã™ã‚‹ã€‚
+	 * @param index è¤‡è£½ã•ã‚Œã‚‹ã‚ˆã†ãã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã€‚
+	 * @return ã“ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æŒ‡å®šã•ã‚ŒãŸè¦ç´ ã‚’ä¿æŒã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
 	 */
 	public abstract Operand dupRaw(final int index);
 	public Operand dup() {
@@ -334,9 +334,9 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚Ì’l‚ğƒCƒ“ƒNƒŠƒƒ“ƒg‚·‚éB
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å€¤ã‚’ã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ãƒˆã™ã‚‹ã€‚
 	 * 
-	 * @param index ƒCƒ“ƒNƒŠƒƒ“ƒg‚·‚é—v‘f”Ô†B
+	 * @param index ã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ãƒˆã™ã‚‹è¦ç´ ç•ªå·ã€‚
 	 */
 	public abstract void incRaw(final int index);
 	public void inc() {
@@ -356,9 +356,9 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚Ì’l‚ğƒfƒNƒŠƒƒ“ƒg‚·‚éB
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å€¤ã‚’ãƒ‡ã‚¯ãƒªãƒ¡ãƒ³ãƒˆã™ã‚‹ã€‚
 	 * 
-	 * @param index ƒfƒNƒŠƒƒ“ƒg‚·‚é—v‘f”Ô†B
+	 * @param index ãƒ‡ã‚¯ãƒªãƒ¡ãƒ³ãƒˆã™ã‚‹è¦ç´ ç•ªå·ã€‚
 	 */
 	public abstract void decRaw(final int index);
 	public void dec() {
@@ -506,11 +506,11 @@ public abstract class Operand implements Serializable {
 		assignLtEqRaw(getIndex(i0, i1, i2, i3), rhs, rhi);
 	}
 	/**
-	 * ‘ã“ü‚ğs‚¤B
+	 * ä»£å…¥ã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index ‘ã“üæ—v‘f”Ô†B
-	 * @param rhs ‘ã“üŒ³ƒIƒuƒWƒFƒNƒgB
-	 * @param rhi ‘ã“üŒ³—v‘f”Ô†B
+	 * @param index ä»£å…¥å…ˆè¦ç´ ç•ªå·ã€‚
+	 * @param rhs ä»£å…¥å…ƒã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
+	 * @param rhi ä»£å…¥å…ƒè¦ç´ ç•ªå·ã€‚
 	 */
 	public abstract void assignRaw(final int index, final int newValue);
 	public void assign(final int newValue) {
@@ -585,11 +585,11 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ‰ÁZ‘ã“ü‚ğs‚¤B
+	 * åŠ ç®—ä»£å…¥ã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index ‘ã“üæ—v‘f”Ô†B
-	 * @param rhs ‘ã“üŒ³ƒIƒuƒWƒFƒNƒgB
-	 * @param rhi ‘ã“üŒ³—v‘f”Ô†B
+	 * @param index ä»£å…¥å…ˆè¦ç´ ç•ªå·ã€‚
+	 * @param rhs ä»£å…¥å…ƒã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
+	 * @param rhi ä»£å…¥å…ƒè¦ç´ ç•ªå·ã€‚
 	 */
 	public abstract void assignAddRaw(final int index, final Operand rhs, final int rhi);
     public void assignAddRaw(final int index, final Operand rhs) {
@@ -615,11 +615,11 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * Œ¸Z‘ã“ü‚ğs‚¤B
+	 * æ¸›ç®—ä»£å…¥ã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index ‘ã“üæ—v‘f”Ô†B
-	 * @param rhs ‘ã“üŒ³ƒIƒuƒWƒFƒNƒgB
-	 * @param rhi ‘ã“üŒ³—v‘f”Ô†B
+	 * @param index ä»£å…¥å…ˆè¦ç´ ç•ªå·ã€‚
+	 * @param rhs ä»£å…¥å…ƒã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
+	 * @param rhi ä»£å…¥å…ƒè¦ç´ ç•ªå·ã€‚
 	 */
 	public abstract void assignSubRaw(final int index, final Operand rhs, final int rhi);
     public void assignSubRaw(final int index, final Operand rhs) {
@@ -645,11 +645,11 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * æZ‘ã“ü‚ğs‚¤B
+	 * ä¹—ç®—ä»£å…¥ã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index ‘ã“üæ—v‘f”Ô†B
-	 * @param rhs ‘ã“üŒ³ƒIƒuƒWƒFƒNƒgB
-	 * @param rhi ‘ã“üŒ³—v‘f”Ô†B
+	 * @param index ä»£å…¥å…ˆè¦ç´ ç•ªå·ã€‚
+	 * @param rhs ä»£å…¥å…ƒã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
+	 * @param rhi ä»£å…¥å…ƒè¦ç´ ç•ªå·ã€‚
 	 */
 	public abstract void assignMulRaw(final int index, final Operand rhs, final int rhi);
     public void assignMulRaw(final int index, final Operand rhs) {
@@ -675,11 +675,11 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * œZ‘ã“ü‚ğs‚¤B
+	 * é™¤ç®—ä»£å…¥ã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index ‘ã“üæ—v‘f”Ô†B
-	 * @param rhs ‘ã“üŒ³ƒIƒuƒWƒFƒNƒgB
-	 * @param rhi ‘ã“üŒ³—v‘f”Ô†B
+	 * @param index ä»£å…¥å…ˆè¦ç´ ç•ªå·ã€‚
+	 * @param rhs ä»£å…¥å…ƒã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
+	 * @param rhi ä»£å…¥å…ƒè¦ç´ ç•ªå·ã€‚
 	 */
 	public abstract void assignDivRaw(final int index, final Operand rhs, final int rhi);
     public void assignDivRaw(final int index, final Operand rhs) {
@@ -705,11 +705,11 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * è—]‘ã“ü‚ğs‚¤B
+	 * å‰°ä½™ä»£å…¥ã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index ‘ã“üæ—v‘f”Ô†B
-	 * @param rhs ‘ã“üŒ³ƒIƒuƒWƒFƒNƒgB
-	 * @param rhi ‘ã“üŒ³—v‘f”Ô†B
+	 * @param index ä»£å…¥å…ˆè¦ç´ ç•ªå·ã€‚
+	 * @param rhs ä»£å…¥å…ƒã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
+	 * @param rhi ä»£å…¥å…ƒè¦ç´ ç•ªå·ã€‚
 	 */
 	public abstract void assignModRaw(final int index, final Operand rhs, final int rhi);
     public void assignModRaw(final int index, final Operand rhs) {
@@ -735,11 +735,11 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ƒrƒbƒg˜_—Ï‘ã“ü‚ğs‚¤B
+	 * ãƒ“ãƒƒãƒˆè«–ç†ç©ä»£å…¥ã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index ‘ã“üæ—v‘f”Ô†B
-	 * @param rhs ‘ã“üŒ³ƒIƒuƒWƒFƒNƒgB
-	 * @param rhi ‘ã“üŒ³—v‘f”Ô†B
+	 * @param index ä»£å…¥å…ˆè¦ç´ ç•ªå·ã€‚
+	 * @param rhs ä»£å…¥å…ƒã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
+	 * @param rhi ä»£å…¥å…ƒè¦ç´ ç•ªå·ã€‚
 	 */
 	public abstract void assignAndRaw(final int index, final Operand rhs, final int rhi);
     public void assignAndRaw(final int index, final Operand rhs) {
@@ -765,11 +765,11 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ƒrƒbƒg˜_—˜a‘ã“ü‚ğs‚¤B
+	 * ãƒ“ãƒƒãƒˆè«–ç†å’Œä»£å…¥ã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index ‘ã“üæ—v‘f”Ô†B
-	 * @param rhs ‘ã“üŒ³ƒIƒuƒWƒFƒNƒgB
-	 * @param rhi ‘ã“üŒ³—v‘f”Ô†B
+	 * @param index ä»£å…¥å…ˆè¦ç´ ç•ªå·ã€‚
+	 * @param rhs ä»£å…¥å…ƒã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
+	 * @param rhi ä»£å…¥å…ƒè¦ç´ ç•ªå·ã€‚
 	 */
 	public abstract void assignOrRaw(final int index, final Operand rhs, final int rhi);
     public void assignOrRaw(final int index, final Operand rhs) {
@@ -795,11 +795,11 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ƒrƒbƒg”r‘¼˜_—˜a‘ã“ü‚ğs‚¤B
+	 * ãƒ“ãƒƒãƒˆæ’ä»–è«–ç†å’Œä»£å…¥ã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index ‘ã“üæ—v‘f”Ô†B
-	 * @param rhs ‘ã“üŒ³ƒIƒuƒWƒFƒNƒgB
-	 * @param rhi ‘ã“üŒ³—v‘f”Ô†B
+	 * @param index ä»£å…¥å…ˆè¦ç´ ç•ªå·ã€‚
+	 * @param rhs ä»£å…¥å…ƒã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
+	 * @param rhi ä»£å…¥å…ƒè¦ç´ ç•ªå·ã€‚
 	 */
 	public abstract void assignXorRaw(final int index, final Operand rhs, final int rhi);
     public void assignXorRaw(final int index, final Operand rhs) {
@@ -825,11 +825,11 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ‰EƒrƒbƒgƒVƒtƒg‘ã“ü‚ğs‚¤B
+	 * å³ãƒ“ãƒƒãƒˆã‚·ãƒ•ãƒˆä»£å…¥ã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index ‘ã“üæ—v‘f”Ô†B
-	 * @param rhs ‘ã“üŒ³ƒIƒuƒWƒFƒNƒgB
-	 * @param rhi ‘ã“üŒ³—v‘f”Ô†B
+	 * @param index ä»£å…¥å…ˆè¦ç´ ç•ªå·ã€‚
+	 * @param rhs ä»£å…¥å…ƒã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
+	 * @param rhi ä»£å…¥å…ƒè¦ç´ ç•ªå·ã€‚
 	 */
 	public abstract void assignSrRaw(final int index, final Operand rhs, final int rhi);
     public void assignSrRaw(final int index, final Operand rhs) {
@@ -855,11 +855,11 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ¶ƒrƒbƒgƒVƒtƒg‘ã“ü‚ğs‚¤B
+	 * å·¦ãƒ“ãƒƒãƒˆã‚·ãƒ•ãƒˆä»£å…¥ã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index ‘ã“üæ—v‘f”Ô†B
-	 * @param rhs ‘ã“üŒ³ƒIƒuƒWƒFƒNƒgB
-	 * @param rhi ‘ã“üŒ³—v‘f”Ô†B
+	 * @param index ä»£å…¥å…ˆè¦ç´ ç•ªå·ã€‚
+	 * @param rhs ä»£å…¥å…ƒã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
+	 * @param rhi ä»£å…¥å…ƒè¦ç´ ç•ªå·ã€‚
 	 */
 	public abstract void assignSlRaw(final int index, final Operand rhs, final int rhi);
     public void assignSlRaw(final int index, final Operand rhs) {
@@ -885,12 +885,12 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ‰ÁZ‚ğs‚¤B
+	 * åŠ ç®—ã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index —v‘f”Ô†B
-	 * @param rhs ‰EƒIƒyƒ‰ƒ“ƒhB
-	 * @param rhi ‰EƒIƒyƒ‰ƒ“ƒh‚Ì—v‘f”Ô†B
-	 * @return ‰‰ZŒ‹‰ÊB
+	 * @param index è¦ç´ ç•ªå·ã€‚
+	 * @param rhs å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã€‚
+	 * @param rhi å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã®è¦ç´ ç•ªå·ã€‚
+	 * @return æ¼”ç®—çµæœã€‚
 	 */
 	public abstract Operand addRaw(final int index, final Operand rhs, final int rhi);
 	public Operand add(final Operand rhs) {
@@ -913,12 +913,12 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * Œ¸Z‚ğs‚¤B
+	 * æ¸›ç®—ã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index —v‘f”Ô†B
-	 * @param rhs ‰EƒIƒyƒ‰ƒ“ƒhB
-	 * @param rhi ‰EƒIƒyƒ‰ƒ“ƒh‚Ì—v‘f”Ô†B
-	 * @return ‰‰ZŒ‹‰ÊB
+	 * @param index è¦ç´ ç•ªå·ã€‚
+	 * @param rhs å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã€‚
+	 * @param rhi å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã®è¦ç´ ç•ªå·ã€‚
+	 * @return æ¼”ç®—çµæœã€‚
 	 */
 	public abstract Operand subRaw(final int index, final Operand rhs, final int rhi);
 	public Operand sub(final Operand rhs) {
@@ -941,12 +941,12 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * æZ‚ğs‚¤B
+	 * ä¹—ç®—ã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index —v‘f”Ô†B
-	 * @param rhs ‰EƒIƒyƒ‰ƒ“ƒhB
-	 * @param rhi ‰EƒIƒyƒ‰ƒ“ƒh‚Ì—v‘f”Ô†B
-	 * @return ‰‰ZŒ‹‰ÊB
+	 * @param index è¦ç´ ç•ªå·ã€‚
+	 * @param rhs å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã€‚
+	 * @param rhi å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã®è¦ç´ ç•ªå·ã€‚
+	 * @return æ¼”ç®—çµæœã€‚
 	 */
 	public abstract Operand mulRaw(final int index, final Operand rhs, final int rhi);
 	public Operand mul(final Operand rhs) {
@@ -969,12 +969,12 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * œZ‚ğs‚¤B
+	 * é™¤ç®—ã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index —v‘f”Ô†B
-	 * @param rhs ‰EƒIƒyƒ‰ƒ“ƒhB
-	 * @param rhi ‰EƒIƒyƒ‰ƒ“ƒh‚Ì—v‘f”Ô†B
-	 * @return ‰‰ZŒ‹‰ÊB
+	 * @param index è¦ç´ ç•ªå·ã€‚
+	 * @param rhs å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã€‚
+	 * @param rhi å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã®è¦ç´ ç•ªå·ã€‚
+	 * @return æ¼”ç®—çµæœã€‚
 	 */
 	public abstract Operand divRaw(final int index, final Operand rhs, final int rhi);
 	public Operand div(final Operand rhs) {
@@ -997,12 +997,12 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * è—]‚ğ‹‚ß‚éB
+	 * å‰°ä½™ã‚’æ±‚ã‚ã‚‹ã€‚
 	 * 
-	 * @param index —v‘f”Ô†B
-	 * @param rhs ‰EƒIƒyƒ‰ƒ“ƒhB
-	 * @param rhi ‰EƒIƒyƒ‰ƒ“ƒh‚Ì—v‘f”Ô†B
-	 * @return ‰‰ZŒ‹‰ÊB
+	 * @param index è¦ç´ ç•ªå·ã€‚
+	 * @param rhs å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã€‚
+	 * @param rhi å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã®è¦ç´ ç•ªå·ã€‚
+	 * @return æ¼”ç®—çµæœã€‚
 	 */
 	public abstract Operand modRaw(final int index, final Operand rhs, final int rhi);
 	public Operand mod(final Operand rhs) {
@@ -1025,12 +1025,12 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ƒrƒbƒg˜_—Ï‚ğ‹‚ß‚éB
+	 * ãƒ“ãƒƒãƒˆè«–ç†ç©ã‚’æ±‚ã‚ã‚‹ã€‚
 	 * 
-	 * @param index —v‘f”Ô†B
-	 * @param rhs ‰EƒIƒyƒ‰ƒ“ƒhB
-	 * @param rhi ‰EƒIƒyƒ‰ƒ“ƒh‚Ì—v‘f”Ô†B
-	 * @return ‰‰ZŒ‹‰ÊB
+	 * @param index è¦ç´ ç•ªå·ã€‚
+	 * @param rhs å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã€‚
+	 * @param rhi å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã®è¦ç´ ç•ªå·ã€‚
+	 * @return æ¼”ç®—çµæœã€‚
 	 */
 	public abstract Operand andRaw(final int index, final Operand rhs, final int rhi);
 	public Operand and(final Operand rhs) {
@@ -1053,12 +1053,12 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ƒrƒbƒg˜_—˜a‚ğ‹‚ß‚éB
+	 * ãƒ“ãƒƒãƒˆè«–ç†å’Œã‚’æ±‚ã‚ã‚‹ã€‚
 	 * 
-	 * @param index —v‘f”Ô†B
-	 * @param rhs ‰EƒIƒyƒ‰ƒ“ƒhB
-	 * @param rhi ‰EƒIƒyƒ‰ƒ“ƒh‚Ì—v‘f”Ô†B
-	 * @return ‰‰ZŒ‹‰ÊB
+	 * @param index è¦ç´ ç•ªå·ã€‚
+	 * @param rhs å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã€‚
+	 * @param rhi å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã®è¦ç´ ç•ªå·ã€‚
+	 * @return æ¼”ç®—çµæœã€‚
 	 */
 	public abstract Operand orRaw(final int index, final Operand rhs, final int rhi);
 	public Operand or(final Operand rhs) {
@@ -1081,12 +1081,12 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ƒrƒbƒg”r‘¼˜_—˜a‚ğ‹‚ß‚éB
+	 * ãƒ“ãƒƒãƒˆæ’ä»–è«–ç†å’Œã‚’æ±‚ã‚ã‚‹ã€‚
 	 * 
-	 * @param index —v‘f”Ô†B
-	 * @param rhs ‰EƒIƒyƒ‰ƒ“ƒhB
-	 * @param rhi ‰EƒIƒyƒ‰ƒ“ƒh‚Ì—v‘f”Ô†B
-	 * @return ‰‰ZŒ‹‰ÊB
+	 * @param index è¦ç´ ç•ªå·ã€‚
+	 * @param rhs å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã€‚
+	 * @param rhi å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã®è¦ç´ ç•ªå·ã€‚
+	 * @return æ¼”ç®—çµæœã€‚
 	 */
 	public abstract Operand xorRaw(final int index, final Operand rhs, final int rhi);
 	public Operand xor(final Operand rhs) {
@@ -1109,12 +1109,12 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ‰EƒrƒbƒgƒVƒtƒg‚ğs‚¤B
+	 * å³ãƒ“ãƒƒãƒˆã‚·ãƒ•ãƒˆã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index —v‘f”Ô†B
-	 * @param rhs ‰EƒIƒyƒ‰ƒ“ƒhB
-	 * @param rhi ‰EƒIƒyƒ‰ƒ“ƒh‚Ì—v‘f”Ô†B
-	 * @return ‰‰ZŒ‹‰ÊB
+	 * @param index è¦ç´ ç•ªå·ã€‚
+	 * @param rhs å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã€‚
+	 * @param rhi å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã®è¦ç´ ç•ªå·ã€‚
+	 * @return æ¼”ç®—çµæœã€‚
 	 */
 	public abstract Operand slRaw(final int index, final Operand rhs, final int rhi);
 	public Operand sl(final Operand rhs) {
@@ -1137,12 +1137,12 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ¶ƒrƒbƒgƒVƒtƒg‚ğs‚¤B
+	 * å·¦ãƒ“ãƒƒãƒˆã‚·ãƒ•ãƒˆã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index —v‘f”Ô†B
-	 * @param rhs ‰EƒIƒyƒ‰ƒ“ƒhB
-	 * @param rhi ‰EƒIƒyƒ‰ƒ“ƒh‚Ì—v‘f”Ô†B
-	 * @return ‰‰ZŒ‹‰ÊB
+	 * @param index è¦ç´ ç•ªå·ã€‚
+	 * @param rhs å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã€‚
+	 * @param rhi å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã®è¦ç´ ç•ªå·ã€‚
+	 * @return æ¼”ç®—çµæœã€‚
 	 */
 	public abstract Operand srRaw(final int index, final Operand rhs, final int rhi);
 	public Operand sr(final Operand rhs) {
@@ -1165,12 +1165,12 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ==”äŠr‚ğs‚¤B
+	 * ==æ¯”è¼ƒã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index —v‘f”Ô†B
-	 * @param rhs ‰EƒIƒyƒ‰ƒ“ƒhB
-	 * @param rhi ‰EƒIƒyƒ‰ƒ“ƒh‚Ì—v‘f”Ô†B
-	 * @return ‰‰ZŒ‹‰ÊB
+	 * @param index è¦ç´ ç•ªå·ã€‚
+	 * @param rhs å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã€‚
+	 * @param rhi å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã®è¦ç´ ç•ªå·ã€‚
+	 * @return æ¼”ç®—çµæœã€‚
 	 */
 	public abstract Operand eqRaw(final int index, final Operand rhs, final int rhi);
 	public Operand eq(final Operand rhs) {
@@ -1193,12 +1193,12 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * !=”äŠr‚ğs‚¤B
+	 * !=æ¯”è¼ƒã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index —v‘f”Ô†B
-	 * @param rhs ‰EƒIƒyƒ‰ƒ“ƒhB
-	 * @param rhi ‰EƒIƒyƒ‰ƒ“ƒh‚Ì—v‘f”Ô†B
-	 * @return ‰‰ZŒ‹‰ÊB
+	 * @param index è¦ç´ ç•ªå·ã€‚
+	 * @param rhs å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã€‚
+	 * @param rhi å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã®è¦ç´ ç•ªå·ã€‚
+	 * @return æ¼”ç®—çµæœã€‚
 	 */
 	public abstract Operand neRaw(final int index, final Operand rhs, final int rhi);
 	public Operand ne(final Operand rhs) {
@@ -1221,12 +1221,12 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * &gt;”äŠr‚ğs‚¤B
+	 * &gt;æ¯”è¼ƒã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index —v‘f”Ô†B
-	 * @param rhs ‰EƒIƒyƒ‰ƒ“ƒhB
-	 * @param rhi ‰EƒIƒyƒ‰ƒ“ƒh‚Ì—v‘f”Ô†B
-	 * @return ‰‰ZŒ‹‰ÊB
+	 * @param index è¦ç´ ç•ªå·ã€‚
+	 * @param rhs å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã€‚
+	 * @param rhi å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã®è¦ç´ ç•ªå·ã€‚
+	 * @return æ¼”ç®—çµæœã€‚
 	 */
 	public abstract Operand gtRaw(final int index, final Operand rhs, final int rhi);
 	public Operand gt(final Operand rhs) {
@@ -1249,12 +1249,12 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * &lt;”äŠr‚ğs‚¤B
+	 * &lt;æ¯”è¼ƒã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index —v‘f”Ô†B
-	 * @param rhs ‰EƒIƒyƒ‰ƒ“ƒhB
-	 * @param rhi ‰EƒIƒyƒ‰ƒ“ƒh‚Ì—v‘f”Ô†B
-	 * @return ‰‰ZŒ‹‰ÊB
+	 * @param index è¦ç´ ç•ªå·ã€‚
+	 * @param rhs å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã€‚
+	 * @param rhi å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã®è¦ç´ ç•ªå·ã€‚
+	 * @return æ¼”ç®—çµæœã€‚
 	 */
 	public abstract Operand ltRaw(final int index, final Operand rhs, final int rhi);
 	public Operand lt(final Operand rhs) {
@@ -1277,12 +1277,12 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * &gt;=”äŠr‚ğs‚¤B
+	 * &gt;=æ¯”è¼ƒã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index —v‘f”Ô†B
-	 * @param rhs ‰EƒIƒyƒ‰ƒ“ƒhB
-	 * @param rhi ‰EƒIƒyƒ‰ƒ“ƒh‚Ì—v‘f”Ô†B
-	 * @return ‰‰ZŒ‹‰ÊB
+	 * @param index è¦ç´ ç•ªå·ã€‚
+	 * @param rhs å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã€‚
+	 * @param rhi å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã®è¦ç´ ç•ªå·ã€‚
+	 * @return æ¼”ç®—çµæœã€‚
 	 */
 	public abstract Operand geRaw(final int index, final Operand rhs, final int rhi);
 	public Operand ge(final Operand rhs) {
@@ -1305,12 +1305,12 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * &lt;=”äŠr‚ğs‚¤B
+	 * &lt;=æ¯”è¼ƒã‚’è¡Œã†ã€‚
 	 * 
-	 * @param index —v‘f”Ô†B
-	 * @param rhs ‰EƒIƒyƒ‰ƒ“ƒhB
-	 * @param rhi ‰EƒIƒyƒ‰ƒ“ƒh‚Ì—v‘f”Ô†B
-	 * @return ‰‰ZŒ‹‰ÊB
+	 * @param index è¦ç´ ç•ªå·ã€‚
+	 * @param rhs å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã€‚
+	 * @param rhi å³ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã®è¦ç´ ç•ªå·ã€‚
+	 * @return æ¼”ç®—çµæœã€‚
 	 */
 	public abstract Operand leRaw(final int index, final Operand rhs, final int rhi);
 	public Operand le(final Operand rhs) {
@@ -1333,20 +1333,20 @@ public abstract class Operand implements Serializable {
 	}
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚ÌƒoƒCƒg‚ğæ“¾‚·‚éB
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ãƒã‚¤ãƒˆã‚’å–å¾—ã™ã‚‹ã€‚
 	 * 
-	 * @param index —v‘f”Ô†B
-	 * @param offset ƒIƒtƒZƒbƒgB
-	 * @return ƒIƒuƒWƒFƒNƒg‚ÌƒoƒCƒg’lB
+	 * @param index è¦ç´ ç•ªå·ã€‚
+	 * @param offset ã‚ªãƒ•ã‚»ãƒƒãƒˆã€‚
+	 * @return ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ãƒã‚¤ãƒˆå€¤ã€‚
 	 */
 	public abstract byte peek(int index, int offset);
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚ÌƒoƒCƒg‚ğİ’è‚·‚éB
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ãƒã‚¤ãƒˆã‚’è¨­å®šã™ã‚‹ã€‚
 	 * 
-	 * @param index —v‘f”Ô†B
-	 * @param offset ƒIƒtƒZƒbƒgB
-	 * @param value İ’è‚·‚é’lB
+	 * @param index è¦ç´ ç•ªå·ã€‚
+	 * @param offset ã‚ªãƒ•ã‚»ãƒƒãƒˆã€‚
+	 * @param value è¨­å®šã™ã‚‹å€¤ã€‚
 	 */
 	public abstract void poke(int index, int offset, byte value);
 
@@ -1376,14 +1376,14 @@ public abstract class Operand implements Serializable {
 	*/
 
 	/**
-	 * ƒTƒ|[ƒg‚³‚ê‚È‚¢‰‰Zq‚ªg—p‚³‚ê‚½‚Æ‚«‚É—áŠO‚ğ”­¶‚³‚¹‚éB
-	 * @param operator ‰‰ZqB
-	 * @return UnsupportedOperationException “Š‚°‚é‚×‚«—áŠOB
+	 * ã‚µãƒãƒ¼ãƒˆã•ã‚Œãªã„æ¼”ç®—å­ãŒä½¿ç”¨ã•ã‚ŒãŸã¨ãã«ä¾‹å¤–ã‚’ç™ºç”Ÿã•ã›ã‚‹ã€‚
+	 * @param operator æ¼”ç®—å­ã€‚
+	 * @return UnsupportedOperationException æŠ•ã’ã‚‹ã¹ãä¾‹å¤–ã€‚
 	 */
 	public UnsupportedOperationException unsupportedOperator(
 			final String operator) {
 
-		return new UnsupportedOperationException("‰‰Zq " + operator + " ‚ÍŒ^ "
-				+ getType() + " ‚É‚Íg—p‚Å‚«‚Ü‚¹‚ñB");
+		return new UnsupportedOperationException("æ¼”ç®—å­ " + operator + " ã¯å‹ "
+				+ getType() + " ã«ã¯ä½¿ç”¨ã§ãã¾ã›ã‚“ã€‚");
 	}
 }

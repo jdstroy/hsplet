@@ -25,7 +25,7 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Sequencer;
 
 /**
- * MIDI ƒ~ƒ…[ƒWƒbƒNB
+ * MIDI ãƒŸãƒ¥ãƒ¼ã‚¸ãƒƒã‚¯ã€‚
  *
  * @author Yuki
  * @version $Revision: 1.8 $, $Date: 2006/02/05 10:08:14 $
@@ -33,23 +33,23 @@ import javax.sound.midi.Sequencer;
 public class Music implements HSPMedia {
 
     /**
-     * ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB
+     * ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚
      */
     private static final String fileVersionID = "$Id: Music.java,v 1.8 2006/02/05 10:08:14 Yuki Exp $";
     /**
-     * ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B
+     * ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚
      */
     private static final long serialVersionUID = 9143714080541551764L;
     private SequencerMultiplexer multiplexer;
     private final MusicClip clip;
 
     /**
-     * ƒƒfƒBƒA‚ğ“Ç‚İ‚İƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
+     * ãƒ¡ãƒ‡ã‚£ã‚¢ã‚’èª­ã¿è¾¼ã¿ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
      *
-     * @param context Às‚µ‚Ä‚¢‚éƒRƒ“ƒeƒLƒXƒgB
-     * @param fileName “Ç‚İ‚ŞƒƒfƒBƒAB
-     * @param mode Ä¶ƒ‚[ƒhB
-     * @throws Exception “Ç‚İ‚ß‚È‚©‚Á‚½‚Æ‚«B
+     * @param context å®Ÿè¡Œã—ã¦ã„ã‚‹ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã€‚
+     * @param fileName èª­ã¿è¾¼ã‚€ãƒ¡ãƒ‡ã‚£ã‚¢ã€‚
+     * @param mode å†ç”Ÿãƒ¢ãƒ¼ãƒ‰ã€‚
+     * @throws Exception èª­ã¿è¾¼ã‚ãªã‹ã£ãŸã¨ãã€‚
      */
     public Music(final Context context, final String fileName, final int mode, SequencerMultiplexer multiplexer) throws Exception {
         this.multiplexer = multiplexer;

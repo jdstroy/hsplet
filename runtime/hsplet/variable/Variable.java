@@ -6,15 +6,15 @@ package hsplet.variable;
 import hsplet.HSPError;
 
 /**
- * HSP ‚Ì•Ï”‚ğ•\‚·ƒNƒ‰ƒXB
+ * HSP ã®å¤‰æ•°ã‚’è¡¨ã™ã‚¯ãƒ©ã‚¹ã€‚
  * <p>
- * HSP ‚Ì•Ï”‚Í dim/sdim ‚â dup ‚È‚Ç‚É‚æ‚Á‚ÄŒ^‚âQÆæ‚ğ“®“I‚É•ÏX‚Å‚«‚È‚¯‚ê‚Î‚¢‚¯‚È‚¢B
+ * HSP ã®å¤‰æ•°ã¯ dim/sdim ã‚„ dup ãªã©ã«ã‚ˆã£ã¦å‹ã‚„å‚ç…§å…ˆã‚’å‹•çš„ã«å¤‰æ›´ã§ããªã‘ã‚Œã°ã„ã‘ãªã„ã€‚
  * </p>
  * </p>
- * Array ‚â Scalar ‚È‚Ç‚ÌƒTƒuƒNƒ‰ƒX‚ğ’¼Úg—p‚·‚é‚Ì‚Å‚Í‚È‚­Aˆê–‡”ç‚ğ‚©‚Ô‚¹‚éB
+ * Array ã‚„ Scalar ãªã©ã®ã‚µãƒ–ã‚¯ãƒ©ã‚¹ã‚’ç›´æ¥ä½¿ç”¨ã™ã‚‹ã®ã§ã¯ãªãã€ä¸€æšçš®ã‚’ã‹ã¶ã›ã‚‹ã€‚
  * </p>
  * <p>
- * –{¿“I‚É Reference ‚Æ“¯‚¶‚¾‚ªAƒx[ƒXƒCƒ“ƒfƒbƒNƒX‚ª 0 ‚Å‚ ‚é‚±‚Æ‚ğ‘O’ñ‚É‚µ‚Ä‚¢‚é•ª‚‘¬B ‚Ü‚½AÀÛ‚É‚ÍƒRƒ“ƒpƒCƒ‰‚É‚æ‚Á‚ÄƒCƒ“ƒ‰ƒCƒ““WŠJ‚³‚ê‚é‚Ì‚ÅAƒpƒtƒH[ƒ}ƒ“ƒX‚Ì’á‰º‚ÍÅ¬ŒÀ‚É—}‚¦‚ç‚ê‚éB
+ * æœ¬è³ªçš„ã« Reference ã¨åŒã˜ã ãŒã€ãƒ™ãƒ¼ã‚¹ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãŒ 0 ã§ã‚ã‚‹ã“ã¨ã‚’å‰æã«ã—ã¦ã„ã‚‹åˆ†é«˜é€Ÿã€‚ ã¾ãŸã€å®Ÿéš›ã«ã¯ã‚³ãƒ³ãƒ‘ã‚¤ãƒ©ã«ã‚ˆã£ã¦ã‚¤ãƒ³ãƒ©ã‚¤ãƒ³å±•é–‹ã•ã‚Œã‚‹ã®ã§ã€ãƒ‘ãƒ•ã‚©ãƒ¼ãƒãƒ³ã‚¹ã®ä½ä¸‹ã¯æœ€å°é™ã«æŠ‘ãˆã‚‰ã‚Œã‚‹ã€‚
  * </p>
  * 
  * @author Yuki
@@ -22,19 +22,19 @@ import hsplet.HSPError;
  */
 public final class Variable extends Operand {
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = 3981954990729087063L;
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: Variable.java,v 1.3.2.1 2006/08/02 12:13:06 Yuki Exp $";
 	//private static int globalErrorIndex=1;
 	//public int myErrorIndex;
 
-	/** ’l‚ğ•Û‚·‚éƒIƒuƒWƒFƒNƒgB */
+	/** å€¤ã‚’ä¿æŒã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚ */
 	public Operand value;
 
 	/**
-	 * int ”z—ñŒ^‚Ì•Ï”‚ğ\’z‚·‚éB
+	 * int é…åˆ—å‹ã®å¤‰æ•°ã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
 	 */
 	public Variable() {
 
@@ -43,8 +43,8 @@ public final class Variable extends Operand {
 	}
 
 	/**
-	 * •Ï”‚Ì’l‚ªŠO•”‚©‚ç•ÏX‚³‚ê‚é‰Â”\«‚ª‚ ‚é‚Æ‚İ‚È‚·B
-	 * @return ŠO•”‚©‚ç•ÏX‚³‚ê‚é’lƒIƒuƒWƒFƒNƒg.
+	 * å¤‰æ•°ã®å€¤ãŒå¤–éƒ¨ã‹ã‚‰å¤‰æ›´ã•ã‚Œã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹ã¨ã¿ãªã™ã€‚
+	 * @return å¤–éƒ¨ã‹ã‚‰å¤‰æ›´ã•ã‚Œã‚‹å€¤ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ.
 	 */
 	public VolatileValue makeVolatile() {
 
@@ -219,7 +219,7 @@ public final class Variable extends Operand {
 	//@Override
 	public void assignRaw(final int index, final Operand rhs, final int rhi) {
 
-		// Œ^‚ªˆá‚¤‘ã“üA‰Šú‰»‚³‚ê‚é
+		// å‹ãŒé•ã†ä»£å…¥ã€åˆæœŸåŒ–ã•ã‚Œã‚‹
 		if (value.getType() != rhs.getType()) {
 			if(index != 0) {
 				error(HSPError.AssignToDifferentType, "", "Invalid type of array");
@@ -236,7 +236,7 @@ public final class Variable extends Operand {
 				value = new StringArray();
 				break;
 			default:
-				throw new UnsupportedOperationException("Œ^ " + rhs.getType() + " ‚ÍƒTƒ|[ƒg‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB");
+				throw new UnsupportedOperationException("å‹ " + rhs.getType() + " ã¯ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
 			}
 		}
 

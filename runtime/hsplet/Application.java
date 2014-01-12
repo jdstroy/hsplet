@@ -34,7 +34,7 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 
 /**
- * HSPLet ‚ÌƒƒCƒ“ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒNƒ‰ƒXB
+ * HSPLet ã®ãƒ¡ã‚¤ãƒ³ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚¯ãƒ©ã‚¹ã€‚
  *
  * @author Yuki
  * @version $Revision: 1.7 $, $Date: 2006/02/11 18:00:38 $
@@ -43,24 +43,24 @@ public final class Application extends JFrame implements AppletStub,
         AppletContext {
 
     /**
-     * ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB
+     * ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚
      */
     private static final String fileVersionID = "$Id: Application.java,v 1.7 2006/02/11 18:00:38 Yuki Exp $";
     /**
-     * ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B
+     * ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚
      */
     private static final long serialVersionUID = 3051070041292384848L;
     /**
-     * ƒAƒvƒŒƒbƒg‚É—^‚¦‚é–¼‘OB
+     * ã‚¢ãƒ—ãƒ¬ãƒƒãƒˆã«ä¸ãˆã‚‹åå‰ã€‚
      */
     public static final String APPLET_NAME = "HSPLet";
 
     /**
-     * ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ÌƒGƒ“ƒgƒŠ[ƒ|ƒCƒ“ƒgB
+     * ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¨ãƒ³ãƒˆãƒªãƒ¼ãƒã‚¤ãƒ³ãƒˆã€‚
      *
-     * @param args Às‚Ìˆø”B <ol> <li>--width=‰¡•</li> <li>--height=‚‚³</li>
-     * <li>--debug=ƒfƒoƒbƒOƒEƒBƒ“ƒhƒE‚ğ•\¦‚·‚é‚©‚Ç‚¤‚©</li> <li>--startClass=ŠJnƒNƒ‰ƒX–¼</li>
-     * <li>--cmdline=ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“ˆø”</li> </ol>
+     * @param args å®Ÿè¡Œæ™‚ã®å¼•æ•°ã€‚ <ol> <li>--width=æ¨ªå¹…</li> <li>--height=é«˜ã•</li>
+     * <li>--debug=ãƒ‡ãƒãƒƒã‚°ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’è¡¨ç¤ºã™ã‚‹ã‹ã©ã†ã‹</li> <li>--startClass=é–‹å§‹ã‚¯ãƒ©ã‚¹å</li>
+     * <li>--cmdline=ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³å¼•æ•°</li> </ol>
      */
     //@SuppressWarnings("unchecked")
     public static void main(final String[] args) {
@@ -101,14 +101,14 @@ public final class Application extends JFrame implements AppletStub,
     }
 
     /**
-     * ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ğŠJn‚·‚éB
+     * ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚’é–‹å§‹ã™ã‚‹ã€‚
      *
-     * @param startClass Às‚³‚ê‚éƒNƒ‰ƒXB
-     * @param width ‰æ–Ê‚Ì‰¡•B
-     * @param height ‰æ–Ê‚Ì‚‚³B
-     * @param debug ƒfƒoƒbƒOƒEƒBƒ“ƒhƒE‚ğ•\¦‚·‚é‚©‚Ç‚¤‚©B
-     * @param cmdline ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“ˆø”B
-     * @return ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒCƒ“ƒXƒ^ƒ“ƒXB
+     * @param startClass å®Ÿè¡Œã•ã‚Œã‚‹ã‚¯ãƒ©ã‚¹ã€‚
+     * @param width ç”»é¢ã®æ¨ªå¹…ã€‚
+     * @param height ç”»é¢ã®é«˜ã•ã€‚
+     * @param debug ãƒ‡ãƒãƒƒã‚°ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’è¡¨ç¤ºã™ã‚‹ã‹ã©ã†ã‹ã€‚
+     * @param cmdline ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³å¼•æ•°ã€‚
+     * @return ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã€‚
      */
     public static Application run(final Class startClass, final int width,
             final int height, final boolean debug, final String cmdline) {
@@ -129,7 +129,7 @@ public final class Application extends JFrame implements AppletStub,
             e.printStackTrace();
         }
 
-        // ƒfƒoƒbƒOƒEƒBƒ“ƒhƒE‚ğ•\¦B
+        // ãƒ‡ãƒãƒƒã‚°ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’è¡¨ç¤ºã€‚
         if (debug) {
             final DebugWindow debugWindow = new DebugWindow();
             addWindowListener(new WindowAdapter() {

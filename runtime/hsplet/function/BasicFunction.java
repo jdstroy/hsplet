@@ -15,7 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * HSP ‚ÌŠî–{ŠÖ”ŒQB
+ * HSP ã®åŸºæœ¬é–¢æ•°ç¾¤ã€‚
  *
  * @author Yuki
  * @version $Revision: 1.6.4.1 $, $Date: 2006/08/02 12:13:07 $
@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 public class BasicFunction extends FunctionBase {
 
     /**
-     * ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB
+     * ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚
      */
     private static final String fileVersionID = "$Id: BasicFunction.java,v 1.6.4.1 2006/08/02 12:13:07 Yuki Exp $";
 
@@ -200,7 +200,7 @@ public class BasicFunction extends FunctionBase {
                 }
 
                 int lineCount = 1;
-                // ˆê”ÔÅŒã‚Ì \n ‚Í–³‹‚³‚ê‚é
+                // ä¸€ç•ªæœ€å¾Œã® \n ã¯ç„¡è¦–ã•ã‚Œã‚‹
                 for (int i = 0; i < note.length() - 1; ++i) {
                     if ((note.get(i) & 0xFF) == '\n') {
                         ++lineCount;

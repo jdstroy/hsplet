@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="Shift_JIS" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!--
  $Id: functions.xslt,v 1.3 2006/01/22 16:00:57 Yuki Exp $
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:output method="html" version="4.01" encoding="Shift_JIS" omit-xml-declaration="no" doctype-public="-//W3C//DTD HTML 4.01//EN"
+	<xsl:output method="html" version="4.01" encoding="UTF-8" omit-xml-declaration="no" doctype-public="-//W3C//DTD HTML 4.01//EN"
 		doctype-system="http://www.w3.org/TR/html4/strict.dtd" indent="yes" />
 	<xsl:template name="copy-attributes">
 		<xsl:for-each select="./@*">
@@ -28,12 +28,12 @@
 				<meta name="copyright" content="Copyright (C) 2004 Yuki. All rights are reserved." />
 				<meta http-equiv="Content-Style-Type" content="text/css" />
 				<meta http-equiv="Content-Script-Type" content="text/javascript" />
-				<title>ŠÖ”ƒŠƒtƒ@ƒŒƒ“ƒX - HSPLet ƒŠƒtƒ@ƒŒƒ“ƒX</title>
+				<title>é–¢æ•°ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹ - HSPLet ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹</title>
 				<link rel="stylesheet" type="text/css" href="common.css" />
 				<link rel="stylesheet" type="text/css" href="functions.css" />
 			</head>
 			<body>
-				<h1>ŠÖ”ƒŠƒtƒ@ƒŒƒ“ƒX</h1>
+				<h1>é–¢æ•°ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹</h1>
 				<xsl:apply-templates select="/reference" mode="contents" />
 				<xsl:apply-templates select="/reference" mode="reference" />
 			</body>
@@ -107,7 +107,7 @@
 		<p>
 			<xsl:value-of select="@summary" />
 		</p>
-		<h6>\•¶</h6>
+		<h6>æ§‹æ–‡</h6>
 		<div class="functionCode">
 			<span>
 				<xsl:value-of select="@name" />
@@ -122,7 +122,7 @@
 			</xsl:for-each>
 		</div>
 		<xsl:if test="param">
-			<h6>ƒpƒ‰ƒ[ƒ^</h6>
+			<h6>ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿</h6>
 			<ul class="params">
 				<xsl:for-each select="param">
 					<li><span class="name">
@@ -132,21 +132,21 @@
 						<xsl:apply-templates />
 						<xsl:if test="@default">
 							<span class="default">
-							iÈ—ªŽž = <span class="defaultValue">
+							ï¼ˆçœç•¥æ™‚ = <span class="defaultValue">
 									<xsl:value-of select="@default" />
-								</span>j
+								</span>ï¼‰
 							</span>
 						</xsl:if>
 					</li>
 				</xsl:for-each>
 			</ul>
 		</xsl:if>
-		<h6>‰ðà</h6>
+		<h6>è§£èª¬</h6>
 		<div class="remarks">
 			<xsl:apply-templates select="remarks/*|remarks/text()" />
 		</div>
 		<xsl:if test="seealso">
-			<h6>ŽQÆ</h6>
+			<h6>å‚ç…§</h6>
 			<div class="seealso">
 				<xsl:for-each select="seealso">
 					<xsl:variable name="name" select="@name" />
@@ -155,7 +155,7 @@
 							<xsl:value-of select="$name" /> not found
 						</xsl:message>
 					</xsl:if>
-					<xsl:if test="position()!=1">b</xsl:if>
+					<xsl:if test="position()!=1">ï½œ</xsl:if>
 					<a href="#function_{translate( @name, ' ', '_' )}"
 						title="{normalize-space( //function[@name=$name]/@summary )}">
 						<xsl:value-of select="@name" />

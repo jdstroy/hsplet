@@ -8,9 +8,9 @@ import java.awt.Dimension;
 import java.io.Serializable;
 
 /**
- * HSP‚Ì‰æ–Ê‚ğ‚ ‚ç‚í‚·ƒCƒ“ƒ^[ƒtƒFƒCƒXB
+ * HSPã®ç”»é¢ã‚’ã‚ã‚‰ã‚ã™ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã€‚
  * <p>
- * ‹¤’Ê‚Ì‹@”\‚Í ScreenInfo ‚ÅÀ‘•‚µ‚Ä‚¢‚é‚Ì‚ÅA‚±‚ÌƒCƒ“ƒ^[ƒtƒFƒCƒX‚Í‚»‚ê‚Ù‚Ç‘½‚­‚Ìî•ñ‚ğ’ñ‹Ÿ‚µ‚È‚¢B
+ * å…±é€šã®æ©Ÿèƒ½ã¯ ScreenInfo ã§å®Ÿè£…ã—ã¦ã„ã‚‹ã®ã§ã€ã“ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã¯ãã‚Œã»ã©å¤šãã®æƒ…å ±ã‚’æä¾›ã—ãªã„ã€‚
  * </p>
  * 
  * @author Yuki
@@ -18,30 +18,30 @@ import java.io.Serializable;
  */
 public interface HSPScreen extends Serializable {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	static final String fileVersionID = "$Id: HSPScreen.java,v 1.4 2006/01/21 12:48:16 Yuki Exp $";
 
 	/**
-	 * ƒRƒ“ƒ|[ƒlƒ“ƒg‚Æ‚µ‚Ä‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğæ“¾‚·‚éB
-	 * @return ƒRƒ“ƒ|[ƒlƒ“ƒg‚Æ‚µ‚Ä‚Ì‚±‚ÌƒCƒ“ƒXƒ^ƒ“ƒXB
+	 * ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã¨ã—ã¦ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’å–å¾—ã™ã‚‹ã€‚
+	 * @return ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã¨ã—ã¦ã®ã“ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã€‚
 	 */
 	public Component asComponent();
 
 	/**
-	 * ‰æ–Êî•ñƒIƒuƒWƒFƒNƒg‚ğæ“¾‚·‚éB
-	 * @return  ‰æ–Êî•ñƒIƒuƒWƒFƒNƒgB
+	 * ç”»é¢æƒ…å ±ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å–å¾—ã™ã‚‹ã€‚
+	 * @return  ç”»é¢æƒ…å ±ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
 	 */
 	public Bmscr getBmscr();
 
 	/**
-	 * ‰æ–ÊƒTƒCƒY‚ğæ“¾‚·‚éB
-	 * @return ‰æ–ÊƒTƒCƒYB
+	 * ç”»é¢ã‚µã‚¤ã‚ºã‚’å–å¾—ã™ã‚‹ã€‚
+	 * @return ç”»é¢ã‚µã‚¤ã‚ºã€‚
 	 */
 	public Dimension getSize();
 
 	/**
-	 * ƒ^ƒCƒgƒ‹‚ğİ’è‚·‚éB
-	 * @param text İ’è‚·‚éƒeƒLƒXƒgB
+	 * ã‚¿ã‚¤ãƒˆãƒ«ã‚’è¨­å®šã™ã‚‹ã€‚
+	 * @param text è¨­å®šã™ã‚‹ãƒ†ã‚­ã‚¹ãƒˆã€‚
 	 */
 	public void setTitle(final String text);
 }

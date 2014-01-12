@@ -8,7 +8,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 /**
- * ƒeƒXƒgÀs—p‚Ég—p‚·‚éŠÈˆÕ Web ƒT[ƒo[B
+ * ãƒ†ã‚¹ãƒˆå®Ÿè¡Œç”¨ã«ä½¿ç”¨ã™ã‚‹ç°¡æ˜“ Web ã‚µãƒ¼ãƒãƒ¼ã€‚
  * 
  * @author Yuki
  * @version $Revision: 1.2 $, $Date: 2006/05/09 11:57:31 $
@@ -16,8 +16,8 @@ import java.net.URLEncoder;
 public class HttpServer implements Runnable {
 
 	/**
-	 * C: ƒhƒ‰ƒCƒu‚Ì’¼‰º‚ğŒöŠJ‚·‚é main.
-	 * @param args –³‹‚³‚ê‚Ü‚·B
+	 * C: ãƒ‰ãƒ©ã‚¤ãƒ–ã®ç›´ä¸‹ã‚’å…¬é–‹ã™ã‚‹ main.
+	 * @param args ç„¡è¦–ã•ã‚Œã¾ã™ã€‚
 	 */
 	public static void main(String[] args) {
 
@@ -26,21 +26,21 @@ public class HttpServer implements Runnable {
 		new Thread(server).start();
 	}
 
-	/** ‘Ò‚¿ó‚¯ƒ|[ƒg. */
+	/** å¾…ã¡å—ã‘ãƒãƒ¼ãƒˆ. */
 	private final int port;
 
 	/**
-	 * ƒT[ƒo[ƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚é.
-	 * @param port ‘Ò‚¿ó‚¯ƒ|[ƒg.
+	 * ã‚µãƒ¼ãƒãƒ¼ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹.
+	 * @param port å¾…ã¡å—ã‘ãƒãƒ¼ãƒˆ.
 	 */
 	public HttpServer(int port) {
 		this.port = port;
 	}
 
 	/**
-	 * ‰¼‘zƒpƒX‚©‚çÀÛ‚Ìƒtƒ@ƒCƒ‹‚ğæ“¾‚·‚é.
-	 * @param virtualPath ‰¼‘zƒpƒXiURI ‚Ìˆê•”j
-	 * @return ÀÛ‚Ìƒtƒ@ƒCƒ‹. null ‚ª•Ô‚é‚±‚Æ‚à‚ ‚éB
+	 * ä»®æƒ³ãƒ‘ã‚¹ã‹ã‚‰å®Ÿéš›ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å–å¾—ã™ã‚‹.
+	 * @param virtualPath ä»®æƒ³ãƒ‘ã‚¹ï¼ˆURI ã®ä¸€éƒ¨ï¼‰
+	 * @return å®Ÿéš›ã®ãƒ•ã‚¡ã‚¤ãƒ«. null ãŒè¿”ã‚‹ã“ã¨ã‚‚ã‚ã‚‹ã€‚
 	 */
 	public static File mapPath(String virtualPath) {
 
@@ -54,9 +54,9 @@ public class HttpServer implements Runnable {
 	}
 
 	/**
-	 * ÀÛ‚Ìƒtƒ@ƒCƒ‹‚©‚ç‰¼‘zƒpƒX‚ğæ“¾‚·‚é.
-	 * @param file ƒtƒ@ƒCƒ‹B
-	 * @return ‰¼‘zƒpƒXB/ ‚©‚çn‚Ü‚éB
+	 * å®Ÿéš›ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ä»®æƒ³ãƒ‘ã‚¹ã‚’å–å¾—ã™ã‚‹.
+	 * @param file ãƒ•ã‚¡ã‚¤ãƒ«ã€‚
+	 * @return ä»®æƒ³ãƒ‘ã‚¹ã€‚/ ã‹ã‚‰å§‹ã¾ã‚‹ã€‚
 	 */
 	public static String mapURL(File file) {
 
@@ -69,7 +69,7 @@ public class HttpServer implements Runnable {
 	}
 
 	/**
-	 * ‘Ò‚¿ó‚¯‚ğÀs‚·‚é.
+	 * å¾…ã¡å—ã‘ã‚’å®Ÿè¡Œã™ã‚‹.
 	 */
 	public void run() {
 

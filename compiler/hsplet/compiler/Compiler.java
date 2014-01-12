@@ -52,17 +52,17 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 
 /**
- * axƒtƒ@ƒCƒ‹‚ğƒRƒ“ƒpƒCƒ‹‚·‚éƒNƒ‰ƒXB
+ * axãƒ•ã‚¡ã‚¤ãƒ«ã‚’ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã™ã‚‹ã‚¯ãƒ©ã‚¹ã€‚
  * <p>
- * ASM ‚ğ—p‚¢‚Ä Java ‚ÌƒoƒCƒgƒR[ƒh‚ğ¶¬‚·‚éB
+ * ASM ã‚’ç”¨ã„ã¦ Java ã®ãƒã‚¤ãƒˆã‚³ãƒ¼ãƒ‰ã‚’ç”Ÿæˆã™ã‚‹ã€‚
  * </p>
  * <ul>
- * <li>•Ï”E’è”Eƒpƒ‰ƒ[ƒ^‚Í‚·‚×‚ÄƒtƒB[ƒ‹ƒh‚ÉƒRƒ“ƒpƒCƒ‹‚·‚éB</li>
- * <li>ƒvƒƒOƒ‰ƒ€‚ÍƒGƒ“ƒgƒŠƒ|ƒCƒ“ƒg‚Æ‚È‚é run ƒƒ\ƒbƒh“à‚ÉÀ‘•‚·‚é‚ªA ‚ ‚é’ö“x‚Ì’PˆÊ‚Å‹æØ‚Á‚ÄƒTƒuƒƒ\ƒbƒh m?? ‚ğŒÄ‚Ño‚·‚æ‚¤‚É‚·‚éB
- * ‚»‚¤‚·‚é‚±‚Æ‚ÅƒGƒ“ƒgƒŠƒ|ƒCƒ“ƒgƒƒ\ƒbƒh‚ÌƒTƒCƒY‚ğ—}‚¦‚é‚±‚Æ‚ªo—ˆ‚éB </li>
- * <li>ƒRƒ}ƒ“ƒh‚Íƒƒ\ƒbƒhŒÄ‚Ño‚µ‚ÉƒRƒ“ƒpƒCƒ‹‚·‚éB</li>
- * <li>ƒ‰ƒxƒ‹‚Íƒ‰ƒxƒ‹‚Æ‚µ‚ÄƒRƒ“ƒpƒCƒ‹‚·‚éB</li>
- * <li>gosubAƒ‚ƒWƒ…[ƒ‹ƒRƒ}ƒ“ƒhŒÄ‚Ño‚µ‚Í©•ª©g‚ÌƒGƒ“ƒgƒŠƒ|ƒCƒ“ƒg‚ğƒ‰ƒxƒ‹‚ğw’è‚µ‚ÄŒÄ‚Ño‚·‚±‚Æ‚ÅÀŒ»‚·‚éB</li>
+ * <li>å¤‰æ•°ãƒ»å®šæ•°ãƒ»ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã¯ã™ã¹ã¦ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã«ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã™ã‚‹ã€‚</li>
+ * <li>ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã¯ã‚¨ãƒ³ãƒˆãƒªãƒã‚¤ãƒ³ãƒˆã¨ãªã‚‹ run ãƒ¡ã‚½ãƒƒãƒ‰å†…ã«å®Ÿè£…ã™ã‚‹ãŒã€ ã‚ã‚‹ç¨‹åº¦ã®å˜ä½ã§åŒºåˆ‡ã£ã¦ã‚µãƒ–ãƒ¡ã‚½ãƒƒãƒ‰ m?? ã‚’å‘¼ã³å‡ºã™ã‚ˆã†ã«ã™ã‚‹ã€‚
+ * ãã†ã™ã‚‹ã“ã¨ã§ã‚¨ãƒ³ãƒˆãƒªãƒã‚¤ãƒ³ãƒˆãƒ¡ã‚½ãƒƒãƒ‰ã®ã‚µã‚¤ã‚ºã‚’æŠ‘ãˆã‚‹ã“ã¨ãŒå‡ºæ¥ã‚‹ã€‚ </li>
+ * <li>ã‚³ãƒãƒ³ãƒ‰ã¯ãƒ¡ã‚½ãƒƒãƒ‰å‘¼ã³å‡ºã—ã«ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã™ã‚‹ã€‚</li>
+ * <li>ãƒ©ãƒ™ãƒ«ã¯ãƒ©ãƒ™ãƒ«ã¨ã—ã¦ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã™ã‚‹ã€‚</li>
+ * <li>gosubã€ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã‚³ãƒãƒ³ãƒ‰å‘¼ã³å‡ºã—ã¯è‡ªåˆ†è‡ªèº«ã®ã‚¨ãƒ³ãƒˆãƒªãƒã‚¤ãƒ³ãƒˆã‚’ãƒ©ãƒ™ãƒ«ã‚’æŒ‡å®šã—ã¦å‘¼ã³å‡ºã™ã“ã¨ã§å®Ÿç¾ã™ã‚‹ã€‚</li>
  * </ul>
  * 
  * @author Yuki
@@ -71,11 +71,11 @@ import org.objectweb.asm.tree.ClassNode;
 //Unused main labels in Elona: 2570, 2627, 2628, 2685, 2768, 2900, 3032, 3035, 3214, 3421, 4222, 4249, 4254, 4382, 4457, 4625, 5353, 5382, 5706
 public class Compiler implements Opcodes, Serializable {
 
-    /** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+    /** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
     private static final String fileVersionID = "$Id: Compiler.java,v 1.11.2.1 2006/08/02 12:13:06 Yuki Exp $";
-    /** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+    /** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
     private static final long serialVersionUID = 8668239863505235428L;
-    /** ƒfƒoƒbƒOo—Í‚ğ‚·‚é‚©‚Ç‚¤‚©B */
+    /** ãƒ‡ãƒãƒƒã‚°å‡ºåŠ›ã‚’ã™ã‚‹ã‹ã©ã†ã‹ã€‚ */
     private static final boolean DEBUG_ENABLED = false;
     /** Show opcode index as line numbers in debug output */
     private static final boolean LINENUMS_ENABLED = false;
@@ -86,27 +86,27 @@ public class Compiler implements Opcodes, Serializable {
     private static final boolean STORE_ENABLED = false;
 
     /**
-     * ax ƒtƒ@ƒCƒ‹‚ğƒRƒ“ƒpƒCƒ‹‚·‚éB
+     * ax ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã™ã‚‹ã€‚
      * <p>
-     * ƒRƒ“ƒpƒCƒ‹Œã‚Ì jar ‚Æ•\¦‚·‚é‚½‚ß‚Ì HTML ‚ª¶¬‚³‚ê‚éB
+     * ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«å¾Œã® jar ã¨è¡¨ç¤ºã™ã‚‹ãŸã‚ã® HTML ãŒç”Ÿæˆã•ã‚Œã‚‹ã€‚
      * </p>
      *
      * @param args
-     *            Às‚Ìˆø”B
+     *            å®Ÿè¡Œæ™‚ã®å¼•æ•°ã€‚
      *            <ol>
-     *            <li>--jar=¶¬‚·‚éJARƒtƒ@ƒCƒ‹–¼</li>
-     *            <li>--html=¶¬‚·‚éHTMLƒtƒ@ƒCƒ‹–¼</li>
-     *            <li>--template=g—p‚·‚éHTMLƒeƒ“ƒvƒŒ[ƒgƒtƒ@ƒCƒ‹–¼</li>
-     *            <li>--startClass=ŠJnƒNƒ‰ƒX–¼iƒIƒuƒWƒFƒNƒgƒtƒ@ƒCƒ‹‚©‚ç.ax‚ğœ‚¢‚½‚à‚Ìj</li>
-     *            <li>--lib=Šg’£ƒ‰ƒCƒuƒ‰ƒŠƒA[ƒJƒCƒu–¼</li>
-     *            <li>--libdir=Šg’£ƒ‰ƒCƒuƒ‰ƒŠŒŸõƒfƒBƒŒƒNƒgƒŠ–¼</li>
-     *            <li>--pack=ƒA[ƒJƒCƒu‚É“ü‚ê‚éƒtƒ@ƒCƒ‹</li>
-     *            <li>--width=‰¡•</li>
-     *            <li>--height=‚‚³</li>
-     *            <li>--title=ƒy[ƒWƒ^ƒCƒgƒ‹</li>
+     *            <li>--jar=ç”Ÿæˆã™ã‚‹JARãƒ•ã‚¡ã‚¤ãƒ«å</li>
+     *            <li>--html=ç”Ÿæˆã™ã‚‹HTMLãƒ•ã‚¡ã‚¤ãƒ«å</li>
+     *            <li>--template=ä½¿ç”¨ã™ã‚‹HTMLãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒ•ã‚¡ã‚¤ãƒ«å</li>
+     *            <li>--startClass=é–‹å§‹ã‚¯ãƒ©ã‚¹åï¼ˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰.axã‚’é™¤ã„ãŸã‚‚ã®ï¼‰</li>
+     *            <li>--lib=æ‹¡å¼µãƒ©ã‚¤ãƒ–ãƒ©ãƒªã‚¢ãƒ¼ã‚«ã‚¤ãƒ–å</li>
+     *            <li>--libdir=æ‹¡å¼µãƒ©ã‚¤ãƒ–ãƒ©ãƒªæ¤œç´¢ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªå</li>
+     *            <li>--pack=ã‚¢ãƒ¼ã‚«ã‚¤ãƒ–ã«å…¥ã‚Œã‚‹ãƒ•ã‚¡ã‚¤ãƒ«</li>
+     *            <li>--width=æ¨ªå¹…</li>
+     *            <li>--height=é«˜ã•</li>
+     *            <li>--title=ãƒšãƒ¼ã‚¸ã‚¿ã‚¤ãƒˆãƒ«</li>
      *            </ol>
      * @throws IOException
-     *             “üo—ÍƒGƒ‰[‚ª”­¶‚µ‚½‚Æ‚«B
+     *             å…¥å‡ºåŠ›ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ãŸã¨ãã€‚
      */
     public static void main(final String[] args) throws IOException {
 
@@ -151,7 +151,7 @@ public class Compiler implements Opcodes, Serializable {
         }
 
         if (jarFile == null) {
-            throw new RuntimeException("o—Íƒtƒ@ƒCƒ‹–¼‚ªw’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB");
+            throw new RuntimeException("å‡ºåŠ›ãƒ•ã‚¡ã‚¤ãƒ«åãŒæŒ‡å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
         }
 
         build(jarFile, htmlFile, templateFile, startClass, title, packs, libs, libdirs, width, height);
@@ -180,13 +180,13 @@ public class Compiler implements Opcodes, Serializable {
         try {
 
             if (jarFile.getName().equalsIgnoreCase("hsplet.jar")) {
-                throw new IllegalArgumentException(jarFile.getName() + " ‚Æ‚¢‚¤–¼‘O‚Íg—p‚Å‚«‚Ü‚¹‚ñB");
+                throw new IllegalArgumentException(jarFile.getName() + " ã¨ã„ã†åå‰ã¯ä½¿ç”¨ã§ãã¾ã›ã‚“ã€‚");
             }
             for (final Iterator<String> i = libs.iterator(); i.hasNext();) {
                 final String extLib = i.next();
 
                 if (jarFile.getName().equalsIgnoreCase(new File(extLib).getName())) {
-                    throw new IllegalArgumentException(jarFile.getName() + " ‚Æ‚¢‚¤–¼‘O‚Í‚·‚Å‚ÉŠg’£ƒ‰ƒCƒuƒ‰ƒŠ‚Åg—p‚³‚ê‚Ä‚¢‚Ü‚·B");
+                    throw new IllegalArgumentException(jarFile.getName() + " ã¨ã„ã†åå‰ã¯ã™ã§ã«æ‹¡å¼µãƒ©ã‚¤ãƒ–ãƒ©ãƒªã§ä½¿ç”¨ã•ã‚Œã¦ã„ã¾ã™ã€‚");
                 }
             }
 
@@ -337,13 +337,13 @@ public class Compiler implements Opcodes, Serializable {
     private final boolean useLiteralsInArray = true;
 
     /**
-     * “ü—ÍƒoƒCƒgƒR[ƒh‚ğw’è‚µ‚ÄƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
+     * å…¥åŠ›ãƒã‚¤ãƒˆã‚³ãƒ¼ãƒ‰ã‚’æŒ‡å®šã—ã¦ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
      *
      * @param ax
-     *            ƒoƒCƒgƒR[ƒhB
+     *            ãƒã‚¤ãƒˆã‚³ãƒ¼ãƒ‰ã€‚
      * @param inputName
-     *            “ü—Íƒtƒ@ƒCƒ‹–¼B
-     * @param libraryLoader Šg’£ƒ‰ƒCƒuƒ‰ƒŠƒ[ƒ_B
+     *            å…¥åŠ›ãƒ•ã‚¡ã‚¤ãƒ«åã€‚
+     * @param libraryLoader æ‹¡å¼µãƒ©ã‚¤ãƒ–ãƒ©ãƒªãƒ­ãƒ¼ãƒ€ã€‚
      */
     public Compiler(final ByteCode ax, final String inputName, final ClassLoader libraryLoader) {
 
@@ -355,14 +355,14 @@ public class Compiler implements Opcodes, Serializable {
     }
 
     /**
-     * ƒf[ƒ^‚ğƒRƒ“ƒpƒCƒ‹‚·‚éB
+     * ãƒ‡ãƒ¼ã‚¿ã‚’ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã™ã‚‹ã€‚
      *
      * @param className
-     *            ƒRƒ“ƒpƒCƒ‹Œã‚ÌƒNƒ‰ƒX–¼B
+     *            ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«å¾Œã®ã‚¯ãƒ©ã‚¹åã€‚
      * @param out
-     *            o—ÍæB
+     *            å‡ºåŠ›å…ˆã€‚
      * @throws IOException
-     *             “üo—ÍƒGƒ‰[‚ª”­¶‚µ‚½‚Æ‚«B
+     *             å…¥å‡ºåŠ›ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ãŸã¨ãã€‚
      */
     public void compile(final String className, final JarOutputStream out) throws IOException {
 
@@ -390,7 +390,7 @@ public class Compiler implements Opcodes, Serializable {
 
     //output = new CheckClassAdapter(output);
 
-        // ƒtƒB[ƒ‹ƒh‚Ì‰Šú‰»B
+        // ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã®åˆæœŸåŒ–ã€‚
         if (DEBUG_ENABLED) {
             cw = new ClassDebugger(output);
         } else {
@@ -406,7 +406,7 @@ public class Compiler implements Opcodes, Serializable {
         enableVariableOptimization = false;
 
         // we will need to change parentIName to classIName + "Super"
-        // ƒNƒ‰ƒX¶¬
+        // ã‚¯ãƒ©ã‚¹ç”Ÿæˆ
 
         cw.visit(V1_4, ACC_PUBLIC, classIName, null, useSuperClassConstants ? classIName + "Super" : parentIName, new String[0]);
 
@@ -471,7 +471,7 @@ public class Compiler implements Opcodes, Serializable {
         final JarEntry je = new JarEntry(className + ".class");
         je.setMethod(JarEntry.DEFLATED);
         out.putNextEntry(je);
-        // o—Í
+        // å‡ºåŠ›
         out.write(writer.toByteArray());
         out.closeEntry();
 
@@ -697,7 +697,7 @@ public class Compiler implements Opcodes, Serializable {
 
     private void collectLiterals() {
 
-        // ‚æ‚­g‚¤B
+        // ã‚ˆãä½¿ã†ã€‚
         literals.add(new Integer(0));
         literals.add(new Double(0.0));
         literals.add("");
@@ -780,20 +780,20 @@ public class Compiler implements Opcodes, Serializable {
 
         cw.visitField(ACC_PROTECTED | ACC_FINAL, "context", contextDesc, null, null);
 
-        // g—p‚·‚é•Ï”‚ğ—pˆÓ‚·‚éB
+        // ä½¿ç”¨ã™ã‚‹å¤‰æ•°ã‚’ç”¨æ„ã™ã‚‹ã€‚
         for (int i = 0; i < ax.header.variableCount; ++i) {
 
             cw.visitField(ACC_PROTECTED | ACC_FINAL, "v" + i, varDesc, null, null);
         }
 
-        // ’è”‚ğ—pˆÓ‚·‚éA–ˆ‰ñì‚Á‚Ä‚¢‚½‚ç’x‚¢B
+        // å®šæ•°ã‚’ç”¨æ„ã™ã‚‹ã€æ¯å›ä½œã£ã¦ã„ãŸã‚‰é…ã„ã€‚
         for (int i = 0; i < literals.size(); ++i) {
             if (!useSuperClassConstants && !useLiteralsInArray) {
                 cw.visitField(ACC_PROTECTED | ACC_FINAL, "c" + i, literalDesc, null, null);
             }
         }
 
-        // ƒCƒ“ƒXƒ^ƒ“ƒX‚ª•K—v‚Èƒ‰ƒCƒuƒ‰ƒŠ‚ğ—pˆÓ‚·‚éB
+        // ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãŒå¿…è¦ãªãƒ©ã‚¤ãƒ–ãƒ©ãƒªã‚’ç”¨æ„ã™ã‚‹ã€‚
         for (int i = 0; i < instancedLibraries.size(); ++i) {
 
             cw.visitField(ACC_PROTECTED | ACC_FINAL, "l" + i, Type.getDescriptor((Class) instancedLibraries.get(i)),
@@ -812,7 +812,7 @@ public class Compiler implements Opcodes, Serializable {
         mv.visitVarInsn(ALOAD, 1);
         mv.visitFieldInsn(PUTFIELD, classIName, "context", contextDesc);
 
-        // g—p‚·‚é•Ï”‚ğ—pˆÓ‚·‚éB
+        // ä½¿ç”¨ã™ã‚‹å¤‰æ•°ã‚’ç”¨æ„ã™ã‚‹ã€‚
         for (int i = 0; i < ax.header.variableCount; ++i) {
 
             mv.visitVarInsn(ALOAD, thisIndex);
@@ -822,7 +822,7 @@ public class Compiler implements Opcodes, Serializable {
             mv.visitFieldInsn(PUTFIELD, classIName, "v" + i, varDesc);
         }
 
-        // ’è”‚ğ—pˆÓ‚·‚éA–ˆ‰ñì‚Á‚Ä‚¢‚½‚ç’x‚¢B
+        // å®šæ•°ã‚’ç”¨æ„ã™ã‚‹ã€æ¯å›ä½œã£ã¦ã„ãŸã‚‰é…ã„ã€‚
         for (int i = 0; i < literals.size(); ++i) {
 
             final Object value = literals.get(i);
@@ -840,14 +840,14 @@ public class Compiler implements Opcodes, Serializable {
             }
         }
 
-        // ƒCƒ“ƒXƒ^ƒ“ƒX‰»‚ª•K—v‚Èƒ‰ƒCƒuƒ‰ƒŠ‚ğ—pˆÓ‚·‚éB
+        // ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ–ãŒå¿…è¦ãªãƒ©ã‚¤ãƒ–ãƒ©ãƒªã‚’ç”¨æ„ã™ã‚‹ã€‚
         for (int i = 0; i < instancedLibraries.size(); ++i) {
 
             final Class clazz = (Class) instancedLibraries.get(i);
 
             mv.visitVarInsn(ALOAD, thisIndex);
             try {
-                // Context ‚ğó‚¯æ‚éƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ª‚ ‚é‚È‚çB
+                // Context ã‚’å—ã‘å–ã‚‹ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãŒã‚ã‚‹ãªã‚‰ã€‚
                 clazz.getConstructor(new Class[]{Context.class});
 
                 mv.visitTypeInsn(NEW, Type.getInternalName(clazz));
@@ -858,7 +858,7 @@ public class Compiler implements Opcodes, Serializable {
             } catch (NoSuchMethodException e) {
 
                 try {
-                    // ƒfƒtƒHƒ‹ƒgƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ª‚ ‚é‚È‚çB
+                    // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãŒã‚ã‚‹ãªã‚‰ã€‚
                     clazz.getConstructor(new Class[]{});
 
                     mv.visitTypeInsn(NEW, Type.getInternalName(clazz));
@@ -1082,7 +1082,7 @@ public class Compiler implements Opcodes, Serializable {
 
         labels = new HashMap<Integer, KLabel>();
 
-        // æ“ª‚Ìƒ‰ƒxƒ‹
+        // å…ˆé ­ã®ãƒ©ãƒ™ãƒ«
         KLabel L;
 
         for (int i = 0; i < ax.labels.length; ++i) {
@@ -1172,7 +1172,7 @@ public class Compiler implements Opcodes, Serializable {
     }
     
     /**
-     * •K—v‚Èƒ[ƒJƒ‹•Ï”‚ğ—pˆÓB
+     * å¿…è¦ãªãƒ­ãƒ¼ã‚«ãƒ«å¤‰æ•°ã‚’ç”¨æ„ã€‚
      *
      * @param mv
      */
@@ -1277,7 +1277,7 @@ public class Compiler implements Opcodes, Serializable {
 
     private void compileStatement(final MethodVisitor mv) {
 
-        // ƒXƒe[ƒgƒƒ“ƒg‚Í•Ï”Eƒpƒ‰ƒ[ƒ^‚Ö‚Ì‘ã“üA‚Ü‚½‚Í–½—ß‚Ån‚Ü‚é‚ÆŒˆ‚Ü‚Á‚Ä‚¢‚éB
+        // ã‚¹ãƒ†ãƒ¼ãƒˆãƒ¡ãƒ³ãƒˆã¯å¤‰æ•°ãƒ»ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã¸ã®ä»£å…¥ã€ã¾ãŸã¯å‘½ä»¤ã§å§‹ã¾ã‚‹ã¨æ±ºã¾ã£ã¦ã„ã‚‹ã€‚
 
         //if(mv instanceof ScanOneVisitor)
         //    System.out.print(ax.codes[codeIndex].offset+" "+byteCodeCodeTypes[ax.codes[codeIndex].type]);
@@ -1322,7 +1322,7 @@ public class Compiler implements Opcodes, Serializable {
                 compileCommand(mv);
                 break;
             default:
-                throw new RuntimeException("–½—ßƒR[ƒh " + ax.codes[codeIndex].type + " ‚Í‰ğß‚Å‚«‚Ü‚¹‚ñB");
+                throw new RuntimeException("å‘½ä»¤ã‚³ãƒ¼ãƒ‰ " + ax.codes[codeIndex].type + " ã¯è§£é‡ˆã§ãã¾ã›ã‚“ã€‚");
         }
             //if(mv instanceof ScanOneVisitor)
             //    System.out.print("\r\n");
@@ -1353,7 +1353,7 @@ public class Compiler implements Opcodes, Serializable {
         
         //final boolean prevEnableVariableOptimization = enableVariableOptimization;
 
-        // ‰‰Zq‚ğæ“Ç‚İ‚µ‚ÄÅ“K‰»‚ğ—LŒø‚É‚·‚éB
+        // æ¼”ç®—å­ã‚’å…ˆèª­ã¿ã—ã¦æœ€é©åŒ–ã‚’æœ‰åŠ¹ã«ã™ã‚‹ã€‚
         // {
         int index = codeIndex;
 
@@ -1808,7 +1808,7 @@ public class Compiler implements Opcodes, Serializable {
 
         } else {
 
-            // ”z—ñƒAƒNƒZƒX‚¶‚á‚È‚¢‚Æ‚«‚ÍƒCƒ“ƒfƒbƒNƒX‚Í 0 ŒÅ’èB
+            // é…åˆ—ã‚¢ã‚¯ã‚»ã‚¹ã˜ã‚ƒãªã„ã¨ãã¯ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã¯ 0 å›ºå®šã€‚
             if(toDirectValue)
                 mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "dup", "()" + opeDesc);
             else
@@ -1852,7 +1852,7 @@ public class Compiler implements Opcodes, Serializable {
     }
     private int compileExpression(final MethodVisitor mv, boolean toDirectValue) {
 
-        // æ“Ç‚İ‚µ‚ÄÅ“K‰»‚ğ—LŒø‰»Aƒg[ƒNƒ“‚ª“ñ‚ÂˆÈã‚ ‚éi‰‰Z‚³‚ê‚éj‚Í—LŒøB
+        // å…ˆèª­ã¿ã—ã¦æœ€é©åŒ–ã‚’æœ‰åŠ¹åŒ–ã€ãƒˆãƒ¼ã‚¯ãƒ³ãŒäºŒã¤ä»¥ä¸Šã‚ã‚‹ï¼ˆæ¼”ç®—ã•ã‚Œã‚‹ï¼‰æ™‚ã¯æœ‰åŠ¹ã€‚
         // {
 
         //final boolean prevEnableVariableOptimization = enableVariableOptimization;
@@ -1883,7 +1883,7 @@ public class Compiler implements Opcodes, Serializable {
 
     private int compileToken(final MethodVisitor mv, boolean toDirectValue) {
 
-        // ƒg[ƒNƒ“‚ÍƒŠƒeƒ‰ƒ‹E•Ï”E‰‰ZqEŠÖ”ŒÄ‚Ño‚µ‚ÆŒˆ‚Ü‚Á‚Ä‚¢‚éB
+        // ãƒˆãƒ¼ã‚¯ãƒ³ã¯ãƒªãƒ†ãƒ©ãƒ«ãƒ»å¤‰æ•°ãƒ»æ¼”ç®—å­ãƒ»é–¢æ•°å‘¼ã³å‡ºã—ã¨æ±ºã¾ã£ã¦ã„ã‚‹ã€‚
         //if(mv instanceof ScanOneVisitor)
         //    System.out.print(" "+byteCodeCodeTypes[ax.codes[codeIndex].type]);
 
@@ -1956,7 +1956,7 @@ public class Compiler implements Opcodes, Serializable {
                 for(int i=0;i<rewind+5;i++)
                 	context.append(ax.codes[codeIndex].type+"("+ax.codes[codeIndex++].value+"), ");
                 throw new RuntimeException(context.toString());
-                //throw new RuntimeException("–½—ßƒR[ƒh " + ax.codes[codeIndex].type + " ‚Í‰ğß‚Å‚«‚Ü‚¹‚ñB");
+                //throw new RuntimeException("å‘½ä»¤ã‚³ãƒ¼ãƒ‰ " + ax.codes[codeIndex].type + " ã¯è§£é‡ˆã§ãã¾ã›ã‚“ã€‚");
         }
         return added;
     }
@@ -2107,7 +2107,7 @@ public class Compiler implements Opcodes, Serializable {
 
         final boolean noeatparam;
         if (bracket && !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == '(')) {
-            // ƒpƒ‰ƒ[ƒ^–³‚µƒVƒXƒeƒ€•Ï”
+            // ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ç„¡ã—ã‚·ã‚¹ãƒ†ãƒ å¤‰æ•°
             noeatparam = true;
             bracket = false;
         } else {
@@ -2115,22 +2115,22 @@ public class Compiler implements Opcodes, Serializable {
         }
 
         if (bracket) {
-            ++codeIndex; // ( ‚ğ“Ç‚İ”ò‚Î‚·B
+            ++codeIndex; // ( ã‚’èª­ã¿é£›ã°ã™ã€‚
         }
 
         compileInvocationParameters(mv, mInfo, noeatparam);
 
         if (bracket) {
 
-            // ')' Œ©‚Â‚©‚ç‚¸
+            // ')' è¦‹ã¤ã‹ã‚‰ãš
             if (!(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')')) {
-                throw new RuntimeException("‘Î‰‚·‚é ) ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB");
+                throw new RuntimeException("å¯¾å¿œã™ã‚‹ ) ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚");
             }
 
-            ++codeIndex; // ) ‚ğ“Ç‚İ”ò‚Î‚·B
+            ++codeIndex; // ) ã‚’èª­ã¿é£›ã°ã™ã€‚
         }
 
-        // ŒÄ‚Ño‚·B
+        // å‘¼ã³å‡ºã™ã€‚
         /* if(method.getName().equals("gosub")) {
             mv.visitInsn(SWAP);
             mv.visitInsn(POP);
@@ -2144,13 +2144,13 @@ public class Compiler implements Opcodes, Serializable {
 
         if (hasresult) {
 
-            // ŠÖ”‚Ì‚Æ‚«‚Í–ß‚è’l‚ª•K—vB
+            // é–¢æ•°ã®ã¨ãã¯æˆ»ã‚Šå€¤ãŒå¿…è¦ã€‚
 
             if (method.getReturnType().equals(Void.TYPE)) {
                 getLiteralByIndex(mv, literals.indexOf(new Integer(0)));
                 System.out.println("Wanted a result from "+libraryClass.getName()+"."+method.getName()+".");
             } else if (method.getReturnType().equals(Operand.class)) {
-                // ‰½‚à‚·‚é•K—v‚È‚µ
+                // ä½•ã‚‚ã™ã‚‹å¿…è¦ãªã—
             } else {
 
                 mv.visitMethodInsn(INVOKESTATIC, literalIName, "fromValue", "("
@@ -2165,7 +2165,7 @@ public class Compiler implements Opcodes, Serializable {
 
         } else {
 
-            // –½—ß‚Ì‚Æ‚«‚Í–ß‚è’l‚Í stat ‚É‘ã“ü
+            // å‘½ä»¤ã®ã¨ãã¯æˆ»ã‚Šå€¤ã¯ stat ã«ä»£å…¥
 
             if (method.getReturnType().equals(Integer.TYPE)) {
 
@@ -2177,7 +2177,7 @@ public class Compiler implements Opcodes, Serializable {
                 mv.visitFieldInsn(PUTFIELD, Type.getInternalName(IntScalar.class), "value", "I");
 
             } else if (!method.getReturnType().equals(Void.TYPE)) {
-                // int ˆÈŠO‚Í–³‹
+                // int ä»¥å¤–ã¯ç„¡è¦–
                 //System.out.println("Call of "+libraryClass.getName()+"."+method.getName()+" with no desired result.");
                 mv.visitInsn(POP);
             }
@@ -2248,12 +2248,12 @@ public class Compiler implements Opcodes, Serializable {
                             skipToInt = false;
                         } else if (type.equals(Operand.class)) {
     
-                            ++paramIndex; // Ÿ‚Ì int ‚Í“Ç‚İ”ò‚Î‚·
+                            ++paramIndex; // æ¬¡ã® int ã¯èª­ã¿é£›ã°ã™
     
-                            // Ÿ‚Í•K‚¸ int
+                            // æ¬¡ã¯å¿…ãš int
                             if (!method.getParameterTypes()[paramIndex].equals(Integer.TYPE)) {
                                 throw new RuntimeException(
-                                        "Šg’£ƒ‰ƒCƒuƒ‰ƒŠ‚Ìˆø”‚É Operand ‚ğó‚¯æ‚Á‚½‚Æ‚«‚Í‚©‚È‚ç‚¸‚»‚ÌŸ‚Ìˆø”‚Å”z—ñƒCƒ“ƒfƒbƒNƒX‚ğó‚¯æ‚ç‚È‚¯‚ê‚Î‚¢‚¯‚Ü‚¹‚ñB");
+                                        "æ‹¡å¼µãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®å¼•æ•°ã« Operand ã‚’å—ã‘å–ã£ãŸã¨ãã¯ã‹ãªã‚‰ãšãã®æ¬¡ã®å¼•æ•°ã§é…åˆ—ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’å—ã‘å–ã‚‰ãªã‘ã‚Œã°ã„ã‘ã¾ã›ã‚“ã€‚");
                             }
     
                         } else if (type.equals(Integer.TYPE)) {
@@ -2274,7 +2274,7 @@ public class Compiler implements Opcodes, Serializable {
                                     + Type.getDescriptor(String.class));
     
                         } else {
-                            throw new UnsupportedOperationException("Šg’£ƒ‰ƒCƒuƒ‰ƒŠ‚Ìˆø”Œ^ " + type + " ‚ÍƒTƒ|[ƒg‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB");
+                            throw new UnsupportedOperationException("æ‹¡å¼µãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®å¼•æ•°å‹ " + type + " ã¯ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
                         }
                         
                         if(--numVals<=0)
@@ -2292,12 +2292,12 @@ public class Compiler implements Opcodes, Serializable {
                         mv.visitInsn(ACONST_NULL);
                         mv.visitInsn(ICONST_0);
 
-                        ++paramIndex; // Ÿ‚Ì int ‚Í“Ç‚İ”ò‚Î‚·
+                        ++paramIndex; // æ¬¡ã® int ã¯èª­ã¿é£›ã°ã™
 
-                        // Ÿ‚Í•K‚¸ int
+                        // æ¬¡ã¯å¿…ãš int
                         if (!method.getParameterTypes()[paramIndex].equals(Integer.TYPE)) {
                             throw new RuntimeException(
-                                    "Šg’£ƒ‰ƒCƒuƒ‰ƒŠ‚Ìˆø”‚É Operand ‚ğó‚¯æ‚Á‚½‚Æ‚«‚Í‚©‚È‚ç‚¸‚»‚ÌŸ‚Ìˆø”‚Å”z—ñƒCƒ“ƒfƒbƒNƒX‚ğó‚¯æ‚ç‚È‚¯‚ê‚Î‚¢‚¯‚Ü‚¹‚ñB");
+                                    "æ‹¡å¼µãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®å¼•æ•°ã« Operand ã‚’å—ã‘å–ã£ãŸã¨ãã¯ã‹ãªã‚‰ãšãã®æ¬¡ã®å¼•æ•°ã§é…åˆ—ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’å—ã‘å–ã‚‰ãªã‘ã‚Œã°ã„ã‘ã¾ã›ã‚“ã€‚");
                         }
 
                     } else if (type.equals(Integer.TYPE)) {
@@ -2318,7 +2318,7 @@ public class Compiler implements Opcodes, Serializable {
 
         }
 
-        // ‚¢‚ç‚È‚¢ˆø”‚Í“Ç‚İ”ò‚Î‚·B
+        // ã„ã‚‰ãªã„å¼•æ•°ã¯èª­ã¿é£›ã°ã™ã€‚
         while (!noeatparam && codeIndex < ax.codes.length && !(ax.codes[codeIndex].newLine)
                 && !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')')) {
 
@@ -2341,14 +2341,14 @@ public class Compiler implements Opcodes, Serializable {
 
         final ByteCode.Function function = ax.functions[code.value];
 
-        // '(' ‚ğ“Ç‚İ”ò‚Î‚·
+        // '(' ã‚’èª­ã¿é£›ã°ã™
         if (function.isFunction()) {
             ++codeIndex;
         }
 
         compileModuleParameters(mv, function);
 
-        // ')' ‚ğ“Ç‚İ”ò‚Î‚·B
+        // ')' ã‚’èª­ã¿é£›ã°ã™ã€‚
         if (function.isFunction()) {
             ++codeIndex;
         }
@@ -2368,7 +2368,7 @@ public class Compiler implements Opcodes, Serializable {
 
         if (hasresult) {
 
-            // ŠÖ”‚Ì‚Æ‚«‚Í–ß‚è’l‚ª•K—vB
+            // é–¢æ•°ã®ã¨ãã¯æˆ»ã‚Šå€¤ãŒå¿…è¦ã€‚
 
             if (!function.isFunction()) {
 
@@ -2388,7 +2388,7 @@ public class Compiler implements Opcodes, Serializable {
                 System.out.println("Invalid method found?!");
             }
 
-            // –½—ß‚Ì‚Æ‚«‚Í–ß‚è’l‚Í stat ‚É‘ã“ü
+            // å‘½ä»¤ã®ã¨ãã¯æˆ»ã‚Šå€¤ã¯ stat ã«ä»£å…¥
 
             //mv.visitInsn(DUP);
 
@@ -2501,11 +2501,11 @@ public class Compiler implements Opcodes, Serializable {
                     }
                     break;
                     case 5: // struct
-                        throw new UnsupportedOperationException("ƒ†[ƒU’è‹`–½—ß‚Ìˆø”Œ^ struct ‚ÍƒTƒ|[ƒg‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB");
+                        throw new UnsupportedOperationException("ãƒ¦ãƒ¼ã‚¶å®šç¾©å‘½ä»¤ã®å¼•æ•°å‹ struct ã¯ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
                     case 6: // label
-                        throw new UnsupportedOperationException("ƒ†[ƒU’è‹`–½—ß‚Ìˆø”Œ^ label ‚ÍƒTƒ|[ƒg‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB");
+                        throw new UnsupportedOperationException("ãƒ¦ãƒ¼ã‚¶å®šç¾©å‘½ä»¤ã®å¼•æ•°å‹ label ã¯ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
                     default:
-                        throw new UnsupportedOperationException("ƒ†[ƒU’è‹`–½—ß‚Ìˆø”Œ^ " + type + " ‚ÍƒTƒ|[ƒg‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB");
+                        throw new UnsupportedOperationException("ãƒ¦ãƒ¼ã‚¶å®šç¾©å‘½ä»¤ã®å¼•æ•°å‹ " + type + " ã¯ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
                 }
 
             } else {
@@ -2515,7 +2515,7 @@ public class Compiler implements Opcodes, Serializable {
                     case -1: // local variable
                     case -2: // array variable
                     case -3: // single variable
-                        throw new RuntimeException("ƒ†[ƒU’è‹`–½—ß‚Ìˆø”‚Ì•Ï”‚ÍÈ—ª‚Å‚«‚Ü‚¹‚ñB");
+                        throw new RuntimeException("ãƒ¦ãƒ¼ã‚¶å®šç¾©å‘½ä»¤ã®å¼•æ•°ã®å¤‰æ•°ã¯çœç•¥ã§ãã¾ã›ã‚“ã€‚");
                     case -6: // local string
                     case 2: // string
                     {
@@ -2533,11 +2533,11 @@ public class Compiler implements Opcodes, Serializable {
                     }
                     break;
                     case 5: // struct
-                        throw new UnsupportedOperationException("ƒ†[ƒU’è‹`–½—ß‚Ìˆø”Œ^ struct ‚ÍƒTƒ|[ƒg‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB");
+                        throw new UnsupportedOperationException("ãƒ¦ãƒ¼ã‚¶å®šç¾©å‘½ä»¤ã®å¼•æ•°å‹ struct ã¯ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
                     case 6: // label
-                        throw new UnsupportedOperationException("ƒ†[ƒU’è‹`–½—ß‚Ìˆø”Œ^ label ‚ÍƒTƒ|[ƒg‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB");
+                        throw new UnsupportedOperationException("ãƒ¦ãƒ¼ã‚¶å®šç¾©å‘½ä»¤ã®å¼•æ•°å‹ label ã¯ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
                     default:
-                        throw new UnsupportedOperationException("ƒ†[ƒU’è‹`–½—ß‚Ìˆø”Œ^ " + type + " ‚ÍƒTƒ|[ƒg‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB");
+                        throw new UnsupportedOperationException("ãƒ¦ãƒ¼ã‚¶å®šç¾©å‘½ä»¤ã®å¼•æ•°å‹ " + type + " ã¯ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
                 }
             }
 
@@ -2545,7 +2545,7 @@ public class Compiler implements Opcodes, Serializable {
 
         }
 
-        // ‚¢‚ç‚È‚¢ˆø”‚Í“Ç‚İ”ò‚Î‚·B
+        // ã„ã‚‰ãªã„å¼•æ•°ã¯èª­ã¿é£›ã°ã™ã€‚
         while (codeIndex < ax.codes.length && !(ax.codes[codeIndex].newLine)
                 && !(ax.codes[codeIndex].type == Code.Type.Mark && ax.codes[codeIndex].value == ')')) {
 
@@ -2565,7 +2565,7 @@ public class Compiler implements Opcodes, Serializable {
 
         final Code code = ax.codes[codeIndex++];
 
-        // context ‚ğƒvƒbƒVƒ…‚µ‚Ä‚¨‚­B
+        // context ã‚’ãƒ—ãƒƒã‚·ãƒ¥ã—ã¦ãŠãã€‚
         mv.visitVarInsn(ALOAD, contextIndex);
 
         final Field field;
@@ -2682,7 +2682,7 @@ public class Compiler implements Opcodes, Serializable {
                 compileCommand(mv);
                 break;
             default:
-                throw new UnsupportedOperationException("ƒvƒƒOƒ‰ƒ€§Œä–½—ß " + ax.codes[codeIndex].value + " ‚ÍƒTƒ|[ƒg‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB");
+                throw new UnsupportedOperationException("ãƒ—ãƒ­ã‚°ãƒ©ãƒ åˆ¶å¾¡å‘½ä»¤ " + ax.codes[codeIndex].value + " ã¯ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
         }
     }
 
@@ -2885,7 +2885,7 @@ public class Compiler implements Opcodes, Serializable {
         final Code code = ax.codes[codeIndex++];
         final Code label = ax.codes[codeIndex++];
 
-        // ‰Šú’l0,‰ñ”–³§ŒÀ‚Ì repeat ‚Æ“¯‚¶ˆµ‚¢‚Æ‚·‚éB
+        // åˆæœŸå€¤0,å›æ•°ç„¡åˆ¶é™ã® repeat ã¨åŒã˜æ‰±ã„ã¨ã™ã‚‹ã€‚
 
         mv.visitVarInsn(ALOAD, contextIndex);
 
@@ -2927,13 +2927,13 @@ public class Compiler implements Opcodes, Serializable {
         final Code code = ax.codes[codeIndex++];
         final Code label = ax.codes[codeIndex++];
 
-        // cnt ‚ª”ÍˆÍ‚ğ’´‚¦‚Ä‚¢‚½‚ç”²‚¯‚éB
+        // cnt ãŒç¯„å›²ã‚’è¶…ãˆã¦ã„ãŸã‚‰æŠœã‘ã‚‹ã€‚
 
         mv.visitVarInsn(ALOAD, contextIndex);
 
         compileExpression(mv, false);
 
-        // ”z—ñ—v‘f‚Í–³‹
+        // é…åˆ—è¦ç´ ã¯ç„¡è¦–
         mv.visitInsn(POP);
 
         mv.visitMethodInsn(INVOKEVIRTUAL, contextIName, "checkForeach", "(" + opeDesc + ")Z");
@@ -2961,15 +2961,15 @@ public class Compiler implements Opcodes, Serializable {
         //@SuppressWarnings("unused")
         final Code code = ax.codes[codeIndex++];
 
-        // •Ï”‚Ì’l
+        // å¤‰æ•°ã®å€¤
         compileExpression(mv, false);
         mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toIntRaw", "(I)I");
 
-        // ƒ‚[ƒh
+        // ãƒ¢ãƒ¼ãƒ‰
         compileExpression(mv, false);
         mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toIntRaw", "(I)I");
 
-        // Šî€’l
+        // åŸºæº–å€¤
         compileExpression(mv, false);
         mv.visitMethodInsn(INVOKEVIRTUAL, opeIName, "toIntRaw", "(I)I");
 
@@ -3022,7 +3022,7 @@ public class Compiler implements Opcodes, Serializable {
         //@SuppressWarnings("unused")
         final Code code = ax.codes[codeIndex++];
         
-        // •Ï”‚Ì’l
+        // å¤‰æ•°ã®å€¤
         compileExpression(mv);
         if(skipToInt)
             skipToInt=false;
@@ -3138,7 +3138,7 @@ public class Compiler implements Opcodes, Serializable {
                 compileElse(mv);
                 break;
             default:
-                throw new UnsupportedOperationException("ğŒ•ªŠò–½—ß " + ax.codes[codeIndex].value + " ‚ÍƒTƒ|[ƒg‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB");
+                throw new UnsupportedOperationException("æ¡ä»¶åˆ†å²å‘½ä»¤ " + ax.codes[codeIndex].value + " ã¯ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
         }
 
     }
@@ -3150,7 +3150,7 @@ public class Compiler implements Opcodes, Serializable {
         //@SuppressWarnings("unused")
         final Code code = ax.codes[codeIndex++];
 
-        // offset ‚ÍAğŒ®‚Ìæ“ª‚©‚ç‚ÌˆÚ“®—Ê
+        // offset ã¯ã€æ¡ä»¶å¼ã®å…ˆé ­ã‹ã‚‰ã®ç§»å‹•é‡
         final int offset = ax.codes[codeIndex++].value;
         final int base = ax.codes[codeIndex].offset;
 
@@ -3189,7 +3189,7 @@ public class Compiler implements Opcodes, Serializable {
         //@SuppressWarnings("unused")
         final Code code = ax.codes[codeIndex++];
 
-        // offset ‚ÍAŸ‚Ì–½—ß‚©‚ç‚ÌˆÚ“®—Ê
+        // offset ã¯ã€æ¬¡ã®å‘½ä»¤ã‹ã‚‰ã®ç§»å‹•é‡
         final int offset = ax.codes[codeIndex++].value;
         final int base = ax.codes[codeIndex].offset;
 

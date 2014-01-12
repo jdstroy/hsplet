@@ -15,8 +15,8 @@ import java.util.Locale;
 import netscape.javascript.JSObject;
 
 /**
- * hspini.dll ‚ğÀ‘•‚·‚éƒNƒ‰ƒX.
- * <p>{@link netscape.javascript.JSObject} ‚ğg—p‚µ‚Ä JavaScript Œo—R‚ÅƒNƒbƒL[‚ğ‘€ì‚·‚é. 
+ * hspini.dll ã‚’å®Ÿè£…ã™ã‚‹ã‚¯ãƒ©ã‚¹.
+ * <p>{@link netscape.javascript.JSObject} ã‚’ä½¿ç”¨ã—ã¦ JavaScript çµŒç”±ã§ã‚¯ãƒƒã‚­ãƒ¼ã‚’æ“ä½œã™ã‚‹. 
  * </p>
  * @author Yuki
  * @version $Revision: 1.4 $, $Date: 2006/05/20 06:12:07 $

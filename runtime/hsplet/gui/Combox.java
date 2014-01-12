@@ -16,9 +16,9 @@ import java.awt.event.ItemListener;
 import javax.swing.JComboBox;
 
 /**
- * ƒRƒ“ƒ{ƒ{ƒbƒNƒXB
+ * ã‚³ãƒ³ãƒœãƒœãƒƒã‚¯ã‚¹ã€‚
  * <p>
- * ‘I‘ğ‚³‚ê‚½‚ç•Ï”‚ğXV‚·‚éB
+ * é¸æŠã•ã‚ŒãŸã‚‰å¤‰æ•°ã‚’æ›´æ–°ã™ã‚‹ã€‚
  * </p>
  * 
  * @author Yuki
@@ -26,23 +26,23 @@ import javax.swing.JComboBox;
  */
 public class Combox extends JComboBox<String> implements VolatileValueUpdater, HSPControl, ItemListener {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: Combox.java,v 1.4 2006/02/11 17:19:31 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = -8777787617022303507L;
 
-	/** •Ï” */
+	/** å¤‰æ•° */
 	private VolatileValue v;
 
-	/** •Ï”ƒCƒ“ƒfƒbƒNƒX */
+	/** å¤‰æ•°ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ */
 	private int vi;
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
-	 * @param v ‘I‘ğ‚ğ•Û‚·‚é•Ï”B
-	 * @param vi ‘I‘ğ‚ğ•Û‚·‚é•Ï”‚ÌƒCƒ“ƒfƒbƒNƒXB
-	 * @param items ‘I‘ğˆ‚Ì”z—ñB
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
+	 * @param v é¸æŠã‚’ä¿æŒã™ã‚‹å¤‰æ•°ã€‚
+	 * @param vi é¸æŠã‚’ä¿æŒã™ã‚‹å¤‰æ•°ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã€‚
+	 * @param items é¸æŠè‚¢ã®é…åˆ—ã€‚
 	 */
 	public Combox(final Variable v, final int vi, final String[] items) {
 

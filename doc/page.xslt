@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="Shift_JIS" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!--
  $Id: page.xslt,v 1.2 2006/01/16 19:34:18 Yuki Exp $
 -->
@@ -28,7 +28,7 @@
 				<meta name="copyright" content="Copyright (C) 2005-2006 Yuki. All rights are reserved." />
 				<meta http-equiv="Content-Style-Type" content="text/css" />
 				<meta http-equiv="Content-Script-Type" content="text/javascript" />
-				<title><xsl:value-of select="page/@name" /> - HSPLet リファレンス</title>
+				<title><xsl:value-of select="page/@name" /> - HSPLet 繝ｪ繝輔ぃ繝ｬ繝ｳ繧ｹ</title>
 				<link rel="stylesheet" type="text/css" href="common.css" />
 				<link rel="stylesheet" type="text/css" href="page.css" />
 			</head>
@@ -53,7 +53,7 @@
 	</xsl:template>
 	
 	<xsl:template match="page" mode="contents">
-		<h2>目次</h2>
+		<h2>逶ｮ谺｡</h2>
 		
 		<ul>
 			<xsl:apply-templates select="paragraph" mode="contents"/>

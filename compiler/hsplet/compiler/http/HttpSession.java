@@ -17,26 +17,26 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
- * HTTP ‚Ì‚Ğ‚Æ‚Â‚ÌƒZƒbƒVƒ‡ƒ“‚Ìˆ—‚ğs‚¤ƒIƒuƒWƒFƒNƒg.
+ * HTTP ã®ã²ã¨ã¤ã®ã‚»ãƒƒã‚·ãƒ§ãƒ³ã®å‡¦ç†ã‚’è¡Œã†ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ.
  *
  * @author Yuki
  * @version $Revision: 1.2 $, $Date: 2006/05/09 11:57:31 $
  */
 public class HttpSession implements Runnable {
 
-	/** ‰üsƒR[ƒh. */
+	/** æ”¹è¡Œã‚³ãƒ¼ãƒ‰. */
 	private static final String CRLF = "\r\n";
 
-	/** ƒNƒ‰ƒCƒAƒ“ƒg‚Æ‚Ì’ÊM—pƒ\ƒPƒbƒg. */
+	/** ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã¨ã®é€šä¿¡ç”¨ã‚½ã‚±ãƒƒãƒˆ. */
 	private final Socket socket;
 
-	/** ƒT[ƒo[ƒIƒuƒWƒFƒNƒg. */
+	/** ã‚µãƒ¼ãƒãƒ¼ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ. */
 	private final HttpServer server;
 
 	/**
-	 * ƒZƒbƒVƒ‡ƒ“‚ğì¬‚·‚é.
-	 * @param socket ’ÊM—pƒ\ƒPƒbƒg.
-	 * @param server ƒT[ƒo[ƒIƒuƒWƒFƒNƒg.
+	 * ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‚’ä½œæˆã™ã‚‹.
+	 * @param socket é€šä¿¡ç”¨ã‚½ã‚±ãƒƒãƒˆ.
+	 * @param server ã‚µãƒ¼ãƒãƒ¼ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ.
 	 */
 	public HttpSession(Socket socket, HttpServer server) {
 		this.socket = socket;
@@ -44,7 +44,7 @@ public class HttpSession implements Runnable {
 	}
 
 	/**
-	 * ’ÊM‚ğÀs‚·‚é.
+	 * é€šä¿¡ã‚’å®Ÿè¡Œã™ã‚‹.
 	 */
 	public void run() {
 		try {
@@ -65,10 +65,10 @@ public class HttpSession implements Runnable {
 
 			final StringTokenizer tokenizer = new StringTokenizer(request, " ");
 
-			final String method = tokenizer.nextToken(); // ƒƒ\ƒbƒh‚Í–³‹EEEB
+			final String method = tokenizer.nextToken(); // ãƒ¡ã‚½ãƒƒãƒ‰ã¯ç„¡è¦–ãƒ»ãƒ»ãƒ»ã€‚
 			final String uri = tokenizer.nextToken();
 
-			// “ñs–ÚˆÈ~‚Í–³‹EEEB
+			// äºŒè¡Œç›®ä»¥é™ã¯ç„¡è¦–ãƒ»ãƒ»ãƒ»ã€‚
 
 			sendContent(uri);
 
@@ -83,12 +83,12 @@ public class HttpSession implements Runnable {
 	}
 
 	/**
-	 * URI ‚©‚çƒRƒ“ƒeƒ“ƒgƒ^ƒCƒv‚ğ“¾‚é.
+	 * URI ã‹ã‚‰ã‚³ãƒ³ãƒ†ãƒ³ãƒˆã‚¿ã‚¤ãƒ—ã‚’å¾—ã‚‹.
 	 * <p>
-	 * TODO ƒe[ƒuƒ‹‚ğ—p‚¢‚Ä‚æ‚è‘½‚­‚ÌŒ`®‚É‘Î‰‚µ‚½‚¢.
+	 * TODO ãƒ†ãƒ¼ãƒ–ãƒ«ã‚’ç”¨ã„ã¦ã‚ˆã‚Šå¤šãã®å½¢å¼ã«å¯¾å¿œã—ãŸã„.
 	 * </p>
 	 * @param uri URI.
-	 * @return ƒRƒ“ƒeƒ“ƒgƒ^ƒCƒv.
+	 * @return ã‚³ãƒ³ãƒ†ãƒ³ãƒˆã‚¿ã‚¤ãƒ—.
 	 */
 	private String getContentType(String uri) {
 		if (uri.endsWith(".htm") || uri.endsWith(".html")) {
@@ -104,9 +104,9 @@ public class HttpSession implements Runnable {
 	}
 
 	/**
-	 * URI ‚©‚ç‘Î‰‚·‚éƒtƒ@ƒCƒ‹‚ğæ“¾‚·‚é.
+	 * URI ã‹ã‚‰å¯¾å¿œã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å–å¾—ã™ã‚‹.
 	 * @param uri URI.
-	 * @return ‘Î‰‚·‚éƒtƒ@ƒCƒ‹B null ‚ª•Ô‚é‚±‚Æ‚à‚ ‚éB
+	 * @return å¯¾å¿œã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ã€‚ null ãŒè¿”ã‚‹ã“ã¨ã‚‚ã‚ã‚‹ã€‚
 	 */
 	private File getFile(String uri) {
 
@@ -123,14 +123,14 @@ public class HttpSession implements Runnable {
 	}
 
 	/**
-	 * ’Êíƒ‚[ƒh‚ÅƒŒƒXƒ|ƒ“ƒX‚ğ•Ô‚·.
-	 * <code>uri</code>‚Å—^‚¦‚ç‚ê‚½URI‚ğƒtƒ@ƒCƒ‹–¼‚É•ÏŠ·‚µA
-	 * ‚»‚Ìƒtƒ@ƒCƒ‹‚ğƒI[ƒvƒ“‚µ‚Ä“à—e‚ğHTTP client‚É•Ô‚·B
-	 * Content-type‚Íƒtƒ@ƒCƒ‹‚ÌŠg’£q‚©‚ç”»’f‚·‚éB
-	 * ƒtƒ@ƒCƒ‹‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½ê‡‚É‚ÍƒGƒ‰[‚ğ•\‚·ƒy[ƒW‚ğ¶¬‚µ‚Ä•Ô‚·B
+	 * é€šå¸¸ãƒ¢ãƒ¼ãƒ‰ã§ãƒ¬ã‚¹ãƒãƒ³ã‚¹ã‚’è¿”ã™.
+	 * <code>uri</code>ã§ä¸ãˆã‚‰ã‚ŒãŸURIã‚’ãƒ•ã‚¡ã‚¤ãƒ«åã«å¤‰æ›ã—ã€
+	 * ãã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ã‚ªãƒ¼ãƒ—ãƒ³ã—ã¦å†…å®¹ã‚’HTTP clientã«è¿”ã™ã€‚
+	 * Content-typeã¯ãƒ•ã‚¡ã‚¤ãƒ«ã®æ‹¡å¼µå­ã‹ã‚‰åˆ¤æ–­ã™ã‚‹ã€‚
+	 * ãƒ•ã‚¡ã‚¤ãƒ«ãŒè¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸå ´åˆã«ã¯ã‚¨ãƒ©ãƒ¼ã‚’è¡¨ã™ãƒšãƒ¼ã‚¸ã‚’ç”Ÿæˆã—ã¦è¿”ã™ã€‚
 	 *
-	 * @param uri —^‚¦‚ç‚ê‚½URI.
-	 * @throws IOException “üo—ÍƒGƒ‰[.
+	 * @param uri ä¸ãˆã‚‰ã‚ŒãŸURI.
+	 * @throws IOException å…¥å‡ºåŠ›ã‚¨ãƒ©ãƒ¼.
 	 */
 	private void sendContent(String uri) throws IOException {
 

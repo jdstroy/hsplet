@@ -4,24 +4,24 @@
 package hsplet.util;
 
 /**
- * Œ^•ÏŠ·‚ğ’ñ‹Ÿ‚·‚éƒ†[ƒeƒBƒŠƒeƒBƒNƒ‰ƒXB
+ * å‹å¤‰æ›ã‚’æä¾›ã™ã‚‹ãƒ¦ãƒ¼ãƒ†ã‚£ãƒªãƒ†ã‚£ã‚¯ãƒ©ã‚¹ã€‚
  * 
  * @author Yuki
  * @version $Revision: 1.3 $, $Date: 2006/05/20 06:12:07 $
  */
 public class Conversion {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: Conversion.java,v 1.3 2006/05/20 06:12:07 Yuki Exp $";
 
 	/**
-	 * •¶š—ñ‚ğ‰Â”\‚ÈŒÀ‚è”š‚É•ÏŠ·‚·‚éB
+	 * æ–‡å­—åˆ—ã‚’å¯èƒ½ãªé™ã‚Šæ•°å­—ã«å¤‰æ›ã™ã‚‹ã€‚
 	 * <p>
-	 * {@link java.lang.Integer#parseInt(java.lang.String)} ‚Æˆá‚¢A‚±‚Ìƒƒ\ƒbƒh‚Í—áŠO‚ğ“Š‚°‚È‚¢B
+	 * {@link java.lang.Integer#parseInt(java.lang.String)} ã¨é•ã„ã€ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã¯ä¾‹å¤–ã‚’æŠ•ã’ãªã„ã€‚
 	 * </p>
 	 * 
-	 * @param text •ÏŠ·Œ³•¶š—ñB
-	 * @return •ÏŠ·Œã‚Ì”šB
+	 * @param text å¤‰æ›å…ƒæ–‡å­—åˆ—ã€‚
+	 * @return å¤‰æ›å¾Œã®æ•°å­—ã€‚
 	 */
 	public static int strtoi(final String text) {
 
@@ -33,7 +33,7 @@ public class Conversion {
 			return 0;
 		}
 
-		// •ÏŠ·‰Â”\‚È‚à‚Á‚Æ‚à’·‚¢’·‚³‚Å•ÏŠ·‚·‚é
+		// å¤‰æ›å¯èƒ½ãªã‚‚ã£ã¨ã‚‚é•·ã„é•·ã•ã§å¤‰æ›ã™ã‚‹
 
 		int result = 0;
 
@@ -52,13 +52,13 @@ public class Conversion {
 	}
 
 	/**
-	 * •¶š—ñ‚ğ‰Â”\‚ÈŒÀ‚è”š‚É•ÏŠ·‚·‚éB
+	 * æ–‡å­—åˆ—ã‚’å¯èƒ½ãªé™ã‚Šæ•°å­—ã«å¤‰æ›ã™ã‚‹ã€‚
 	 * <p>
-	 * {@link java.lang.Double#parseDouble(java.lang.String)} ‚Æˆá‚¢A‚±‚Ìƒƒ\ƒbƒh‚Í—áŠO‚ğ“Š‚°‚È‚¢B
+	 * {@link java.lang.Double#parseDouble(java.lang.String)} ã¨é•ã„ã€ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã¯ä¾‹å¤–ã‚’æŠ•ã’ãªã„ã€‚
 	 * </p>
 	 * 
-	 * @param text •ÏŠ·Œ³•¶š—ñB
-	 * @return •ÏŠ·Œã‚Ì”šB
+	 * @param text å¤‰æ›å…ƒæ–‡å­—åˆ—ã€‚
+	 * @return å¤‰æ›å¾Œã®æ•°å­—ã€‚
 	 */
 	public static double strtod(final String text) {
 
@@ -70,7 +70,7 @@ public class Conversion {
 			return 0.0;
 		}
 
-		// •ÏŠ·‰Â”\‚È‚à‚Á‚Æ‚à’·‚¢’·‚³‚Å•ÏŠ·‚·‚é
+		// å¤‰æ›å¯èƒ½ãªã‚‚ã£ã¨ã‚‚é•·ã„é•·ã•ã§å¤‰æ›ã™ã‚‹
 
 		double result = 0;
 

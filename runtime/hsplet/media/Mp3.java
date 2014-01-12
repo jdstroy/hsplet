@@ -19,9 +19,9 @@ import javazoom.jl.player.AudioDevice;
 import javazoom.jl.player.FactoryRegistry;
 
 /**
- * MP3 ƒTƒEƒ“ƒhB
+ * MP3 ã‚µã‚¦ãƒ³ãƒ‰ã€‚
  * <p>
- * JavaLayer ƒ‰ƒCƒuƒ‰ƒŠ‚ª•K—vB
+ * JavaLayer ãƒ©ã‚¤ãƒ–ãƒ©ãƒªãŒå¿…è¦ã€‚
  * </p>
  * 
  * @author Yuki
@@ -29,18 +29,18 @@ import javazoom.jl.player.FactoryRegistry;
  */
 public class Mp3 implements HSPMedia {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: Mp3.java,v 1.7 2006/02/05 10:08:14 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = 4705909472249775632L;
 
 	/**
-	 * ƒƒfƒBƒA‚ğ“Ç‚İ‚İƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
-	 * @param context Às‚µ‚Ä‚¢‚éƒRƒ“ƒeƒLƒXƒgB
-	 * @param fileName “Ç‚İ‚ŞƒƒfƒBƒAB
-	 * @param mode Ä¶ƒ‚[ƒhB
-	 * @throws Exception “Ç‚İ‚ß‚È‚©‚Á‚½‚Æ‚«B
+	 * ãƒ¡ãƒ‡ã‚£ã‚¢ã‚’èª­ã¿è¾¼ã¿ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
+	 * @param context å®Ÿè¡Œã—ã¦ã„ã‚‹ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã€‚
+	 * @param fileName èª­ã¿è¾¼ã‚€ãƒ¡ãƒ‡ã‚£ã‚¢ã€‚
+	 * @param mode å†ç”Ÿãƒ¢ãƒ¼ãƒ‰ã€‚
+	 * @throws Exception èª­ã¿è¾¼ã‚ãªã‹ã£ãŸã¨ãã€‚
 	 */
 	public Mp3(final Context context, final String fileName, final int mode) throws Exception {
 
@@ -99,7 +99,7 @@ public class Mp3 implements HSPMedia {
 
 	public void play() {
 
-		// Å‰‚©‚çÄ¶‚·‚é
+		// æœ€åˆã‹ã‚‰å†ç”Ÿã™ã‚‹
 
 		playing = true;
 		referenceTime = System.currentTimeMillis();
@@ -201,8 +201,8 @@ public class Mp3 implements HSPMedia {
 
 	private long skipLength;
 
-	// ‚È‚º‚© JRE 1.5 ‚Å‚ÍÄ¶ŠÔ‚ª‚Ô‚ê‚éB
-	// ’¼‘O‚ÌŠÔ‚ğ‹L‰¯‚µ‚Ä‚¨‚¢‚Ä•â³‚·‚éB
+	// ãªãœã‹ JRE 1.5 ã§ã¯å†ç”Ÿæ™‚é–“ãŒã¶ã‚Œã‚‹ã€‚
+	// ç›´å‰ã®æ™‚é–“ã‚’è¨˜æ†¶ã—ã¦ãŠã„ã¦è£œæ­£ã™ã‚‹ã€‚
 
 	private long referencePosition;
 

@@ -51,7 +51,7 @@ import javax.swing.filechooser.FileFilter;
 import org.yi.jdstroy.commons.EDTUtils;
 
 /**
- * HSP ‚ÌŠg’£GUIƒRƒ}ƒ“ƒhŒQB
+ * HSP ã®æ‹¡å¼µGUIã‚³ãƒžãƒ³ãƒ‰ç¾¤ã€‚
  *
  * @author Yuki
  * @version $Revision: 1.14 $, $Date: 2006/05/20 06:12:07 $
@@ -59,7 +59,7 @@ import org.yi.jdstroy.commons.EDTUtils;
 public class GuiCommand extends FunctionBase {
 
     /**
-     * ‚±‚ÌƒNƒ‰ƒX‚ðŠÜ‚Þƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶Žš—ñB
+     * ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚
      */
     private static final String fileVersionID = "$Id: GuiCommand.java,v 1.14 2006/05/20 06:12:07 Yuki Exp $";
 
@@ -261,7 +261,7 @@ public class GuiCommand extends FunctionBase {
 
                 dialog.setVisible(true);
 
-                // ƒ_ƒCƒAƒƒO‚Í•ÊƒXƒŒƒbƒh‚È‚Ì‚ÅA•Â‚¶‚½ŒãŽáŠ±‘Ò‚¿ŽžŠÔ‚ª•K—vB
+                // ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã¯åˆ¥ã‚¹ãƒ¬ãƒƒãƒ‰ãªã®ã§ã€é–‰ã˜ãŸå¾Œè‹¥å¹²å¾…ã¡æ™‚é–“ãŒå¿…è¦ã€‚
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
@@ -393,7 +393,7 @@ public class GuiCommand extends FunctionBase {
             case 11:
                 color = SystemColor.inactiveCaptionBorder;
                 break;
-            case 12: // MDI ‚Ì”wŒi–¢‘Î‰ž
+            case 12: // MDI ã®èƒŒæ™¯æœªå¯¾å¿œ
                 color = SystemColor.desktop;
                 break;
             case 13:
@@ -432,19 +432,19 @@ public class GuiCommand extends FunctionBase {
             case 24:
                 color = SystemColor.info;
                 break;
-            case 26: // ƒzƒbƒgƒgƒ‰ƒbƒNƒAƒCƒeƒ€‚ÌF –¢‘Î‰ž
+            case 26: // ãƒ›ãƒƒãƒˆãƒˆãƒ©ãƒƒã‚¯ã‚¢ã‚¤ãƒ†ãƒ ã®è‰² æœªå¯¾å¿œ
                 color = SystemColor.controlText;
                 break;
-            case 27: // ƒOƒ‰ƒf[ƒVƒ‡ƒ“‚Ìê‡‚ÍƒAƒNƒeƒBƒuƒEƒBƒ“ƒhƒE‚Ìƒ^ƒCƒgƒ‹ƒo[‚Ì‰E‘¤‚ÌF –¢‘Î‰ž
+            case 27: // ã‚°ãƒ©ãƒ‡ãƒ¼ã‚·ãƒ§ãƒ³ã®å ´åˆã¯ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ã‚¿ã‚¤ãƒˆãƒ«ãƒãƒ¼ã®å³å´ã®è‰² æœªå¯¾å¿œ
                 color = SystemColor.activeCaption;
                 break;
-            case 28: // ƒOƒ‰ƒf[ƒVƒ‡ƒ“‚Ìê‡‚Í”ñƒAƒNƒeƒBƒuƒEƒBƒ“ƒhƒE‚Ìƒ^ƒCƒgƒ‹ƒo[‚Ì‰E‘¤‚ÌF –¢‘Î‰ž
+            case 28: // ã‚°ãƒ©ãƒ‡ãƒ¼ã‚·ãƒ§ãƒ³ã®å ´åˆã¯éžã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ã‚¿ã‚¤ãƒˆãƒ«ãƒãƒ¼ã®å³å´ã®è‰² æœªå¯¾å¿œ
                 color = SystemColor.inactiveCaption;
                 break;
-            case 29: // XP ƒƒjƒ…[ƒAƒCƒeƒ€‚ðƒnƒCƒ‰ƒCƒg•\Ž¦‚·‚é‚Ì‚ÉŽg—p‚³‚ê‚éF –¢‘Î‰ž
+            case 29: // XP ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚¢ã‚¤ãƒ†ãƒ ã‚’ãƒã‚¤ãƒ©ã‚¤ãƒˆè¡¨ç¤ºã™ã‚‹ã®ã«ä½¿ç”¨ã•ã‚Œã‚‹è‰² æœªå¯¾å¿œ
                 color = SystemColor.controlHighlight;
                 break;
-            case 30: // XP ƒƒjƒ…[ƒo[‚Ì”wŒiF –¢‘Î‰ž
+            case 30: // XP ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒãƒ¼ã®èƒŒæ™¯è‰² æœªå¯¾å¿œ
                 color = SystemColor.menu;
                 break;
             default:
@@ -629,7 +629,7 @@ public class GuiCommand extends FunctionBase {
                 win.font = new Font("Monospaced", 0, 18);
                 win.fontStyle = win.font.getStyle();
                 break;
-            case 17: // ƒfƒtƒHƒ‹ƒg GUI ƒtƒHƒ“ƒg
+            case 17: // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ GUI ãƒ•ã‚©ãƒ³ãƒˆ
                 win.font = ((Bmscr) context.windows.get(0)).component.getFont();
                 win.fontStyle = win.font.getStyle();
                 break;
@@ -1321,16 +1321,16 @@ public class GuiCommand extends FunctionBase {
             context.windows.add(null);
         }
 
-        // ‚·‚Å‚É‚ ‚éƒXƒNƒŠ[ƒ“‚ð”jŠü‚µ‚È‚¯‚ê‚Î‚È‚ç‚È‚¢
+        // ã™ã§ã«ã‚ã‚‹ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã‚’ç ´æ£„ã—ãªã‘ã‚Œã°ãªã‚‰ãªã„
         if (context.windows.get(id) != null) {
 
             final Bmscr existing = (Bmscr) context.windows.get(id);
 
             if (existing.window != null) {
-                // ƒXƒNƒŠ[ƒ“‚ÍƒEƒBƒ“ƒhƒE
+                // ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã¯ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
                 existing.window.dispose();
             } else if (existing.component != null) {
-                // ‚»‚êˆÈŠO‚ÌƒRƒ“ƒ|[ƒlƒ“ƒgi‚ ‚è‚¦‚È‚¢‚ªEEEj
+                // ãã‚Œä»¥å¤–ã®ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆï¼ˆã‚ã‚Šãˆãªã„ãŒãƒ»ãƒ»ãƒ»ï¼‰
 
                 if (existing.component.getParent() != null) {
                     existing.component.getParent().remove(existing.component);
@@ -1393,7 +1393,7 @@ public class GuiCommand extends FunctionBase {
         final int x1 = toInt(x1v, x1vi, win.cx);
         final int y1 = toInt(y1v, y1vi, win.cy);
 
-        // I“_‚Í‘‚¢‚Ä‚Íƒ_ƒ
+        // çµ‚ç‚¹ã¯æ›¸ã„ã¦ã¯ãƒ€ãƒ¡
 
         if (x2 >= 0 && y2 >= 0 && x2 < win.backImage.getWidth() && y2 < win.backImage.getHeight()) {
             final int last = win.backImage.getRGB(x2, y2);

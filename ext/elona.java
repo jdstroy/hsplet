@@ -104,13 +104,13 @@ public class elona extends FunctionBase {
         final BufferedImage dest = win.backImage;
 
         if (dest.getType() != BufferedImage.TYPE_3BYTE_BGR) {
-            throw new IllegalArgumentException("ƒrƒbƒgƒ^ƒCƒv " + dest.getType() + " ‚ÍƒTƒ|[ƒg‚³‚ê‚Ü‚¹‚ñB");
+            throw new IllegalArgumentException("ãƒ“ãƒƒãƒˆã‚¿ã‚¤ãƒ— " + dest.getType() + " ã¯ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¾ã›ã‚“ã€‚");
         }
         if (src.getType() != BufferedImage.TYPE_3BYTE_BGR) {
-            throw new IllegalArgumentException("ƒrƒbƒgƒ^ƒCƒv " + src.getType() + " ‚ÍƒTƒ|[ƒg‚³‚ê‚Ü‚¹‚ñB");
+            throw new IllegalArgumentException("ãƒ“ãƒƒãƒˆã‚¿ã‚¤ãƒ— " + src.getType() + " ã¯ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¾ã›ã‚“ã€‚");
         }
 
-        // •`‰ææ‚Ì Y À•W‚Ì”ÍˆÍ‚ğ‹‚ß‚éB
+        // æç”»å…ˆã® Y åº§æ¨™ã®ç¯„å›²ã‚’æ±‚ã‚ã‚‹ã€‚
         int minY = dy[0];
         int maxY = dy[0];
         for (int i = 1; i < 4; ++i) {
@@ -128,7 +128,7 @@ public class elona extends FunctionBase {
             maxY = dest.getHeight();
         }
 
-        // minY <= y < maxY ‚É‚Â‚¢‚ÄAˆês‚¸‚ÂƒRƒs[
+        // minY <= y < maxY ã«ã¤ã„ã¦ã€ä¸€è¡Œãšã¤ã‚³ãƒ”ãƒ¼
         final int[] dxs = new int[2];
         final int[] dys = new int[2];
         final float[] sxs = new float[2];
@@ -136,9 +136,9 @@ public class elona extends FunctionBase {
 
         for (int y = minY; y < maxY; ++y) {
 
-            // ‚±‚Ì y À•W‚ğ’Ê‚é•Ó‚ğ’T‚µA‚»‚Ì‚Æ‚«‚Ì x À•W‚ğ‹L˜^
-            // ’Ê‚é•Ó‚ª•¡”‚ ‚éê‡i•’Ê‚Q–{‚ ‚éjA¶‚Ì‚Ù‚¤‚ªdxs[0]A‰E‚Ì‚Ù‚¤‚ªdxs[1] ‚É‚Í‚¢‚éB
-            // sxs/sys ‚É‚Í‚»‚Ì‚Æ‚«‚ÌƒRƒs[Œ³À•W‚ª“ü‚é
+            // ã“ã® y åº§æ¨™ã‚’é€šã‚‹è¾ºã‚’æ¢ã—ã€ãã®ã¨ãã® x åº§æ¨™ã‚’è¨˜éŒ²
+            // é€šã‚‹è¾ºãŒè¤‡æ•°ã‚ã‚‹å ´åˆï¼ˆæ™®é€šï¼’æœ¬ã‚ã‚‹ï¼‰ã€å·¦ã®ã»ã†ãŒdxs[0]ã€å³ã®ã»ã†ãŒdxs[1] ã«ã¯ã„ã‚‹ã€‚
+            // sxs/sys ã«ã¯ãã®ã¨ãã®ã‚³ãƒ”ãƒ¼å…ƒåº§æ¨™ãŒå…¥ã‚‹
 
             dys[0] = dys[1] = y;
             dxs[0] = 0x7FFFFFFF;
@@ -151,17 +151,17 @@ public class elona extends FunctionBase {
                 final float srx;
                 final float sry;
                 if (dy[i] == y) {
-                    // n“_‚Ì y À•W‚ªˆê’v
+                    // å§‹ç‚¹ã® y åº§æ¨™ãŒä¸€è‡´
                     x = dx[i];
                     srx = sx[i];
                     sry = sy[i];
                 } else if (dy[j] == y) {
-                    // I“_‚Ì y À•W‚ªˆê’v
+                    // çµ‚ç‚¹ã® y åº§æ¨™ãŒä¸€è‡´
                     x = dx[j];
                     srx = sx[j];
                     sry = sy[j];
                 } else if (dy[i] > y ^ dy[j] > y) {
-                    // ‚Ü‚½‚ª‚Á‚Ä‚é
+                    // ã¾ãŸãŒã£ã¦ã‚‹
 
                     final int toY = (y - dy[i]);
                     final int toJ = (dy[j] - dy[i]);
@@ -173,14 +173,14 @@ public class elona extends FunctionBase {
                     continue;
                 }
 
-                // x@‚ª¬‚³‚¢‚È‚ç¶•Ó
+                // xã€€ãŒå°ã•ã„ãªã‚‰å·¦è¾º
                 if (x < dxs[0]) {
                     dxs[0] = x;
                     sxs[0] = srx;
                     sys[0] = sry;
                 }
 
-                // x ‚ª‘å‚«‚¢‚È‚ç‰E•Ó
+                // x ãŒå¤§ãã„ãªã‚‰å³è¾º
                 if (x > dxs[1]) {
                     dxs[1] = x;
                     sxs[1] = srx;
@@ -189,7 +189,7 @@ public class elona extends FunctionBase {
 
             }
 
-            // ˆês•ªƒRƒs[
+            // ä¸€è¡Œåˆ†ã‚³ãƒ”ãƒ¼
             gsquare_line(win, dest, dxs, dys, src, sxs, sys);
         }
     }
@@ -241,7 +241,7 @@ public class elona extends FunctionBase {
             dw = dest.getWidth() - dx;
         }
 
-        // ƒ\[ƒX‚ÌƒNƒŠƒbƒsƒ“ƒO‚Í‚µ‚È‚¢A¸”s‚µ‚½‚ç©ŒÈÓ”CB
+        // ã‚½ãƒ¼ã‚¹ã®ã‚¯ãƒªãƒƒãƒ”ãƒ³ã‚°ã¯ã—ãªã„ã€å¤±æ•—ã—ãŸã‚‰è‡ªå·±è²¬ä»»ã€‚
 
         final int[] srcPixels = ArrayFactory.INTS_FACTORY.array(1024 * 32);
         final int[] destPixels = ArrayFactory.INTS_FACTORY.array(1024 * 32);
@@ -249,7 +249,7 @@ public class elona extends FunctionBase {
         final WritableRaster dr = dest.getRaster();
         final Raster sr = src.getRaster();
 
-        // int ‚ÅŒvZ‚µ‚ÄƒXƒs[ƒhƒAƒbƒvI
+        // int ã§è¨ˆç®—ã—ã¦ã‚¹ãƒ”ãƒ¼ãƒ‰ã‚¢ãƒƒãƒ—ï¼
 
         final int vsx = (int) (sw * 0x10000 / dw);
         final int vsy = (int) (sh * 0x10000 / dw);
@@ -258,7 +258,7 @@ public class elona extends FunctionBase {
         int sry = (int) (sy * 0x10000);
 
         if (vsy == 0) {
-            // ‰ñ“]–³‚µƒRƒs[‚Í‚æ‚­g‚í‚ê‚é‚Æv‚í‚ê‚é‚Ì‚Å‚¿‚å‚Á‚Æ‚¾‚¯‚‘¬‰»
+            // å›è»¢ç„¡ã—ã‚³ãƒ”ãƒ¼ã¯ã‚ˆãä½¿ã‚ã‚Œã‚‹ã¨æ€ã‚ã‚Œã‚‹ã®ã§ã¡ã‚‡ã£ã¨ã ã‘é«˜é€ŸåŒ–
             final int syi = (int) sy;
             for (int i = 0, end = dw * 3; i < end; i += 3) {
 
@@ -420,7 +420,7 @@ public class elona extends FunctionBase {
                 }
             }
             break;
-            // TODO gcopy mode 7 ƒsƒNƒZƒ‹ƒAƒ‹ƒtƒ@ƒuƒŒƒ“ƒh
+            // TODO gcopy mode 7 ãƒ”ã‚¯ã‚»ãƒ«ã‚¢ãƒ«ãƒ•ã‚¡ãƒ–ãƒ¬ãƒ³ãƒ‰
         }
     }
 }

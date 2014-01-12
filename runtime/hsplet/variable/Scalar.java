@@ -4,12 +4,12 @@
 package hsplet.variable;
 
 /**
- * �P��̗v�f���������I�y�����h������킷��{�N���X�B
+ * 単一の要素だけを持つオペランドをあらわす基本クラス。
  * <p>
- * Array �������̗v�f�����̂ɑ΂��āA���̃N���X�͈�����v�f�����B
+ * Array が複数の要素を持つのに対して、このクラスは一つだけ要素を持つ。
  * </p>
  * <p>
- * �萔�≉�Z�̌��ʁA�֐��̖߂�l�ȂǁA�͂��߂���v�f��������Ȃ��Ƃ킩���Ă���Ƃ��́A�z���肱������g�p�����ق��������Ɏ��s�ł���B
+ * 定数や演算の結果、関数の戻り値など、はじめから要素が一つしかないとわかっているときは、配列よりこちらを使用したほうが高速に実行できる。
  * </p>
  * 
  * @author Yuki
@@ -17,7 +17,7 @@ package hsplet.variable;
  */
 public abstract class Scalar extends Operand {
     
-	/** ���̃N���X���܂ރ\�[�X�t�@�C���̃o�[�W����������B */
+	/** このクラスを含むソースファイルのバージョン文字列。 */
 	private static final String fileVersionID = "$Id: Scalar.java,v 1.3 2006/02/11 18:00:37 Yuki Exp $";
 
 	private static final Scalar[] intCache = new Scalar[256];
@@ -31,13 +31,13 @@ public abstract class Scalar extends Operand {
 
         public static final Scalar UNITY = Scalar.fromValue(1);
 	/**
-	 * ����̒l������킷�I�u�W�F�N�g���擾����B
+	 * 特定の値をあらわすオブジェクトを取得する。
 	 * <p>
-	 * ���̃��\�b�h����Ԃ��ꂽ�I�u�W�F�N�g�̒l�͕ύX���Ă͂Ȃ�Ȃ��B
+	 * このメソッドから返されたオブジェクトの値は変更してはならない。
 	 * </p>
 	 * 
-	 * @param rawValue ���̒l�B
-	 * @return �w�肳�ꂽ�l��\���X�J���[�I�u�W�F�N�g�B
+	 * @param rawValue 元の値。
+	 * @return 指定された値を表すスカラーオブジェクト。
 	 */
 	public static Scalar fromValue(final String rawValue) {
 
@@ -45,13 +45,13 @@ public abstract class Scalar extends Operand {
 	}
 
 	/**
-	 * ����̒l������킷�I�u�W�F�N�g���擾����B
+	 * 特定の値をあらわすオブジェクトを取得する。
 	 * <p>
-	 * ���̃��\�b�h����Ԃ��ꂽ�I�u�W�F�N�g�̒l�͕ύX���Ă͂Ȃ�Ȃ��B
+	 * このメソッドから返されたオブジェクトの値は変更してはならない。
 	 * </p>
 	 * 
-	 * @param rawValue ���̒l�B
-	 * @return �w�肳�ꂽ�l��\���X�J���[�I�u�W�F�N�g�B
+	 * @param rawValue 元の値。
+	 * @return 指定された値を表すスカラーオブジェクト。
 	 */
 	public static Scalar fromValue(final ByteString rawValue) {
 
@@ -59,13 +59,13 @@ public abstract class Scalar extends Operand {
 	}
 
 	/**
-	 * ����̒l������킷�I�u�W�F�N�g���擾����B
+	 * 特定の値をあらわすオブジェクトを取得する。
 	 * <p>
-	 * ���̃��\�b�h����Ԃ��ꂽ�I�u�W�F�N�g�̒l�͕ύX���Ă͂Ȃ�Ȃ��B
+	 * このメソッドから返されたオブジェクトの値は変更してはならない。
 	 * </p>
 	 * 
-	 * @param rawValue ���̒l�B
-	 * @return �w�肳�ꂽ�l��\���X�J���[�I�u�W�F�N�g�B
+	 * @param rawValue 元の値。
+	 * @return 指定された値を表すスカラーオブジェクト。
 	 */
 	public static Scalar fromValue(final double rawValue) {
 
@@ -73,13 +73,13 @@ public abstract class Scalar extends Operand {
 	}
 
 	/**
-	 * ����̒l������킷�I�u�W�F�N�g���擾����B
+	 * 特定の値をあらわすオブジェクトを取得する。
 	 * <p>
-	 * ���̃��\�b�h����Ԃ��ꂽ�I�u�W�F�N�g�̒l�͕ύX���Ă͂Ȃ�Ȃ��B
+	 * このメソッドから返されたオブジェクトの値は変更してはならない。
 	 * </p>
 	 * 
-	 * @param rawValue ���̒l�B
-	 * @return �w�肳�ꂽ�l��\���X�J���[�I�u�W�F�N�g�B
+	 * @param rawValue 元の値。
+	 * @return 指定された値を表すスカラーオブジェクト。
 	 */
 	public static Scalar fromValue(final int rawValue) {
 
@@ -91,13 +91,13 @@ public abstract class Scalar extends Operand {
 	}
 
 	/**
-	 * ����̒l������킷�I�u�W�F�N�g���擾����B
+	 * 特定の値をあらわすオブジェクトを取得する。
 	 * <p>
-	 * ���̃��\�b�h����Ԃ��ꂽ�I�u�W�F�N�g�̒l�͕ύX���Ă͂Ȃ�Ȃ��B
+	 * このメソッドから返されたオブジェクトの値は変更してはならない。
 	 * </p>
 	 * 
-	 * @param rawValue ���̒l�B
-	 * @return �w�肳�ꂽ�l��\���X�J���[�I�u�W�F�N�g�B
+	 * @param rawValue 元の値。
+	 * @return 指定された値を表すスカラーオブジェクト。
 	 */
 	public static Scalar fromLabel(final int rawValue) {
 

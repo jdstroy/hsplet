@@ -10,14 +10,14 @@ import hsplet.variable.*;
 import org.yi.jdstroy.hsplet.compiler.interop.Out;
 
 /**
- * HSP ‚ÌƒvƒƒOƒ‰ƒ€§ŒäƒRƒ}ƒ“ƒhŒQB
+ * HSP ã®ãƒ—ãƒ­ã‚°ãƒ©ãƒ åˆ¶å¾¡ã‚³ãƒãƒ³ãƒ‰ç¾¤ã€‚
  * 
  * @author Yuki
  * @version $Revision: 1.6 $, $Date: 2006/01/29 16:29:20 $
  */
 public class ProgramCommand extends FunctionBase {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: ProgramCommand.java,v 1.6 2006/01/29 16:29:20 Yuki Exp $";
 
 	public static void goto_(final Context context, final int label, final boolean clearLoop) {
@@ -323,7 +323,7 @@ public class ProgramCommand extends FunctionBase {
 
 	public static void alloc(final Context context, final int label) {
 
-		// alloc –½—ß‚Íƒ}ƒNƒ‚É‚È‚Á‚½‚Ì‚ÅŒÄ‚Ño‚³‚ê‚é‚±‚Æ‚Í–³‚¢B
+		// alloc å‘½ä»¤ã¯ãƒã‚¯ãƒ­ã«ãªã£ãŸã®ã§å‘¼ã³å‡ºã•ã‚Œã‚‹ã“ã¨ã¯ç„¡ã„ã€‚
 		context.error(HSPError.UnsupportedOperation, "alloc");
 	}
 

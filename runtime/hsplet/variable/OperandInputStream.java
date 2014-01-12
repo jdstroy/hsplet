@@ -6,7 +6,7 @@ package hsplet.variable;
 import java.io.InputStream;
 
 /**
- * •Ï”‚©‚ç“Ç‚İæ‚é“ü—ÍƒXƒgƒŠ[ƒ€B
+ * å¤‰æ•°ã‹ã‚‰èª­ã¿å–ã‚‹å…¥åŠ›ã‚¹ãƒˆãƒªãƒ¼ãƒ ã€‚
  * 
  * @author Yuki
  * @version $Revision: 1.1 $, $Date: 2006/01/21 12:48:19 $
@@ -14,11 +14,11 @@ import java.io.InputStream;
 public class OperandInputStream extends InputStream implements Cloneable {
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
-	 * @param o ƒIƒyƒ‰ƒ“ƒhB
-	 * @param oi ƒIƒyƒ‰ƒ“ƒh‚Ì”z—ñ—v‘fƒCƒ“ƒfƒbƒNƒXB
-	 * @param base “Ç‚İæ‚èƒCƒ“ƒfƒbƒNƒXB
-	 * @param size ƒf[ƒ^ƒTƒCƒYB
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
+	 * @param o ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã€‚
+	 * @param oi ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã®é…åˆ—è¦ç´ ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã€‚
+	 * @param base èª­ã¿å–ã‚Šã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã€‚
+	 * @param size ãƒ‡ãƒ¼ã‚¿ã‚µã‚¤ã‚ºã€‚
 	 */
 	public OperandInputStream(final Operand o, final int oi, final int base, final int size) {
 		this.o = o;
@@ -42,8 +42,8 @@ public class OperandInputStream extends InputStream implements Cloneable {
 	private final int size;
 
 	/**
-	 * ƒf[ƒ^ƒTƒCƒYæ“¾B
-	 * @return ƒf[ƒ^ƒTƒCƒYB
+	 * ãƒ‡ãƒ¼ã‚¿ã‚µã‚¤ã‚ºå–å¾—ã€‚
+	 * @return ãƒ‡ãƒ¼ã‚¿ã‚µã‚¤ã‚ºã€‚
 	 */
 	public int getSize() {
 		return size;

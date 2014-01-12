@@ -12,8 +12,8 @@ import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.Opcodes;
 
 /**
- * ƒƒ\ƒbƒh¶¬‚ÌƒfƒoƒbƒO‚Ég—pB
- * <p>¶¬‚µ‚½“à—e‚Ìˆê•”‚ğƒRƒ“ƒ\[ƒ‹‚Éo—Í‚·‚éB
+ * ãƒ¡ã‚½ãƒƒãƒ‰ç”Ÿæˆã®ãƒ‡ãƒãƒƒã‚°æ™‚ã«ä½¿ç”¨ã€‚
+ * <p>ç”Ÿæˆã—ãŸå†…å®¹ã®ä¸€éƒ¨ã‚’ã‚³ãƒ³ã‚½ãƒ¼ãƒ«ã«å‡ºåŠ›ã™ã‚‹ã€‚
  * </p>
  * 
  * @author Yuki
@@ -22,20 +22,20 @@ import org.objectweb.asm.Opcodes;
 public class MethodDebugger extends MethodAdapter implements Serializable,
 		Opcodes {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: MethodDebugger.java,v 1.3 2006/01/13 20:32:11 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = -8947987460775942821L;
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
-	 * @param cv ƒNƒ‰ƒXƒrƒWƒ^B
-	 * @param access ƒAƒNƒZƒX•û–@B
-	 * @param name ƒƒ\ƒbƒh–¼B
-	 * @param desc ƒƒ\ƒbƒh‚ÌƒVƒOƒlƒ`ƒƒB
-	 * @param signature ƒƒ\ƒbƒh‚ÌƒVƒOƒlƒ`ƒƒ‚à‚µ‚­‚Í nullB
-	 * @param exceptions ‚±‚Ìƒƒ\ƒbƒh‚ª“Š‚°‚é—áŠOB
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
+	 * @param cv ã‚¯ãƒ©ã‚¹ãƒ“ã‚¸ã‚¿ã€‚
+	 * @param access ã‚¢ã‚¯ã‚»ã‚¹æ–¹æ³•ã€‚
+	 * @param name ãƒ¡ã‚½ãƒƒãƒ‰åã€‚
+	 * @param desc ãƒ¡ã‚½ãƒƒãƒ‰ã®ã‚·ã‚°ãƒãƒãƒ£ã€‚
+	 * @param signature ãƒ¡ã‚½ãƒƒãƒ‰ã®ã‚·ã‚°ãƒãƒãƒ£ã‚‚ã—ãã¯ nullã€‚
+	 * @param exceptions ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ãŒæŠ•ã’ã‚‹ä¾‹å¤–ã€‚
 	 */
 	public MethodDebugger(final ClassVisitor cv, final int access,
 			final String name, final String desc, final String signature,

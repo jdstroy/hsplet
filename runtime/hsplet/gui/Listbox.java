@@ -17,9 +17,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 /**
- * listbox ƒRƒ“ƒgƒ[ƒ‹B
+ * listbox ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã€‚
  * <p>
- * ‘I‘ğ‚³‚ê‚½‚ç•Ï”‚ğXV‚·‚éB
+ * é¸æŠã•ã‚ŒãŸã‚‰å¤‰æ•°ã‚’æ›´æ–°ã™ã‚‹ã€‚
  * </p>
  * 
  * @author Yuki
@@ -27,25 +27,25 @@ import javax.swing.event.ListSelectionListener;
  */
 public class Listbox extends JScrollPane implements VolatileValueUpdater, HSPControl, ListSelectionListener {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: Listbox.java,v 1.5 2006/02/27 15:52:04 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = 8135061756805120960L;
 
-	/** •Ï” */
+	/** å¤‰æ•° */
 	private VolatileValue v;
 
-	/** •Ï”ƒCƒ“ƒfƒbƒNƒX */
+	/** å¤‰æ•°ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ */
 	private int vi;
 
 	private final JList<String> list;
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
-	 * @param v ‘I‘ğ‚ğ•Û‚·‚é•Ï”B
-	 * @param vi ‘I‘ğ‚ğ•Û‚·‚é•Ï”‚ÌƒCƒ“ƒfƒbƒNƒXB
-	 * @param items ‘I‘ğˆ‚Ì”z—ñB
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
+	 * @param v é¸æŠã‚’ä¿æŒã™ã‚‹å¤‰æ•°ã€‚
+	 * @param vi é¸æŠã‚’ä¿æŒã™ã‚‹å¤‰æ•°ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã€‚
+	 * @param items é¸æŠè‚¢ã®é…åˆ—ã€‚
 	 */
 	public Listbox(final Variable v, final int vi, final String[] items) {
 		super(VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_NEVER);

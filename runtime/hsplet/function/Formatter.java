@@ -6,8 +6,8 @@ package hsplet.function;
 import com.braju.format.Format;
 
 /**
- * strf ‚ğÀ‘•‚·‚éƒNƒ‰ƒXB
- * <p>ÀÛ‚É‚Í hb16 ‚Éˆ—‚ğŠÛ“Š‚°‚·‚éB
+ * strf ã‚’å®Ÿè£…ã™ã‚‹ã‚¯ãƒ©ã‚¹ã€‚
+ * <p>å®Ÿéš›ã«ã¯ hb16 ã«å‡¦ç†ã‚’ä¸¸æŠ•ã’ã™ã‚‹ã€‚
  * </p>
  * 
  * @author Yuki
@@ -16,10 +16,10 @@ import com.braju.format.Format;
 public class Formatter {
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚ğ•¶š—ñ‰»‚·‚éB
-	 * @param format ‘®B
-	 * @param param ƒIƒuƒWƒFƒNƒgB
-	 * @return ‘®‰»‚³‚ê‚½•¶š—ñB
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ–‡å­—åˆ—åŒ–ã™ã‚‹ã€‚
+	 * @param format æ›¸å¼ã€‚
+	 * @param param ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
+	 * @return æ›¸å¼åŒ–ã•ã‚ŒãŸæ–‡å­—åˆ—ã€‚
 	 */
 	public static String format(final String format, final Object param) {
 		return Format.sprintf(format, new Object[] { param });

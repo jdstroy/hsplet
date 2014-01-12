@@ -13,9 +13,9 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CoderResult;
 
 /**
- * ƒoƒCƒg’PˆÊ‚ÅŠÇ—‚³‚ê‚é•¶š—ñƒNƒ‰ƒXB <p> HSP ‚Ì•¶š—ñ‚ª MS932 ‚È‚Ì‚É‘Î‚µ‚Ä Java ‚Í UCS-2A‚Ü‚½ HSP
- * ‚Ì•¶š—ñ‚ª‰Â•Ï‚É‘Î‚µ‚ÄAJava ‚Ì•¶š—ñ‚Í•s•Ï‚È‚ÇA ‘½‚­‚Ìê–Ê‚Å Java
- * ‚Ì•¶š—ñ‚ğ‚»‚Ì‚Ü‚Üg—p‚·‚é‚±‚Æ‚ªo—ˆ‚È‚¢‚Ì‚ÅA‘ã‚í‚è‚É‚±‚ÌƒNƒ‰ƒX‚ğg—p‚·‚éB </p>
+ * ãƒã‚¤ãƒˆå˜ä½ã§ç®¡ç†ã•ã‚Œã‚‹æ–‡å­—åˆ—ã‚¯ãƒ©ã‚¹ã€‚ <p> HSP ã®æ–‡å­—åˆ—ãŒ MS932 ãªã®ã«å¯¾ã—ã¦ Java ã¯ UCS-2ã€ã¾ãŸ HSP
+ * ã®æ–‡å­—åˆ—ãŒå¯å¤‰ã«å¯¾ã—ã¦ã€Java ã®æ–‡å­—åˆ—ã¯ä¸å¤‰ãªã©ã€ å¤šãã®å ´é¢ã§ Java
+ * ã®æ–‡å­—åˆ—ã‚’ãã®ã¾ã¾ä½¿ç”¨ã™ã‚‹ã“ã¨ãŒå‡ºæ¥ãªã„ã®ã§ã€ä»£ã‚ã‚Šã«ã“ã®ã‚¯ãƒ©ã‚¹ã‚’ä½¿ç”¨ã™ã‚‹ã€‚ </p>
  *
  * @author Yuki
  * @version $Revision: 1.7.2.1 $, $Date: 2006/08/02 12:13:06 $
@@ -23,11 +23,11 @@ import java.nio.charset.CoderResult;
 public class ByteString implements Serializable {
 
     /**
-     * ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B
+     * ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚
      */
     private static final long serialVersionUID = 6225913660341986054L;
     /**
-     * ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB
+     * ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚
      */
     private static final String fileVersionID = "$Id: ByteString.java,v 1.7.2.1 2006/08/02 12:13:06 Yuki Exp $";
     private static final Charset charset = Charset.forName("MS932");
@@ -37,9 +37,9 @@ public class ByteString implements Serializable {
     private int length;
 
     /**
-     * Šù‘¶•¶š—ñ‚©‚çƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
+     * æ—¢å­˜æ–‡å­—åˆ—ã‹ã‚‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
      *
-     * @param text ‚±‚ÌƒIƒuƒWƒFƒNƒg‚Ì‰Šú’l‚É‚È‚é•¶š—ñB
+     * @param text ã“ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®åˆæœŸå€¤ã«ãªã‚‹æ–‡å­—åˆ—ã€‚
      */
     public ByteString(final String text) {
 
@@ -51,26 +51,26 @@ public class ByteString implements Serializable {
     }
 
     /**
-     * w’è‚³‚ê‚½ƒoƒCƒg”z—ñ‚ğg—p‚·‚éƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
+     * æŒ‡å®šã•ã‚ŒãŸãƒã‚¤ãƒˆé…åˆ—ã‚’ä½¿ç”¨ã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
      *
-     * @param bytes MS932 ‚Å•¶š—ñ‚ğ•Û‚·‚éƒoƒCƒg‚Ì”z—ñB
-     * @param offset •¶š—ñ‚ğŠJn‚·‚éƒIƒtƒZƒbƒgB
-     * @param uniqueBuffer ‚±‚ÌƒIƒuƒWƒFƒNƒg‚ª bytes ‚Æ‚Í•Ê‚Ìƒoƒbƒtƒ@‚ğg—p‚·‚é‚©‚Ç‚¤‚©B false
-     * ‚Ì•û‚ª‚‘¬‚Å‚·‚ªA•¶š—ñ‚ğ•ÏX—\’è‚Ì‚Æ‚«‚Í true ‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢B
+     * @param bytes MS932 ã§æ–‡å­—åˆ—ã‚’ä¿æŒã™ã‚‹ãƒã‚¤ãƒˆã®é…åˆ—ã€‚
+     * @param offset æ–‡å­—åˆ—ã‚’é–‹å§‹ã™ã‚‹ã‚ªãƒ•ã‚»ãƒƒãƒˆã€‚
+     * @param uniqueBuffer ã“ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒ bytes ã¨ã¯åˆ¥ã®ãƒãƒƒãƒ•ã‚¡ã‚’ä½¿ç”¨ã™ã‚‹ã‹ã©ã†ã‹ã€‚ false
+     * ã®æ–¹ãŒé«˜é€Ÿã§ã™ãŒã€æ–‡å­—åˆ—ã‚’å¤‰æ›´äºˆå®šã®ã¨ãã¯ true ã‚’æŒ‡å®šã—ã¦ãã ã•ã„ã€‚
      */
     public ByteString(final byte[] bytes, final int offset, final boolean uniqueBuffer) {
         this(bytes, offset, bytes.length - offset, uniqueBuffer);
     }
 
     /**
-     * w’è‚³‚ê‚½ƒoƒCƒg”z—ñ‚ğg—p‚·‚éƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB <p>ÀÛ‚Ì•¶š—ñ‚Ì’·‚³‚ª length ‚æ‚è’Z‚¢‚Æ‚«‚ÍAÀÛ‚Ì’·‚³‚ª—Dæ‚³‚ê‚éB
+     * æŒ‡å®šã•ã‚ŒãŸãƒã‚¤ãƒˆé…åˆ—ã‚’ä½¿ç”¨ã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚ <p>å®Ÿéš›ã®æ–‡å­—åˆ—ã®é•·ã•ãŒ length ã‚ˆã‚ŠçŸ­ã„ã¨ãã¯ã€å®Ÿéš›ã®é•·ã•ãŒå„ªå…ˆã•ã‚Œã‚‹ã€‚
      * </p>
      *
-     * @param bytes MS932 ‚Å•¶š—ñ‚ğ•Û‚·‚éƒoƒCƒg‚Ì”z—ñB
-     * @param offset •¶š—ñ‚ğŠJn‚·‚éƒIƒtƒZƒbƒgB
-     * @param length •¶š—ñ‚Ì’·‚³B
-     * @param uniqueBuffer ‚±‚ÌƒIƒuƒWƒFƒNƒg‚ª bytes ‚Æ‚Í•Ê‚Ìƒoƒbƒtƒ@‚ğg—p‚·‚é‚©‚Ç‚¤‚©B false
-     * ‚Ì•û‚ª‚‘¬‚Å‚·‚ªA•¶š—ñ‚ğ•ÏX—\’è‚Ì‚Æ‚«‚Í true ‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢B
+     * @param bytes MS932 ã§æ–‡å­—åˆ—ã‚’ä¿æŒã™ã‚‹ãƒã‚¤ãƒˆã®é…åˆ—ã€‚
+     * @param offset æ–‡å­—åˆ—ã‚’é–‹å§‹ã™ã‚‹ã‚ªãƒ•ã‚»ãƒƒãƒˆã€‚
+     * @param length æ–‡å­—åˆ—ã®é•·ã•ã€‚
+     * @param uniqueBuffer ã“ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒ bytes ã¨ã¯åˆ¥ã®ãƒãƒƒãƒ•ã‚¡ã‚’ä½¿ç”¨ã™ã‚‹ã‹ã©ã†ã‹ã€‚ false
+     * ã®æ–¹ãŒé«˜é€Ÿã§ã™ãŒã€æ–‡å­—åˆ—ã‚’å¤‰æ›´äºˆå®šã®ã¨ãã¯ true ã‚’æŒ‡å®šã—ã¦ãã ã•ã„ã€‚
      */
     public ByteString(final byte[] bytes, final int offset, final int length, final boolean uniqueBuffer) {
 
@@ -90,11 +90,11 @@ public class ByteString implements Serializable {
     }
 
     /**
-     * w’è‚³‚ê‚½•¶š—ñ‚Æ“¯‚¶“à—e‚ÌƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
+     * æŒ‡å®šã•ã‚ŒãŸæ–‡å­—åˆ—ã¨åŒã˜å†…å®¹ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
      *
-     * @param str ‰Šú‚©‚à‚Æ•¶š—ñB
-     * @param uniqueBuffer ‚±‚ÌƒIƒuƒWƒFƒNƒg‚ª uniqueBuffer ‚Æ‚Í•Ê‚Ìƒoƒbƒtƒ@‚ğg—p‚·‚é‚©‚Ç‚¤‚©B false
-     * ‚Ì•û‚ª‚‘¬‚Å‚·‚ªA•¶š—ñ‚ğ•ÏX—\’è‚Ì‚Æ‚«‚Í true ‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢B
+     * @param str åˆæœŸã‹ã‚‚ã¨æ–‡å­—åˆ—ã€‚
+     * @param uniqueBuffer ã“ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒ uniqueBuffer ã¨ã¯åˆ¥ã®ãƒãƒƒãƒ•ã‚¡ã‚’ä½¿ç”¨ã™ã‚‹ã‹ã©ã†ã‹ã€‚ false
+     * ã®æ–¹ãŒé«˜é€Ÿã§ã™ãŒã€æ–‡å­—åˆ—ã‚’å¤‰æ›´äºˆå®šã®ã¨ãã¯ true ã‚’æŒ‡å®šã—ã¦ãã ã•ã„ã€‚
      */
     public ByteString(final ByteString str, final boolean uniqueBuffer) {
         this(str.bytes, str.offset, str.length, uniqueBuffer);
@@ -133,7 +133,7 @@ public class ByteString implements Serializable {
 
     private CharBuffer decode(final ByteBuffer in) {
 
-        // Java ‚Ì‚»‚ê‚ÍƒoƒO‚Á‚Ä‚¢‚é‚Ì‚Å©—Í‚Å‚â‚é
+        // Java ã®ãã‚Œã¯ãƒã‚°ã£ã¦ã„ã‚‹ã®ã§è‡ªåŠ›ã§ã‚„ã‚‹
 
         int n = (int) (in.remaining() * decorder.averageCharsPerByte() + 1);
         CharBuffer out = CharBuffer.allocate(n);
@@ -214,7 +214,7 @@ public class ByteString implements Serializable {
             }
         }
 
-        // ‚±‚Ì•¶š—ñ‚Ì•û‚ª’Z‚¢
+        // ã“ã®æ–‡å­—åˆ—ã®æ–¹ãŒçŸ­ã„
         if (l < rhs.length) {
             return -1;
         }
@@ -223,9 +223,9 @@ public class ByteString implements Serializable {
     }
 
     /**
-     * length ‚Ì’l‚ğæ“¾‚·‚éB
+     * length ã®å€¤ã‚’å–å¾—ã™ã‚‹ã€‚
      *
-     * @return length ‚Ì’lB
+     * @return length ã®å€¤ã€‚
      */
     public int length() {
 
@@ -302,7 +302,7 @@ public class ByteString implements Serializable {
         final int newLength = this.length + string.length - length;
         if (bytes.length < offset + newLength + 1) {
 
-            // ƒoƒbƒtƒ@‚ÌŠg’£‚ª•K—v
+            // ãƒãƒƒãƒ•ã‚¡ã®æ‹¡å¼µãŒå¿…è¦
 
             final byte[] newBytes = new byte[newLength + 1024];
 

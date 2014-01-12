@@ -15,9 +15,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * ‚“x‚È(H)‰æ‘œ•`‰æ‚ğƒTƒ|[ƒg‚·‚éƒNƒ‰ƒXB
+ * é«˜åº¦ãª(ï¼Ÿ)ç”»åƒæç”»ã‚’ã‚µãƒãƒ¼ãƒˆã™ã‚‹ã‚¯ãƒ©ã‚¹ã€‚
  * <p>
- * gcopy/gsquare “™‚ğÀ‘•‚·‚éB Œ»İ TYPE_3BYTE_BGR ‚Ì BufferedImage ‚µ‚©ƒTƒ|[ƒg‚µ‚È‚¢B
+ * gcopy/gsquare ç­‰ã‚’å®Ÿè£…ã™ã‚‹ã€‚ ç¾åœ¨ TYPE_3BYTE_BGR ã® BufferedImage ã—ã‹ã‚µãƒãƒ¼ãƒˆã—ãªã„ã€‚
  * </p>
  * 
  * @author Yuki
@@ -30,15 +30,15 @@ public class GraphicsRenderer {
 	private static int[] destPixels = new int[1024 * 32];
 
 	/**
-	 * ‰æ‘œ‚ğƒRƒs[‚·‚éB
-	 * @param win ƒRƒs[æ‰æ–ÊB
-	 * @param dx ƒRƒs[æXB
-	 * @param dy ƒRƒs[æYB
-	 * @param src ƒRƒs[Œ³‰æ‘œB
-	 * @param sx ƒRƒs[Œ³XB
-	 * @param sy ƒRƒs[Œ³YB
-	 * @param w ƒRƒs[•B
-	 * @param h ƒRƒs[‚‚³B
+	 * ç”»åƒã‚’ã‚³ãƒ”ãƒ¼ã™ã‚‹ã€‚
+	 * @param win ã‚³ãƒ”ãƒ¼å…ˆç”»é¢ã€‚
+	 * @param dx ã‚³ãƒ”ãƒ¼å…ˆXã€‚
+	 * @param dy ã‚³ãƒ”ãƒ¼å…ˆYã€‚
+	 * @param src ã‚³ãƒ”ãƒ¼å…ƒç”»åƒã€‚
+	 * @param sx ã‚³ãƒ”ãƒ¼å…ƒXã€‚
+	 * @param sy ã‚³ãƒ”ãƒ¼å…ƒYã€‚
+	 * @param w ã‚³ãƒ”ãƒ¼å¹…ã€‚
+	 * @param h ã‚³ãƒ”ãƒ¼é«˜ã•ã€‚
 	 */
 	public static synchronized void gcopy(final Bmscr win, int dx, int dy, final BufferedImage src, int sx, int sy,
 			int w, int h) {
@@ -47,10 +47,10 @@ public class GraphicsRenderer {
 		final Graphics2D destG = win.backGraphics;
 
 		if (dest.getType() != BufferedImage.TYPE_3BYTE_BGR) {
-			throw new IllegalArgumentException("ƒrƒbƒgƒ^ƒCƒv " + dest.getType() + " ‚ÍƒTƒ|[ƒg‚³‚ê‚Ü‚¹‚ñB");
+			throw new IllegalArgumentException("ãƒ“ãƒƒãƒˆã‚¿ã‚¤ãƒ— " + dest.getType() + " ã¯ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¾ã›ã‚“ã€‚");
 		}
 		if (src.getType() != BufferedImage.TYPE_3BYTE_BGR) {
-			throw new IllegalArgumentException("ƒrƒbƒgƒ^ƒCƒv " + src.getType() + " ‚ÍƒTƒ|[ƒg‚³‚ê‚Ü‚¹‚ñB");
+			throw new IllegalArgumentException("ãƒ“ãƒƒãƒˆã‚¿ã‚¤ãƒ— " + src.getType() + " ã¯ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¾ã›ã‚“ã€‚");
 		}
 
 		if (dx < 0) {
@@ -235,18 +235,18 @@ public class GraphicsRenderer {
 			}
 		}
 			break;
-		// TODO gcopy mode 7 ƒsƒNƒZƒ‹ƒAƒ‹ƒtƒ@ƒuƒŒƒ“ƒh
+		// TODO gcopy mode 7 ãƒ”ã‚¯ã‚»ãƒ«ã‚¢ãƒ«ãƒ•ã‚¡ãƒ–ãƒ¬ãƒ³ãƒ‰
 		}
 	}
 
 	/**
-	 * ‰æ‘œ‚ğ•ÏŒ`ƒRƒs[‚·‚éB
-	 * @param win ƒRƒs[æ‰æ–ÊB
-	 * @param dx ƒRƒs[æXB
-	 * @param dy ƒRƒs[Œ³XB
-	 * @param src ƒRƒs[Œ³‰æ‘œB
-	 * @param sx ƒRƒs[Œ³XB
-	 * @param sy ƒRƒs[Œ³YB
+	 * ç”»åƒã‚’å¤‰å½¢ã‚³ãƒ”ãƒ¼ã™ã‚‹ã€‚
+	 * @param win ã‚³ãƒ”ãƒ¼å…ˆç”»é¢ã€‚
+	 * @param dx ã‚³ãƒ”ãƒ¼å…ˆXã€‚
+	 * @param dy ã‚³ãƒ”ãƒ¼å…ƒXã€‚
+	 * @param src ã‚³ãƒ”ãƒ¼å…ƒç”»åƒã€‚
+	 * @param sx ã‚³ãƒ”ãƒ¼å…ƒXã€‚
+	 * @param sy ã‚³ãƒ”ãƒ¼å…ƒYã€‚
 	 */
 	public static synchronized void gsquare(final Bmscr win, final int[] dx, final int[] dy, final BufferedImage src,
 			final int[] sx, final int[] sy) {
@@ -254,13 +254,13 @@ public class GraphicsRenderer {
 		final BufferedImage dest = win.backImage;
 
 		if (dest.getType() != BufferedImage.TYPE_3BYTE_BGR) {
-			throw new IllegalArgumentException("ƒrƒbƒgƒ^ƒCƒv " + dest.getType() + " ‚ÍƒTƒ|[ƒg‚³‚ê‚Ü‚¹‚ñB");
+			throw new IllegalArgumentException("ãƒ“ãƒƒãƒˆã‚¿ã‚¤ãƒ— " + dest.getType() + " ã¯ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¾ã›ã‚“ã€‚");
 		}
 		if (src.getType() != BufferedImage.TYPE_3BYTE_BGR) {
-			throw new IllegalArgumentException("ƒrƒbƒgƒ^ƒCƒv " + src.getType() + " ‚ÍƒTƒ|[ƒg‚³‚ê‚Ü‚¹‚ñB");
+			throw new IllegalArgumentException("ãƒ“ãƒƒãƒˆã‚¿ã‚¤ãƒ— " + src.getType() + " ã¯ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¾ã›ã‚“ã€‚");
 		}
 
-		// •`‰ææ‚Ì Y À•W‚Ì”ÍˆÍ‚ğ‹‚ß‚éB
+		// æç”»å…ˆã® Y åº§æ¨™ã®ç¯„å›²ã‚’æ±‚ã‚ã‚‹ã€‚
 		int minY = dy[0];
 		int maxY = dy[0];
 		for (int i = 1; i < 4; ++i) {
@@ -278,7 +278,7 @@ public class GraphicsRenderer {
 			maxY = dest.getHeight();
 		}
 
-		// minY <= y < maxY ‚É‚Â‚¢‚ÄAˆês‚¸‚ÂƒRƒs[
+		// minY <= y < maxY ã«ã¤ã„ã¦ã€ä¸€è¡Œãšã¤ã‚³ãƒ”ãƒ¼
 		final int[] dxs = new int[2];
 		final int[] dys = new int[2];
 		final float[] sxs = new float[2];
@@ -286,9 +286,9 @@ public class GraphicsRenderer {
 
 		for (int y = minY; y < maxY; ++y) {
 
-			// ‚±‚Ì y À•W‚ğ’Ê‚é•Ó‚ğ’T‚µA‚»‚Ì‚Æ‚«‚Ì x À•W‚ğ‹L˜^
-			// ’Ê‚é•Ó‚ª•¡”‚ ‚éê‡i•’Ê‚Q–{‚ ‚éjA¶‚Ì‚Ù‚¤‚ªdxs[0]A‰E‚Ì‚Ù‚¤‚ªdxs[1] ‚É‚Í‚¢‚éB
-			// sxs/sys ‚É‚Í‚»‚Ì‚Æ‚«‚ÌƒRƒs[Œ³À•W‚ª“ü‚é
+			// ã“ã® y åº§æ¨™ã‚’é€šã‚‹è¾ºã‚’æ¢ã—ã€ãã®ã¨ãã® x åº§æ¨™ã‚’è¨˜éŒ²
+			// é€šã‚‹è¾ºãŒè¤‡æ•°ã‚ã‚‹å ´åˆï¼ˆæ™®é€šï¼’æœ¬ã‚ã‚‹ï¼‰ã€å·¦ã®ã»ã†ãŒdxs[0]ã€å³ã®ã»ã†ãŒdxs[1] ã«ã¯ã„ã‚‹ã€‚
+			// sxs/sys ã«ã¯ãã®ã¨ãã®ã‚³ãƒ”ãƒ¼å…ƒåº§æ¨™ãŒå…¥ã‚‹
 
 			// y is the y of the destination picture to be drawn
 			dys[0] = dys[1] = y;
@@ -302,17 +302,17 @@ public class GraphicsRenderer {
 				final float srx;
 				final float sry;
 				if (dy[i] == y) {
-					// n“_‚Ì y À•W‚ªˆê’v
+					// å§‹ç‚¹ã® y åº§æ¨™ãŒä¸€è‡´
 					x = dx[i];
 					srx = sx[i];
 					sry = sy[i];
 				} else if (dy[j] == y) {
-					// I“_‚Ì y À•W‚ªˆê’v
+					// çµ‚ç‚¹ã® y åº§æ¨™ãŒä¸€è‡´
 					x = dx[j];
 					srx = sx[j];
 					sry = sy[j];
 				} else if (dy[i] > y ^ dy[j] > y) {
-					// ‚Ü‚½‚ª‚Á‚Ä‚é
+					// ã¾ãŸãŒã£ã¦ã‚‹
 
 					final int toY = (y - dy[i]);
 					final int toJ = (dy[j] - dy[i]);
@@ -326,14 +326,14 @@ public class GraphicsRenderer {
 				// x is the x position where the line between the two corners (i and j) of the original image
 				// intersects the 
 
-				// x@‚ª¬‚³‚¢‚È‚ç¶•Ó
+				// xã€€ãŒå°ã•ã„ãªã‚‰å·¦è¾º
 				if (x < dxs[0]) {
 					dxs[0] = x;
 					sxs[0] = srx;
 					sys[0] = sry;
 				}
 
-				// x ‚ª‘å‚«‚¢‚È‚ç‰E•Ó
+				// x ãŒå¤§ãã„ãªã‚‰å³è¾º
 				if (x > dxs[1]) {
 					dxs[1] = x;
 					sxs[1] = srx;
@@ -347,7 +347,7 @@ public class GraphicsRenderer {
                                     @Override
                                     public void run() {
 
-                                        // ˆês•ªƒRƒs[
+                                        // ä¸€è¡Œåˆ†ã‚³ãƒ”ãƒ¼
                                         gsquare_line(win, dest, dxs, dys, src, sxs, sys);
                                     }
                                 }
@@ -407,14 +407,14 @@ public class GraphicsRenderer {
 			dw = dest.getWidth() - dx;
 		}
 
-		// ƒ\[ƒX‚ÌƒNƒŠƒbƒsƒ“ƒO‚Í‚µ‚È‚¢A¸”s‚µ‚½‚ç©ŒÈÓ”CB
+		// ã‚½ãƒ¼ã‚¹ã®ã‚¯ãƒªãƒƒãƒ”ãƒ³ã‚°ã¯ã—ãªã„ã€å¤±æ•—ã—ãŸã‚‰è‡ªå·±è²¬ä»»ã€‚
 
 		final int[] srcPixels = GraphicsRenderer.srcPixels;
 
 		final WritableRaster dr = dest.getRaster();
 		final Raster sr = src.getRaster();
 
-		// int ‚ÅŒvZ‚µ‚ÄƒXƒs[ƒhƒAƒbƒvI
+		// int ã§è¨ˆç®—ã—ã¦ã‚¹ãƒ”ãƒ¼ãƒ‰ã‚¢ãƒƒãƒ—ï¼
 
 		final int vsx = (int) (sw * 0x10000 / dw);
 		final int vsy = (int) (sh * 0x10000 / dw);
@@ -423,7 +423,7 @@ public class GraphicsRenderer {
 		int sry = (int) (sy * 0x10000);
 
 		if (vsy == 0) {
-			// ‰ñ“]–³‚µƒRƒs[‚Í‚æ‚­g‚í‚ê‚é‚Æv‚í‚ê‚é‚Ì‚Å‚¿‚å‚Á‚Æ‚¾‚¯‚‘¬‰»
+			// å›è»¢ç„¡ã—ã‚³ãƒ”ãƒ¼ã¯ã‚ˆãä½¿ã‚ã‚Œã‚‹ã¨æ€ã‚ã‚Œã‚‹ã®ã§ã¡ã‚‡ã£ã¨ã ã‘é«˜é€ŸåŒ–
 			final int syi = (int) sy;
 			for (int i = 0, end = dw * 3; i < end; i += 3) {
 
@@ -456,17 +456,17 @@ public class GraphicsRenderer {
 	}
 
 	/**
-	 * lŠpŒ`‚ğ•`‰æB
-	 * @param win •`‰ææ‰æ–ÊB
-	 * @param dx •`‰ææXB
-	 * @param dy •`‰ææYB
+	 * å››è§’å½¢ã‚’æç”»ã€‚
+	 * @param win æç”»å…ˆç”»é¢ã€‚
+	 * @param dx æç”»å…ˆXã€‚
+	 * @param dy æç”»å…ˆYã€‚
 	 */
 	public static synchronized void gsquare(final Bmscr win, int[] dx, int[] dy) {
 
 		final BufferedImage dest = win.backImage;
 
 		if (dest.getType() != BufferedImage.TYPE_3BYTE_BGR) {
-			throw new IllegalArgumentException("ƒrƒbƒgƒ^ƒCƒv " + dest.getType() + " ‚ÍƒTƒ|[ƒg‚³‚ê‚Ü‚¹‚ñB");
+			throw new IllegalArgumentException("ãƒ“ãƒƒãƒˆã‚¿ã‚¤ãƒ— " + dest.getType() + " ã¯ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¾ã›ã‚“ã€‚");
 		}
 
 		if (win.gmode < 3) {

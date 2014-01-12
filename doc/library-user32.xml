@@ -1,31 +1,31 @@
-<?xml version="1.0" encoding="Shift_JIS"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
  $Id: library-user32.xml,v 1.1 2006/02/11 17:19:30 Yuki Exp $
 -->
 <library name="user32">
 	<summary>
-		<p>user32.dll ���g�p���� Windows API �ł��B
+		<p>user32.dll を使用した Windows API です。
 		</p>
 	</summary>
-	<category name="���j���[���얽��">
-		<function name="CreateMenu" summary="���j���[�쐬" implement="yes" />
-		<function name="CreatePopupMenu" summary="�|�b�v�A�b�v���j���[�쐬" implement="yes" />
-		<function name="AppendMenuA" summary="���j���[���ړo�^" implement="partial" >
+	<category name="メニュー操作命令">
+		<function name="CreateMenu" summary="メニュー作成" implement="yes" />
+		<function name="CreatePopupMenu" summary="ポップアップメニュー作成" implement="yes" />
+		<function name="AppendMenuA" summary="メニュー項目登録" implement="partial" >
 			<remarks>
-				<p>�O���C�\�����Ȃ��������ڂ͍쐬�ł��܂���B<br />
-					�I�[�i�[�h���[�E�r�b�g�}�b�v�͎g�p�ł��܂���B
+				<p>グレイ表示しない無効項目は作成できません。<br />
+					オーナードロー・ビットマップは使用できません。
 				</p>
 			</remarks>
 		</function>
-		<function name="SetMenu" summary="�E�B���h�E�Ƀ��j���[��ݒ�" implement="yes" />
-		<function name="DrawMenuBar" summary="���j���[�o�[�ĕ`��" implement="yes" >
+		<function name="SetMenu" summary="ウィンドウにメニューを設定" implement="yes" />
+		<function name="DrawMenuBar" summary="メニューバー再描画" implement="yes" >
 			<remarks>
-				<p>�����s���܂���B</p>
+				<p>何も行いません。</p>
 			</remarks>
 		</function>
-		<function name="DestroyMenu" summary="���j���[�폜" implement="partial" >
+		<function name="DestroyMenu" summary="メニュー削除" implement="partial" >
 			<remarks>
-				<p>���݂̃o�[�W�����ł͑Ώۂ̃��j���[�������폜����܂��A�T�u���j���[�͍폜����Ȃ��̂Œ��ӂ��Ă��������B</p>
+				<p>現在のバージョンでは対象のメニューだけが削除されます、サブメニューは削除されないので注意してください。</p>
 			</remarks>
 		</function>
 	</category>

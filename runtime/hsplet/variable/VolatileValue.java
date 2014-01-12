@@ -8,9 +8,9 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * GUIƒRƒ“ƒgƒ[ƒ‹‚È‚Ç‚ÉŠÖ˜A•t‚¯‚ç‚ê‚½AƒŠƒAƒ‹ƒ^ƒCƒ€‚É’l‚ª•ÏX‚³‚ê‚éƒIƒuƒWƒFƒNƒgB
+ * GUIã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ãªã©ã«é–¢é€£ä»˜ã‘ã‚‰ã‚ŒãŸã€ãƒªã‚¢ãƒ«ã‚¿ã‚¤ãƒ ã«å€¤ãŒå¤‰æ›´ã•ã‚Œã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
  * <p>
- * ‚±‚ÌƒNƒ‰ƒX‚Í•Ê‚ÌƒIƒuƒWƒFƒNƒg‚ğ•ïŠÜ‚µA’l‚Ì•ÏX‚ğŒŸoAƒŠƒAƒ‹ƒ^ƒCƒ€‚ÉXV‚·‚é‚±‚Æ‚ªo—ˆ‚éB
+ * ã“ã®ã‚¯ãƒ©ã‚¹ã¯åˆ¥ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’åŒ…å«ã—ã€å€¤ã®å¤‰æ›´ã‚’æ¤œå‡ºã€ãƒªã‚¢ãƒ«ã‚¿ã‚¤ãƒ ã«æ›´æ–°ã™ã‚‹ã“ã¨ãŒå‡ºæ¥ã‚‹ã€‚
  * </p>
  * 
  * @author Yuki
@@ -18,19 +18,19 @@ import java.util.Set;
  */
 public class VolatileValue extends Operand {
 
-    /** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+    /** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
     private static final long serialVersionUID = -835641208389109876L;
-    /** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+    /** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
     private static final String fileVersionID = "$Id: VolatileValue.java,v 1.2.2.1 2006/08/02 12:13:06 Yuki Exp $";
-    /** ’l‚ğ•Û‚·‚éƒIƒuƒWƒFƒNƒgB */
+    /** å€¤ã‚’ä¿æŒã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚ */
     private Operand value;
-    /** ’l‚ğXV‚·‚éƒIƒuƒWƒFƒNƒgB */
+    /** å€¤ã‚’æ›´æ–°ã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚ */
     public Set<VolatileValueUpdater> updaters = new HashSet<VolatileValueUpdater>();
 
     /**
-     * ƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
+     * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
      *
-     * @param value ’l‚ğ•Û‚·‚éƒIƒuƒWƒFƒNƒgB
+     * @param value å€¤ã‚’ä¿æŒã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
      */
     public VolatileValue(final Operand value) {
 

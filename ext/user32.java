@@ -29,7 +29,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 
 /**
- * user32.dll ‚ğÀ‘•‚·‚éƒNƒ‰ƒX.
+ * user32.dll ã‚’å®Ÿè£…ã™ã‚‹ã‚¯ãƒ©ã‚¹.
  *
  * @author Yuki
  * @version $Revision: 1.2 $, $Date: 2006/05/20 06:12:07 $
@@ -57,7 +57,7 @@ public class user32 extends FunctionBase implements Serializable {
     public user32(final Context context) {
         this.context = context;
 
-        // ID = 0 ‚Íg—p‚µ‚È‚¢
+        // ID = 0 ã¯ä½¿ç”¨ã—ãªã„
         objects.add(new Object());
     }
 

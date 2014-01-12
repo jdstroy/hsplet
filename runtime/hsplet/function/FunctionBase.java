@@ -6,9 +6,9 @@ package hsplet.function;
 import hsplet.variable.Operand;
 
 /**
- * ŠÖ”ŒQƒNƒ‰ƒX‚ÌÀ‘•‚É•Ö—˜‚È‚¢‚­‚Â‚©‚ÌƒXƒ^ƒeƒBƒbƒNƒƒ\ƒbƒh‚ğ‚Á‚½ƒNƒ‰ƒXB
+ * é–¢æ•°ç¾¤ã‚¯ãƒ©ã‚¹ã®å®Ÿè£…ã«ä¾¿åˆ©ãªã„ãã¤ã‹ã®ã‚¹ã‚¿ãƒ†ã‚£ãƒƒã‚¯ãƒ¡ã‚½ãƒƒãƒ‰ã‚’æŒã£ãŸã‚¯ãƒ©ã‚¹ã€‚
  * <p>
- * V‚µ‚¢ŠÖ”ŒQƒNƒ‰ƒX‚ğì¬‚·‚é‚Æ‚«‚Í’Êí‚±‚ÌƒNƒ‰ƒX‚ğŠg’£‚·‚é‚ªA‚µ‚È‚­‚Ä‚à—Ç‚¢B
+ * æ–°ã—ã„é–¢æ•°ç¾¤ã‚¯ãƒ©ã‚¹ã‚’ä½œæˆã™ã‚‹ã¨ãã¯é€šå¸¸ã“ã®ã‚¯ãƒ©ã‚¹ã‚’æ‹¡å¼µã™ã‚‹ãŒã€ã—ãªãã¦ã‚‚è‰¯ã„ã€‚
  * </p>
  * 
  * @author Yuki
@@ -16,7 +16,7 @@ import hsplet.variable.Operand;
  */
 public class FunctionBase {
 
-  /** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+  /** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
   private static final String fileVersionID = "$Id: FunctionBase.java,v 1.1 2006/01/09 12:07:12 Yuki Exp $";
 
   protected static int toInt(final Operand v, final int vi, final int ifnull) {

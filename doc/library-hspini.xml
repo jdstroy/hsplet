@@ -1,29 +1,29 @@
-<?xml version="1.0" encoding="Shift_JIS"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
  $Id: library-hspini.xml,v 1.2 2006/05/20 06:12:06 Yuki Exp $
 -->
 <library name="hspini">
 	<summary>
-		<p>hspini �v���O�C���Ŏg�p�ł���g�����߂ł��B<br />
-			DLL �ł� hspini �� K-K ����ɂ���ĊJ������܂����B
-			<a href="http://www.chichibu.ne.jp/~kawahira/">http://www.chichibu.ne.jp/~kawahira/</a> ������\�ł��B
+		<p>hspini プラグインで使用できる拡張命令です。<br />
+			DLL 版の hspini は K-K さんによって開発されました。
+			<a href="http://www.chichibu.ne.jp/~kawahira/">http://www.chichibu.ne.jp/~kawahira/</a> より入手可能です。
 		</p>
 	</summary>
-	<category name="ini�t�@�C�����얽��">
-		<function name="iniset" summary="�g��ini�t�@�C����ݒ肵�܂�" implement="note">
-			<param name="file">�ݒ��ۑ�����t�@�C����</param>
-			<param name="section">�Z�N�V������</param>
+	<category name="iniファイル操作命令">
+		<function name="iniset" summary="使うiniファイルを設定します" implement="note">
+			<param name="file">設定を保存するファイル名</param>
+			<param name="section">セクション名</param>
 			<remarks>
-				<p>�ݒ���̓N�b�L�[�ɕۑ�����܂��B
-					�t�@�C�����E�Z�N�V�������́A�N�b�L�[���̓��Ƀv���t�B�b�N�X�Ƃ��đ}�����邱�Ƃň�Ӑ����������܂��B </p>
+				<p>設定情報はクッキーに保存されます。
+					ファイル名・セクション名は、クッキー名の頭にプレフィックスとして挿入することで一意性を実現します。 </p>
 				<p>
-					�N�b�L�[�����p�ł��Ȃ��Ƃ��� stat �� 1 ���Ԃ�܂��B
+					クッキーが利用できないときは stat に 1 が返ります。
 				</p>
 			</remarks>
 		</function>
-		<function name="iniget" summary="���l�f�[�^�ǂ݂���" implement="yes"/>
-		<function name="inigets" summary="������`�f�[�^�ǂ݂���" implement="yes"/>
-		<function name="iniput" summary="�f�[�^��������" implement="yes"/>
-		<function name="inidel" summary="�L�[���폜" implement="yes"/>	
+		<function name="iniget" summary="数値データ読みこみ" implement="yes"/>
+		<function name="inigets" summary="文字列形データ読みこみ" implement="yes"/>
+		<function name="iniput" summary="データ書き込み" implement="yes"/>
+		<function name="inidel" summary="キーを削除" implement="yes"/>	
 	</category>
 </library>

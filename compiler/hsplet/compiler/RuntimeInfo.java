@@ -9,32 +9,32 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 
 /**
- * ƒ‰ƒ“ƒ^ƒCƒ€‚ÉŠÖ‚·‚éî•ñiƒoƒCƒgƒR[ƒh‚Æƒƒ\ƒbƒh‚ÌŠÖ˜A•t‚¯j‚ğ’ñ‹Ÿ‚·‚éƒCƒ“ƒ^[ƒtƒFƒCƒXB
+ * ãƒ©ãƒ³ã‚¿ã‚¤ãƒ ã«é–¢ã™ã‚‹æƒ…å ±ï¼ˆãƒã‚¤ãƒˆã‚³ãƒ¼ãƒ‰ã¨ãƒ¡ã‚½ãƒƒãƒ‰ã®é–¢é€£ä»˜ã‘ï¼‰ã‚’æä¾›ã™ã‚‹ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã€‚
  * 
  * @author Yuki
  * @version $Revision: 1.2 $, $Date: 2006/01/13 05:20:55 $
  */
 public interface RuntimeInfo extends Serializable {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	static final String fileVersionID = "$Id: RuntimeInfo.java,v 1.2 2006/01/13 05:20:55 Yuki Exp $";
 
 	/**
-	 * ƒR[ƒh‚ğÀs‚·‚éƒNƒ‰ƒX‚ğæ“¾‚·‚éB
-	 * @param ax ƒoƒCƒgƒR[ƒhB
-	 * @param code –½—ßƒR[ƒhB
-	 * @return Às‚·‚éƒNƒ‰ƒXB
+	 * ã‚³ãƒ¼ãƒ‰ã‚’å®Ÿè¡Œã™ã‚‹ã‚¯ãƒ©ã‚¹ã‚’å–å¾—ã™ã‚‹ã€‚
+	 * @param ax ãƒã‚¤ãƒˆã‚³ãƒ¼ãƒ‰ã€‚
+	 * @param code å‘½ä»¤ã‚³ãƒ¼ãƒ‰ã€‚
+	 * @return å®Ÿè¡Œã™ã‚‹ã‚¯ãƒ©ã‚¹ã€‚
 	 */
 	public Class getClassFor(final ByteCode ax, final Code code);
 
 	/**
-	 * ƒR[ƒh‚ğÀs‚·‚éƒƒ\ƒbƒh‚ğæ“¾‚·‚éB
-	 * <p>‚±‚Ìƒƒ\ƒbƒh‚ÌéŒ¾‚³‚ê‚Ä‚¢‚éƒNƒ‰ƒX‚ªAÀÛ‚É–½—ß‚ğÀs‚·‚é•ÛØ‚Í–³‚¢B
-	 * 	ÀÛ‚É–½—ß‚ğÀs‚·‚éƒNƒ‰ƒX‚Í {@link RuntimeInfo#getClassFor(ByteCode,Code)} ‚Åæ“¾‚·‚éB
+	 * ã‚³ãƒ¼ãƒ‰ã‚’å®Ÿè¡Œã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰ã‚’å–å¾—ã™ã‚‹ã€‚
+	 * <p>ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã®å®£è¨€ã•ã‚Œã¦ã„ã‚‹ã‚¯ãƒ©ã‚¹ãŒã€å®Ÿéš›ã«å‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹ä¿è¨¼ã¯ç„¡ã„ã€‚
+	 * 	å®Ÿéš›ã«å‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹ã‚¯ãƒ©ã‚¹ã¯ {@link RuntimeInfo#getClassFor(ByteCode,Code)} ã§å–å¾—ã™ã‚‹ã€‚
 	 * </p>
-	 * @param ax ƒoƒCƒgƒR[ƒhB
-	 * @param code –½—ßƒR[ƒhB
-	 * @return Às‚·‚éƒƒ\ƒbƒhB
+	 * @param ax ãƒã‚¤ãƒˆã‚³ãƒ¼ãƒ‰ã€‚
+	 * @param code å‘½ä»¤ã‚³ãƒ¼ãƒ‰ã€‚
+	 * @return å®Ÿè¡Œã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰ã€‚
 	 */
 	public MethodInformation getMethodFor(final ByteCode ax, final ByteCode.Code code);
 

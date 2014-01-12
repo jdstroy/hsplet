@@ -1,114 +1,114 @@
-<?xml version="1.0" encoding="Shift_JIS" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!--
  $Id: introduction.xml,v 1.4 2006/01/22 16:00:57 Yuki Exp $
 -->
 <?xml-stylesheet type="text/xsl" href="page.xslt"?>
-<page name="HSPLet �̏Љ�">
+<page name="HSPLet の紹介">
 	<header>
 		<h1>
 			<img src="LetTitle.jpg" width="640" height="240" alt="HSPLet 3.0"/>
 		</h1>
 	</header>
-	<paragraph name="HSPLet �̏Љ�">
-		<p>HSPLet �̓C���^�[�v���^����
-			<a href="http://www.onionsoft.net/hsp/">HSP</a> �� Java �ɂ�郉���^�C���̎����ł��B
-			HSPLet �� Java �ɂ���ċL�q����Ă���̂Ŋ��ˑ������Ȃ��A�����̃v���b�g�t�H�[���� HSP
-			���̃v���O�����𓮍삳���邱�Ƃ��o���܂��B �܂��A�A�v���b�g�Ƃ��� HTML �y�[�W�ɖ��ߍ��ނ��Ƃ��o���܂��B </p>
-		<p>HSPLet �̃T�|�[�g����эŐV�ł̓����
-			<a href="http://www.group-finity.com">Group Finity �� Web �T�C�g</a>
-			�ōs���Ă��܂��B</p>
+	<paragraph name="HSPLet の紹介">
+		<p>HSPLet はインタープリタ言語
+			<a href="http://www.onionsoft.net/hsp/">HSP</a> の Java によるランタイムの実装です。
+			HSPLet は Java によって記述されているので環境依存が少なく、多くのプラットフォームで HSP
+			製のプログラムを動作させることが出来ます。 また、アプレットとして HTML ページに埋め込むことも出来ます。 </p>
+		<p>HSPLet のサポートおよび最新版の入手は
+			<a href="http://www.group-finity.com">Group Finity の Web サイト</a>
+			で行っています。</p>
 	</paragraph>
-	<paragraph name="�n�߂�O��">
-		<p>HSPLet ���g�p���邽�߂ɂ� HSP �̃v���O�������R���p�C���ł�����ƒm�����K�v�ł��B HSP �̊J������
-			<a href="http://www.onionsoft.net/hsp/">HSP �̌����T�C�g</a> �œ���ł��܂��B </p>
-		<p>�A�v���b�g�Ƃ��� Web �y�[�W�ɕ\������ɂ� FTP �ȂǁAWeb �T�C�g�̊Ǘ����@�Ɋւ���m�����K�v�ł��B
-			���������̃T�C�g�������Ă��Ȃ��Ƃ���킩��Ȃ��Ƃ��͘A�����Ă��炦��� Group Finity �̃T�C�g�ő㗝���J���邱�Ƃ��ł��܂��B
+	<paragraph name="始める前に">
+		<p>HSPLet を使用するためには HSP のプログラムがコンパイルできる環境と知識が必要です。 HSP の開発環境は
+			<a href="http://www.onionsoft.net/hsp/">HSP の公式サイト</a> で入手できます。 </p>
+		<p>アプレットとして Web ページに表示するには FTP など、Web サイトの管理方法に関する知識が必要です。
+			もし自分のサイトを持っていないときやわからないときは連絡してもらえれば Group Finity のサイトで代理公開することもできます。
 		</p>
-		<p>���̃h�L�������g�ł͏o���邾������ȊO�̊��A�m���͕K�v�Ȃ��悤�ɐ����������Ǝv���܂����A �킩��Ȃ��_������Ƃ��͂��m�点���������B
-			���̂悤�ȃt�B�[�h�o�b�N�̓h�L�������g�̏[���ɑ�ϖ𗧂��܂��B </p>
+		<p>このドキュメントでは出来るだけそれ以外の環境、知識は必要ないように説明したいと思いますが、 わからない点があるときはお知らせください。
+			そのようなフィードバックはドキュメントの充実に大変役立ちます。 </p>
 	</paragraph>
-	<paragraph name="�g����">
-		<p>HSPLet ���A�v���b�g�Ƃ��ē��삳������@��������܂��B</p>
+	<paragraph name="使い方">
+		<p>HSPLet をアプレットとして動作させる方法を説明します。</p>
 		<ol>
 			<li>
-				<p>�܂� Java �A�v���b�g�����s�ł���悤��
-					<a href="http://www.java.com/ja/">JRE</a> ���C���X�g�[�����܂��B IE
-					�Ȃ�t���̃T���v����\�����邾���Ŏ����I�ɃC���X�g�[������܂��B </p>
-				<p>JRE ���C���X�g�[������� *.jar ���A�v���b�g�Ƃ��Ď��s�ł���悤�ɂȂ�܂��B</p>
+				<p>まず Java アプレットを実行できるように
+					<a href="http://www.java.com/ja/">JRE</a> をインストールします。 IE
+					なら付属のサンプルを表示するだけで自動的にインストールされます。 </p>
+				<p>JRE をインストールすると *.jar をアプレットとして実行できるようになります。</p>
 			</li>
 			<li>
-				<p>���� HSP �R���p�C�����g�p���Ď��s�������v���O�������R���p�C������ *.ax ���쐬���܂��B</p>
+				<p>次に HSP コンパイラを使用して実行したいプログラムをコンパイルして *.ax を作成します。</p>
 			</li>
 			<li>
-				<p>HSPLet �t���� compiler.exe ���N�����āA*.ax �t�@�C�����p�b�N�t�@�C���ɒǉ����܂��B �R���p�C�������������
-					*.jar�i�A�v���b�g�̖{�́j�A*.html�i�A�v���b�g��\������ HTML�j �t�@�C�����o���オ��܂��B </p>
+				<p>HSPLet 付属の compiler.exe を起動して、*.ax ファイルをパックファイルに追加します。 コンパイルが完了すると
+					*.jar（アプレットの本体）、*.html（アプレットを表示する HTML） ファイルが出来上がります。 </p>
 			</li>
 			<li>
-				<p>*.html ��\������ƃv���O���������s�ł��܂��B</p>
+				<p>*.html を表示するとプログラムを実行できます。</p>
 			</li>
 			<li>
-				<p>�T�[�o�[�ɃA�b�v���[�h����Ƃ��́A*.jar�A*.html �𓯂��t�H���_�ɂ����Ă��������A*.ax
-					��p�b�N�t�@�C���ɋl�ߍ��񂾃t�@�C�����ꏏ�ɃA�b�v���[�h����K�v�͂���܂���B</p>
+				<p>サーバーにアップロードするときは、*.jar、*.html を同じフォルダにおいてください、*.ax
+					やパックファイルに詰め込んだファイルを一緒にアップロードする必要はありません。</p>
 			</li>
 		</ol>
 	</paragraph>
-	<paragraph name="�g�p��̒���">
-		<p>HSPLet �p�Ƀv���O�����������ۂɒ��ӂ��Ȃ���΂����Ȃ����Ƃ�����������܂��B </p>
+	<paragraph name="使用上の注意">
+		<p>HSPLet 用にプログラムを書く際に注意しなければいけないことがいくつかあります。 </p>
 		<ul>
 			<li>
-				<strong>���ׂĂ̖��߂��T�|�[�g����Ă���킯�ł͂���܂���</strong>
-				<p>�Z�L�����e�B����̂��閽�߂�A�v���b�g�t�H�[���Ɉˑ��������߁A���邢�� Java
-					�ł͎��s�ł��Ȃ����߂Ȃǂ̓T�|�[�g����Ă��܂���B </p>
-				<p>�T�|�[�g����Ă��閽�߂̒��ł��A�ꕔ�̋@�\�����g�p����Ȃ����̂� HSPLet
-					�ł����@�\���Ȃ��g�����s���Ă�����̂Ȃǂ�����܂��B
-					���߃T�|�[�g�󋵂̃��X�g�Ƀ����N�̕t���Ă�����̂́A�t������������̂ŕK���ǂ�ł����Ă��������B </p>
+				<strong>すべての命令がサポートされているわけではありません</strong>
+				<p>セキュリティ上問題のある命令や、プラットフォームに依存した命令、あるいは Java
+					では実行できない命令などはサポートされていません。 </p>
+				<p>サポートされている命令の中でも、一部の機能しか使用されないものや HSPLet
+					でしか機能しない拡張が行われているものなどもあります。
+					命令サポート状況のリストにリンクの付いているものは、付加説明があるので必ず読んでおいてください。 </p>
 			</li>
 			<li>
-				<strong>�A�v���b�g�Ƃ��Ďg�p����Ƃ��́Acodebase
-					����̃f�B���N�g����̃t�@�C���͓ǂݍ��߂܂���</strong>
-				<p>codebase �͕K���K�v�ȑS�Ẵt�@�C�� (hsplet.jar ���܂�)
-					������̃f�B���N�g�����w�肷��悤�ɂ��Ă��������B �i���ʂ� codebase ���ӎ�����K�v�͂���܂���B�j </p>
+				<strong>アプレットとして使用するときは、codebase
+					より上のディレクトリ上のファイルは読み込めません</strong>
+				<p>codebase は必ず必要な全てのファイル (hsplet.jar を含む)
+					よりも上のディレクトリを指定するようにしてください。 （普通は codebase を意識する必要はありません。） </p>
 			</li>
 			<li>
-				<strong>���ӂ����߂��Ă���̂ł͂Ȃ����Ǝv����悤�ȃv���O�����͑g�܂Ȃ�</strong>
-				<p>�_�u���N���b�N���Ȃ���Ύ��s����Ȃ� exe �t�@�C���ƈ���� HSPLet �̓y�[�W��\�����邾���Ŏ����I�Ɏ��s����܂��B
-					�y�[�W��\�������l���s���Ɋ�����悤�ȃv���O�����͑g�܂Ȃ��悤�ɂ��܂��傤�B HSPLet ��A�Ђ��Ă� HSP
-					�S�̂ɑ΂��Ĉ����C���[�W��������邱�ƂɂȂ肩�˂܂���B </p>
-				<p>���ɕʃE�B���h�E��\������v���O�������쐬����Ƃ��͒��ӂ��Ă��������B</p>
+				<strong>悪意がこめられているのではないかと思われるようなプログラムは組まない</strong>
+				<p>ダブルクリックしなければ実行されない exe ファイルと違って HSPLet はページを表示するだけで自動的に実行されます。
+					ページを表示した人が不快に感じるようなプログラムは組まないようにしましょう。 HSPLet や、ひいては HSP
+					全体に対して悪いイメージを持たれることになりかねません。 </p>
+				<p>特に別ウィンドウを表示するプログラムを作成するときは注意してください。</p>
 			</li>
 		</ul>
 	</paragraph>
-	<paragraph name="HTML �̃J�X�^�}�C�Y">
-		<p>�I���W�i���̃e���v���[�g���g�p������A�����������ꂽ HTML ���C������Ƃ��͈ȉ��̂��Ƃɒ��ӂ��Ă��������B </p>
+	<paragraph name="HTML のカスタマイズ">
+		<p>オリジナルのテンプレートを使用したり、自動生成された HTML を修正するときは以下のことに注意してください。 </p>
 		<ul>
 			<li>
-				<strong>�R�����g���폜�����菑���������肵�Ȃ�</strong>
-				<p>�������ꂽ HTML ���̃R�����g�� IE �� Firefox�AOpera �̗����Ő������\�����邽�߂ɏd�v�ȈӖ��������Ă��܂��B
-					�R�����g������Ƃ����ďC��������폜����Ɛ������\���ł��Ȃ��Ȃ�܂��B </p>
+				<strong>コメントを削除したり書き換えたりしない</strong>
+				<p>生成された HTML 内のコメントは IE と Firefox、Opera の両方で正しく表示するために重要な意味を持っています。
+					コメントだからといって修正したり削除すると正しく表示できなくなります。 </p>
 			</li>
 			<li>
-				<p>HSPLet �ւ̓����̃����N�͍폜���Ă����܂��܂��񂪁A��葽���̕��� HSPLet ���g�p���Ă��炦��悤�ɉ��炩�̌`�Ŏc���Ă����Ă��炦��ƍK���ł��B
+				<p>HSPLet への入手先のリンクは削除してもかまいませんが、より多くの方に HSPLet を使用してもらえるように何らかの形で残しておいてもらえると幸せです。
 					 </p>
 			</li>
 		</ul>
 	</paragraph>
-	<paragraph name="�g�����C�u�����̎g�p">
-		<p>HSPLet �ł� Windows �Ɉˑ����� DLL �͎g�p�ł��܂���B ���̑���AHSPLet
-			�p�ɍ쐬���ꂽ��p�̃��C�u�����i�ȍ~�g�����C�u�����ƌĂт܂��j���g�p���邱�Ƃ��ł��܂��B �쐬�����g�����C�u�����ɑΉ�����N���X�� jar
-			�t�@�C���� lib �t�H���_���ɃR�s�[����ƁA �R���p�C���Ƀ`�F�b�N�{�b�N�X���\�������̂ŁA�`�F�b�N������Ύg�p�ł��܂��B </p>
+	<paragraph name="拡張ライブラリの使用">
+		<p>HSPLet では Windows に依存する DLL は使用できません。 その代わり、HSPLet
+			用に作成された専用のライブラリ（以降拡張ライブラリと呼びます）を使用することができます。 作成した拡張ライブラリに対応するクラスの jar
+			ファイルを lib フォルダ内にコピーすると、 コンパイラにチェックボックスが表示されるので、チェックをつければ使用できます。 </p>
 		
-		<p>�g�����C�u�����̍쐬�@�ɂ��Ă� src.zip ���ɓ����Ă��� winmm.java �Ȃǂ��Q�l�ɂ��Ă��������B </p>
+		<p>拡張ライブラリの作成法については src.zip 内に入っている winmm.java などを参考にしてください。 </p>
 	</paragraph>
 	
-	<paragraph name="�M�������ւ̓��e">
+	<paragraph name="ギャラリへの投稿">
 		
 		<p>
-			<a href="http://www.group-finity.com/">Group Finity �� Web �T�C�g</a>�ł� HSPLet
-			�ɂ��A�v���b�g��A�g�����C�u�����̓��e���󂯕t���Ă��܂��B ���M�삪�ł����為�Г��e���Ă��������B ���e�̕��@��
-			<a href="mailto:yuki@group-finity.com">���[��</a> �܂��͌f���ɂāA
-			�`���́A�A�v���b�g�̃t�@�C���ꎮ�𓊍e���A
-			<a href="http://www.group-finity.com/">Group Finity �� Web �T�C�g</a>
-			���ɒu���`�ł��A���ۂɎg�p���Ă���y�[�W�Ƀ����N�𒣂�`�ł����܂��܂���B </p>
+			<a href="http://www.group-finity.com/">Group Finity の Web サイト</a>では HSPLet
+			によるアプレットや、拡張ライブラリの投稿を受け付けています。 自信作ができたらぜひ投稿してください。 投稿の方法は
+			<a href="mailto:yuki@group-finity.com">メール</a> または掲示板にて、
+			形式は、アプレットのファイル一式を投稿し、
+			<a href="http://www.group-finity.com/">Group Finity の Web サイト</a>
+			内に置く形でも、実際に使用しているページにリンクを張る形でもかまいません。 </p>
 	</paragraph>
 	
 </page>

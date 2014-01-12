@@ -6,10 +6,10 @@ package hsplet;
 import java.io.Serializable;
 
 /**
- * button ���荞�݂Ȃǂ̃^�X�N�̃C���^�[�t�F�C�X�B
+ * button 割り込みなどのタスクのインターフェイス。
  * <p>
- * HSPLet 3.0 �� GUI �ƃX�N���v�g�������ʃX���b�h�ōs���邽�߁Abutton �Ȃǂ̃C�x���g�𑦍��Ɏ��s���邱�Ƃ��o���Ȃ��B ���荞�݂����������Ƃ��́A�R���e�L�X�g�ɂ��̃^�X�N��ǉ����Ă����A���̌��
- * await/wait/stop ���Ɏ��s����B
+ * HSPLet 3.0 は GUI とスクリプト処理が別スレッドで行われるため、button などのイベントを即座に実行することが出来ない。 割り込みが発生したときは、コンテキストにこのタスクを追加しておき、その後の
+ * await/wait/stop 時に実行する。
  * </p>
  * 
  * @author Yuki
@@ -17,13 +17,13 @@ import java.io.Serializable;
  */
 public interface Task extends Serializable {
 
-  /** ���̃N���X���܂ރ\�[�X�t�@�C���̃o�[�W����������B */
+  /** このクラスを含むソースファイルのバージョン文字列。 */
   static final String fileVersionID = "$Id: Task.java,v 1.1 2006/01/09 12:07:13 Yuki Exp $";
 
   /**
-   * �^�X�N�����s����B
+   * タスクを実行する。
    * 
-   * @param context ���s�R���e�L�X�g�B
+   * @param context 実行コンテキスト。
    */
   public void run(final Context context);
 }

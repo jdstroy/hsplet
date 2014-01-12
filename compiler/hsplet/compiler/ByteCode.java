@@ -9,25 +9,25 @@ import java.io.InputStream;
 import java.io.Serializable;
 
 /**
- * HSP ‚Ì’†ŠÔƒR[ƒh(*.ax)‚Ìƒf[ƒ^‚ğ‚ ‚ç‚í‚·ƒf[ƒ^ƒNƒ‰ƒXB
+ * HSP ã®ä¸­é–“ã‚³ãƒ¼ãƒ‰(*.ax)ã®ãƒ‡ãƒ¼ã‚¿ã‚’ã‚ã‚‰ã‚ã™ãƒ‡ãƒ¼ã‚¿ã‚¯ãƒ©ã‚¹ã€‚
  * 
- * ’†ŠÔƒR[ƒh‚Í‘å‚«‚­•ª‚¯‚ÄA
+ * ä¸­é–“ã‚³ãƒ¼ãƒ‰ã¯å¤§ããåˆ†ã‘ã¦ã€
  * <ul>
- * <li>ƒwƒbƒ_</li>
- * <li>ƒR[ƒhƒZƒOƒƒ“ƒg</li>
- * <li>ƒf[ƒ^ƒZƒOƒƒ“ƒg</li>
- * <li>ƒ‰ƒxƒ‹ƒIƒtƒZƒbƒg</li>
- * <li>ƒfƒoƒbƒOî•ñ</li>
- * <li>ƒ‰ƒCƒuƒ‰ƒŠî•ñ</li>
- * <li>ŠÖ”î•ñ</li>
- * <li>ŠÖ”‚Ìƒpƒ‰ƒ[ƒ^î•ñ</li>
- * <li>ŒÃ‚¢ŠÖ”î•ñ(HSPLet ‚Å‚Íg—p‚µ‚È‚¢)</li>
- * <li>HPIî•ñ(HSPLet ‚Å‚Íg—p‚µ‚È‚¢)</li>
+ * <li>ãƒ˜ãƒƒãƒ€</li>
+ * <li>ã‚³ãƒ¼ãƒ‰ã‚»ã‚°ãƒ¡ãƒ³ãƒˆ</li>
+ * <li>ãƒ‡ãƒ¼ã‚¿ã‚»ã‚°ãƒ¡ãƒ³ãƒˆ</li>
+ * <li>ãƒ©ãƒ™ãƒ«ã‚ªãƒ•ã‚»ãƒƒãƒˆ</li>
+ * <li>ãƒ‡ãƒãƒƒã‚°æƒ…å ±</li>
+ * <li>ãƒ©ã‚¤ãƒ–ãƒ©ãƒªæƒ…å ±</li>
+ * <li>é–¢æ•°æƒ…å ±</li>
+ * <li>é–¢æ•°ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿æƒ…å ±</li>
+ * <li>å¤ã„é–¢æ•°æƒ…å ±(HSPLet ã§ã¯ä½¿ç”¨ã—ãªã„)</li>
+ * <li>HPIæƒ…å ±(HSPLet ã§ã¯ä½¿ç”¨ã—ãªã„)</li>
  * </ul>
- * ‚©‚ç¬‚è—§‚Á‚Ä‚¢‚éB
+ * ã‹ã‚‰æˆã‚Šç«‹ã£ã¦ã„ã‚‹ã€‚
  * 
  * <p>
- * ‚±‚ÌƒNƒ‰ƒX‚Í•s•Ï‚È‚Ì‚ÅAƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ÉƒoƒCƒgƒf[ƒ^‚ğ“n‚·‚±‚Æ‚Å‰Šú‰»‚·‚éB
+ * ã“ã®ã‚¯ãƒ©ã‚¹ã¯ä¸å¤‰ãªã®ã§ã€ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã«ãƒã‚¤ãƒˆãƒ‡ãƒ¼ã‚¿ã‚’æ¸¡ã™ã“ã¨ã§åˆæœŸåŒ–ã™ã‚‹ã€‚
  * </p>
  * 
  * @author Yuki
@@ -35,47 +35,47 @@ import java.io.Serializable;
  */
 public final class ByteCode implements Serializable {
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = 6171509589300649390L;
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: ByteCode.java,v 1.2 2006/01/13 20:32:11 Yuki Exp $";
 
-	/** ƒwƒbƒ_‚ÉŠi”[‚³‚ê‚Ä‚¢‚½î•ñB */
+	/** ãƒ˜ãƒƒãƒ€ã«æ ¼ç´ã•ã‚Œã¦ã„ãŸæƒ…å ±ã€‚ */
 	public final Header header;
 
-	/** ƒR[ƒhƒZƒOƒƒ“ƒg‚Ì“à—eB */
+	/** ã‚³ãƒ¼ãƒ‰ã‚»ã‚°ãƒ¡ãƒ³ãƒˆã®å†…å®¹ã€‚ */
 	public final Code[] codes;
 
-	/** ƒf[ƒ^ƒZƒOƒƒ“ƒg‚Ì“à—eB */
+	/** ãƒ‡ãƒ¼ã‚¿ã‚»ã‚°ãƒ¡ãƒ³ãƒˆã®å†…å®¹ã€‚ */
 	public final byte[] datas;
 
 	/**
-	 * ƒ‰ƒxƒ‹‚ÌƒIƒtƒZƒbƒg‚Ì”z—ñB
+	 * ãƒ©ãƒ™ãƒ«ã®ã‚ªãƒ•ã‚»ãƒƒãƒˆã®é…åˆ—ã€‚
 	 * <p>
-	 * ‚±‚Ì’l‚ÍA codes[?].offset ‚Å“¾‚ç‚ê‚é’l‚É‚È‚éB codes “à‚Å‚ÌƒCƒ“ƒfƒbƒNƒX‚Å‚Í‚È‚¢‚Ì‚Å’ˆÓ‚·‚é‚±‚ÆB
+	 * ã“ã®å€¤ã¯ã€ codes[?].offset ã§å¾—ã‚‰ã‚Œã‚‹å€¤ã«ãªã‚‹ã€‚ codes å†…ã§ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã§ã¯ãªã„ã®ã§æ³¨æ„ã™ã‚‹ã“ã¨ã€‚
 	 * </p>
 	 * 
 	 */
 	public final int[] labels;
 
-	/** ƒfƒoƒbƒOî•ñB */
+	/** ãƒ‡ãƒãƒƒã‚°æƒ…å ±ã€‚ */
 	public final int[] debugInfo;
 
-	/** ƒ‰ƒCƒuƒ‰ƒŠî•ñB */
+	/** ãƒ©ã‚¤ãƒ–ãƒ©ãƒªæƒ…å ±ã€‚ */
 	public final Library[] libraries;
 
-	/** ŠÖ”î•ñB */
+	/** é–¢æ•°æƒ…å ±ã€‚ */
 	public final Function[] functions;
 
-	/** ŠÖ”‚Ìƒpƒ‰ƒ[ƒ^î•ñB */
+	/** é–¢æ•°ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿æƒ…å ±ã€‚ */
 	public final Parameter[] parameters;
 
 	/**
-	 * ƒƒ‚ƒŠã‚ÌƒoƒCƒg”z—ñ‚©‚ç’†ŠÔƒR[ƒh‚ğ“Ç‚İ‚ŞB
+	 * ãƒ¡ãƒ¢ãƒªä¸Šã®ãƒã‚¤ãƒˆé…åˆ—ã‹ã‚‰ä¸­é–“ã‚³ãƒ¼ãƒ‰ã‚’èª­ã¿è¾¼ã‚€ã€‚
 	 * 
-	 * @param bytes ’†ŠÔƒR[ƒh‚ªŠi”[‚³‚ê‚½”z—ñB
-	 * @throws IOException “Ç‚İæ‚èƒGƒ‰[‚ª”­¶‚µ‚½‚Æ‚«B
+	 * @param bytes ä¸­é–“ã‚³ãƒ¼ãƒ‰ãŒæ ¼ç´ã•ã‚ŒãŸé…åˆ—ã€‚
+	 * @throws IOException èª­ã¿å–ã‚Šã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ãŸã¨ãã€‚
 	 */
 	public ByteCode(final byte[] bytes) throws IOException {
 
@@ -83,10 +83,10 @@ public final class ByteCode implements Serializable {
 	}
 
 	/**
-	 * —^‚¦‚ç‚ê‚½ƒXƒgƒŠ[ƒ€‚©‚ç’†ŠÔƒR[ƒh‚ğ“Ç‚İ‚ŞB
+	 * ä¸ãˆã‚‰ã‚ŒãŸã‚¹ãƒˆãƒªãƒ¼ãƒ ã‹ã‚‰ä¸­é–“ã‚³ãƒ¼ãƒ‰ã‚’èª­ã¿è¾¼ã‚€ã€‚
 	 * 
-	 * @param stream ’†ŠÔƒR[ƒh‚ªŠi”[‚³‚ê‚½ƒXƒgƒŠ[ƒ€B
-	 * @throws IOException “Ç‚İæ‚èƒGƒ‰[‚ª”­¶‚µ‚½‚Æ‚«B
+	 * @param stream ä¸­é–“ã‚³ãƒ¼ãƒ‰ãŒæ ¼ç´ã•ã‚ŒãŸã‚¹ãƒˆãƒªãƒ¼ãƒ ã€‚
+	 * @throws IOException èª­ã¿å–ã‚Šã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ãŸã¨ãã€‚
 	 */
 	public ByteCode(final InputStream stream) throws IOException {
 
@@ -105,7 +105,7 @@ public final class ByteCode implements Serializable {
 	}
 
 	/**
-	 * “–‚Éî•ñ‚ğ“Ç‚İæ‚Á‚Ä‚¢‚éƒXƒgƒŠ[ƒ€B
+	 * å½“ã«æƒ…å ±ã‚’èª­ã¿å–ã£ã¦ã„ã‚‹ã‚¹ãƒˆãƒªãƒ¼ãƒ ã€‚
 	 */
 	private LEInputStream in;
 
@@ -120,14 +120,14 @@ public final class ByteCode implements Serializable {
 
 			codes[codeCount++] = new Code(in);
 
-			// if/else ‚Ì‚Æ‚«‚ÍŸ‚ÌWORD‚ªˆÚ“®—Êi‘Š‘Î WORD ”j‚ğ‚ ‚ç‚í‚·B
+			// if/else ã®ã¨ãã¯æ¬¡ã®WORDãŒç§»å‹•é‡ï¼ˆç›¸å¯¾ WORD æ•°ï¼‰ã‚’ã‚ã‚‰ã‚ã™ã€‚
 			if (codes[codeCount - 1].type == Code.Type.CmpCmd) {
 				codes[codeCount++] = new Code(Code.Type.JumpOffset, in
 						.readShort() * 2);
 			}
 		}
 
-		codeCount -= 2; // ÅŒã‚Ì“ñ‚Â(goto *lastLabel)‚Í‚Æ‚è‚ ‚¦‚¸‚¢‚ç‚È‚¢B
+		codeCount -= 2; // æœ€å¾Œã®äºŒã¤(goto *lastLabel)ã¯ã¨ã‚Šã‚ãˆãšã„ã‚‰ãªã„ã€‚
 
 		final Code[] result = new Code[codeCount];
 
@@ -155,8 +155,8 @@ public final class ByteCode implements Serializable {
 
 		for (int index = 0; index < result.length; ++index) {
 
-			// ƒ‰ƒxƒ‹‚Ì’l‚ÍƒR[ƒhƒZƒOƒƒ“ƒg‚Ìæ“ª‚©‚ç‚Ì‘Š‘ÎƒAƒhƒŒƒX‚É‚È‚Á‚Ä‚¢‚éB
-			// WORD ’PˆÊ‚È‚Ì‚Å2”{‚µ‚Ä‚â‚é•K—v‚ª‚ ‚éB
+			// ãƒ©ãƒ™ãƒ«ã®å€¤ã¯ã‚³ãƒ¼ãƒ‰ã‚»ã‚°ãƒ¡ãƒ³ãƒˆã®å…ˆé ­ã‹ã‚‰ã®ç›¸å¯¾ã‚¢ãƒ‰ãƒ¬ã‚¹ã«ãªã£ã¦ã„ã‚‹ã€‚
+			// WORD å˜ä½ãªã®ã§2å€ã—ã¦ã‚„ã‚‹å¿…è¦ãŒã‚ã‚‹ã€‚
 
 			result[index] = header.codes.offset + in.readInt() * 2;
 		}
@@ -221,7 +221,7 @@ public final class ByteCode implements Serializable {
 	}
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒgƒtƒ@ƒCƒ‹’†‚Ìƒwƒbƒ_‚ğ•\‚·ƒNƒ‰ƒXB
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ä¸­ã®ãƒ˜ãƒƒãƒ€ã‚’è¡¨ã™ã‚¯ãƒ©ã‚¹ã€‚
 	 * 
 	 * @author Yuki
 	 */
@@ -254,10 +254,10 @@ public final class ByteCode implements Serializable {
 			functions = new OffsetSize(in.readInt(), in.readInt());
 			parameters = new OffsetSize(in.readInt(), in.readInt());
 
-			// FUNC2 g—p‚µ‚È‚¢
+			// FUNC2 ä½¿ç”¨ã—ãªã„
 			new OffsetSize(in.readInt(), in.readInt());
 
-			// HPI g—p‚µ‚È‚¢
+			// HPI ä½¿ç”¨ã—ãªã„
 			new OffsetSize(in.readInt(), in.readInt());
 		}
 
@@ -288,7 +288,7 @@ public final class ByteCode implements Serializable {
 	/**
 	 * @author Yuki
 	 * 
-	 * ƒIƒuƒWƒFƒNƒgƒtƒ@ƒCƒ‹’†‚ÌƒR[ƒhƒZƒOƒƒ“ƒg‚ÌŠeƒGƒ“ƒgƒŠ‚ğ•\‚·ƒNƒ‰ƒXB
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ä¸­ã®ã‚³ãƒ¼ãƒ‰ã‚»ã‚°ãƒ¡ãƒ³ãƒˆã®å„ã‚¨ãƒ³ãƒˆãƒªã‚’è¡¨ã™ã‚¯ãƒ©ã‚¹ã€‚
 	 */
 	public final static class Code implements Serializable {
 
@@ -379,7 +379,7 @@ public final class ByteCode implements Serializable {
 	/**
 	 * @author Yuki
 	 * 
-	 * Šg’£ƒvƒ‰ƒOƒCƒ“‚ÌƒGƒ“ƒgƒŠ‚ğ•\‚·ƒNƒ‰ƒXB
+	 * æ‹¡å¼µãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®ã‚¨ãƒ³ãƒˆãƒªã‚’è¡¨ã™ã‚¯ãƒ©ã‚¹ã€‚
 	 */
 	public final static class Library implements Serializable {
 
@@ -407,7 +407,7 @@ public final class ByteCode implements Serializable {
 	/**
 	 * @author Yuki
 	 * 
-	 * ŠÖ”‚ÌƒGƒ“ƒgƒŠ‚ğ•\‚·ƒNƒ‰ƒXB
+	 * é–¢æ•°ã®ã‚¨ãƒ³ãƒˆãƒªã‚’è¡¨ã™ã‚¯ãƒ©ã‚¹ã€‚
 	 */
 	public static final class Function implements Serializable {
 

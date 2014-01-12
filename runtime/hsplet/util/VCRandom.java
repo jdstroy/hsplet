@@ -4,7 +4,7 @@
 package hsplet.util;
 
 /**
- * VC++‚Æ“¯‚¶ŒvZ®‚Ì‹[——”B
+ * VC++ã¨åŒã˜è¨ˆç®—å¼ã®æ“¬ä¼¼ä¹±æ•°ã€‚
  * 
  * @author Yuki
  * @version $Revision: 1.1 $, $Date: 2006/01/21 12:48:19 $
@@ -22,8 +22,8 @@ public class VCRandom {
 	private long x = S;
 
 	/**
-	 * Ÿ‚Ì—”’l‚ğ“¾‚éB
-	 * @return Ÿ‚Ì—”’lB
+	 * æ¬¡ã®ä¹±æ•°å€¤ã‚’å¾—ã‚‹ã€‚
+	 * @return æ¬¡ã®ä¹±æ•°å€¤ã€‚
 	 */
 	public int rand() {
 		x = x * A + C;
@@ -31,8 +31,8 @@ public class VCRandom {
 	}
 
 	/**
-	 * —”‚ğ‰Šú‰»‚·‚éB
-	 * @param s ƒV[ƒhB
+	 * ä¹±æ•°ã‚’åˆæœŸåŒ–ã™ã‚‹ã€‚
+	 * @param s ã‚·ãƒ¼ãƒ‰ã€‚
 	 */
 	public void srand(int s) {
 		x = s;

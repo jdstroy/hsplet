@@ -50,17 +50,17 @@ import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 
 /**
- * ƒRƒ“ƒpƒCƒ‰‚Ì GUI ƒtƒƒ“ƒgƒGƒ“ƒhB
+ * ã‚³ãƒ³ãƒ‘ã‚¤ãƒ©ã® GUI ãƒ•ãƒ­ãƒ³ãƒˆã‚¨ãƒ³ãƒ‰ã€‚
  * 
  * @author Yuki
  * @version $Revision: 1.10 $, $Date: 2006/05/09 11:57:31 $
  */
 public class GuiFrontEnd extends JFrame {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: GuiFrontEnd.java,v 1.10 2006/05/09 11:57:31 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = 4690822266500902135L;
 
 	private static final BufferedImage logoImage;
@@ -107,7 +107,7 @@ public class GuiFrontEnd extends JFrame {
 		if (strfCheckBox == null) {
 			strfCheckBox = new JCheckBox();
 			strfCheckBox.setActionCommand("strf");
-			strfCheckBox.setText("strf‚ğg‚¤");
+			strfCheckBox.setText("strfã‚’ä½¿ã†");
 		}
 		return strfCheckBox;
 	}
@@ -571,7 +571,7 @@ public class GuiFrontEnd extends JFrame {
 
 		if (mp3CheckBox == null) {
 			mp3CheckBox = new JCheckBox();
-			mp3CheckBox.setText("mp3‚ğg‚¤");
+			mp3CheckBox.setText("mp3ã‚’ä½¿ã†");
 			mp3CheckBox.setActionCommand("mp3");
 		}
 		return mp3CheckBox;
@@ -831,8 +831,8 @@ public class GuiFrontEnd extends JFrame {
 		if (runButton == null) {
 			runButton = new JButton();
 			runButton.setEnabled(true);
-			runButton.setActionCommand("Às");
-			runButton.setText("ƒeƒXƒgÀs");
+			runButton.setActionCommand("å®Ÿè¡Œ");
+			runButton.setText("ãƒ†ã‚¹ãƒˆå®Ÿè¡Œ");
 			runButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					run();
@@ -1052,7 +1052,7 @@ public class GuiFrontEnd extends JFrame {
 			}
 
 			public String getDescription() {
-				return "PACKFILE ‚Ü‚½‚Í’Ç‰Á‚·‚éƒtƒ@ƒCƒ‹";
+				return "PACKFILE ã¾ãŸã¯è¿½åŠ ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«";
 			}
 		});
 
@@ -1169,7 +1169,7 @@ public class GuiFrontEnd extends JFrame {
 			}
 
 			public String getDescription() {
-				return "Java ƒA[ƒJƒCƒu";
+				return "Java ã‚¢ãƒ¼ã‚«ã‚¤ãƒ–";
 			}
 		});
 
@@ -1201,7 +1201,7 @@ public class GuiFrontEnd extends JFrame {
 			}
 
 			public String getDescription() {
-				return "HTML ƒy[ƒW";
+				return "HTML ãƒšãƒ¼ã‚¸";
 			}
 		});
 
@@ -1248,7 +1248,7 @@ public class GuiFrontEnd extends JFrame {
 			}
 
 			public String getDescription() {
-				return "HTML ƒeƒ“ƒvƒŒ[ƒg";
+				return "HTML ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆ";
 			}
 		});
 
@@ -1357,7 +1357,7 @@ public class GuiFrontEnd extends JFrame {
 	private void exit() {
 
 		if (modified) {
-			switch (JOptionPane.showConfirmDialog(this, "İ’è‚ª•ÏX‚³‚ê‚Ä‚¢‚Ü‚·A•Û‘¶‚µ‚Ü‚·‚©H", getTitle(),
+			switch (JOptionPane.showConfirmDialog(this, "è¨­å®šãŒå¤‰æ›´ã•ã‚Œã¦ã„ã¾ã™ã€ä¿å­˜ã—ã¾ã™ã‹ï¼Ÿ", getTitle(),
 					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE)) {
 			case JOptionPane.CANCEL_OPTION:
 				return;
@@ -1527,7 +1527,7 @@ public class GuiFrontEnd extends JFrame {
 
 		if (compileButton == null) {
 			compileButton = new JButton();
-			compileButton.setText("ƒRƒ“ƒpƒCƒ‹");
+			compileButton.setText("ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«");
 			compileButton.setEnabled(true);
 			compileButton.addActionListener(new java.awt.event.ActionListener() {
 

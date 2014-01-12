@@ -1,77 +1,77 @@
-<?xml version="1.0" encoding="Shift_JIS" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!--
  $Id: sample.xml,v 1.3 2006/02/27 15:52:04 Yuki Exp $
 -->
 <?xml-stylesheet type="text/xsl" href="page.xslt"?>
-<page name="�T���v���ꗗ">
+<page name="サンプル一覧">
 	<header>
-		<h1>�T���v���ꗗ</h1>
+		<h1>サンプル一覧</h1>
 	</header>
 	
-	<paragraph name="�T���v��">
+	<paragraph name="サンプル">
 		
 		<dl>
-			<dt><a target="sample" href="../sample/basic.html">��{</a></dt>
+			<dt><a target="sample" href="../sample/basic.html">基本</a></dt>
 			<dd>
 				<p>
-					mes �� boxf �Ȃǂ̊�{�I�Ȗ��߂ŁA�Ƃ肠�����������Ƃ��m�F���Ă݂�T���v���ł��B
+					mes や boxf などの基本的な命令で、とりあえず動くことを確認してみるサンプルです。
 				</p>
 			</dd>
-			<dt><a target="sample" href="../sample/network.html">�l�b�g���[�N</a></dt>
+			<dt><a target="sample" href="../sample/network.html">ネットワーク</a></dt>
 			<dd>
 				<p>
-					hspsockA ���g�p���ăT�[�o�[�ɐڑ�����T���v���ł��B
-					�������A���[�J���� HTML ����T�[�o�[�ɐڑ����邱�Ƃ͏o���Ȃ��̂ŁA��L�����N���N���b�N���Ă����������삵�܂���B
+					hspsockA を使用してサーバーに接続するサンプルです。
+					ただし、ローカルの HTML からサーバーに接続することは出来ないので、上記リンクをクリックしても正しく動作しません。
 				</p>
 				<p>
-					�R���p�C���́u�e�X�g���s�v���N���b�N���邩�A�T�[�o�[�ɃA�b�v���[�h���Ă�����s����K�v������܂��B
+					コンパイラの「テスト実行」をクリックするか、サーバーにアップロードしてから実行する必要があります。
 				</p>
 			</dd>
-			<dt><a target="sample" href="../sample/sound.html">�T�E���h</a></dt>
+			<dt><a target="sample" href="../sample/sound.html">サウンド</a></dt>
 			<dd>
-				<p>midi �t�@�C�����Đ����Ă݂�T���v���ł��B</p>
+				<p>midi ファイルを再生してみるサンプルです。</p>
 			</dd>
-			<dt><a target="sample" href="../sample/cookie.html">�N�b�L�[</a></dt>
+			<dt><a target="sample" href="../sample/cookie.html">クッキー</a></dt>
 			<dd>
-				<p>hspini ���g�p���ăN�b�L�[�̓ǂݏ������s���T���v���ł��B</p>
+				<p>hspini を使用してクッキーの読み書きを行うサンプルです。</p>
 			</dd>
-			<dt><a target="sample" href="../sample/menu.html">���j���[</a></dt>
+			<dt><a target="sample" href="../sample/menu.html">メニュー</a></dt>
 			<dd>
-				<p>mod_menu.as ���g�p���ă��j���[���쐬����T���v���ł��B</p>
+				<p>mod_menu.as を使用してメニューを作成するサンプルです。</p>
 			</dd>
 		</dl>
 		
 	</paragraph>
 	
-	<paragraph name="�f���v���O����">
+	<paragraph name="デモプログラム">
 		
 		<dl>
-			<dt><a target="sample" href="../demo/cube.html">���[�r�b�N�L���[�u</a></dt>
+			<dt><a target="sample" href="../demo/cube.html">ルービックキューブ</a></dt>
 			<dd>
-				<p>���[�r�b�N�L���[�u��V�ԃf���v���O�����ł��B
+				<p>ルービックキューブを遊ぶデモプログラムです。
 				</p>
 				<p>
-					�}�E�X����уJ�[�\���L�[�ő��삵�܂��B
-					�������Ă������o�܂���B
+					マウスおよびカーソルキーで操作します。
+					完成しても何も出ません。
 				</p>
 			</dd>
 			<dt><a target="sample" href="../demo/netball.html">Net-Ball</a></dt>
 			<dd>
-				<p>HSP�R���e�X�g��i Net-Ball �� HSPLet �ɈڐA�������̂ł��B
+				<p>HSPコンテスト作品 Net-Ball を HSPLet に移植したものです。
 				</p>
 				<p>
-					�}�E�X�ő��삵�܂��B
+					マウスで操作します。
 				</p>
 			</dd>
-			<dt><a target="sample" href="../demo/nanoflower.html">�i�m��</a></dt>
+			<dt><a target="sample" href="../demo/nanoflower.html">ナノ花</a></dt>
 			<dd>
-				<p>HSP�R���e�X�g��i �i�m�� �� HSPLet �ɈڐA�������̂ł��B
+				<p>HSPコンテスト作品 ナノ花 を HSPLet に移植したものです。
 				</p>
 			</dd>
-			<dt><a target="sample" href="../demo/shogi.html">����(�b���)</a></dt>
+			<dt><a target="sample" href="../demo/shogi.html">将棋(暫定版)</a></dt>
 			<dd>
-				<p>�ΐ�^�����ł��B</p>
-				<p> �}�E�X�ő��삵�܂��B </p>
+				<p>対戦型将棋です。</p>
+				<p> マウスで操作します。 </p>
 			</dd>
 		</dl>
 		

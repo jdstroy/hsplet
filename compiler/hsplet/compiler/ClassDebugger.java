@@ -11,8 +11,8 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.MethodNode;
 
 /**
- * ƒNƒ‰ƒX¶¬‚ÌƒfƒoƒbƒO‚Ég—pB
- * <p>¶¬‚µ‚½“à—e‚Ìˆê•”‚ğƒRƒ“ƒ\[ƒ‹‚Éo—Í‚·‚éB
+ * ã‚¯ãƒ©ã‚¹ç”Ÿæˆã®ãƒ‡ãƒãƒƒã‚°æ™‚ã«ä½¿ç”¨ã€‚
+ * <p>ç”Ÿæˆã—ãŸå†…å®¹ã®ä¸€éƒ¨ã‚’ã‚³ãƒ³ã‚½ãƒ¼ãƒ«ã«å‡ºåŠ›ã™ã‚‹ã€‚
  * </p>
  * 
  * @author Yuki
@@ -20,15 +20,15 @@ import org.objectweb.asm.tree.MethodNode;
  */
 public class ClassDebugger extends ClassAdapter implements Serializable {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: ClassDebugger.java,v 1.3 2006/01/13 20:32:11 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = 6559205215277401891L;
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
-	 * @param cv “à•ï‚·‚éƒNƒ‰ƒXƒrƒWƒ^B
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
+	 * @param cv å†…åŒ…ã™ã‚‹ã‚¯ãƒ©ã‚¹ãƒ“ã‚¸ã‚¿ã€‚
 	 */
 	public ClassDebugger(final ClassVisitor cv) {
 

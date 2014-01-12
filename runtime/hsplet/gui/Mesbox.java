@@ -20,7 +20,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.Keymap;
 
 /**
- * mesbox ƒRƒ“ƒgƒ[ƒ‹B <p> “à—e‚ª•ÏX‚³‚ê‚½‚ç•Ï”‚ğXV‚·‚éB </p>
+ * mesbox ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã€‚ <p> å†…å®¹ãŒå¤‰æ›´ã•ã‚ŒãŸã‚‰å¤‰æ•°ã‚’æ›´æ–°ã™ã‚‹ã€‚ </p>
  *
  * @author Yuki
  * @version $Revision: 1.4 $, $Date: 2006/02/27 15:52:05 $
@@ -28,19 +28,19 @@ import javax.swing.text.Keymap;
 public class Mesbox extends JScrollPane implements VolatileValueUpdater, HSPControl, DocumentListener {
 
     /**
-     * ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB
+     * ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚
      */
     private static final String fileVersionID = "$Id: Mesbox.java,v 1.4 2006/02/27 15:52:05 Yuki Exp $";
     /**
-     * ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B
+     * ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚
      */
     private static final long serialVersionUID = 2562206890409286100L;
     /**
-     * •Ï”
+     * å¤‰æ•°
      */
     private VolatileValue v;
     /**
-     * •Ï”ƒCƒ“ƒfƒbƒNƒX
+     * å¤‰æ•°ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
      */
     private int vi;
     private final JTextArea text;
@@ -51,12 +51,12 @@ public class Mesbox extends JScrollPane implements VolatileValueUpdater, HSPCont
     };
 
     /**
-     * ƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
+     * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
      *
-     * @param v •\¦‚·‚é•Ï”B
-     * @param vi •\¦‚·‚é•Ï”‚ÌƒCƒ“ƒfƒbƒNƒXB
-     * @param editable •ÒW‰Â”\‚©‚Ç‚¤‚©B
-     * @param hscroll ‰¡ƒXƒNƒ[ƒ‹‰Â”\‚©‚Ç‚¤‚©B
+     * @param v è¡¨ç¤ºã™ã‚‹å¤‰æ•°ã€‚
+     * @param vi è¡¨ç¤ºã™ã‚‹å¤‰æ•°ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã€‚
+     * @param editable ç·¨é›†å¯èƒ½ã‹ã©ã†ã‹ã€‚
+     * @param hscroll æ¨ªã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«å¯èƒ½ã‹ã©ã†ã‹ã€‚
      */
     public Mesbox(final Variable v, final int vi, boolean editable, boolean hscroll) {
         super(VERTICAL_SCROLLBAR_ALWAYS, hscroll ? HORIZONTAL_SCROLLBAR_ALWAYS : HORIZONTAL_SCROLLBAR_NEVER);

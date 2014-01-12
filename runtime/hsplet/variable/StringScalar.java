@@ -6,7 +6,7 @@ package hsplet.variable;
 import hsplet.util.Conversion;
 
 /**
- * •¶š—ñ‚ğ•\‚·ƒNƒ‰ƒXB
+ * æ–‡å­—åˆ—ã‚’è¡¨ã™ã‚¯ãƒ©ã‚¹ã€‚
  * 
  * 
  * @author Yuki
@@ -14,19 +14,19 @@ import hsplet.util.Conversion;
  */
 public final class StringScalar extends Scalar {
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = 4664482061973809570L;
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: StringScalar.java,v 1.4.2.1 2006/08/02 12:13:06 Yuki Exp $";
 
-	/** ƒIƒuƒWƒFƒNƒg‚Ì’lB */
+	/** ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å€¤ã€‚ */
 	public ByteString value;
 
 	/**
-	 * ’l‚ğw’è‚µ‚ÄƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
+	 * å€¤ã‚’æŒ‡å®šã—ã¦ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
 	 * 
-	 * @param value ‰Šú’lB
+	 * @param value åˆæœŸå€¤ã€‚
 	 */
 	public StringScalar(final String value) {
 
@@ -34,9 +34,9 @@ public final class StringScalar extends Scalar {
 	}
 
 	/**
-	 * ’l‚ğw’è‚µ‚ÄƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
+	 * å€¤ã‚’æŒ‡å®šã—ã¦ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
 	 * 
-	 * @param value ‰Šú’lB
+	 * @param value åˆæœŸå€¤ã€‚
 	 */
 	public StringScalar(final ByteString value) {
 

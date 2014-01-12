@@ -14,13 +14,13 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
 /**
- * hspsockAhspsockA ‚Í‚Ù‚Æ‚ñ‚Ç‹¤’Ê‚È‚Ì‚ÅA‚»‚Ì‹¤’Ê•”•ªB
+ * hspsockã€hspsockA ã¯ã»ã¨ã‚“ã©å…±é€šãªã®ã§ã€ãã®å…±é€šéƒ¨åˆ†ã€‚
  * @author Yuki
  * @version $Revision: 1.4 $, $Date: 2006/05/20 06:12:07 $
  */
 public abstract class hspsockBase extends FunctionBase {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: hspsockBase.java,v 1.4 2006/05/20 06:12:07 Yuki Exp $";
 
 	protected static class BufferedSocket {

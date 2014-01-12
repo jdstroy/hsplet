@@ -5,21 +5,21 @@
 import hsplet.function.FunctionBase;
 
 /**
- * winmm.dll ‚ÌŠÖ”ŒQ‚ğÀ‘•‚·‚éƒNƒ‰ƒXB
+ * winmm.dll ã®é–¢æ•°ç¾¤ã‚’å®Ÿè£…ã™ã‚‹ã‚¯ãƒ©ã‚¹ã€‚
  * <p>
- * ‚±‚ÌƒNƒ‰ƒX‚Í DLL ‚ÌÀ‘•‚ª”@‰½‚É—eˆÕ‚Å‚ ‚é‚©‚ğ‚æ‚­‚ ‚ç‚í‚µ‚Ä‚¢‚éB
+ * ã“ã®ã‚¯ãƒ©ã‚¹ã¯ DLL ã®å®Ÿè£…ãŒå¦‚ä½•ã«å®¹æ˜“ã§ã‚ã‚‹ã‹ã‚’ã‚ˆãã‚ã‚‰ã‚ã—ã¦ã„ã‚‹ã€‚
  * </p>
  * <p>
- * ‚·‚È‚Í‚¿ADLL –¼‚ğ•t‚¯‚½ƒNƒ‰ƒX‚ğƒfƒtƒHƒ‹ƒgƒpƒbƒP[ƒW‚É”z’u‚µA public static ‚Èƒƒ\ƒbƒh‚ğÀ‘•‚·‚é‚¾‚¯‚Å‚æ‚¢B
+ * ã™ãªã¯ã¡ã€DLL åã‚’ä»˜ã‘ãŸã‚¯ãƒ©ã‚¹ã‚’ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã«é…ç½®ã—ã€ public static ãªãƒ¡ã‚½ãƒƒãƒ‰ã‚’å®Ÿè£…ã™ã‚‹ã ã‘ã§ã‚ˆã„ã€‚
  * </p>
  * <p>
- * –ß‚è’l‚É‚Í void/int/double/String/ByteString/Operand ‚ªg—p‚Å‚«‚éB
+ * æˆ»ã‚Šå€¤ã«ã¯ void/int/double/String/ByteString/Operand ãŒä½¿ç”¨ã§ãã‚‹ã€‚
  * </p>
  * <p>
- * ˆø”‚É‚Í int/double/string/ByteString/Operand/Context ‚ğó‚¯æ‚é‚±‚Æ‚ªo—ˆ‚éB
+ * å¼•æ•°ã«ã¯ int/double/string/ByteString/Operand/Context ã‚’å—ã‘å–ã‚‹ã“ã¨ãŒå‡ºæ¥ã‚‹ã€‚
  * </p>
  * <p>
- * Operand ‚ğó‚¯æ‚é‚Æ‚«‚ÍA•K‚¸Ÿ‚Ìˆø”‚ğ int ‚É‚µA”z—ñ‚ÌƒCƒ“ƒfƒbƒNƒX‚ğó‚¯æ‚ç‚È‚¯‚ê‚Î‚¢‚¯‚È‚¢B
+ * Operand ã‚’å—ã‘å–ã‚‹ã¨ãã¯ã€å¿…ãšæ¬¡ã®å¼•æ•°ã‚’ int ã«ã—ã€é…åˆ—ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’å—ã‘å–ã‚‰ãªã‘ã‚Œã°ã„ã‘ãªã„ã€‚
  * </p>
  * 
  * @author Yuki
@@ -28,14 +28,14 @@ import hsplet.function.FunctionBase;
 public class winmm extends FunctionBase {
 
     public static final int TIMERR_NOERROR = 0, TIMERR_BASE = 96, TIMERR_NOCANDO = 97, TIMERR_STRUCT = 96 + 33;
-    /** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+    /** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
     private static final String fileVersionID = "$Id: winmm.java,v 1.1 2006/01/09 12:07:06 Yuki Exp $";
     private static final long startMillis = System.currentTimeMillis();
 
     /**
-     * ‹N“®‚µ‚Ä‚©‚çŒ»İ‚Ü‚Å‚Ìƒ~ƒŠ•b‚ğæ“¾‚·‚éB
+     * èµ·å‹•ã—ã¦ã‹ã‚‰ç¾åœ¨ã¾ã§ã®ãƒŸãƒªç§’ã‚’å–å¾—ã™ã‚‹ã€‚
      * 
-     * @return ‹N“®‚µ‚Ä‚©‚çŒ»İ‚Ü‚Å‚Ìƒ~ƒŠ•bB
+     * @return èµ·å‹•ã—ã¦ã‹ã‚‰ç¾åœ¨ã¾ã§ã®ãƒŸãƒªç§’ã€‚
      */
     public static int timeGetTime() {
         return (int) (System.currentTimeMillis() - startMillis);

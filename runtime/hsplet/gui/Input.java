@@ -20,8 +20,8 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
 /**
- * input ƒRƒ“ƒgƒ[ƒ‹B
- * <p>“à—e‚ª•ÏX‚³‚ê‚½‚ç•Ï”‚ğXV‚·‚éB
+ * input ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã€‚
+ * <p>å†…å®¹ãŒå¤‰æ›´ã•ã‚ŒãŸã‚‰å¤‰æ•°ã‚’æ›´æ–°ã™ã‚‹ã€‚
  * </p>
  * 
  * @author Yuki
@@ -29,23 +29,23 @@ import javax.swing.text.PlainDocument;
  */
 public class Input extends JTextField implements VolatileValueUpdater, HSPControl, DocumentListener {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: Input.java,v 1.6.2.1 2006/08/02 12:13:06 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = -1371744407933876506L;
 
-	/** •Ï” */
+	/** å¤‰æ•° */
 	private VolatileValue v;
 
-	/** •Ï”ƒCƒ“ƒfƒbƒNƒX */
+	/** å¤‰æ•°ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ */
 	private int vi;
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
-	 * @param v •\¦‚·‚é•Ï”B
-	 * @param vi •\¦‚·‚é•Ï”‚ÌƒCƒ“ƒfƒbƒNƒXB
-	 * @param length Å‘å•¶š”B
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
+	 * @param v è¡¨ç¤ºã™ã‚‹å¤‰æ•°ã€‚
+	 * @param vi è¡¨ç¤ºã™ã‚‹å¤‰æ•°ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã€‚
+	 * @param length æœ€å¤§æ–‡å­—æ•°ã€‚
 	 */
 	public Input(final Variable v, final int vi, final int length) {
 

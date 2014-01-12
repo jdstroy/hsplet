@@ -12,16 +12,16 @@ import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
 
 /**
- * hspsockA Šg’£ƒ‰ƒCƒuƒ‰ƒŠB
+ * hspsockA æ‹¡å¼µãƒ©ã‚¤ãƒ–ãƒ©ãƒªã€‚
  * @author Yuki
  * @version $Revision: 1.4 $, $Date: 2006/05/20 06:12:07 $
  */
 public final class hspsockA extends hspsockBase {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: hspsockA.java,v 1.4 2006/05/20 06:12:07 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = 8450563058418420541L;
 
 	public hspsockA(final Context context) {

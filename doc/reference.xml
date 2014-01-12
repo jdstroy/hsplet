@@ -1,16 +1,16 @@
-<?xml version="1.0" encoding="Shift_JIS"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
  $Id: reference.xml,v 1.5 2006/02/11 17:39:31 Yuki Exp $
 -->
 <reference product-name="HSPLet" version="1.6">
 	<page name="README" href="../readme.txt" />
-	<page name="XV—š—ð" href="../history.txt" />
-	<page name="ƒTƒ“ƒvƒ‹" href="sample.html" />
-	<page name="HSPLet ‚Ì“±“ü" href="introduction.html" />
-	<page name="ƒRƒ“ƒpƒCƒ‰‚ÌŽg‚¢•û" href="compiler.html" />
-	<page name="‚æ‚­‚ ‚éŽ¿–â(FAQ)" href="faq.html" />
-	<page name="ƒMƒƒƒ‰ƒŠ" href="http://www.group-finity.com/LetGallery/" />
-	<page name="ÅV”Å‚Ìƒ_ƒEƒ“ƒ[ƒh" href="http://www.group-finity.com/HSP/HSPLet/" />
+	<page name="æ›´æ–°å±¥æ­´" href="../history.txt" />
+	<page name="ã‚µãƒ³ãƒ—ãƒ«" href="sample.html" />
+	<page name="HSPLet ã®å°Žå…¥" href="introduction.html" />
+	<page name="ã‚³ãƒ³ãƒ‘ã‚¤ãƒ©ã®ä½¿ã„æ–¹" href="compiler.html" />
+	<page name="ã‚ˆãã‚ã‚‹è³ªå•(FAQ)" href="faq.html" />
+	<page name="ã‚®ãƒ£ãƒ©ãƒª" href="http://www.group-finity.com/LetGallery/" />
+	<page name="æœ€æ–°ç‰ˆã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰" href="http://www.group-finity.com/HSP/HSPLet/" />
 	<library href="library-hsp.xml" />
 	<library href="library-hspsock.xml" />
 	<library href="library-hspsockA.xml" />

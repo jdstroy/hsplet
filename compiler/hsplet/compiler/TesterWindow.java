@@ -36,7 +36,7 @@ public class TesterWindow extends JFrame {
 	private void initialize() {
 		this.setSize(300, 200);
 		this.setContentPane(getJContentPane());
-		this.setTitle("HSPLet ƒeƒXƒgƒT[ƒo");
+		this.setTitle("HSPLet ãƒ†ã‚¹ãƒˆã‚µãƒ¼ãƒ");
 	}
 
 	/**
@@ -55,13 +55,13 @@ public class TesterWindow extends JFrame {
 			gridBagConstraints1.insets = new java.awt.Insets(0, 20, 0, 20);
 			gridBagConstraints1.gridy = 1;
 			messageLabel2 = new JLabel();
-			messageLabel2.setText("ƒeƒXƒg‚ªI—¹‚µ‚½‚ç’â~ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚Ä‚­‚¾‚³‚¢B");
+			messageLabel2.setText("ãƒ†ã‚¹ãƒˆãŒçµ‚äº†ã—ãŸã‚‰åœæ­¢ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ã¦ãã ã•ã„ã€‚");
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.gridx = 0;
 			gridBagConstraints.insets = new java.awt.Insets(20, 20, 0, 20);
 			gridBagConstraints.gridy = 0;
 			messageLabel = new JLabel();
-			messageLabel.setText("HSPLet ‚ÌƒeƒXƒgƒT[ƒo‚ª‰Ò“®’†‚Å‚·B");
+			messageLabel.setText("HSPLet ã®ãƒ†ã‚¹ãƒˆã‚µãƒ¼ãƒãŒç¨¼å‹•ä¸­ã§ã™ã€‚");
 			jContentPane = new JPanel();
 			jContentPane.setLayout(new GridBagLayout());
 			jContentPane.add(messageLabel, gridBagConstraints);
@@ -79,7 +79,7 @@ public class TesterWindow extends JFrame {
 	private JButton getStopButton() {
 		if (stopButton == null) {
 			stopButton = new JButton();
-			stopButton.setText("’â~");
+			stopButton.setText("åœæ­¢");
 			stopButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					System.exit(0);

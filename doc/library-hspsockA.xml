@@ -1,36 +1,36 @@
-<?xml version="1.0" encoding="Shift_JIS"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
  $Id: library-hspsockA.xml,v 1.2 2006/02/11 17:19:30 Yuki Exp $
 -->
 <library name="hspsockA">
 	<summary>
-		<p>hspsockA ƒvƒ‰ƒOƒCƒ“‚ÅŽg—p‚Å‚«‚éŠg’£–½—ß‚Å‚·B<br />
-			DLL ”Å‚Ì hspsockA ‚Í PCB ‚³‚ñ‚É‚æ‚Á‚ÄŠJ”­‚³‚ê‚Ü‚µ‚½B
-			<a href="http://www.pcbsoft.net/">http://www.pcbsoft.net/</a> ‚æ‚è“üŽè‰Â”\‚Å‚·B
+		<p>hspsockA ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã§ä½¿ç”¨ã§ãã‚‹æ‹¡å¼µå‘½ä»¤ã§ã™ã€‚<br />
+			DLL ç‰ˆã® hspsockA ã¯ PCB ã•ã‚“ã«ã‚ˆã£ã¦é–‹ç™ºã•ã‚Œã¾ã—ãŸã€‚
+			<a href="http://www.pcbsoft.net/">http://www.pcbsoft.net/</a> ã‚ˆã‚Šå…¥æ‰‹å¯èƒ½ã§ã™ã€‚
 		</p>
 	</summary>
-	<category name="ƒ\ƒPƒbƒg’ÊM–½—ß">
-	<function name="sockinit" summary="ƒvƒ‰ƒOƒCƒ“‚ð‰Šú‰»‚·‚é" implement="yes"/>
-	<function name="sockopen" summary="ƒzƒXƒg‚ÉÚ‘±‚·‚é" implement="yes"/>
-	<function name="sockmake" summary="ƒNƒ‰ƒCƒAƒ“ƒg‚©‚ç‚ÌÚ‘±‚ð‘Ò‹@‚·‚é" implement="no"/>
-	<function name="sockwait" summary="Ú‘±ˆ—‚Ìó‘Ô‚ðŽæ“¾‚·‚é" implement="yes"/>
-	<function name="sockshut" summary="ƒf[ƒ^‘—M‚ÌI—¹‚ð’Ê’m‚·‚é" implement="yes"/>
-	<function name="sockclose" summary="ƒ\ƒPƒbƒg‚ð•Â‚¶‚é" implement="yes"/>
-	<function name="sockget" summary="•¶Žš—ñ‚ðŽóM‚·‚é" implement="yes"/>
-	<function name="sockgetc" summary="1ƒoƒCƒgŽóM‚·‚é" implement="yes"/>
-	<function name="sockgetw" summary="2ƒoƒCƒgŽóM‚·‚é" implement="yes"/>
-	<function name="sockgetd" summary="4ƒoƒCƒgŽóM‚·‚é" implement="yes"/>
-	<function name="sockgetb" summary="ƒoƒCƒiƒŠƒf[ƒ^‚ðŽóM‚·‚é" implement="yes"/>
-	<function name="sockput" summary="•¶Žš—ñ‚ð‘—M‚·‚é" implement="yes"/>
-	<function name="sockputc" summary="1ƒoƒCƒg‘—M‚·‚é" implement="yes"/>
-	<function name="sockputw" summary="2ƒoƒCƒg‘—M‚·‚é" implement="yes"/>
-	<function name="sockputd" summary="4ƒoƒCƒg‘—M‚·‚é" implement="yes"/>
-	<function name="sockputb" summary="ƒoƒCƒiƒŠƒf[ƒ^‚ð‘—M‚·‚é" implement="yes"/>
-	<function name="sockcheck" summary="ƒ\ƒPƒbƒg‚Ì’ÊMó‘Ô‚ðŽæ“¾‚·‚é" implement="yes"/>
-	<function name="sockcount" summary="ŽóMƒoƒbƒtƒ@‚É‚ ‚éƒf[ƒ^‚ÌƒTƒCƒY‚ðŽæ“¾‚·‚é" implement="yes"/>
-	<function name="sockerror" summary="ƒ\ƒPƒbƒgƒGƒ‰[ƒR[ƒh‚ðŽæ“¾‚·‚é" implement="yes"/>
-	<function name="ipget" summary="Ž©•ª‚ÌIPƒAƒhƒŒƒX‚ðŽæ“¾‚·‚é" implement="yes"/>
-	<function name="sockbye" summary="ƒvƒ‰ƒOƒCƒ“‚ÌƒŠƒ\[ƒX‚ð‰ð•ú‚·‚é" implement="yes"/>
+	<category name="ã‚½ã‚±ãƒƒãƒˆé€šä¿¡å‘½ä»¤">
+	<function name="sockinit" summary="ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’åˆæœŸåŒ–ã™ã‚‹" implement="yes"/>
+	<function name="sockopen" summary="ãƒ›ã‚¹ãƒˆã«æŽ¥ç¶šã™ã‚‹" implement="yes"/>
+	<function name="sockmake" summary="ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‹ã‚‰ã®æŽ¥ç¶šã‚’å¾…æ©Ÿã™ã‚‹" implement="no"/>
+	<function name="sockwait" summary="æŽ¥ç¶šå‡¦ç†ã®çŠ¶æ…‹ã‚’å–å¾—ã™ã‚‹" implement="yes"/>
+	<function name="sockshut" summary="ãƒ‡ãƒ¼ã‚¿é€ä¿¡ã®çµ‚äº†ã‚’é€šçŸ¥ã™ã‚‹" implement="yes"/>
+	<function name="sockclose" summary="ã‚½ã‚±ãƒƒãƒˆã‚’é–‰ã˜ã‚‹" implement="yes"/>
+	<function name="sockget" summary="æ–‡å­—åˆ—ã‚’å—ä¿¡ã™ã‚‹" implement="yes"/>
+	<function name="sockgetc" summary="1ãƒã‚¤ãƒˆå—ä¿¡ã™ã‚‹" implement="yes"/>
+	<function name="sockgetw" summary="2ãƒã‚¤ãƒˆå—ä¿¡ã™ã‚‹" implement="yes"/>
+	<function name="sockgetd" summary="4ãƒã‚¤ãƒˆå—ä¿¡ã™ã‚‹" implement="yes"/>
+	<function name="sockgetb" summary="ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿ã‚’å—ä¿¡ã™ã‚‹" implement="yes"/>
+	<function name="sockput" summary="æ–‡å­—åˆ—ã‚’é€ä¿¡ã™ã‚‹" implement="yes"/>
+	<function name="sockputc" summary="1ãƒã‚¤ãƒˆé€ä¿¡ã™ã‚‹" implement="yes"/>
+	<function name="sockputw" summary="2ãƒã‚¤ãƒˆé€ä¿¡ã™ã‚‹" implement="yes"/>
+	<function name="sockputd" summary="4ãƒã‚¤ãƒˆé€ä¿¡ã™ã‚‹" implement="yes"/>
+	<function name="sockputb" summary="ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿ã‚’é€ä¿¡ã™ã‚‹" implement="yes"/>
+	<function name="sockcheck" summary="ã‚½ã‚±ãƒƒãƒˆã®é€šä¿¡çŠ¶æ…‹ã‚’å–å¾—ã™ã‚‹" implement="yes"/>
+	<function name="sockcount" summary="å—ä¿¡ãƒãƒƒãƒ•ã‚¡ã«ã‚ã‚‹ãƒ‡ãƒ¼ã‚¿ã®ã‚µã‚¤ã‚ºã‚’å–å¾—ã™ã‚‹" implement="yes"/>
+	<function name="sockerror" summary="ã‚½ã‚±ãƒƒãƒˆã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰ã‚’å–å¾—ã™ã‚‹" implement="yes"/>
+	<function name="ipget" summary="è‡ªåˆ†ã®IPã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹" implement="yes"/>
+	<function name="sockbye" summary="ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®ãƒªã‚½ãƒ¼ã‚¹ã‚’è§£æ”¾ã™ã‚‹" implement="yes"/>
 	
 	</category>
 </library>

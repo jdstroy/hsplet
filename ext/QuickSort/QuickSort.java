@@ -1,5 +1,5 @@
-/* HSPDA‚Å—˜—p‚·‚é‚½‚ß‚Ìƒ\[ƒgƒAƒ‹ƒSƒŠƒYƒ€
- * ƒ\[ƒgƒAƒ‹ƒSƒŠƒYƒ€‚É‚ÍJava•W€‚ÌC³ƒNƒCƒbƒNƒ\[ƒgiArraysƒNƒ‰ƒX‚Ìsortƒƒ\ƒbƒhj‚ğg—p
+/* HSPDAã§åˆ©ç”¨ã™ã‚‹ãŸã‚ã®ã‚½ãƒ¼ãƒˆã‚¢ãƒ«ã‚´ãƒªã‚ºãƒ 
+ * ã‚½ãƒ¼ãƒˆã‚¢ãƒ«ã‚´ãƒªã‚ºãƒ ã«ã¯Javaæ¨™æº–ã®ä¿®æ­£ã‚¯ã‚¤ãƒƒã‚¯ã‚½ãƒ¼ãƒˆï¼ˆArraysã‚¯ãƒ©ã‚¹ã®sortãƒ¡ã‚½ãƒƒãƒ‰ï¼‰ã‚’ä½¿ç”¨
  * 2007/12/29 eller ver. 1.0
  * */
 
@@ -26,7 +26,7 @@ public class QuickSort {
 
 	public static void sort(final Context context, final Operand op, final boolean sortmode) {
 
-		// •Ï”‚ÌŒ^‚É‚æ‚Á‚Äg—p‚·‚éƒƒ\ƒbƒh‚ğØ‚è‘Ö‚¦‚é
+		// å¤‰æ•°ã®å‹ã«ã‚ˆã£ã¦ä½¿ç”¨ã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰ã‚’åˆ‡ã‚Šæ›¿ãˆã‚‹
 		switch (op.getType()) {
 			case Operand.Type.INTEGER:
 				sortInt(op, sortmode);
@@ -38,12 +38,12 @@ public class QuickSort {
 				sortByteString(op, sortmode);
 				break;
 			default:
-				// ”’l‚Å‚Í‚È‚¢ê‡ƒGƒ‰[‚ğ•Ô‚·
+				// æ•°å€¤ã§ã¯ãªã„å ´åˆã‚¨ãƒ©ãƒ¼ã‚’è¿”ã™
 				context.error(HSPError.ParameterTypeMismatch, "sortval", "vartype( op )==" + op.getType());
 				break;
 		}
 
-		// ˆÈ‘O‚ÌƒCƒ“ƒfƒbƒNƒX‚ğ‘ã“ü‚µ‚½VectorƒNƒ‰ƒX‚ğì¬
+		// ä»¥å‰ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’ä»£å…¥ã—ãŸVectorã‚¯ãƒ©ã‚¹ã‚’ä½œæˆ
 		oldIndexes = new ArrayList<Integer>(containers.length);
 		for (int i=0; i<containers.length; i++) {
 			oldIndexes.add(new Integer(containers[i].index));
@@ -51,9 +51,9 @@ public class QuickSort {
 	}
 
 	/**
-	 * ®”Œ^”z—ñ•Ï”‚Ìƒ\[ƒg
-	 * @param target ƒ\[ƒg‚·‚é”’lŒ^”z—ñ•Ï”
-	 * @param sortmode true‚È‚ç~‡‚Éƒ\[ƒg
+	 * æ•´æ•°å‹é…åˆ—å¤‰æ•°ã®ã‚½ãƒ¼ãƒˆ
+	 * @param target ã‚½ãƒ¼ãƒˆã™ã‚‹æ•°å€¤å‹é…åˆ—å¤‰æ•°
+	 * @param sortmode trueãªã‚‰é™é †ã«ã‚½ãƒ¼ãƒˆ
 	 */
 	private static void sortInt(final Operand target, final boolean sortmode) {
 
@@ -65,9 +65,9 @@ public class QuickSort {
 		}
 		Arrays.sort(localContainer, new IntComparator());
 
-		// ”z—ñ•Ï”‚ÉŒ‹‰Ê‚ğ‘ã“ü
+		// é…åˆ—å¤‰æ•°ã«çµæœã‚’ä»£å…¥
 		if (sortmode) {
-			// ~‡‚Éƒ\[ƒg‚·‚éê‡‚Í‡˜‚ğ“ü‚ê‘Ö‚¦‚é
+			// é™é †ã«ã‚½ãƒ¼ãƒˆã™ã‚‹å ´åˆã¯é †åºã‚’å…¥ã‚Œæ›¿ãˆã‚‹
 			for(int i=0; i<target.l0(); i++) {
 				target.assignRaw(target.l0() - i - 1, Scalar.fromValue((localContainer[i]).value), 0);
 			}
@@ -79,9 +79,9 @@ public class QuickSort {
 	}
 
 	/**
-	 * À”Œ^”z—ñ•Ï”‚Ìƒ\[ƒg
-	 * @param target •À‚Ñ‘Ö‚¦‚é”z—ñ•Ï”
-	 * @param sortmode true‚È‚ç~‡‚Éƒ\[ƒg
+	 * å®Ÿæ•°å‹é…åˆ—å¤‰æ•°ã®ã‚½ãƒ¼ãƒˆ
+	 * @param target ä¸¦ã³æ›¿ãˆã‚‹é…åˆ—å¤‰æ•°
+	 * @param sortmode trueãªã‚‰é™é †ã«ã‚½ãƒ¼ãƒˆ
 	 */
 	private static void sortDouble(final Operand target, final boolean sortmode) {
 
@@ -92,9 +92,9 @@ public class QuickSort {
 		}
 		Arrays.sort(localContainers, new DoubleComparator());
 
-		// ”z—ñ•Ï”‚ÉŒ‹‰Ê‚ğ‘ã“ü
+		// é…åˆ—å¤‰æ•°ã«çµæœã‚’ä»£å…¥
 		if (sortmode) {
-			// ~‡‚Éƒ\[ƒg‚·‚éê‡‚Í‡˜‚ğ“ü‚ê‘Ö‚¦‚é
+			// é™é †ã«ã‚½ãƒ¼ãƒˆã™ã‚‹å ´åˆã¯é †åºã‚’å…¥ã‚Œæ›¿ãˆã‚‹
 			for(int i=0; i<target.l0(); i++) {
 				target.assignRaw(target.l0() - i - 1, Scalar.fromValue((localContainers[i]).value), 0);
 			}
@@ -106,9 +106,9 @@ public class QuickSort {
 	}
 
 	/**
-	 * •¶š—ñŒ^”z—ñ•Ï”‚Ìƒ\[ƒg
-	 * @param target •À‚Ñ‘Ö‚¦‚é”z—ñ•Ï”
-	 * @param sortmode true‚È‚ç~‡‚Éƒ\[ƒg
+	 * æ–‡å­—åˆ—å‹é…åˆ—å¤‰æ•°ã®ã‚½ãƒ¼ãƒˆ
+	 * @param target ä¸¦ã³æ›¿ãˆã‚‹é…åˆ—å¤‰æ•°
+	 * @param sortmode trueãªã‚‰é™é †ã«ã‚½ãƒ¼ãƒˆ
 	 */
 	private static void sortByteString(final Operand target, final boolean sortmode) {
 
@@ -116,15 +116,15 @@ public class QuickSort {
                     new ByteStringContainer[target.l0()];
             containers = localContainers;
 		for(int i=0; i<target.l0(); i++) {
-			// ByteStringƒNƒ‰ƒX‚ªCloneable‚Å‚È‚¢‚Ì‚ÅStringƒNƒ‰ƒX‚É•Ï‚¦‚½‚à‚Ì‚ğ—˜—p‚µ‚ÄƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬‚·‚é
+			// ByteStringã‚¯ãƒ©ã‚¹ãŒCloneableã§ãªã„ã®ã§Stringã‚¯ãƒ©ã‚¹ã«å¤‰ãˆãŸã‚‚ã®ã‚’åˆ©ç”¨ã—ã¦ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆã™ã‚‹
 			localContainers[i] = new ByteStringContainer(
 					new ByteString(target.toByteString(i).toString()), i);
 		}
 		Arrays.sort(localContainers, new ByteStringComparator());
 
-		// ”z—ñ•Ï”‚ÉŒ‹‰Ê‚ğ‘ã“ü
+		// é…åˆ—å¤‰æ•°ã«çµæœã‚’ä»£å…¥
 		if (sortmode) {
-			// ~‡‚Éƒ\[ƒg‚·‚éê‡‚Í‡˜‚ğ“ü‚ê‘Ö‚¦‚é
+			// é™é †ã«ã‚½ãƒ¼ãƒˆã™ã‚‹å ´åˆã¯é †åºã‚’å…¥ã‚Œæ›¿ãˆã‚‹
 			for(int i=0; i<target.l0(); i++) {
 				target.assignRaw(target.l0() - i - 1, Scalar.fromValue((localContainers[i]).value), 0);
 			}

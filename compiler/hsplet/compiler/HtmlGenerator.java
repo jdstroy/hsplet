@@ -16,9 +16,9 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * HSPLet ‚Å–Ú“I‚ÌƒR[ƒh‚ğÀs‚·‚é‚½‚ß‚Ì HTML ‚ğ¶¬‚·‚éƒNƒ‰ƒXB
+ * HSPLet ã§ç›®çš„ã®ã‚³ãƒ¼ãƒ‰ã‚’å®Ÿè¡Œã™ã‚‹ãŸã‚ã® HTML ã‚’ç”Ÿæˆã™ã‚‹ã‚¯ãƒ©ã‚¹ã€‚
  * <p>
- * ƒeƒ“ƒvƒŒ[ƒg‚ğ“Ç‚İ‚ñ‚ÅA•K—v‚È‰ÓŠ‚ğ‘‚«Š·‚¦‚Äo—Í‚·‚éB
+ * ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã‚’èª­ã¿è¾¼ã‚“ã§ã€å¿…è¦ãªç®‡æ‰€ã‚’æ›¸ãæ›ãˆã¦å‡ºåŠ›ã™ã‚‹ã€‚
  * </p>
  * 
  * @author Yuki
@@ -26,57 +26,57 @@ import java.util.Iterator;
  */
 public final class HtmlGenerator implements Serializable {
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = -5216057552518726784L;
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: HtmlGenerator.java,v 1.4 2006/01/16 19:34:22 Yuki Exp $";
 
-	/** ƒeƒ“ƒvƒŒ[ƒgƒtƒ@ƒCƒ‹–¼B */
+	/** ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒ•ã‚¡ã‚¤ãƒ«åã€‚ */
 	private static final String TEMPLATE_NAME = "template.html";
 
-	/** ƒNƒ‰ƒX–¼‚ğ’u‚«Š·‚¦‚éƒ^ƒOB */
+	/** ã‚¯ãƒ©ã‚¹åã‚’ç½®ãæ›ãˆã‚‹ã‚¿ã‚°ã€‚ */
 	private static final String START_CLASS_NAME_TAG_REGEX = "\\{START_CLASS_NAME\\}";
 
-	/** ƒ^ƒCƒgƒ‹‚ğ’u‚«Š·‚¦‚éƒ^ƒOB */
+	/** ã‚¿ã‚¤ãƒˆãƒ«ã‚’ç½®ãæ›ãˆã‚‹ã‚¿ã‚°ã€‚ */
 	private static final String TITLE_TAG_REGEX = "\\{TITLE\\}";
 
-	/** mp3—pƒ‰ƒCƒuƒ‰ƒŠ‚ğ’u‚«Š·‚¦‚éƒ^ƒOB */
+	/** mp3ç”¨ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã‚’ç½®ãæ›ãˆã‚‹ã‚¿ã‚°ã€‚ */
 	private static final String LIBS_TAG_REGEX = "\\{LIBS\\}";
 
-	/** ‰¡•‚ğ’u‚«Š·‚¦‚éƒ^ƒOB */
+	/** æ¨ªå¹…ã‚’ç½®ãæ›ãˆã‚‹ã‚¿ã‚°ã€‚ */
 	private static final String WIDTH_TAG_REGEX = "\\{WIDTH\\}";
 
-	/** ‚‚³‚ğ’u‚«Š·‚¦‚éƒ^ƒOB */
+	/** é«˜ã•ã‚’ç½®ãæ›ãˆã‚‹ã‚¿ã‚°ã€‚ */
 	private static final String HEIGHT_TAG_REGEX = "\\{HEIGHT\\}";
 
-	/** Às‚·‚éƒNƒ‰ƒX–¼B */
+	/** å®Ÿè¡Œã™ã‚‹ã‚¯ãƒ©ã‚¹åã€‚ */
 	private final String className;
 
-	/** ƒy[ƒWƒ^ƒCƒgƒ‹ */
+	/** ãƒšãƒ¼ã‚¸ã‚¿ã‚¤ãƒˆãƒ« */
 	private final String title;
 
-	/** Šg’£ƒ‰ƒCƒuƒ‰ƒŠB */
+	/** æ‹¡å¼µãƒ©ã‚¤ãƒ–ãƒ©ãƒªã€‚ */
 	private final Collection libs;
 
-	/** ‰¡•B */
+	/** æ¨ªå¹…ã€‚ */
 	private final int width;
 
-	/** ‚‚³B */
+	/** é«˜ã•ã€‚ */
 	private final int height;
 
-	/** ƒeƒ“ƒvƒŒ[ƒgƒtƒ@ƒCƒ‹ */
+	/** ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒ•ã‚¡ã‚¤ãƒ« */
 	private final File template;
 
 	/**
-	 * Às‚·‚éƒNƒ‰ƒX–¼‚ğw’è‚µ‚ÄƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
+	 * å®Ÿè¡Œã™ã‚‹ã‚¯ãƒ©ã‚¹åã‚’æŒ‡å®šã—ã¦ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
 	 * 
-	 * @param className Às‚·‚éƒNƒ‰ƒX–¼B
-	 * @param title ƒy[ƒWƒ^ƒCƒgƒ‹B
-	 * @param libs Šg’£ƒ‰ƒCƒuƒ‰ƒŠ‚ÌƒŠƒXƒgB
-	 * @param h ‰¡•
-	 * @param w ‚‚³
-	 * @param template ƒeƒ“ƒvƒŒ[ƒgƒtƒ@ƒCƒ‹B
+	 * @param className å®Ÿè¡Œã™ã‚‹ã‚¯ãƒ©ã‚¹åã€‚
+	 * @param title ãƒšãƒ¼ã‚¸ã‚¿ã‚¤ãƒˆãƒ«ã€‚
+	 * @param libs æ‹¡å¼µãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®ãƒªã‚¹ãƒˆã€‚
+	 * @param h æ¨ªå¹…
+	 * @param w é«˜ã•
+	 * @param template ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã€‚
 	 */
 	public HtmlGenerator(final String className, final String title,
 			final Collection libs, final int w, int h, final File template) {
@@ -90,10 +90,10 @@ public final class HtmlGenerator implements Serializable {
 	}
 
 	/**
-	 * HTML ‚ğ¶¬‚·‚éB
+	 * HTML ã‚’ç”Ÿæˆã™ã‚‹ã€‚
 	 * 
-	 * @param out o—ÍæB
-	 * @throws IOException “üo—ÍƒGƒ‰[‚ª”­¶‚µ‚½‚Æ‚«B
+	 * @param out å‡ºåŠ›å…ˆã€‚
+	 * @throws IOException å…¥å‡ºåŠ›ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ãŸã¨ãã€‚
 	 */
 	public void generate(final OutputStream out) throws IOException {
 

@@ -7,9 +7,9 @@ import java.io.Serializable;
 
 
 /**
- * ‰½‚àÀs‚µ‚È‚¢ MethodVisitorB
+ * ä½•ã‚‚å®Ÿè¡Œã—ãªã„ MethodVisitorã€‚
  * <p>
- * ASM ‚Ì’Ç‰Áƒ‰ƒCƒuƒ‰ƒŠ‚É‚à“¯‚¶ƒNƒ‰ƒX‚Í‚ ‚é‚ªƒTƒCƒY‚ª‘å‚«‚¢‚Ì‚ÅEEEB
+ * ASM ã®è¿½åŠ ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã«ã‚‚åŒã˜ã‚¯ãƒ©ã‚¹ã¯ã‚ã‚‹ãŒã‚µã‚¤ã‚ºãŒå¤§ãã„ã®ã§ãƒ»ãƒ»ãƒ»ã€‚
  * </p>
  * 
  * @author Yuki
@@ -17,10 +17,10 @@ import java.io.Serializable;
  */
 public class EmptyVisitor extends NullVisitor implements  Serializable {
 
-  /** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+  /** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
   private static final long serialVersionUID = -3781394417631917269L;
 
-  /** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+  /** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
   private static final String fileVersionID = "$Id: EmptyVisitor.java,v 1.1 2006/01/09 12:07:05 Yuki Exp $";
   
   public static final EmptyVisitor mv=new EmptyVisitor();

@@ -1,111 +1,111 @@
-<?xml version="1.0" encoding="Shift_JIS" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!--
  $Id: compiler.xml,v 1.1 2006/01/29 16:29:18 Yuki Exp $
 -->
 <?xml-stylesheet type="text/xsl" href="page.xslt"?>
-<page name="�R���p�C���̎g����">
+<page name="コンパイラの使い方">
 	<header>
-		<h1>�R���p�C���̎g����</h1>
+		<h1>コンパイラの使い方</h1>
 	</header>
 	
-	<paragraph name="��ʂ̐���">
+	<paragraph name="画面の説明">
 		
-		<img src="compiler_ss.jpg" alt="�X�N���[���V���b�g" style="float: right; margin: 2em 4em; "/>
+		<img src="compiler_ss.jpg" alt="スクリーンショット" style="float: right; margin: 2em 4em; "/>
 		
 		<dl>
-			<dt>�^�C�g��</dt>
+			<dt>タイトル</dt>
 			<dd>
-				��������� HTML �y�[�W�̃^�C�g�����w�肵�܂��B
+				生成される HTML ページのタイトルを指定します。
 			</dd>
-			<dt>����</dt>
+			<dt>横幅</dt>
 			<dd>
-				���������A�v���b�g�̉������w�肵�܂��B
+				生成されるアプレットの横幅を指定します。
 			</dd>
-			<dt>����</dt>
+			<dt>高さ</dt>
 			<dd>
-				���������A�v���b�g�̍������w�肵�܂��B
+				生成されるアプレットの高さを指定します。
 			</dd>
-			<dt>�p�b�N�t�@�C��</dt>
+			<dt>パックファイル</dt>
 			<dd>
-				�A�v���b�g�̃t�@�C���Ɉꏏ�ɋl�ߍ��ރt�@�C�����w�肵�܂��B
-				HSP �� PACKFILE ��I�����邱�Ƃ��A����ȊO�̃t�@�C�������R�ɑI�Ԃ��Ƃ��ł��܂��B<br />
-				�p�b�N�t�@�C���ɑI�����ꂽ�t�@�C���́A�R���p�C������Əo��JAR�̒��Ɉꏏ�Ɋi�[����܂��B<br />
-				HSPLet �� JAR ���u���Ă���T�[�o�[����l�b�g���[�N�z���Ƀt�@�C����ǂݍ��߂�̂ŁA�K�v�ȃt�@�C�������ׂăp�b�N�t�@�C���ɓ���Ă����K�v�͂���܂���B<br />
-				�p�b�N�t�@�C���ɓ���Ă����ƁA�A�v���b�g�J�n�O�ɐ�Ƀ_�E�����[�h�����̂œr���œǂݍ��݂Ɏ��Ԃ�������Ƃ������Ƃ��Ȃ��Ȃ�܂��B
-				�t��mp3���̑傫�ȃt�@�C���̓_�E�����[�h�Ɏ��Ԃ��������Ă��܂��̂ŁA�T�[�o�[�ɂ����ăX�g���[�~���O�Đ����������ǂ��ł��B<br />
+				アプレットのファイルに一緒に詰め込むファイルを指定します。
+				HSP の PACKFILE を選択することも、それ以外のファイルを自由に選ぶこともできます。<br />
+				パックファイルに選択されたファイルは、コンパイルすると出力JARの中に一緒に格納されます。<br />
+				HSPLet は JAR が置いてあるサーバーからネットワーク越しにファイルを読み込めるので、必要なファイルをすべてパックファイルに入れておく必要はありません。<br />
+				パックファイルに入れておくと、アプレット開始前に先にダウンロードされるので途中で読み込みに時間がかかるということがなくなります。
+				逆にmp3等の大きなファイルはダウンロードに時間がかかってしまうので、サーバーにおいてストリーミング再生した方が良いです。<br />
 				<br />
-				�p�b�N�t�@�C���ɑI�����ꂽAX�t�@�C�����R���p�C���̑ΏۂɂȂ�܂��B
-				�u�J�n�t�@�C���v����̂Ƃ��͑I������ax�t�@�C�����������I�ɕ⊮����܂��B
-				���ʂ̃t�@�C���ƈ���āAAX�t�@�C���͕K���p�b�N�t�@�C���ɓ����Ă��Ȃ��Ǝ��s�ł��Ȃ��̂Œ��ӂ��Ă��������B
+				パックファイルに選択されたAXファイルがコンパイルの対象になります。
+				「開始ファイル」が空のときは選択したaxファイル名が自動的に補完されます。
+				普通のファイルと違って、AXファイルは必ずパックファイルに入っていないと実行できないので注意してください。
 			</dd>
-			<dt>�J�n�t�@�C��</dt>
+			<dt>開始ファイル</dt>
 			<dd>
-				�A�v���b�g�̊J�nAX�t�@�C�������w�肵�܂��B
-				�g���q�͂��Ȃ��ł��������B
-				�J�n�t�@�C���Ɏw�肵�Ȃ�����AX�t�@�C����run���߂Ŏ��s���邱�Ƃ��ł��܂��B
+				アプレットの開始AXファイル名を指定します。
+				拡張子はつけないでください。
+				開始ファイルに指定しなかったAXファイルもrun命令で実行することができます。
 			</dd>
-			<dt>�g�����C�u����</dt>
+			<dt>拡張ライブラリ</dt>
 			<dd>
-				�ǉ��Ŏg�p���郉�C�u������I�����܂��B
-				mp3�̍Đ��Astrf�̓t�@�C���T�C�Y�̔�剻��h�����߂ɕʃ��C�u�����ɂȂ��Ă��܂��B
-				����ȊO�̃��C�u�������g���Ƃ��������̃`�F�b�N�����Ă��������B<br />
-				�`�F�b�N���������C�u�����̓A�v���b�g����g�p����悤�ɐݒ肳��A�����I�Ɂu�o��HTML�v�Ɠ����t�H���_�ɃR�s�[����܂��B
+				追加で使用するライブラリを選択します。
+				mp3の再生、strfはファイルサイズの肥大化を防ぐために別ライブラリになっています。
+				それ以外のライブラリを使うときもここのチェックをつけてください。<br />
+				チェックをつけたライブラリはアプレットから使用するように設定され、自動的に「出力HTML」と同じフォルダにコピーされます。
 			</dd>
-			<dt>�o��HTML</dt>
+			<dt>出力HTML</dt>
 			<dd>
-				�������� HTML �̃t�@�C�������w�肵�܂��B
-				���̖��O�� HTML ����������A�R���p�C���ɂ���Ăł��� JAR�Ahsplet.jar�A����ъg�����C�u�����������t�H���_�ɃR�s�[����܂��B<br />
+				生成する HTML のファイル名を指定します。
+				この名前で HTML が生成され、コンパイルによってできた JAR、hsplet.jar、および拡張ライブラリが同じフォルダにコピーされます。<br />
 				<br />
-				�o��HTML���w�肳��Ă��Ȃ��Ƃ���JAR�t�@�C����������������A�t�@�C���̃R�s�[�͍s���܂���B
+				出力HTMLが指定されていないときはJARファイルだけが生成され、ファイルのコピーは行われません。
 			</dd>
-			<dt>�o��JAR</dt>
+			<dt>出力JAR</dt>
 			<dd>
-				��������JAR�t�@�C���i�A�v���b�g�̖{�́j�̃t�@�C�������w�肵�܂��B
-				�ʏ� HTML �Ɠ������O�ł��܂��܂���B
+				生成するJARファイル（アプレットの本体）のファイル名を指定します。
+				通常 HTML と同じ名前でかまいません。
 			</dd>
-			<dt>�e���v���[�g</dt>
+			<dt>テンプレート</dt>
 			<dd>
-				�������� HTML �̃e���v���[�g���w�肵�܂��B
-				�e���v���[�g���� {XXXXX_YYY} �̂悤�Ɋ��ʂň͂܂ꂽ�͈͂��R���p�C���ɂ���Đ������ꂽ���Œu�������邱�Ƃ�HTML�𐶐����܂��B<br />
-				�w�肵�Ȃ������Ƃ��͓����I�ɕێ����Ă���V���v���ȃe���v���[�g���g�p����܂��B<br />
+				生成する HTML のテンプレートを指定します。
+				テンプレート内の {XXXXX_YYY} のように括弧で囲まれた範囲をコンパイラによって生成された情報で置き換えることでHTMLを生成します。<br />
+				指定しなかったときは内部的に保持しているシンプルなテンプレートが使用されます。<br />
 				<br />
-				�ڍׂ� sample-template.html ���e�L�X�g�G�f�B�^�ŊJ���Ă��������B
+				詳細は sample-template.html をテキストエディタで開いてください。
 			</dd>
-			<dt>�R���p�C��</dt>
+			<dt>コンパイル</dt>
 			<dd>
-				�R���p�C�������s���A�K�v�ȃt�@�C�����R�s�[���܂��B
+				コンパイルを実行し、必要なファイルをコピーします。
 			</dd>
-			<dt>�e�X�g���s</dt>
+			<dt>テスト実行</dt>
 			<dd>
-				�����I�ɃR���p�C����A�A�v���b�g���e�X�g�N�����܂��B
-				�e�X�g���s���̓t�@�C����l�b�g���[�N�ւ̐ڑ��̐����������̂ŁA�T�[�o�[�ƒʐM����K�v������v���O�������T�[�o�[�ɃA�b�v���[�h����O�ɓ���m�F�������Ƃ��Ȃǂɕ֗��ł��B
+				自動的にコンパイル後、アプレットをテスト起動します。
+				テスト実行中はファイルやネットワークへの接続の制限が無いので、サーバーと通信する必要があるプログラムをサーバーにアップロードする前に動作確認したいときなどに便利です。
 			</dd>
 		</dl>
 		
 	</paragraph>
 	
-	<paragraph name="���j���[�E�c�[���o�[�R�}���h">
+	<paragraph name="メニュー・ツールバーコマンド">
 		
 		<dl>
-			<dt>�V�K�쐬</dt>
+			<dt>新規作成</dt>
 			<dd>
-				���͓��e�����ׂċ�ɂ��Ă�蒼���܂��B
+				入力内容をすべて空にしてやり直します。
 			</dd>
-			<dt>�J��</dt>
+			<dt>開く</dt>
 			<dd>
-				�O��ۑ����Ă������ݒ���e��ǂݍ��݂܂��B
+				前回保存しておいた設定内容を読み込みます。
 			</dd>
-			<dt>�㏑���ۑ�</dt>
+			<dt>上書き保存</dt>
 			<dd>
-				�ݒ���e��ۑ����Ă������񂩂瓯���ݒ���e�̃A�v���b�g���ȒP�ɍ���悤�ɂ��܂��B<br />
-				�V�K�쐬����́u���O�����ĕۑ��v�̓���ɂȂ�܂��B
+				設定内容を保存しておき次回から同じ設定内容のアプレットを簡単に作れるようにします。<br />
+				新規作成直後は「名前をつけて保存」の動作になります。
 			</dd>
-			<dt>���O�����ĕۑ�</dt>
+			<dt>名前をつけて保存</dt>
 			<dd>
-				�ݒ���e�ɕʖ������ĕۑ����܂��B
+				設定内容に別名をつけて保存します。
 			</dd>
-			<dt>�I��</dt>
-			<dd>�R���p�C������܂��B</dd>
+			<dt>終了</dt>
+			<dd>コンパイラを閉じます。</dd>
 		</dl>
 		
 	</paragraph>

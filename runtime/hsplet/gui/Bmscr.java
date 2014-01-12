@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ƒEƒBƒ“ƒhƒE‚Ìó‘Ô‚ğŠÇ—‚·‚éƒNƒ‰ƒXB
+ * ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®çŠ¶æ…‹ã‚’ç®¡ç†ã™ã‚‹ã‚¯ãƒ©ã‚¹ã€‚
  * <p>
- * color/gmode “™‚Åİ’è‚³‚ê‚½’l‚Í‚·‚×‚Ä‚±‚ÌƒNƒ‰ƒX‚ÅŠÇ—‚·‚éB
+ * color/gmode ç­‰ã§è¨­å®šã•ã‚ŒãŸå€¤ã¯ã™ã¹ã¦ã“ã®ã‚¯ãƒ©ã‚¹ã§ç®¡ç†ã™ã‚‹ã€‚
  * </p>
  * 
  * @author Yuki
@@ -25,17 +25,17 @@ import java.util.List;
  */
 public class Bmscr implements Serializable {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: Bmscr.java,v 1.2 2006/01/29 16:29:17 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = 7942441592976959984L;
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
-	 * <p>ƒTƒCƒY‚ÍƒEƒBƒ“ƒhƒEƒTƒCƒY‚ğg—p‚·‚éB</p>
-	 * @param screen ƒEƒBƒ“ƒhƒEB
-	 * @param contentPane ƒRƒ“ƒeƒ“ƒgƒyƒCƒ“B
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
+	 * <p>ã‚µã‚¤ã‚ºã¯ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚µã‚¤ã‚ºã‚’ä½¿ç”¨ã™ã‚‹ã€‚</p>
+	 * @param screen ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã€‚
+	 * @param contentPane ã‚³ãƒ³ãƒ†ãƒ³ãƒˆãƒšã‚¤ãƒ³ã€‚
 	 */
 	public Bmscr(final HSPScreen screen, final ContentPane contentPane) {
 
@@ -44,10 +44,10 @@ public class Bmscr implements Serializable {
 	}
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
-	 * @param screen ƒEƒBƒ“ƒhƒEB
-	 * @param contentPane ƒRƒ“ƒeƒ“ƒgƒyƒCƒ“B
-	 * @param bufferSize ƒoƒbƒtƒ@ƒTƒCƒYB
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
+	 * @param screen ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã€‚
+	 * @param contentPane ã‚³ãƒ³ãƒ†ãƒ³ãƒˆãƒšã‚¤ãƒ³ã€‚
+	 * @param bufferSize ãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã€‚
 	 */
 	public Bmscr(final HSPScreen screen, final ContentPane contentPane, final Dimension bufferSize) {
 

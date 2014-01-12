@@ -8,9 +8,9 @@ import java.awt.Graphics;
 import javax.swing.JPanel;
 
 /**
- * HSPLet ‚ÌŠe‰æ–Ê‚Ìu“à—e•¨v‚ğŒ»‚·ƒIƒuƒWƒFƒNƒgB
+ * HSPLet ã®å„ç”»é¢ã®ã€Œå†…å®¹ç‰©ã€ã‚’ç¾ã™ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
  * <p>
- * ƒRƒ“ƒgƒ[ƒ‹‚ğ‚±‚Ì’†‚É”z’u‚·‚é‚Ù‚©AƒoƒbƒNƒoƒbƒtƒ@‚ğg—p‚µ‚½ƒ_ƒuƒ‹ƒoƒbƒtƒ@ƒŠƒ“ƒO‚àƒTƒ|[ƒg‚·‚éB
+ * ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã‚’ã“ã®ä¸­ã«é…ç½®ã™ã‚‹ã»ã‹ã€ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã‚’ä½¿ç”¨ã—ãŸãƒ€ãƒ–ãƒ«ãƒãƒƒãƒ•ã‚¡ãƒªãƒ³ã‚°ã‚‚ã‚µãƒãƒ¼ãƒˆã™ã‚‹ã€‚
  * </p>
  * 
  * @author Yuki
@@ -18,15 +18,15 @@ import javax.swing.JPanel;
  */
 public class ContentPane extends JPanel {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: ContentPane.java,v 1.9 2006/02/27 15:52:05 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = 8376446656431845833L;
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚ğì¬‚·‚éB
-	 * @param owner ƒI[ƒi[‚Æ‚È‚é‰æ–ÊB
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ä½œæˆã™ã‚‹ã€‚
+	 * @param owner ã‚ªãƒ¼ãƒŠãƒ¼ã¨ãªã‚‹ç”»é¢ã€‚
 	 */
 	public ContentPane(final HSPScreen owner) {
 

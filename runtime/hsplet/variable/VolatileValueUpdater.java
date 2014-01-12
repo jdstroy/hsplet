@@ -1,9 +1,9 @@
 package hsplet.variable;
 
 /**
- * •Ï”‚Ì’l‚ğŠÇ—‚·‚éƒIƒuƒWƒFƒNƒgB
+ * å¤‰æ•°ã®å€¤ã‚’ç®¡ç†ã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
  * <p>
- * •Ï”‚Ì’l‚ª•ÏX‚³‚êAÅV‚Ìî•ñ‚ª•K—v‚É‚È‚Á‚½‚Æ‚«‚ÉŒÄ‚Ño‚³‚ê‚éB
+ * å¤‰æ•°ã®å€¤ãŒå¤‰æ›´ã•ã‚Œã€æœ€æ–°ã®æƒ…å ±ãŒå¿…è¦ã«ãªã£ãŸã¨ãã«å‘¼ã³å‡ºã•ã‚Œã‚‹ã€‚
  * </p>
  * 
  * @author Yuki
@@ -11,13 +11,13 @@ package hsplet.variable;
  */
 public interface VolatileValueUpdater {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	static final String fileVersionID = "$Id: VolatileValueUpdater.java,v 1.2 2006/02/11 17:19:35 Yuki Exp $";
 
 	/**
-	 * ˆø”‚É“n‚³‚ê‚½•Ï”‚Ì’l‚ğÅV‚É‚·‚éB
+	 * å¼•æ•°ã«æ¸¡ã•ã‚ŒãŸå¤‰æ•°ã®å€¤ã‚’æœ€æ–°ã«ã™ã‚‹ã€‚
 	 * 
-	 * @param value XV‚·‚é•Ï”B
+	 * @param value æ›´æ–°ã™ã‚‹å¤‰æ•°ã€‚
 	 */
 	public void update(final Operand value);
 }

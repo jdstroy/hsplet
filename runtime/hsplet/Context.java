@@ -30,7 +30,7 @@ import org.yi.jdstroy.hsplet.io.IdentityFileSystemTranslator;
 import org.yi.jdstroy.hsplet.io.UriDecodeTranslator;
 
 /**
- * HSPLet ‚ÌÀs‚³‚ê‚Ä‚¢‚éƒRƒ“ƒeƒLƒXƒg‚ğ•\‚·ƒNƒ‰ƒXB <p> ƒVƒXƒeƒ€•Ï”‚È‚Ç‚ğŠÜ‚ŞB </p>
+ * HSPLet ã®å®Ÿè¡Œã•ã‚Œã¦ã„ã‚‹ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã‚’è¡¨ã™ã‚¯ãƒ©ã‚¹ã€‚ <p> ã‚·ã‚¹ãƒ†ãƒ å¤‰æ•°ãªã©ã‚’å«ã‚€ã€‚ </p>
  *
  * @author Yuki
  * @version $Revision: 1.14 $, $Date: 2006/05/20 06:12:07 $
@@ -38,11 +38,11 @@ import org.yi.jdstroy.hsplet.io.UriDecodeTranslator;
 public class Context implements Serializable {
 
     /**
-     * ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB
+     * ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚
      */
     private static final String fileVersionID = "$Id: Context.java,v 1.14 2006/05/20 06:12:07 Yuki Exp $";
     /**
-     * ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B
+     * ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚
      */
     private static final long serialVersionUID = 4644182106732036912L;
     public Applet applet;
@@ -522,7 +522,7 @@ public class Context implements Serializable {
                 }
 
                 {
-                    // ƒpƒbƒNƒtƒ@ƒCƒ‹‚ÍƒfƒBƒŒƒNƒgƒŠ‚à–³‹‚·‚é
+                    // ãƒ‘ãƒƒã‚¯ãƒ•ã‚¡ã‚¤ãƒ«ã¯ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚‚ç„¡è¦–ã™ã‚‹
 
                     final URL result = getClass().getClassLoader().getResource(fileName);
 
@@ -532,7 +532,7 @@ public class Context implements Serializable {
                 }
 
                 {
-                    // ƒpƒbƒNƒtƒ@ƒCƒ‹‚Í‚·‚×‚Ä‚ÌƒfƒBƒŒƒNƒgƒŠ‚à–³‹‚·‚é
+                    // ãƒ‘ãƒƒã‚¯ãƒ•ã‚¡ã‚¤ãƒ«ã¯ã™ã¹ã¦ã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚‚ç„¡è¦–ã™ã‚‹
 
                     final URL result = getClass().getClassLoader().getResource(new File(relativeName).getName());
 

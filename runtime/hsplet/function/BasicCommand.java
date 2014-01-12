@@ -29,7 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * HSP ‚ÌŠî–{ƒRƒ}ƒ“ƒhŒQB
+ * HSP ã®åŸºæœ¬ã‚³ãƒãƒ³ãƒ‰ç¾¤ã€‚
  *
  * @author Yuki
  * @version $Revision: 1.8 $, $Date: 2006/03/26 14:35:37 $
@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 public class BasicCommand extends FunctionBase {
 
     /**
-     * ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB
+     * ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚
      */
     private static final String fileVersionID = "$Id: BasicCommand.java,v 1.8 2006/03/26 14:35:37 Yuki Exp $";
 
@@ -348,7 +348,7 @@ public class BasicCommand extends FunctionBase {
                     }
 
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    // •Ï”ƒoƒbƒtƒ@ƒI[ƒo[
+                    // å¤‰æ•°ãƒãƒƒãƒ•ã‚¡ã‚ªãƒ¼ãƒãƒ¼
                 }
 
                 context.strsize.value = readedDataSize;
@@ -426,7 +426,7 @@ public class BasicCommand extends FunctionBase {
                     }
 
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    // •Ï”ƒoƒbƒtƒ@ƒI[ƒo[
+                    // å¤‰æ•°ãƒãƒƒãƒ•ã‚¡ã‚ªãƒ¼ãƒãƒ¼
                 }
 
                 //context.strsize.value = readedDataSize;
@@ -692,7 +692,7 @@ public class BasicCommand extends FunctionBase {
 
         final int line = toInt(linev, linei, -1);
 
-        // •¶š—ñŒ^‚È‚çg—p’†‚Ìƒoƒbƒtƒ@‚ª•Ô‚Á‚Ä‚­‚é‚Í‚¸B
+        // æ–‡å­—åˆ—å‹ãªã‚‰ä½¿ç”¨ä¸­ã®ãƒãƒƒãƒ•ã‚¡ãŒè¿”ã£ã¦ãã‚‹ã¯ãšã€‚
         final ByteString note = context.note.toByteStringRaw(0);
 
         int lineIndex = note.lineIndex(line);
@@ -728,7 +728,7 @@ public class BasicCommand extends FunctionBase {
 
     public static void notedel(final Context context, final int line) {
 
-        // •¶š—ñŒ^‚È‚çg—p’†‚Ìƒoƒbƒtƒ@‚ª•Ô‚Á‚Ä‚­‚é‚Í‚¸B
+        // æ–‡å­—åˆ—å‹ãªã‚‰ä½¿ç”¨ä¸­ã®ãƒãƒƒãƒ•ã‚¡ãŒè¿”ã£ã¦ãã‚‹ã¯ãšã€‚
         final ByteString note = context.note.toByteStringRaw(0);
 
         int lineIndex = note.lineIndex(line);
@@ -747,7 +747,7 @@ public class BasicCommand extends FunctionBase {
         final int size = toInt(sizev, sizevi, -1);
         final int offset = 0;
 
-        // •¶š—ñŒ^‚È‚çg—p’†‚Ìƒoƒbƒtƒ@‚ª•Ô‚Á‚Ä‚­‚é‚Í‚¸B
+        // æ–‡å­—åˆ—å‹ãªã‚‰ä½¿ç”¨ä¸­ã®ãƒãƒƒãƒ•ã‚¡ãŒè¿”ã£ã¦ãã‚‹ã¯ãšã€‚
         final ByteString note = context.note.toByteStringRaw(0);
 
         // If the note length is zero, do not set the 0th byte.
@@ -859,7 +859,7 @@ public class BasicCommand extends FunctionBase {
             return;
         }
 
-        // •¶š—ñŒ^‚È‚çg—p’†‚Ìƒoƒbƒtƒ@‚ª•Ô‚Á‚Ä‚­‚é‚Í‚¸B
+        // æ–‡å­—åˆ—å‹ãªã‚‰ä½¿ç”¨ä¸­ã®ãƒãƒƒãƒ•ã‚¡ãŒè¿”ã£ã¦ãã‚‹ã¯ãšã€‚
         final ByteString note = context.note.toByteStringRaw(0);
 
         int lineIndex = note.lineIndex(line);

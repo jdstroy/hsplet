@@ -5,26 +5,26 @@ package hsplet.variable;
 import hsplet.util.Conversion;
 
 /**
- * int ‚Ì”z—ñ‚ğ•\‚·ƒNƒ‰ƒXB
+ * int ã®é…åˆ—ã‚’è¡¨ã™ã‚¯ãƒ©ã‚¹ã€‚
  * 
  * @author Yuki
  * @version $Revision: 1.2.4.1 $, $Date: 2006/08/02 12:13:06 $
  */
 public class IntScalar extends Scalar {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: IntScalar.java,v 1.2.4.1 2006/08/02 12:13:06 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = -798941318580432310L;
 
-	/** ƒIƒuƒWƒFƒNƒg‚Ì’lB */
+	/** ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å€¤ã€‚ */
 	public int value;
 
 	/**
-	 * ’l‚ğw’è‚µ‚ÄƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
+	 * å€¤ã‚’æŒ‡å®šã—ã¦ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
 	 * 
-	 * @param value ‰Šú’lB
+	 * @param value åˆæœŸå€¤ã€‚
 	 */
 	public IntScalar(final int value) {
 

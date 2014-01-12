@@ -16,25 +16,25 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.Line;
 
 /**
- * AIFF/AU/WAVE ƒTƒEƒ“ƒhB
+ * AIFF/AU/WAVE ã‚µã‚¦ãƒ³ãƒ‰ã€‚
  * 
  * @author Yuki
  * @version $Revision: 1.10 $, $Date: 2006/05/09 11:57:31 $
  */
 public class Sound implements HSPMedia {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: Sound.java,v 1.10 2006/05/09 11:57:31 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = 4437980027030449232L;
 
 	/**
-	 * ƒƒfƒBƒA‚ğ“Ç‚İ‚İƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
-	 * @param context Às‚µ‚Ä‚¢‚éƒRƒ“ƒeƒLƒXƒgB
-	 * @param fileName “Ç‚İ‚ŞƒƒfƒBƒAB
-	 * @param mode Ä¶ƒ‚[ƒhB
-	 * @throws Exception “Ç‚İ‚ß‚È‚©‚Á‚½‚Æ‚«B
+	 * ãƒ¡ãƒ‡ã‚£ã‚¢ã‚’èª­ã¿è¾¼ã¿ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
+	 * @param context å®Ÿè¡Œã—ã¦ã„ã‚‹ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã€‚
+	 * @param fileName èª­ã¿è¾¼ã‚€ãƒ¡ãƒ‡ã‚£ã‚¢ã€‚
+	 * @param mode å†ç”Ÿãƒ¢ãƒ¼ãƒ‰ã€‚
+	 * @throws Exception èª­ã¿è¾¼ã‚ãªã‹ã£ãŸã¨ãã€‚
 	 */
 	public Sound(final Context context, final String fileName, final int mode) throws Exception {
 

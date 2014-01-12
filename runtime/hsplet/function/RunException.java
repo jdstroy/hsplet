@@ -4,13 +4,13 @@
 package hsplet.function;
 
 /**
- * run ‚ğÀŒ»‚·‚é‚½‚ß‚Ì—áŠOB
+ * run ã‚’å®Ÿç¾ã™ã‚‹ãŸã‚ã®ä¾‹å¤–ã€‚
  * <p>
- * ‚±‚Ì—áŠO‚ğ“Š‚°‚é‚ÆƒXƒŒƒbƒh‚ÌÅãˆÊ‚ÅƒLƒƒƒbƒ`‚³‚êAV‚µ‚¢ƒNƒ‰ƒX‚ªÀs‚³‚ê‚éB
+ * ã“ã®ä¾‹å¤–ã‚’æŠ•ã’ã‚‹ã¨ã‚¹ãƒ¬ãƒƒãƒ‰ã®æœ€ä¸Šä½ã§ã‚­ãƒ£ãƒƒãƒã•ã‚Œã€æ–°ã—ã„ã‚¯ãƒ©ã‚¹ãŒå®Ÿè¡Œã•ã‚Œã‚‹ã€‚
  * </p>
  * <p>
- * ’Êí‚±‚Ì—áŠO‚ğ’¼Úg—p‚·‚é‚±‚Æ‚Í–³‚­A‚Ü‚½g—p‚·‚×‚«‚Å‚Í‚È‚¢B ‘ã‚í‚è‚É {@link hsplet.function.ProgramCommand#run(hsplet.Context, String, String) }
- * ‚ğg—p‚·‚éB
+ * é€šå¸¸ã“ã®ä¾‹å¤–ã‚’ç›´æ¥ä½¿ç”¨ã™ã‚‹ã“ã¨ã¯ç„¡ãã€ã¾ãŸä½¿ç”¨ã™ã¹ãã§ã¯ãªã„ã€‚ ä»£ã‚ã‚Šã« {@link hsplet.function.ProgramCommand#run(hsplet.Context, String, String) }
+ * ã‚’ä½¿ç”¨ã™ã‚‹ã€‚
  * </p>
  * 
  * @author Yuki
@@ -18,10 +18,10 @@ package hsplet.function;
  */
 public class RunException extends RuntimeException {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: RunException.java,v 1.1 2006/01/16 19:34:23 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = 2931064258661525139L;
 
 	private final Class runClass;
@@ -29,9 +29,9 @@ public class RunException extends RuntimeException {
 	private final String cmdline;
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
-	 * @param runClass ‹N“®‚·‚éƒNƒ‰ƒXB
-	 * @param cmdline ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“ˆø”B
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
+	 * @param runClass èµ·å‹•ã™ã‚‹ã‚¯ãƒ©ã‚¹ã€‚
+	 * @param cmdline ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³å¼•æ•°ã€‚
 	 */
 	public RunException(final Class runClass, final String cmdline) {
 		this.runClass = runClass;
@@ -39,16 +39,16 @@ public class RunException extends RuntimeException {
 	}
 
 	/**
-	 * ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“ˆø”‚ğæ“¾‚·‚éB
-	 * @return ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“ˆø”B
+	 * ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³å¼•æ•°ã‚’å–å¾—ã™ã‚‹ã€‚
+	 * @return ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³å¼•æ•°ã€‚
 	 */
 	public String getCmdline() {
 		return cmdline;
 	}
 
 	/**
-	 * ‹N“®‚·‚éƒNƒ‰ƒX‚ğæ“¾‚·‚éB
-	 * @return ‹N“®‚·‚éƒNƒ‰ƒXB
+	 * èµ·å‹•ã™ã‚‹ã‚¯ãƒ©ã‚¹ã‚’å–å¾—ã™ã‚‹ã€‚
+	 * @return èµ·å‹•ã™ã‚‹ã‚¯ãƒ©ã‚¹ã€‚
 	 */
 	public Class getRunClass() {
 		return runClass;

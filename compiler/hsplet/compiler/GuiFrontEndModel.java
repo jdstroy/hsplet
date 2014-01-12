@@ -27,23 +27,23 @@ import javax.swing.JOptionPane;
 import edu.stanford.ejalbert.BrowserLauncher;
 
 /**
- * GUI ƒtƒƒ“ƒgƒGƒ“ƒh‚Ìî•ñ‚ÆƒƒWƒbƒN‚ğ•Û‚·‚éƒNƒ‰ƒXB
+ * GUI ãƒ•ãƒ­ãƒ³ãƒˆã‚¨ãƒ³ãƒ‰ã®æƒ…å ±ã¨ãƒ­ã‚¸ãƒƒã‚¯ã‚’ä¿æŒã™ã‚‹ã‚¯ãƒ©ã‚¹ã€‚
  * 
  * @author Yuki
  * @version $Revision: 1.5 $, $Date: 2006/05/09 11:57:31 $
  */
 public class GuiFrontEndModel implements Serializable {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: GuiFrontEndModel.java,v 1.5 2006/05/09 11:57:31 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = 8731834569307009875L;
 
-	/** mp3 —pƒ‰ƒCƒuƒ‰ƒŠ‚Ìƒtƒ@ƒCƒ‹–¼B */
+	/** mp3 ç”¨ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®ãƒ•ã‚¡ã‚¤ãƒ«åã€‚ */
 	private static final String MP3_LIB_NAME = "lib/jl1.0.jar";
 
-	/** strf —pƒ‰ƒCƒuƒ‰ƒŠ‚Ìƒtƒ@ƒCƒ‹–¼B */
+	/** strf ç”¨ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®ãƒ•ã‚¡ã‚¤ãƒ«åã€‚ */
 	private static final String STRF_LIB_NAME = "lib/hb16.jar";
 
 	private String title = "";
@@ -175,7 +175,7 @@ public class GuiFrontEndModel implements Serializable {
 				}
 				BrowserLauncher.openURL("http://localhost:6791" + HttpServer.mapURL(new File(htmlName)));
 			} else {
-				JOptionPane.showMessageDialog(null, "ƒRƒ“ƒpƒCƒ‹‚É¬Œ÷‚µ‚Ü‚µ‚½B", "HSPLet", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, "ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã«æˆåŠŸã—ã¾ã—ãŸã€‚", "HSPLet", JOptionPane.INFORMATION_MESSAGE);
 
 			}
 		} catch (Throwable e) {

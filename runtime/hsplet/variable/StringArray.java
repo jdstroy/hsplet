@@ -6,7 +6,7 @@ package hsplet.variable;
 import hsplet.util.Conversion;
 
 /**
- * •¶š—ñ‚Ì”z—ñ‚ğ•\‚·ƒNƒ‰ƒXB
+ * æ–‡å­—åˆ—ã®é…åˆ—ã‚’è¡¨ã™ã‚¯ãƒ©ã‚¹ã€‚
  * 
  * 
  * @author Yuki
@@ -14,17 +14,17 @@ import hsplet.util.Conversion;
  */
 public final class StringArray extends Array {
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = 5025854224973749708L;
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: StringArray.java,v 1.4.2.1 2006/08/02 12:13:06 Yuki Exp $";
 
-	/** ƒIƒuƒWƒFƒNƒg‚Ì’lB */
+	/** ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å€¤ã€‚ */
 	private ByteString[] values;
 
 	/**
-	 * ’·‚³ 64A—v‘f” 1 ‚Ì”z—ñ‚ğ\’z‚·‚éB
+	 * é•·ã• 64ã€è¦ç´ æ•° 1 ã®é…åˆ—ã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
 	 */
 	public StringArray() {
 
@@ -32,16 +32,16 @@ public final class StringArray extends Array {
 	}
 
 	/**
-	 * ‰Šú’·‚³‚Æ—v‘f”‚ğw’è‚µ‚ÄƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
+	 * åˆæœŸé•·ã•ã¨è¦ç´ æ•°ã‚’æŒ‡å®šã—ã¦ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
 	 * <p>
-	 * ƒIƒŠƒWƒiƒ‹ HSP ‚Æˆá‚¢A—v‘f”‚É 0 ‚ğw’è‚·‚é‚±‚Æ‚Ío—ˆ‚È‚¢B ‚Â‚Ü‚èA”z—ñ‚Í•K‚¸lŸŒ³‚ ‚é‚±‚Æ‚É‚È‚éB ‚»‚Ì‚Ù‚¤‚ª—v‘f”‚È‚Ç‚ÌŒvZ‚ªŠÈ’PB
+	 * ã‚ªãƒªã‚¸ãƒŠãƒ« HSP ã¨é•ã„ã€è¦ç´ æ•°ã« 0 ã‚’æŒ‡å®šã™ã‚‹ã“ã¨ã¯å‡ºæ¥ãªã„ã€‚ ã¤ã¾ã‚Šã€é…åˆ—ã¯å¿…ãšå››æ¬¡å…ƒã‚ã‚‹ã“ã¨ã«ãªã‚‹ã€‚ ãã®ã»ã†ãŒè¦ç´ æ•°ãªã©ã®è¨ˆç®—ãŒç°¡å˜ã€‚
 	 * </p>
 	 * 
-	 * @param length ‰Šúó‘Ô‚Å‚Ì•¶š—ñƒoƒbƒtƒ@ƒTƒCƒYB
-	 * @param l0 ˆêŸŒ³–Ú‚Ì—v‘f”B
-	 * @param l1 “ñŸŒ³–Ú‚Ì—v‘f”B
-	 * @param l2 OŸŒ³–Ú‚Ì—v‘f”B
-	 * @param l3 lŸŒ³–Ú‚Ì—v‘f”B
+	 * @param length åˆæœŸçŠ¶æ…‹ã§ã®æ–‡å­—åˆ—ãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºã€‚
+	 * @param l0 ä¸€æ¬¡å…ƒç›®ã®è¦ç´ æ•°ã€‚
+	 * @param l1 äºŒæ¬¡å…ƒç›®ã®è¦ç´ æ•°ã€‚
+	 * @param l2 ä¸‰æ¬¡å…ƒç›®ã®è¦ç´ æ•°ã€‚
+	 * @param l3 å››æ¬¡å…ƒç›®ã®è¦ç´ æ•°ã€‚
 	 */
 	public StringArray(final int length, final int l0, final int l1,
 			final int l2, final int l3) {

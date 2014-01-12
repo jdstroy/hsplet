@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="Shift_JIS" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!--
  $Id: contents.xslt,v 1.3 2006/01/22 16:00:57 Yuki Exp $
 -->
@@ -28,7 +28,7 @@
 				<meta name="copyright" content="Copyright (C) 2004 Yuki. All rights are reserved." />
 				<meta http-equiv="Content-Style-Type" content="text/css" />
 				<meta http-equiv="Content-Script-Type" content="text/javascript" />
-				<title>–ÚŽŸ - HSPLet ƒŠƒtƒ@ƒŒƒ“ƒX</title>
+				<title>ç›®æ¬¡ - HSPLet ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹</title>
 				<link rel="stylesheet" type="text/css" href="common.css" />
 				<link rel="stylesheet" type="text/css" href="contents.css" />
 			</head>
@@ -43,7 +43,7 @@
 		<xsl:param name="id" />
 		<xsl:choose>
 			<xsl:when test="name()='reference'">
-				<h1>–ÚŽŸ</h1>
+				<h1>ç›®æ¬¡</h1>
 
 				<ul class="contents">
 				<xsl:for-each select="page">
@@ -112,19 +112,19 @@
 		<li>
 			<xsl:choose>
 				<xsl:when test="@implement='extend'">
-					<span class="supportExtend"></span>
+					<span class="supportExtend">â—Ž</span>
 				</xsl:when>
 				<xsl:when test="@implement='yes'">
-					<span class="supportYes">›</span>
+					<span class="supportYes">â—‹</span>
 				</xsl:when>
 				<xsl:when test="@implement='partial'">
-					<span class="supportPartial">¢</span>
+					<span class="supportPartial">â–³</span>
 				</xsl:when>
 				<xsl:when test="@implement='note'">
-					<span class="supportNote">I</span>
+					<span class="supportNote">ï¼</span>
 				</xsl:when>
 				<xsl:when test="@implement='no'">
-					<span class="supportNo">~</span>
+					<span class="supportNo">Ã—</span>
 				</xsl:when>
 			</xsl:choose>
 			<xsl:choose>

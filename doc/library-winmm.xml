@@ -1,17 +1,17 @@
-<?xml version="1.0" encoding="Shift_JIS"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
  $Id: library-winmm.xml,v 1.1 2006/01/22 16:00:57 Yuki Exp $
 -->
 <library name="winmm">
 	<summary>
-		<p>winmm.dll ���g�p���� Windows API �ł��B
+		<p>winmm.dll を使用した Windows API です。
 		</p>
 	</summary>
-	<category name="�}���`���f�B�A�^�C�}�[">
-		<function name="timeGetTime" summary="�~���b�P�ʂ̎��Ԃ��擾" implement="yes">
+	<category name="マルチメディアタイマー">
+		<function name="timeGetTime" summary="ミリ秒単位の時間を取得" implement="yes">
 			<remarks>
 				<p>
-					HSPLet �N��������̃~���b�P�ʂ̎������擾���܂��B
+					HSPLet 起動時からのミリ秒単位の時刻を取得します。
 				</p>
 			</remarks>
 		</function>

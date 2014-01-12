@@ -4,137 +4,137 @@
 package hsplet;
 
 /**
- * HSP ‚ÌƒGƒ‰[’lB
+ * HSP ã®ã‚¨ãƒ©ãƒ¼å€¤ã€‚
  * 
  * @author Yuki
  * @version $Revision: 1.2 $, $Date: 2006/01/13 20:32:10 $
  */
 public final class HSPError {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: HSPError.java,v 1.2 2006/01/13 20:32:10 Yuki Exp $";
 	
-	/** ƒGƒ‰[–³‚µ */
+	/** ã‚¨ãƒ©ãƒ¼ç„¡ã— */
 	public static final int None = 0;
 
-	/** ƒVƒXƒeƒ€ƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½ */
+	/** ã‚·ã‚¹ãƒ†ãƒ ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸ */
 	public static final int SystemError = 1;
 
-	/** •¶–@‚ªŠÔˆá‚Á‚Ä‚¢‚Ü‚· */
+	/** æ–‡æ³•ãŒé–“é•ã£ã¦ã„ã¾ã™ */
 	public static final int InvalidGrammar = 2;
 	
-	/** ƒpƒ‰ƒ[ƒ^‚Ì’l‚ªˆÙí‚Å‚· */
+	/** ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®å€¤ãŒç•°å¸¸ã§ã™ */
 	public static final int InvalidParameterValue = 3;
 
-	/** ŒvZ®‚ÅƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½ */
+	/** è¨ˆç®—å¼ã§ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸ */
 	public static final int ErrorOnExpression = 4;
 
-	/** ƒpƒ‰ƒ[ƒ^‚ÌÈ—ª‚Í‚Å‚«‚Ü‚¹‚ñ */
+	/** ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®çœç•¥ã¯ã§ãã¾ã›ã‚“ */
 	public static final int ParameterCannotBeOmitted = 5;
 
-	/** ƒpƒ‰ƒ[ƒ^‚ÌŒ^‚ªˆá‚¢‚Ü‚· */
+	/** ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®å‹ãŒé•ã„ã¾ã™ */
 	public static final int ParameterTypeMismatch = 6;
 
-	/** ”z—ñ‚Ì—v‘f‚ª–³Œø‚Å‚· */
+	/** é…åˆ—ã®è¦ç´ ãŒç„¡åŠ¹ã§ã™ */
 	public static final int IndexOutOfBounds = 7;
 	
-	/** —LŒø‚Èƒ‰ƒxƒ‹‚ªw’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ */
+	/** æœ‰åŠ¹ãªãƒ©ãƒ™ãƒ«ãŒæŒ‡å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ */
 	public static final int InvalidLabel = 8;
 	
-	/** ƒTƒuƒ‹[ƒ`ƒ“‚âƒ‹[ƒv‚ÌƒlƒXƒg‚ª[‚·‚¬‚Ü‚· */
+	/** ã‚µãƒ–ãƒ«ãƒ¼ãƒãƒ³ã‚„ãƒ«ãƒ¼ãƒ—ã®ãƒã‚¹ãƒˆãŒæ·±ã™ãã¾ã™ */
 	public static final int SubroutineNestTooDeep = 9;
 	
-	/** ƒTƒuƒ‹[ƒ`ƒ“ŠO‚Ìreturn‚Í–³Œø‚Å‚· */
+	/** ã‚µãƒ–ãƒ«ãƒ¼ãƒãƒ³å¤–ã®returnã¯ç„¡åŠ¹ã§ã™ */
 	public static final int ReturnOutOfSubroutineDisallowed = 10;
 
-	/** repeatŠO‚Å‚Ìloop‚Í–³Œø‚Å‚· */
+	/** repeatå¤–ã§ã®loopã¯ç„¡åŠ¹ã§ã™ */
 	public static final int LoopOutOfRepeatDisallowed = 11;
 
-	/** ƒtƒ@ƒCƒ‹‚ªŒ©‚Â‚©‚ç‚È‚¢‚©–³Œø‚È–¼‘O‚Å‚· */
+	/** ãƒ•ã‚¡ã‚¤ãƒ«ãŒè¦‹ã¤ã‹ã‚‰ãªã„ã‹ç„¡åŠ¹ãªåå‰ã§ã™ */
 	public static final int FileNotFound = 12;
 	
-	/** ‰æ‘œƒtƒ@ƒCƒ‹‚ª‚ ‚è‚Ü‚¹‚ñ */
+	/** ç”»åƒãƒ•ã‚¡ã‚¤ãƒ«ãŒã‚ã‚Šã¾ã›ã‚“ */
 	public static final int ImageNotFound = 13;
 
-	/** ŠO•”ƒtƒ@ƒCƒ‹ŒÄ‚Ño‚µ’†‚ÌƒGƒ‰[‚Å‚· */
+	/** å¤–éƒ¨ãƒ•ã‚¡ã‚¤ãƒ«å‘¼ã³å‡ºã—ä¸­ã®ã‚¨ãƒ©ãƒ¼ã§ã™ */
 	public static final int ErrorOnExecution = 14;
 
-	/** ŒvZ®‚ÅƒJƒbƒR‚Ì‹Lq‚ªˆá‚¢‚Ü‚· */
+	/** è¨ˆç®—å¼ã§ã‚«ãƒƒã‚³ã®è¨˜è¿°ãŒé•ã„ã¾ã™ */
 	public static final int InvalidParenthesis = 15;
 
-	/** ƒpƒ‰ƒ[ƒ^‚Ì”‚ª‘½‚·‚¬‚Ü‚· */
+	/** ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®æ•°ãŒå¤šã™ãã¾ã™ */
 	public static final int ParameetersTooMany = 16;
 	
-	/** •¶š—ñ®‚Åˆµ‚¦‚é•¶š”‚ğ‰z‚¦‚Ü‚µ‚½ */
+	/** æ–‡å­—åˆ—å¼ã§æ‰±ãˆã‚‹æ–‡å­—æ•°ã‚’è¶Šãˆã¾ã—ãŸ */
 	public static final int StringTooLong = 17;
 	
-	/** ‘ã“ü‚Å‚«‚È‚¢•Ï”–¼‚ğw’è‚µ‚Ä‚¢‚Ü‚· */
+	/** ä»£å…¥ã§ããªã„å¤‰æ•°åã‚’æŒ‡å®šã—ã¦ã„ã¾ã™ */
 	public static final int CannotAssign = 18;
 	
-	/** 0‚ÅœZ‚µ‚Ü‚µ‚½ */
+	/** 0ã§é™¤ç®—ã—ã¾ã—ãŸ */
 	public static final int DividedByZero = 19;
 	
-	/** ƒoƒbƒtƒ@ƒI[ƒo[ƒtƒ[‚ª”­¶‚µ‚Ü‚µ‚½ */
+	/** ãƒãƒƒãƒ•ã‚¡ã‚ªãƒ¼ãƒãƒ¼ãƒ•ãƒ­ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸ */
 	public static final int BufferOverFlow = 20;
 	
-	/** ƒTƒ|[ƒg‚³‚ê‚È‚¢‹@”\‚ğ‘I‘ğ‚µ‚Ü‚µ‚½ */
+	/** ã‚µãƒãƒ¼ãƒˆã•ã‚Œãªã„æ©Ÿèƒ½ã‚’é¸æŠã—ã¾ã—ãŸ */
 	public static final int UnsupportedOperation = 21;
 	
-	/** ŒvZ®‚ÌƒJƒbƒR‚ª[‚·‚¬‚Ü‚· */
+	/** è¨ˆç®—å¼ã®ã‚«ãƒƒã‚³ãŒæ·±ã™ãã¾ã™ */
 	public static final int ParenthesisToMany = 22;
 	
-	/** •Ï”–¼‚ªw’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ */
+	/** å¤‰æ•°åãŒæŒ‡å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ */
 	public static final int VariableNameNotSpecified = 23;
 
-	/** ®”ˆÈŠO‚ªw’è‚³‚ê‚Ä‚¢‚Ü‚· */
+	/** æ•´æ•°ä»¥å¤–ãŒæŒ‡å®šã•ã‚Œã¦ã„ã¾ã™ */
 	public static final int NonIntegerValueSpecified = 24;
 
-	/** ”z—ñ‚Ì—v‘f‘®‚ªŠÔˆá‚Á‚Ä‚¢‚Ü‚· */
+	/** é…åˆ—ã®è¦ç´ æ›¸å¼ãŒé–“é•ã£ã¦ã„ã¾ã™ */
 	public static final int InvalidFormOfArray = 25;
 
-	/** ƒƒ‚ƒŠ‚ÌŠm•Û‚ª‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½ */
+	/** ãƒ¡ãƒ¢ãƒªã®ç¢ºä¿ãŒã§ãã¾ã›ã‚“ã§ã—ãŸ */
 	public static final int OutOfMemory = 26;
 	
-	/** ƒ^ƒCƒv‚Ì‰Šú‰»‚É¸”s‚µ‚Ü‚µ‚½ */
+	/** ã‚¿ã‚¤ãƒ—ã®åˆæœŸåŒ–ã«å¤±æ•—ã—ã¾ã—ãŸ */
 	public static final int FailToInitializeType = 27;
 
-	/** ŠÖ”‚Éˆø”‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ */
+	/** é–¢æ•°ã«å¼•æ•°ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ */
 	public static final int ParameterNotSpecified = 28;
 
-	/** ƒXƒ^ƒbƒN—Ìˆæ‚ÌƒI[ƒo[ƒtƒ[‚Å‚· */
+	/** ã‚¹ã‚¿ãƒƒã‚¯é ˜åŸŸã®ã‚ªãƒ¼ãƒãƒ¼ãƒ•ãƒ­ãƒ¼ã§ã™ */
 	public static final int StackOverFlow = 29;
 
-	/** –³Œø‚È–¼‘O‚ªƒpƒ‰ƒ[ƒ^[‚Éw’è‚³‚ê‚Ä‚¢‚Ü‚· */
+	/** ç„¡åŠ¹ãªåå‰ãŒãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼ã«æŒ‡å®šã•ã‚Œã¦ã„ã¾ã™ */
 	public static final int InvalidNameToParameter = 30;
 
-	/** ˆÙ‚È‚éŒ^‚ğ‚Â”z—ñ•Ï”‚É‘ã“ü‚µ‚Ü‚µ‚½ */
+	/** ç•°ãªã‚‹å‹ã‚’æŒã¤é…åˆ—å¤‰æ•°ã«ä»£å…¥ã—ã¾ã—ãŸ */
 	public static final int AssignToDifferentType = 31;
 	
-	/** ŠÖ”‚Ìƒpƒ‰ƒ[ƒ^[‹Lq‚ª•s³‚Å‚· */
+	/** é–¢æ•°ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼è¨˜è¿°ãŒä¸æ­£ã§ã™ */
 	public static final int InvalidFunctionDescription = 32;
 
-	/** ƒIƒuƒWƒFƒNƒg”‚ª‘½‚·‚¬‚Ü‚· */
+	/** ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆæ•°ãŒå¤šã™ãã¾ã™ */
 	public static final int ObjectsTooMany = 33;
 
-	/** ”z—ñEŠÖ”‚Æ‚µ‚Äg—p‚Å‚«‚È‚¢Œ^‚Å‚· */
+	/** é…åˆ—ãƒ»é–¢æ•°ã¨ã—ã¦ä½¿ç”¨ã§ããªã„å‹ã§ã™ */
 	public static final int TypeCannotUseToArrayOrFunction = 34;
 
-	/** ƒ‚ƒWƒ…[ƒ‹•Ï”‚ªw’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ */
+	/** ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«å¤‰æ•°ãŒæŒ‡å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ */
 	public static final int ModuleVariableNotSpecified = 35;
 	
-	/** ƒ‚ƒWƒ…[ƒ‹•Ï”‚Ìw’è‚ª–³Œø‚Å‚· */
+	/** ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«å¤‰æ•°ã®æŒ‡å®šãŒç„¡åŠ¹ã§ã™ */
 	public static final int InvalidModuleVariableSpecification = 36;
 
-	/** •Ï”Œ^‚Ì•ÏŠ·‚É¸”s‚µ‚Ü‚µ‚½ */
+	/** å¤‰æ•°å‹ã®å¤‰æ›ã«å¤±æ•—ã—ã¾ã—ãŸ */
 	public static final int FailToConvertVariableType = 37;
 
-	/** ŠO•”DLL‚ÌŒÄ‚Ño‚µ‚É¸”s‚µ‚Ü‚µ‚½ */
+	/** å¤–éƒ¨DLLã®å‘¼ã³å‡ºã—ã«å¤±æ•—ã—ã¾ã—ãŸ */
 	public static final int FailToLoadExternalLibrary = 38;
 
-	/** ŠO•”ƒIƒuƒWƒFƒNƒg‚ÌŒÄ‚Ño‚µ‚É¸”s‚µ‚Ü‚µ‚½ */
+	/** å¤–éƒ¨ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å‘¼ã³å‡ºã—ã«å¤±æ•—ã—ã¾ã—ãŸ */
 	public static final int FailToCallExternalObject = 39;
 
-	/** ŠÖ”‚Ì–ß‚è’l‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB */
+	/** é–¢æ•°ã®æˆ»ã‚Šå€¤ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚ */
 	public static final int ReturnValueNotSpecified = 40;
 
 

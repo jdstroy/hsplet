@@ -4,17 +4,17 @@
 package hsplet.function;
 
 /**
- * end –½—ß‚ªÀs‚³‚ê‚½‚Æ‚«‚É“Š‚°‚ç‚ê‚é—áŠOB
+ * end å‘½ä»¤ãŒå®Ÿè¡Œã•ã‚ŒãŸã¨ãã«æŠ•ã’ã‚‰ã‚Œã‚‹ä¾‹å¤–ã€‚
  * 
  * @author Yuki
  * @version $Revision: 1.1 $, $Date: 2006/01/09 12:07:12 $
  */
 public class EndException extends RuntimeException {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: EndException.java,v 1.1 2006/01/09 12:07:12 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = -413786554606335070L;
 
 }

@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 
 /**
- * ƒ}ƒEƒX‚âƒL[ƒ{[ƒh‚ÌƒCƒxƒ“ƒg‚ğŠÄ‹‚µ‚ÄAcontext ‚É“o˜^‚·‚éƒIƒuƒWƒFƒNƒgB <p> Screen ‚â Bgscr ‚ğ“o˜^‚·‚éB </p>
+ * ãƒã‚¦ã‚¹ã‚„ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã®ã‚¤ãƒ™ãƒ³ãƒˆã‚’ç›£è¦–ã—ã¦ã€context ã«ç™»éŒ²ã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚ <p> Screen ã‚„ Bgscr ã‚’ç™»éŒ²ã™ã‚‹ã€‚ </p>
  *
  * @author Yuki
  * @version $Revision: 1.8 $, $Date: 2006/05/20 06:12:06 $
@@ -31,26 +31,26 @@ import javax.swing.SwingUtilities;
 public class EventListener implements MouseListener, MouseMotionListener, KeyListener, FocusListener, Serializable {
 
     /**
-     * ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB
+     * ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚
      */
     private static final String fileVersionID = "$Id: EventListener.java,v 1.8 2006/05/20 06:12:06 Yuki Exp $";
     /**
-     * ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B
+     * ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚
      */
     private static final long serialVersionUID = -7715847659889033067L;
     private final Context context;
     /**
-     * JavaƒL[ƒR[ƒh -> WindowsƒL[ƒR[ƒh
+     * Javaã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰ -> Windowsã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰
      */
     private static final int[] vkJtoW = new int[1024];
     /**
-     * JavaƒL[ƒR[ƒh -> •¶šƒR[ƒh
+     * Javaã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰ -> æ–‡å­—ã‚³ãƒ¼ãƒ‰
      */
     private static final int[] vkJtoC = new int[1024];
 
     static {
 
-        // Šî–{‚Í“¯‚¶
+        // åŸºæœ¬ã¯åŒã˜
         for (int i = 0; i < vkJtoW.length; ++i) {
             vkJtoW[i] = i;
         }
@@ -68,11 +68,11 @@ public class EventListener implements MouseListener, MouseMotionListener, KeyLis
         vkJtoW[44] = 188;//,
         vkJtoW[46] = 190;//.
         vkJtoW[47] = 191;///
-        vkJtoW[524] = 91;//“c
-        vkJtoW[525] = 93;//ƒƒjƒ…[
-        vkJtoW[10] = 13;//ƒGƒ“ƒ^[
+        vkJtoW[524] = 91;//ç”°
+        vkJtoW[525] = 93;//ãƒ¡ãƒ‹ãƒ¥ãƒ¼
+        vkJtoW[10] = 13;//ã‚¨ãƒ³ã‚¿ãƒ¼
 
-        // Šî–{‚Í“¯‚¶
+        // åŸºæœ¬ã¯åŒã˜
         for (int i = '0'; i <= '9'; ++i) {
             vkJtoC[i] = i;
         }
@@ -91,13 +91,13 @@ public class EventListener implements MouseListener, MouseMotionListener, KeyLis
         vkJtoC[44] = ',';//,
         vkJtoC[46] = '.';//.
         vkJtoC[47] = '/';///
-        vkJtoC[10] = 13;//ƒGƒ“ƒ^[
+        vkJtoC[10] = 13;//ã‚¨ãƒ³ã‚¿ãƒ¼
     }
 
     /**
-     * ƒIƒuƒWƒFƒNƒg‚ğì¬‚·‚éB
+     * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ä½œæˆã™ã‚‹ã€‚
      *
-     * @param context Às‚µ‚Ä‚¢‚éƒRƒ“ƒeƒLƒXƒgB
+     * @param context å®Ÿè¡Œã—ã¦ã„ã‚‹ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã€‚
      */
     public EventListener(final Context context) {
 
@@ -105,9 +105,9 @@ public class EventListener implements MouseListener, MouseMotionListener, KeyLis
     }
 
     /**
-     * ‰æ–Ê‚ğŠÄ‹‚·‚éB
+     * ç”»é¢ã‚’ç›£è¦–ã™ã‚‹ã€‚
      *
-     * @param info ŠÄ‹‚³‚ê‚é‰æ–ÊB
+     * @param info ç›£è¦–ã•ã‚Œã‚‹ç”»é¢ã€‚
      */
     public void listen(final Bmscr info) {
 
@@ -122,9 +122,9 @@ public class EventListener implements MouseListener, MouseMotionListener, KeyLis
     }
 
     /**
-     * ƒIƒuƒWƒFƒNƒg‚ğŠÄ‹‚·‚éB
+     * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç›£è¦–ã™ã‚‹ã€‚
      *
-     * @param control ŠÄ‹‚³‚ê‚éƒIƒuƒWƒFƒNƒgB
+     * @param control ç›£è¦–ã•ã‚Œã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚
      */
     public void listen(final HSPControl control) {
 

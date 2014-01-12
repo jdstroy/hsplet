@@ -9,7 +9,7 @@ import edu.stanford.ejalbert.exception.UnsupportedOperatingSystemException;
 public class Launcher {
 
 	/**
-	 * ŠeƒƒCƒ“ƒNƒ‰ƒX‚ğŒÄ‚Ño‚·‚½‚ß‚Ìƒ‰ƒ“ƒ`ƒƒ[
+	 * å„ãƒ¡ã‚¤ãƒ³ã‚¯ãƒ©ã‚¹ã‚’å‘¼ã³å‡ºã™ãŸã‚ã®ãƒ©ãƒ³ãƒãƒ£ãƒ¼
 	 * @throws IOException 
 	 * @throws BrowserLaunchingInitializingException 
 	 * @throws BrowserLaunchingExecutionException 
@@ -17,11 +17,11 @@ public class Launcher {
 	 * @throws InterruptedException 
 	 * 
 	 * @args
-	 *            Às‚Ìˆø”B
+	 *            å®Ÿè¡Œæ™‚ã®å¼•æ•°ã€‚
 	 *            <ol>
-	 *            <li>GuiFrontEnd args... ƒ†[ƒUƒCƒ“ƒ^[ƒtƒFƒCƒX‚ğ•\¦B</li>
-	 *            <li>Compiler args... ƒRƒ“ƒpƒCƒ‹ÀsB</li>
-	 *            <li>Tester args... ƒeƒXƒgÀsB</li>
+	 *            <li>GuiFrontEnd args... ãƒ¦ãƒ¼ã‚¶ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã‚’è¡¨ç¤ºã€‚</li>
+	 *            <li>Compiler args... ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«å®Ÿè¡Œã€‚</li>
+	 *            <li>Tester args... ãƒ†ã‚¹ãƒˆå®Ÿè¡Œã€‚</li>
 	 *            </ol>
 	 */
 	public static void main(String[] args) throws IOException, UnsupportedOperatingSystemException,

@@ -22,7 +22,7 @@ import org.yi.jdstroy.hsplet.io.UriDecodeTranslator;
 import org.yi.jdstroy.hsplet.io.UriFileSystemTranslator;
 
 /**
- * HSP ‚ÌŠg’£GUIŠÖ”ŒQB
+ * HSP ã®æ‹¡å¼µGUIé–¢æ•°ç¾¤ã€‚
  *
  * @author Yuki
  * @version $Revision: 1.7 $, $Date: 2006/02/11 17:19:34 $
@@ -30,7 +30,7 @@ import org.yi.jdstroy.hsplet.io.UriFileSystemTranslator;
 public class GuiFunction extends FunctionBase {
 
     /**
-     * ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB
+     * ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚
      */
     private static final String fileVersionID = "$Id: GuiFunction.java,v 1.7 2006/02/11 17:19:34 Yuki Exp $";
 
@@ -166,7 +166,7 @@ public class GuiFunction extends FunctionBase {
                 return win.color.getGreen();
             case 18:
                 return win.color.getBlue();
-            case 19: // Œ»İ‚ÌƒfƒXƒNƒgƒbƒvƒJƒ‰[ƒ‚[ƒh(Fƒ‚[ƒh)‚ª•Ô‚³‚ê‚Ü‚·B ƒtƒ‹ƒJƒ‰[ƒ‚[ƒh‚Ìê‡‚Í0‚ªAƒpƒŒƒbƒgƒ‚[ƒh‚Ìê‡‚Í1‚ª•Ô‚³‚ê‚Ü‚·B
+            case 19: // ç¾åœ¨ã®ãƒ‡ã‚¹ã‚¯ãƒˆãƒƒãƒ—ã‚«ãƒ©ãƒ¼ãƒ¢ãƒ¼ãƒ‰(è‰²ãƒ¢ãƒ¼ãƒ‰)ãŒè¿”ã•ã‚Œã¾ã™ã€‚ ãƒ•ãƒ«ã‚«ãƒ©ãƒ¼ãƒ¢ãƒ¼ãƒ‰ã®å ´åˆã¯0ãŒã€ãƒ‘ãƒ¬ãƒƒãƒˆãƒ¢ãƒ¼ãƒ‰ã®å ´åˆã¯1ãŒè¿”ã•ã‚Œã¾ã™ã€‚
                 return 0;
             case 20:
                 return Toolkit.getDefaultToolkit().getScreenSize().width;

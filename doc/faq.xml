@@ -1,31 +1,31 @@
-<?xml version="1.0" encoding="Shift_JIS" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!--
  $Id: faq.xml,v 1.1 2006/02/11 17:19:31 Yuki Exp $
 -->
 <?xml-stylesheet type="text/xsl" href="page.xslt"?>
-<page name="�悭���鎿��">
+<page name="よくある質問">
 	<header>
-		<h1>�悭���鎿��</h1>
+		<h1>よくある質問</h1>
 	</header>
 	
-	<paragraph name="�����Ȃ��i�m�G�j">
+	<paragraph name="動かない（ノ；）">
 		
-		<p>�u���E�U�̃��j���[�o�[����uJava�R���\�[����\���v������Ԃ� HSPLet �𑖂点��Ɨl�X�ȃG���[��񂪕\������܂��B
-			�M�d�ȏ��Ȃ̂Ŗ�肪�N�������Ƃ��͊m�F���Ă݂Ă��������B </p>
-		<p> ����ł����������ɁABBS ���Ɏ��₷��Ƃ��͕K�����̃G���[����\��t���Ă��������B ���̉����ɂƂĂ����ɗ����܂��B</p>
+		<p>ブラウザのメニューバーから「Javaコンソールを表示」した状態で HSPLet を走らせると様々なエラー情報が表示されます。
+			貴重な情報なので問題が起こったときは確認してみてください。 </p>
+		<p> それでも解決せずに、BBS 等に質問するときは必ずこのエラー情報を貼り付けてください。 問題の解決にとても役に立ちます。</p>
 	</paragraph>
 	
-	<paragraph name="�X�N���v�g�������Ȃ�����ˑR�N�����Ȃ��Ȃ���">
-		<p> Java�ɂ͂ЂƂ̃��\�b�h�̃T�C�Y�� 64 KB �ȉ��łȂ���΂����Ȃ��Ƃ������Ɍ���������������܂��B
-			�������߂̃X�N���v�g�������ƁA64KB ���x�͂������蒴���Ă��܂��̂ŁAHSPLet
-			�ł͂��̎肱�̎�ł��̐������z���Ȃ��悤�ɍH�v���Ă��܂��B
-			����ł������Ă��܂����Ƃ��͂����ǂ����悤���Ȃ��̂ŁA������߂ăX�N���v�g��Z�����Ă݂Ă��������B </p>
+	<paragraph name="スクリプトが長くなったら突然起動しなくなった">
+		<p> Javaにはひとつのメソッドのサイズが 64 KB 以下でなければいけないという非常に厳しい制限があります。
+			少し長めのスクリプトを書くと、64KB 程度はあっさり超えてしまうので、HSPLet
+			ではあの手この手でこの制限を越えないように工夫しています。
+			それでも超えてしまったときはもうどうしようもないので、あきらめてスクリプトを短くしてみてください。 </p>
 	</paragraph>
 	
-	<paragraph name="HSP�Ɠ��삪�Ⴄ">
-		<p> ���̓��삪HSP�̃w���v�ɏ�����Ă��邩�m�F���Ă��������B �w���v�ɏ�����Ă��Ȃ������HSPLet�ɋ��߂��Ă�����܂��B
-			(�w���v�̋L�q�R��Ǝv����Ƃ��͂��̎|���ɂ��܂���ɓ`���Ă��������B)
-			HSP�̃w���v�ɏ�����Ă��āAHSPLet�̃h�L�������g�ɂ����L�����������Ƃ��͕s���HSPLet�̃h�L�������g�̋L�q�R��Ȃ̂ł��m�点���������B
+	<paragraph name="HSPと動作が違う">
+		<p> その動作がHSPのヘルプに書かれているか確認してください。 ヘルプに書かれていない動作をHSPLetに求められても困ります。
+			(ヘルプの記述漏れと思われるときはその旨おにたまさんに伝えてください。)
+			HSPのヘルプに書かれていて、HSPLetのドキュメントにも特記事項が無いときは不具合かHSPLetのドキュメントの記述漏れなのでお知らせください。
 			</p>
 	</paragraph>
 </page>

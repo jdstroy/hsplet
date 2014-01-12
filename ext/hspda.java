@@ -13,24 +13,24 @@ public class hspda extends FunctionBase {
 
     private static ArrayList<Integer> sortget;
     /**
-     * ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB
+     * ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚
      */
     private static final String fileVersionID = "$Id: hspda.java,v 0.11 2008/01/16 08:00:00 OpenHSP Exp $";
     /*
-     * v 0.11 OpenHSP‚ÖˆÚsEƒNƒ‰ƒXƒtƒ@ƒCƒ‹‚Ì\¬‚ğ•ÏX
+     * v 0.11 OpenHSPã¸ç§»è¡Œãƒ»ã‚¯ãƒ©ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®æ§‹æˆã‚’å¤‰æ›´
      */
 
     // -------------------------------------------
-    // sort`Œn
+    // sortã€œç³»
     public static void sortget(final Context context, final Operand op, final int oi, final int index) {
 
         if (sortget == null) {
-            // sortget‚ª–¢’è‹`‚Ìê‡AƒVƒXƒeƒ€ƒGƒ‰[
+            // sortgetãŒæœªå®šç¾©ã®å ´åˆã€ã‚·ã‚¹ãƒ†ãƒ ã‚¨ãƒ©ãƒ¼
             context.error(HSPError.SystemError, "sortget", "not sorted");
             return;
         }
         if (index < 0 || sortget.size() <= index) {
-            // –¢’è‹`‚Ì”ÍˆÍ‚Ìê‡A ƒGƒ‰[‚É‚Í‚È‚ç‚¸Aí‚É0‚ª•Ô‚é
+            // æœªå®šç¾©ã®ç¯„å›²ã®å ´åˆã€ ã‚¨ãƒ©ãƒ¼ã«ã¯ãªã‚‰ãšã€å¸¸ã«0ãŒè¿”ã‚‹
             op.assignRaw(oi, Scalar.fromValue(0), 0);
         } else {
             op.assignRaw(oi, Scalar.fromValue(objToInt(sortget.get(index))), 0);
@@ -38,10 +38,10 @@ public class hspda extends FunctionBase {
     }
 
     /**
-     * ObjectŒ^‚©‚çintŒ^‚Ö•ÏŠ·
+     * Objectå‹ã‹ã‚‰intå‹ã¸å¤‰æ›
      *
-     * @param object intŒ^‚Ö•ÏŠ·‚·‚éObject
-     * @return object‚ğintŒ^‚Ö•ÏŠ·‚µ‚½’l
+     * @param object intå‹ã¸å¤‰æ›ã™ã‚‹Object
+     * @return objectã‚’intå‹ã¸å¤‰æ›ã—ãŸå€¤
      * @author eller
      */
     private static int objToInt(final Object object) {
@@ -50,12 +50,12 @@ public class hspda extends FunctionBase {
     }
 
     /**
-     * ”’lŒ^i®”Œ^•À”Œ^j”z—ñ•Ï”‚ğƒ\[ƒg
+     * æ•°å€¤å‹ï¼ˆæ•´æ•°å‹ï¼†å®Ÿæ•°å‹ï¼‰é…åˆ—å¤‰æ•°ã‚’ã‚½ãƒ¼ãƒˆ
      *
      * @param context
-     * @param op ƒ\[ƒg‚·‚é”z—ñ•Ï”
+     * @param op ã‚½ãƒ¼ãƒˆã™ã‚‹é…åˆ—å¤‰æ•°
      * @param oi
-     * @param sortmode 0ˆÈŠO‚È‚ç~‡‚Éƒ\[ƒg
+     * @param sortmode 0ä»¥å¤–ãªã‚‰é™é †ã«ã‚½ãƒ¼ãƒˆ
      */
     public static void sortval(final Context context, final Operand op, final int oi, final int sortmode) {
 
@@ -66,12 +66,12 @@ public class hspda extends FunctionBase {
     }
 
     /**
-     * •¶š—ñŒ^”z—ñ•Ï”‚ğƒ\[ƒg
+     * æ–‡å­—åˆ—å‹é…åˆ—å¤‰æ•°ã‚’ã‚½ãƒ¼ãƒˆ
      *
      * @param context
-     * @param op ƒ\[ƒg‚·‚é”z—ñ•Ï”
+     * @param op ã‚½ãƒ¼ãƒˆã™ã‚‹é…åˆ—å¤‰æ•°
      * @param oi
-     * @param sortmode 0ˆÈŠO‚È‚ç~‡‚Éƒ\[ƒg
+     * @param sortmode 0ä»¥å¤–ãªã‚‰é™é †ã«ã‚½ãƒ¼ãƒˆ
      */
     public static void sortstr(final Context context, final Operand op, final int oi, final int sortmode) {
 
@@ -82,46 +82,46 @@ public class hspda extends FunctionBase {
     }
 
     /**
-     * •¶š—ñŒ^•Ï”‚ğƒ\[ƒg
+     * æ–‡å­—åˆ—å‹å¤‰æ•°ã‚’ã‚½ãƒ¼ãƒˆ
      *
      * @param context
-     * @param op ƒ\[ƒg‚·‚é•Ï”
+     * @param op ã‚½ãƒ¼ãƒˆã™ã‚‹å¤‰æ•°
      * @param oi
-     * @param sortmode 0ˆÈŠO‚È‚ç~‡‚Éƒ\[ƒg
+     * @param sortmode 0ä»¥å¤–ãªã‚‰é™é †ã«ã‚½ãƒ¼ãƒˆ
      */
     public static void sortnote(final Context context, Operand op, final int oi, final int sortmode) {
 
-        // •¶š—ñline‚ğ‰üs‚Å‹æØ‚Á‚Äsa‚Ö‘ã“ü‚·‚é
+        // æ–‡å­—åˆ—lineã‚’æ”¹è¡Œã§åŒºåˆ‡ã£ã¦saã¸ä»£å…¥ã™ã‚‹
         String s[] = op.toStringRaw(oi).split("\\r\\n|\\n", -1);
         StringArray sa = new StringArray(64, s.length, 0, 0, 0);
         for (int i = 0; i < s.length; i++) {
             sa.assignRaw(i, Scalar.fromValue(s[i]), 0);
         }
 
-        // ƒ\[ƒg‚ÌÀ{
+        // ã‚½ãƒ¼ãƒˆã®å®Ÿæ–½
         QuickSort.sort(context, sa, sortmode != 0);
         if (QuickSort.existOldIndexes()) {
             sortget = QuickSort.getOldIndexes();
         }
 
-        // bs‚©‚çs‚Ö‘ã“ü
+        // bsã‹ã‚‰sã¸ä»£å…¥
         for (int i = 0; i < s.length; i++) {
             s[i] = sa.toStringRaw(i);
         }
 
-        // ‰üs‹æØ‚è‚É•ÏŠ·
+        // æ”¹è¡ŒåŒºåˆ‡ã‚Šã«å¤‰æ›
         op.assignRaw(oi, Scalar.fromValue(Arrays.toString(s).replaceAll("\\[|\\]", "").replaceAll(", ", "\r\n")), 0);
-        // ÅŒã‚É‹ós‚ğ’Ç‰ÁiHSP3.1‚Ìd—lj
+        // æœ€å¾Œã«ç©ºè¡Œã‚’è¿½åŠ ï¼ˆHSP3.1ã®ä»•æ§˜ï¼‰
         op.assignAddRaw(oi, Scalar.fromValue("\r\n"), 0);
     }
 
     /**
-     * CSV‚Ì‚Ps‚ğ”z—ñ‚É•ÏŠ·
+     * CSVã®ï¼‘è¡Œã‚’é…åˆ—ã«å¤‰æ›
      *
      * @param context
-     * @param op Œ‹‰Ê‚ª‘ã“ü‚³‚ê‚é•¶š—ñŒ^”z—ñ•Ï”
+     * @param op çµæœãŒä»£å…¥ã•ã‚Œã‚‹æ–‡å­—åˆ—å‹é…åˆ—å¤‰æ•°
      * @param oi
-     * @param target CSV‚Ì‚Ps‚ğæ‚èo‚µ‚½•¶š—ñ
+     * @param target CSVã®ï¼‘è¡Œã‚’å–ã‚Šå‡ºã—ãŸæ–‡å­—åˆ—
      */
     public static void csvnote(final Context context, final Operand op, final int oi, final ByteString target) {
 
@@ -131,7 +131,7 @@ public class hspda extends FunctionBase {
         }
 
         try {
-            // •¶š—ñline“à‚Ì”¼ŠpƒJƒ“ƒ}‚ğ‰üs‚É•ÏŠ·‚µ‚Äo‚Ö‘ã“ü
+            // æ–‡å­—åˆ—lineå†…ã®åŠè§’ã‚«ãƒ³ãƒã‚’æ”¹è¡Œã«å¤‰æ›ã—ã¦oã¸ä»£å…¥
             op.assignRaw(0, Scalar.fromValue(target.toString().replaceAll(",", "\n")), 0);
             context.stat.value = 0;
         } catch (Exception e) {
@@ -140,12 +140,12 @@ public class hspda extends FunctionBase {
     }
 
     /**
-     * CSV‚Ì‚Ps‚ğƒƒ‚ƒŠƒm[ƒg•ÏŠ·
+     * CSVã®ï¼‘è¡Œã‚’ãƒ¡ãƒ¢ãƒªãƒãƒ¼ãƒˆå¤‰æ›
      *
      * @param context
-     * @param op Œ‹‰Ê‚ª‘ã“ü‚³‚ê‚é•¶š—ñŒ^•Ï”
+     * @param op çµæœãŒä»£å…¥ã•ã‚Œã‚‹æ–‡å­—åˆ—å‹å¤‰æ•°
      * @param oi
-     * @param target CSV‚Ì‚Ps‚ğæ‚èo‚µ‚½•¶š—ñ
+     * @param target CSVã®ï¼‘è¡Œã‚’å–ã‚Šå‡ºã—ãŸæ–‡å­—åˆ—
      */
     public static void csvstr(final Context context, final Operand op, final int oi, final ByteString target) {
 
@@ -154,9 +154,9 @@ public class hspda extends FunctionBase {
             return;
         }
         try {
-            // •¶š—ñline‚ğƒJƒ“ƒ}‚Å‹æØ‚Á‚Äs[]‚ÉŠi”[‚·‚é
+            // æ–‡å­—åˆ—lineã‚’ã‚«ãƒ³ãƒã§åŒºåˆ‡ã£ã¦s[]ã«æ ¼ç´ã™ã‚‹
             String s[] = target.toString().split(",");
-            // Operand‚ÉŠi”[‚·‚é
+            // Operandã«æ ¼ç´ã™ã‚‹
             for (int i = 0; i < Math.min(s.length, op.l0()); i++) {
                 op.assignRaw(i, Scalar.fromValue(s[i]), 0);
             }
@@ -166,7 +166,7 @@ public class hspda extends FunctionBase {
         }
     }
     // -------------------------------------------
-    // xnote`Œn
+    // xnoteã€œç³»
     private static Operand xNote;
 
     public static void xnotesel(final Context context, final Operand op, final int oi) {
@@ -176,39 +176,39 @@ public class hspda extends FunctionBase {
             return;
         }
 
-        // •¶š—ñŒ^‚Ö‚Ì•ÏŠ·‚È‚Ç‚Ís‚í‚È‚¢iHSP3.1“_‚Å‚Ìd—lj
+        // æ–‡å­—åˆ—å‹ã¸ã®å¤‰æ›ãªã©ã¯è¡Œã‚ãªã„ï¼ˆHSP3.1æ™‚ç‚¹ã§ã®ä»•æ§˜ï¼‰
         xNote = op.ref(oi);
 
-        // sortget‚Ì‰Šú‰»
+        // sortgetã®åˆæœŸåŒ–
         sortget = new ArrayList<Integer>();
     }
 
     public static void xnoteadd(final Context context, final ByteString str) {
 
         if (str.indexOf(new ByteString("\n"), 0) != -1) {
-            // add“à‚É‰üs‚ªŠÜ‚Ü‚ê‚Ä‚¢‚½ê‡
-            // HSP3.1‚Å‚ÍƒGƒ‰[‚É‚È‚ç‚È‚¢‚ªAŒµ–§‚É‚ÍŒë‚èihsƒtƒ@ƒCƒ‹‚É–¾‹Lj‚È‚Ì‚ÅƒGƒ‰[iƒpƒ‰ƒ[ƒ^‚Ì’l‚ªˆÙíj‚Æ‚·‚é
+            // addå†…ã«æ”¹è¡ŒãŒå«ã¾ã‚Œã¦ã„ãŸå ´åˆ
+            // HSP3.1ã§ã¯ã‚¨ãƒ©ãƒ¼ã«ãªã‚‰ãªã„ãŒã€å³å¯†ã«ã¯èª¤ã‚Šï¼ˆhsãƒ•ã‚¡ã‚¤ãƒ«ã«æ˜è¨˜ï¼‰ãªã®ã§ã‚¨ãƒ©ãƒ¼ï¼ˆãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®å€¤ãŒç•°å¸¸ï¼‰ã¨ã™ã‚‹
             context.error(HSPError.InvalidParameterValue, "xnoteadd", "1st parameter cannot be multi line string");
             return;
         }
         if (xNote == null) {
-            // xnotesel–¢Às‚Ìê‡
-            // ƒVƒXƒeƒ€ƒGƒ‰[
+            // xnoteselæœªå®Ÿè¡Œã®å ´åˆ
+            // ã‚·ã‚¹ãƒ†ãƒ ã‚¨ãƒ©ãƒ¼
             context.error(HSPError.SystemError, "xnoteadd", "please command 'xnotesel' in advance");
             return;
         }
         if (xNote.getType() != Operand.Type.STRING) {
-            // xnotesel‚Åw’è‚µ‚½•Ï”‚ª•¶š—ñŒ^‚Å‚È‚©‚Á‚½ê‡
-            // ƒVƒXƒeƒ€ƒGƒ‰[
+            // xnoteselã§æŒ‡å®šã—ãŸå¤‰æ•°ãŒæ–‡å­—åˆ—å‹ã§ãªã‹ã£ãŸå ´åˆ
+            // ã‚·ã‚¹ãƒ†ãƒ ã‚¨ãƒ©ãƒ¼
             context.error(HSPError.SystemError, "xnoteadd", "vartype(xNote)==" + xNote.getType());
             return;
         }
 
-        // ˆê’v‚·‚é•¶š—ñ‚ÌsƒCƒ“ƒfƒbƒNƒXi‰½s–Ú‚©j‚ğ’²‚×‚é
+        // ä¸€è‡´ã™ã‚‹æ–‡å­—åˆ—ã®è¡Œã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ï¼ˆä½•è¡Œç›®ã‹ï¼‰ã‚’èª¿ã¹ã‚‹
         int sameStringIndex = getSameStringIndex(str);
 
         if (sameStringIndex < 0) {
-            // ŠÜ‚Ü‚ê‚Ä‚¢‚È‚¢‚È‚ç‚ÎÅŒã‚Ì—ñ‚É‰Á‚¦‚é
+            // å«ã¾ã‚Œã¦ã„ãªã„ãªã‚‰ã°æœ€å¾Œã®åˆ—ã«åŠ ãˆã‚‹
             sameStringIndex = -sameStringIndex - 1;
             xNote.assignAddRaw(0, Scalar.fromValue(str), 0);
             xNote.assignAddRaw(0, Scalar.fromValue("\r\n"), 0);
@@ -232,7 +232,7 @@ public class hspda extends FunctionBase {
     }
 
     /**
-     * ˆê’v‚·‚é•¶š—ñ‚ÌsƒCƒ“ƒfƒbƒNƒXi‰½s–Ú‚©j‚ğ’²‚×‚é üŒ`ŒŸõ
+     * ä¸€è‡´ã™ã‚‹æ–‡å­—åˆ—ã®è¡Œã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ï¼ˆä½•è¡Œç›®ã‹ï¼‰ã‚’èª¿ã¹ã‚‹ ç·šå½¢æ¤œç´¢
      *
      * @param bs
      * @return
@@ -249,13 +249,13 @@ public class hspda extends FunctionBase {
             next = xnote.nextLineIndex(start);
             lineLength = next - start;
 
-            // lineNumbers–Ú‚Ì•¶š—ñi‰üs‚Æ•œ‹A‚ğŠÜ‚Şj
+            // lineNumberè¡Œç›®ã®æ–‡å­—åˆ—ï¼ˆæ”¹è¡Œã¨å¾©å¸°ã‚’å«ã‚€ï¼‰
             ByteString line = xnote.substring(start, lineLength);
-            // ‰üs‚Æ•œ‹A‚ğíœ
+            // æ”¹è¡Œã¨å¾©å¸°ã‚’å‰Šé™¤
             deleteBR(line);
 
             if (line.compareTo(bs) == 0) {
-                // ˆê’v‚·‚é•¶š—ñ‚ªŒ©‚Â‚©‚Á‚½ê‡
+                // ä¸€è‡´ã™ã‚‹æ–‡å­—åˆ—ãŒè¦‹ã¤ã‹ã£ãŸå ´åˆ
                 result = lineNumber;
                 break;
             }
@@ -263,14 +263,14 @@ public class hspda extends FunctionBase {
             lineNumber++;
         }
 
-        // ˆê’v‚·‚é•¶š‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½ê‡A(-ÅŒãs‚ÌƒCƒ“ƒfƒbƒNƒX-1)‚ğ•Ô‚·
+        // ä¸€è‡´ã™ã‚‹æ–‡å­—ãŒè¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸå ´åˆã€(-æœ€å¾Œè¡Œã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹-1)ã‚’è¿”ã™
         return result == -1 ? -lineNumber - 1 : result;
     }
 
     /**
-     * I’[‚Ì‰üs‚Æ•œ‹A‚ğíœ
+     * çµ‚ç«¯ã®æ”¹è¡Œã¨å¾©å¸°ã‚’å‰Šé™¤
      *
-     * @param target ‘ÎÛ‚Ì•¶š—ñ
+     * @param target å¯¾è±¡ã®æ–‡å­—åˆ—
      */
     private static void deleteBR(ByteString target) {
         if (target.length() >= 1 && target.get(target.length() - 1) == '\n') {
@@ -282,11 +282,11 @@ public class hspda extends FunctionBase {
     }
 
     /**
-     * Vector‚Ìindex”Ô–Ú‚ÉIntegerƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğ‘ã“ü
+     * Vectorã®indexç•ªç›®ã«Integerã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ä»£å…¥
      *
-     * @param vector ‘ã“üæ‚Å‚ ‚éVectorƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒX
-     * @param index ‘ã“üæƒCƒ“ƒfƒbƒNƒX
-     * @param value ‘ã“ü‚·‚éIntegerƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ª•Û‚·‚é’l
+     * @param vector ä»£å…¥å…ˆã§ã‚ã‚‹Vectorã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
+     * @param index ä»£å…¥å…ˆã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
+     * @param value ä»£å…¥ã™ã‚‹Integerã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãŒä¿æŒã™ã‚‹å€¤
      */
     private static void setElementAtEx(final ArrayList<Integer> vector, final int index, final int value) {
         vector.ensureCapacity(index + 1);
@@ -296,7 +296,7 @@ public class hspda extends FunctionBase {
         vector.set(new Integer(value), index);
     }
     // -------------------------------------------
-    // csv`Œn À‘•’†
+    // csvã€œç³» å®Ÿè£…ä¸­
     private static Operand csvSel;
     private static Operand csvRes;
     private static ByteString csvSeparator = new ByteString(",");
@@ -313,12 +313,12 @@ public class hspda extends FunctionBase {
     }
 
     /**
-     * CSVŒŸõ‚Ì‘ÎÛƒoƒbƒtƒ@‚ğ‘I‘ğ
+     * CSVæ¤œç´¢ã®å¯¾è±¡ãƒãƒƒãƒ•ã‚¡ã‚’é¸æŠ
      *
      * @param context
-     * @param op CSVŒŸõ‚Ì‘ÎÛƒoƒbƒtƒ@
+     * @param op CSVæ¤œç´¢ã®å¯¾è±¡ãƒãƒƒãƒ•ã‚¡
      * @param oi
-     * @param sep ‹æØ‚è•¶š
+     * @param sep åŒºåˆ‡ã‚Šæ–‡å­—
      * @param sepi
      */
     public static void csvsel(Context context, Operand op, final int oi, final Operand sep, final int sepi) {
@@ -330,16 +330,16 @@ public class hspda extends FunctionBase {
         }
 
         csvSel = op.ref(oi);
-        // ‹æØ‚è•¶š‚Ìw’èiƒfƒtƒHƒ‹ƒg‚Í”¼ŠpƒJƒ“ƒ}j
+        // åŒºåˆ‡ã‚Šæ–‡å­—ã®æŒ‡å®šï¼ˆãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯åŠè§’ã‚«ãƒ³ãƒï¼‰
         byte[] separator = {(byte) toInt(sep, sepi, defaultSeparator.get(0))};
         csvSeparator = new ByteString(separator, 0, false);
     }
 
     /**
-     * CSVŒŸõ‚ÌŒ‹‰Êo—Íƒoƒbƒtƒ@‚ğw’è
+     * CSVæ¤œç´¢ã®çµæœå‡ºåŠ›ãƒãƒƒãƒ•ã‚¡ã‚’æŒ‡å®š
      *
      * @param context
-     * @param op Œ‹‰Êo—Íæ•Ï”
+     * @param op çµæœå‡ºåŠ›å…ˆå¤‰æ•°
      * @param oi
      */
     public static void csvres(Context context, Operand op, final int oi) {
@@ -353,10 +353,10 @@ public class hspda extends FunctionBase {
     }
 
     /**
-     * CSVŒŸõ‚Ì€–Úƒtƒ‰ƒO‚ğİ’è
+     * CSVæ¤œç´¢ã®é …ç›®ãƒ•ãƒ©ã‚°ã‚’è¨­å®š
      *
-     * @param id €–ÚID
-     * @param val İ’è’l
+     * @param id é …ç›®ID
+     * @param val è¨­å®šå€¤
      */
     public static void csvflag(final int id, final int val) {
 
@@ -364,9 +364,9 @@ public class hspda extends FunctionBase {
     }
 
     /**
-     * CSVŒŸõ‚ÌƒIƒvƒVƒ‡ƒ“‚ğİ’è
+     * CSVæ¤œç´¢ã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’è¨­å®š
      *
-     * @param op ƒIƒvƒVƒ‡ƒ“’l
+     * @param op ã‚ªãƒ—ã‚·ãƒ§ãƒ³å€¤
      * @param oi
      */
     public static void csvopt(final Operand op, final int oi) {
@@ -375,31 +375,31 @@ public class hspda extends FunctionBase {
     }
 
     /**
-     * CSVŒŸõ‚ğÀs
+     * CSVæ¤œç´¢ã‚’å®Ÿè¡Œ
      *
      * @param context
-     * @param keyword ŒŸõƒL[ƒ[ƒh
-     * @param resMax Œ‹‰Êo—Í‚ÌÅ‘å”
+     * @param keyword æ¤œç´¢ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
+     * @param resMax çµæœå‡ºåŠ›ã®æœ€å¤§æ•°
      * @param resMaxi
-     * @param index Œ‹‰Êo—Í‚ÌŠJnƒCƒ“ƒfƒbƒNƒX
+     * @param index çµæœå‡ºåŠ›ã®é–‹å§‹ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
      * @param indexi
      */
     public static void csvfind(final Context context, final ByteString keyword, final Operand resMax, final int resMaxi, final Operand index, final int indexi) {
 
         if (csvSel == null || csvRes == null) {
-            // csvsel, csvres‚ªw’è‚³‚ê‚Ä‚¢‚È‚¢ê‡
-            // HSP3.1‚Å‚ÍƒGƒ‰[‚É‚È‚ç‚È‚¢‚ªAŒµ–§‚É‚ÍˆÙí“®ì‚È‚Ì‚ÅƒGƒ‰[‚Æ‚·‚é
+            // csvsel, csvresãŒæŒ‡å®šã•ã‚Œã¦ã„ãªã„å ´åˆ
+            // HSP3.1ã§ã¯ã‚¨ãƒ©ãƒ¼ã«ãªã‚‰ãªã„ãŒã€å³å¯†ã«ã¯ç•°å¸¸å‹•ä½œãªã®ã§ã‚¨ãƒ©ãƒ¼ã¨ã™ã‚‹
             context.error(HSPError.SystemError, "csvfind");
             return;
         }
 
         if (csvSel.getType() != Operand.Type.STRING || csvRes.getType() != Operand.Type.STRING) {
-            // csvsel, csvres‚Å‘I‘ğ‚µ‚½•Ï”‚ÌŒ^‚ª•¶š—ñˆÈŠO‚Ì‚Æ‚«
+            // csvsel, csvresã§é¸æŠã—ãŸå¤‰æ•°ã®å‹ãŒæ–‡å­—åˆ—ä»¥å¤–ã®ã¨ã
             context.error(HSPError.SystemError, "csvfind");
             return;
         }
 
-        // •¶š—ñline‚ğ‰üs‚Å‹æØ‚Á‚Äkeywords[]‚Ö‘ã“ü‚·‚é
+        // æ–‡å­—åˆ—lineã‚’æ”¹è¡Œã§åŒºåˆ‡ã£ã¦keywords[]ã¸ä»£å…¥ã™ã‚‹
         String s[] = keyword.toString().split("\\r\\n|\\n", -1);
         ByteString[] keywords = new ByteString[s.length];
         for (int i = 0; i < s.length; i++) {
@@ -411,13 +411,13 @@ public class hspda extends FunctionBase {
         int csvIndex = 0,
                 serchedLine = 0;
         while (csvIndex < csv.length()) {
-            // 1s‚¸‚Âæ‚èo‚·
+            // 1è¡Œãšã¤å–ã‚Šå‡ºã™
             boolean match = false;
             int lineLength = csv.nextLineIndex(csvIndex) - csvIndex,
                     lineIndex = 0,
                     serchedCol = 0;
             ByteString line = csv.substring(csvIndex, lineLength);
-            // ‰üs‚Æ•œ‹A‚ğíœ
+            // æ”¹è¡Œã¨å¾©å¸°ã‚’å‰Šé™¤
             deleteBR(line);
 
             boolean[] matches = new boolean[s.length];
@@ -425,7 +425,7 @@ public class hspda extends FunctionBase {
                 matches[i] = false;
             }
             while (lineIndex < line.length()) {
-                // 1ƒZƒ‹‚¸‚Âæ‚èo‚·
+                // 1ã‚»ãƒ«ãšã¤å–ã‚Šå‡ºã™
                 int cellLength = line.indexOf(csvSeparator, lineIndex);
                 if (cellLength == -1) {
                     cellLength = line.length() - lineIndex;
@@ -433,7 +433,7 @@ public class hspda extends FunctionBase {
                 ByteString cell = line.substring(lineIndex, cellLength);
 
                 if (csvFlags.size() <= serchedCol || objToInt(csvFlags.get(serchedCol)) != 0) {
-                    // ƒtƒ‰ƒO‚ª0ˆÈŠO‚È‚ç‚Î‚±‚ÌƒZƒ‹‚ğ’²‚×‚é•K—v‚ª‚ ‚é
+                    // ãƒ•ãƒ©ã‚°ãŒ0ä»¥å¤–ãªã‚‰ã°ã“ã®ã‚»ãƒ«ã‚’èª¿ã¹ã‚‹å¿…è¦ãŒã‚ã‚‹
                     if ((csvOption & Option.CCSV_OPT_ANDMATCH) != 0) {
                         for (int i = 0; i < s.length; i++) {
                             matches[i] |= serchCell(cell, keywords[i]);
@@ -450,7 +450,7 @@ public class hspda extends FunctionBase {
                 serchedCol++;
                 lineIndex += cellLength + csvSeparator.length();
             }
-            // 1s’²‚×I‚í‚è
+            // 1è¡Œèª¿ã¹çµ‚ã‚ã‚Š
             if ((csvOption & Option.CCSV_OPT_ANDMATCH) != 0) {
                 match = true;
                 for (int i = 0; i < s.length; i++) {
@@ -462,9 +462,9 @@ public class hspda extends FunctionBase {
             }
 
             if (match) {
-                // ƒ}ƒbƒ`‚·‚éê‡‚ÍcsvRes‚Ö”½‰f
+                // ãƒãƒƒãƒã™ã‚‹å ´åˆã¯csvResã¸åæ˜ 
                 if ((csvOption & Option.CCSV_OPT_ADDLINE) != 0) {
-                    // ƒIƒvƒVƒ‡ƒ“Es”Ô†‚ğæ“ª‚É•t‰Á
+                    // ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ»è¡Œç•ªå·ã‚’å…ˆé ­ã«ä»˜åŠ 
                     final ByteString zero = new ByteString("0");
                     ByteString header = new ByteString(new Integer(serchedLine).toString().concat(":"));
                     while (header.length() < 6) {
@@ -481,18 +481,18 @@ public class hspda extends FunctionBase {
     }
 
     /**
-     * •¶š—ñcell‚ªkeyword‚ğŠÜ‚Ş‚©‚Ç‚¤‚©”»•Ê‚·‚éB
-     * ƒIƒvƒVƒ‡ƒ“CCSV_OPT_NOCASEECCSV_OPT_ZENKAKU‚¨‚æ‚ÑCCSV_OPT_EXPRESSION‚Í ‚±‚±‚Å”½‰f‚³‚¹‚é‚±‚ÆB
-     * Œ»ƒo[ƒWƒ‡ƒ“‚Å‚ÍƒIƒvƒVƒ‡ƒ“CCSV_OPT_ZENKAKU‚¨‚æ‚ÑCCSV_OPT_EXPRESSION‚Í–¢‘Î‰B
-     * ƒIƒvƒVƒ‡ƒ“CCSV_OPT_NOCASE‚Í‘SŠp”¼Šp‹æ•Ê‚È‚­“®ìB
+     * æ–‡å­—åˆ—cellãŒkeywordã‚’å«ã‚€ã‹ã©ã†ã‹åˆ¤åˆ¥ã™ã‚‹ã€‚
+     * ã‚ªãƒ—ã‚·ãƒ§ãƒ³CCSV_OPT_NOCASEãƒ»CCSV_OPT_ZENKAKUãŠã‚ˆã³CCSV_OPT_EXPRESSIONã¯ ã“ã“ã§åæ˜ ã•ã›ã‚‹ã“ã¨ã€‚
+     * ç¾ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã§ã¯ã‚ªãƒ—ã‚·ãƒ§ãƒ³CCSV_OPT_ZENKAKUãŠã‚ˆã³CCSV_OPT_EXPRESSIONã¯æœªå¯¾å¿œã€‚
+     * ã‚ªãƒ—ã‚·ãƒ§ãƒ³CCSV_OPT_NOCASEã¯å…¨è§’åŠè§’åŒºåˆ¥ãªãå‹•ä½œã€‚
      *
-     * @param cell ƒZƒ‹‚Ì•¶š—ñ
-     * @param keyword ŒŸõ‚·‚éƒL[ƒ[ƒh
-     * @return ƒZƒ‹‚ªƒL[ƒ[ƒh‚ğŠÜ‚Ş‚©”Û‚©
+     * @param cell ã‚»ãƒ«ã®æ–‡å­—åˆ—
+     * @param keyword æ¤œç´¢ã™ã‚‹ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
+     * @return ã‚»ãƒ«ãŒã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’å«ã‚€ã‹å¦ã‹
      */
     private static boolean serchCell(final ByteString cell, final ByteString keyword) {
         if ((csvOption & Option.CCSV_OPT_NOCASE) != 0) {
-            // ‘å•¶š¬•¶š‚ğ“¯ˆê‹i‘SŠp”¼Šp‹æ•Ê‚È‚­“®ìj
+            // å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒä¸€è¦–ï¼ˆå…¨è§’åŠè§’åŒºåˆ¥ãªãå‹•ä½œï¼‰
             ByteString sourceString = new ByteString(cell.toString().toLowerCase());
             ByteString keywordString = new ByteString(keyword.toString().toLowerCase());
             return sourceString.indexOf(keywordString, 0) != -1;
@@ -501,9 +501,9 @@ public class hspda extends FunctionBase {
         }
     }
     // -------------------------------------------
-    // rndf_`Œn
-    //   Mersenne Twister‚Ìƒ‰ƒCƒZƒ“ƒX‚ª•ª‚©‚Á‚½iCharlotte‚³‚ñ‚ÉŠ´Ó!j‚Ì‚Å‚»‚ê‚ğg—pB
-    //   ƒIƒŠƒWƒiƒ‹Fhttp://www.cs.umd.edu/users/seanl/gp/mersenne/MersenneTwister.java
+    // rndf_ã€œç³»
+    //   Mersenne Twisterã®ãƒ©ã‚¤ã‚»ãƒ³ã‚¹ãŒåˆ†ã‹ã£ãŸï¼ˆCharlotteã•ã‚“ã«æ„Ÿè¬!ï¼‰ã®ã§ãã‚Œã‚’ä½¿ç”¨ã€‚
+    //   ã‚ªãƒªã‚¸ãƒŠãƒ«ï¼šhttp://www.cs.umd.edu/users/seanl/gp/mersenne/MersenneTwister.java
     static Random randomGenerator = new SecureRandom();
 
     public static void rndf_ini(Operand seed, final int seedi) {
@@ -525,8 +525,8 @@ public class hspda extends FunctionBase {
     }
 
     // -------------------------------------------
-    // getvar`Œn
-    //   “–•ªŒã‰ñ‚µ
+    // getvarã€œç³»
+    //   å½“åˆ†å¾Œå›ã—
     public static void getvarid(final Context context, final Operand o, final int oi, final String varname) {
 
         context.error(HSPError.UnsupportedOperation, "getvarid");
@@ -543,8 +543,8 @@ public class hspda extends FunctionBase {
     }
 
     // -------------------------------------------
-    // vsave, vloadŒn
-    //   “–•ªŒã‰ñ‚µ
+    // vsave, vloadç³»
+    //   å½“åˆ†å¾Œå›ã—
     public static void vsave(final Context context, final String filename) {
 
         context.error(HSPError.UnsupportedOperation, "vsave");

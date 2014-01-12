@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * ƒfƒtƒHƒ‹ƒg‚Ìƒ‰ƒCƒ“ƒ^ƒCƒ€î•ñB
+ * ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®ãƒ©ã‚¤ãƒ³ã‚¿ã‚¤ãƒ æƒ…å ±ã€‚
  * 
  * @author Yuki
  * @version $Revision: 1.6 $, $Date: 2006/01/16 19:34:22 $
@@ -29,17 +29,17 @@ public class DefaultRuntimeInfo implements RuntimeInfo {
 	private ClassLoader extLibLoader;
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
-	 * @param extLibLoader Šg’£ƒ‰ƒCƒuƒ‰ƒŠ‚ğ“Ç‚İ‚Ş‚½‚ß‚ÌƒNƒ‰ƒXƒ[ƒ_B
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
+	 * @param extLibLoader æ‹¡å¼µãƒ©ã‚¤ãƒ–ãƒ©ãƒªã‚’èª­ã¿è¾¼ã‚€ãŸã‚ã®ã‚¯ãƒ©ã‚¹ãƒ­ãƒ¼ãƒ€ã€‚
 	 */
 	public DefaultRuntimeInfo(final ClassLoader extLibLoader) {
 		this.extLibLoader = extLibLoader;
 	}
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: DefaultRuntimeInfo.java,v 1.6 2006/01/16 19:34:22 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = -9212746715730027401L;
 
 	private static final String[][] basicFunctions = new String[][] {
@@ -129,8 +129,8 @@ public class DefaultRuntimeInfo implements RuntimeInfo {
 			}
                         
 		default:
-			throw new RuntimeException("–½—ßƒ^ƒCƒv " + code.type
-					+ " ‚ÍƒNƒ‰ƒX‚ÆŠÖ˜A•t‚¯‚ç‚ê‚Ü‚¹‚ñB");
+			throw new RuntimeException("å‘½ä»¤ã‚¿ã‚¤ãƒ— " + code.type
+					+ " ã¯ã‚¯ãƒ©ã‚¹ã¨é–¢é€£ä»˜ã‘ã‚‰ã‚Œã¾ã›ã‚“ã€‚");
 		}
 	}
 
@@ -208,8 +208,8 @@ public class DefaultRuntimeInfo implements RuntimeInfo {
 				name = basicFunctions[2][code.value & 0x7F];
 				break;
 			default:
-				throw new UnsupportedOperationException("“à•”ŠÖ” " + code.value
-						+ " ‚ÍƒTƒ|[ƒg‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB");
+				throw new UnsupportedOperationException("å†…éƒ¨é–¢æ•° " + code.value
+						+ " ã¯ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
 			}
 			break;
 		case ByteCode.Code.Type.ExtSysVar:
@@ -221,8 +221,8 @@ public class DefaultRuntimeInfo implements RuntimeInfo {
 				name = guiFunctions[1][code.value & 0xFF];
 				break;
 			default:
-				throw new UnsupportedOperationException("Šg’£ GUI ŠÖ” "
-						+ code.value + " ‚ÍƒTƒ|[ƒg‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB");
+				throw new UnsupportedOperationException("æ‹¡å¼µ GUI é–¢æ•° "
+						+ code.value + " ã¯ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
 			}
 			break;
 		case ByteCode.Code.Type.ProgCmd:
@@ -251,7 +251,7 @@ public class DefaultRuntimeInfo implements RuntimeInfo {
                         name = DllCtrlClassStub.getMethodNameBySubTypeId(code.value);
                         break;
 		default:
-			throw new RuntimeException("–½—ßƒ^ƒCƒv " + code.type);
+			throw new RuntimeException("å‘½ä»¤ã‚¿ã‚¤ãƒ— " + code.type);
 		}
 
 		HashMap<String, MethodInformation> theseMethods = cachedMethods.get(clazz);

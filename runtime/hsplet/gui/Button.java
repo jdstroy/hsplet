@@ -13,9 +13,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * button ƒRƒ“ƒgƒ[ƒ‹B
+ * button ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã€‚
  * <p>
- * ƒNƒŠƒbƒN‚³‚ê‚½‚çƒWƒƒƒ“ƒvƒ^ƒXƒN‚ğ“o˜^‚·‚éB
+ * ã‚¯ãƒªãƒƒã‚¯ã•ã‚ŒãŸã‚‰ã‚¸ãƒ£ãƒ³ãƒ—ã‚¿ã‚¹ã‚¯ã‚’ç™»éŒ²ã™ã‚‹ã€‚
  * </p>
  * 
  * @author Yuki
@@ -23,18 +23,18 @@ import java.awt.event.ActionListener;
  */
 public class Button extends javax.swing.JButton implements ActionListener, HSPControl {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: Button.java,v 1.3 2006/02/11 17:19:32 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = 7638106082988894456L;
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
-	 * @param text ƒ{ƒ^ƒ“‚É•\¦‚·‚éƒeƒLƒXƒgB
-	 * @param context Às‚³‚ê‚Ä‚¢‚éƒRƒ“ƒeƒLƒXƒgB
-	 * @param jump ƒWƒƒƒ“ƒv‚Ìí—ŞB
-	 * @param label ƒWƒƒƒ“ƒvæƒ‰ƒxƒ‹B
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
+	 * @param text ãƒœã‚¿ãƒ³ã«è¡¨ç¤ºã™ã‚‹ãƒ†ã‚­ã‚¹ãƒˆã€‚
+	 * @param context å®Ÿè¡Œã•ã‚Œã¦ã„ã‚‹ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã€‚
+	 * @param jump ã‚¸ãƒ£ãƒ³ãƒ—ã®ç¨®é¡ã€‚
+	 * @param label ã‚¸ãƒ£ãƒ³ãƒ—å…ˆãƒ©ãƒ™ãƒ«ã€‚
 	 */
 	public Button(final String text, final Context context, final JumpStatement jump, final int label) {
 

@@ -7,24 +7,24 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * ��܂��ꂽ InputStream �����g���G���f�B�A���Ƃ݂Ȃ��đ��o�C�g�̏�����x�Ɏ��o�����߂̃N���X�B
+ * 包含された InputStream をリトルエンディアンとみなして多バイトの情報を一度に取り出すためのクラス。
  * <p>
- * HSP �̒��ԃR�[�h�� WORD/DWORD ���f�[�^�̊�{�P�ʂƂȂ��Ă���̂ŁAJava �� InputStream �͗��p���ɂ����B ���̃N���X�Ń��b�v�����Ԃ��A�e�ՂɃf�[�^�����o����悤�ɂ���B
+ * HSP の中間コードは WORD/DWORD がデータの基本単位となっているので、Java の InputStream は利用しにくい。 このクラスでラップをかぶせ、容易にデータを取り出せるようにする。
  * </p>
  * 
- * @note Java �̃��C�u�����ɓ����̃N���X�����肻���Ȃ̂ŁA��������Βu��������B
+ * @note Java のライブラリに同等のクラスがありそうなので、もしあれば置き換える。
  * @author Yuki
  * @version $Revision: 1.3 $, $Date: 2006/01/13 20:32:11 $
  */
 public final class LEInputStream extends InputStream {
 
-	/** ���̃N���X���܂ރ\�[�X�t�@�C���̃o�[�W����������B */
+	/** このクラスを含むソースファイルのバージョン文字列。 */
 	private static final String fileVersionID = "$Id: LEInputStream.java,v 1.3 2006/01/13 20:32:11 Yuki Exp $";
 
-	/** ���̃I�u�W�F�N�g����܂��� InputStream */
+	/** このオブジェクトが包含する InputStream */
 	private final InputStream inner;
 
-	/** ���݂̓ǂݎ��ς݃I�t�Z�b�g */
+	/** 現在の読み取り済みオフセット */
 	private int offset;
 
 	public LEInputStream(final InputStream inner) {

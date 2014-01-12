@@ -6,9 +6,9 @@ package hsplet.function;
 import java.io.Serializable;
 
 /**
- * ƒWƒƒƒ“ƒvƒXƒe[ƒgƒƒ“ƒg‚ğ‚ ‚ç‚í‚·ˆø”’lB
+ * ã‚¸ãƒ£ãƒ³ãƒ—ã‚¹ãƒ†ãƒ¼ãƒˆãƒ¡ãƒ³ãƒˆã‚’ã‚ã‚‰ã‚ã™å¼•æ•°å€¤ã€‚
  * <p>
- * button ‚È‚ÇAgoto or gosub ‚ğ’Ç‰Á‚Åó‚¯æ‚éƒRƒ}ƒ“ƒh‚Ìˆø”‚Ég—p‚·‚é’lB
+ * button ãªã©ã€goto or gosub ã‚’è¿½åŠ ã§å—ã‘å–ã‚‹ã‚³ãƒãƒ³ãƒ‰ã®å¼•æ•°ã«ä½¿ç”¨ã™ã‚‹å€¤ã€‚
  * </p>
  * 
  * @author Yuki
@@ -16,26 +16,26 @@ import java.io.Serializable;
  */
 public final class JumpStatement implements Serializable {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: JumpStatement.java,v 1.2 2006/01/13 20:32:09 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = -4548306193459980074L;
 
 	private int code;
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
-	 * @param code ƒWƒƒƒ“ƒv‚Ìí—Ş‚ğ•\‚·’è”B
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
+	 * @param code ã‚¸ãƒ£ãƒ³ãƒ—ã®ç¨®é¡ã‚’è¡¨ã™å®šæ•°ã€‚
 	 */
 	private JumpStatement(final int code) {
 		this.code = code;
 	}
 
-	/** goto ‚ªw’è‚³‚ê‚½B */
+	/** goto ãŒæŒ‡å®šã•ã‚ŒãŸã€‚ */
 	public static final JumpStatement Goto = new JumpStatement(0);
 
-	/** gosub ‚ªw’è‚³‚ê‚½B */
+	/** gosub ãŒæŒ‡å®šã•ã‚ŒãŸã€‚ */
 	public static final JumpStatement Gosub = new JumpStatement(1);
 
 	private Object readResolve() {

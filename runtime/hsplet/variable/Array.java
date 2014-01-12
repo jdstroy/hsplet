@@ -5,9 +5,9 @@ package hsplet.variable;
 import hsplet.HSPError;
 
 /**
- * �z��I�y�����h������킷��{�N���X�B
+ * 配列オペランドをあらわす基本クラス。
  * <p>
- * ���̃N���X�͔z��̃C���f�b�N�X�ƃI�t�Z�b�g�̊֌W���`���A �z��̗v�f�̌^�Ɖ��Z�̎����̓T�u�N���X�ɔC����B
+ * このクラスは配列のインデックスとオフセットの関係を定義し、 配列の要素の型と演算の実装はサブクラスに任せる。
  * </p>
  * 
  * @author Yuki
@@ -17,31 +17,31 @@ public abstract class Array extends Operand {
     
     public int MAX_DIMENSION_INDEX = 4;
 
-  /** ���̃N���X���܂ރ\�[�X�t�@�C���̃o�[�W����������B */
+  /** このクラスを含むソースファイルのバージョン文字列。 */
   private static final String fileVersionID = "$Id: Array.java,v 1.2 2006/01/13 20:32:12 Yuki Exp $";
 
-  /** �ꎟ���ڂ̗v�f���B */
+  /** 一次元目の要素数。 */
   protected int l0;
 
-  /** �񎟌��ڂ̗v�f���B */
+  /** 二次元目の要素数。 */
   protected int l1;
 
-  /** �O�����ڂ̗v�f���B */
+  /** 三次元目の要素数。 */
   protected int l2;
 
-  /** �l�����ڂ̗v�f���B */
+  /** 四次元目の要素数。 */
   protected int l3;
 
   /**
-   * �v�f�����w�肵�ăI�u�W�F�N�g���\�z����B
+   * 要素数を指定してオブジェクトを構築する。
    * <p>
-   * �I���W�i�� HSP �ƈႢ�A�v�f���� 0 ���w�肷�邱�Ƃ͏o���Ȃ��B �܂�A�z��͕K���l�������邱�ƂɂȂ�B ���̂ق����v�f���Ȃǂ̌v�Z���ȒP�B
+   * オリジナル HSP と違い、要素数に 0 を指定することは出来ない。 つまり、配列は必ず四次元あることになる。 そのほうが要素数などの計算が簡単。
    * </p>
    * 
-   * @param l0 �ꎟ���ڂ̗v�f���B
-   * @param l1 �񎟌��ڂ̗v�f���B
-   * @param l2 �O�����ڂ̗v�f���B
-   * @param l3 �l�����ڂ̗v�f���B
+   * @param l0 一次元目の要素数。
+   * @param l1 二次元目の要素数。
+   * @param l2 三次元目の要素数。
+   * @param l3 四次元目の要素数。
    */
   public Array(final int l0, final int l1, final int l2, final int l3) {
 
@@ -261,12 +261,12 @@ public abstract class Array extends Operand {
 
 
   /**
-   * �w�肳�ꂽ�v�f�ɃA�N�Z�X�ł���悤�ɔz��������g������B
+   * 指定された要素にアクセスできるように配列を自動拡張する。
    * <p>
-   * ���̃��\�b�h�͗v�f����K�؂ɕύX���邾���Ȃ̂ŁB �T�u�N���X�ŃI�[�o�[���C�h����K�v������B
+   * このメソッドは要素数を適切に変更するだけなので。 サブクラスでオーバーライドする必要がある。
    * </p>
    * 
-   * @param index �Œ���m�ۂ������v�f�ԍ��B
+   * @param index 最低限確保したい要素番号。
    */
   public void expand(final int i0) {
     if(i0 >= l0) l0 = i0+1;

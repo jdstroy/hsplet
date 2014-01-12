@@ -19,29 +19,29 @@ import javax.swing.JApplet;
 import javax.swing.UIManager;
 
 /**
- * HSPLet ‚ÌƒƒCƒ“ƒAƒvƒŒƒbƒgƒNƒ‰ƒXB
+ * HSPLet ã®ãƒ¡ã‚¤ãƒ³ã‚¢ãƒ—ãƒ¬ãƒƒãƒˆã‚¯ãƒ©ã‚¹ã€‚
  * 
  * @author Yuki
  * @version $Revision: 1.9 $, $Date: 2006/05/09 11:57:31 $
  */
 public final class Applet extends JApplet implements HSPScreen {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: Applet.java,v 1.9 2006/05/09 11:57:31 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = -1458193602845132311L;
 
-	/** ŠJnƒNƒ‰ƒX–¼‚ğ“n‚·ƒpƒ‰ƒ[ƒ^–¼B */
+	/** é–‹å§‹ã‚¯ãƒ©ã‚¹åã‚’æ¸¡ã™ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿åã€‚ */
 	public static final String START_CLASSNAME_PARAM = "startClass";
 
-	/** ƒfƒtƒHƒ‹ƒg‚ÌŠJnƒNƒ‰ƒX–¼B*/
+	/** ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®é–‹å§‹ã‚¯ãƒ©ã‚¹åã€‚*/
 	public static final String DEFAULT_START_CLASSNAME = "start";
 
 	private final Context context = new Context();
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
 	 */
 	public Applet() {
 
@@ -80,8 +80,8 @@ public final class Applet extends JApplet implements HSPScreen {
 	}
 
 	/**
-	 * ƒNƒ‰ƒX‚ğw’è‚µ‚ÄƒAƒvƒŒƒbƒg‚ğŠJn‚·‚éB
-	 * @param codeClass Às‚·‚éƒR[ƒh‚ÌƒNƒ‰ƒXB
+	 * ã‚¯ãƒ©ã‚¹ã‚’æŒ‡å®šã—ã¦ã‚¢ãƒ—ãƒ¬ãƒƒãƒˆã‚’é–‹å§‹ã™ã‚‹ã€‚
+	 * @param codeClass å®Ÿè¡Œã™ã‚‹ã‚³ãƒ¼ãƒ‰ã®ã‚¯ãƒ©ã‚¹ã€‚
 	 */
 	public void init(final Class codeClass) {
 
@@ -97,7 +97,7 @@ public final class Applet extends JApplet implements HSPScreen {
 	//@Override
 	public void start() {
 
-		// ‰‰ñ‹N“®‚Í‚Ü‚¸ƒtƒH[ƒJƒX‚ğ“¾‚éB
+		// åˆå›èµ·å‹•æ™‚ã¯ã¾ãšãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’å¾—ã‚‹ã€‚
 		new Timer().schedule(new TimerTask() {
 
 			//@Override

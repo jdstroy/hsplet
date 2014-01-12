@@ -7,17 +7,17 @@ import hsplet.function.JumpStatement;
 import hsplet.function.ProgramCommand;
 
 /**
- * ƒ{ƒ^ƒ“‚âƒL[“ü—Í‚È‚Ç‚É‚æ‚Á‚Ä”­¶‚·‚éŠ„‚è‚İƒWƒƒƒ“ƒvƒ^ƒXƒNB
+ * ãƒœã‚¿ãƒ³ã‚„ã‚­ãƒ¼å…¥åŠ›ãªã©ã«ã‚ˆã£ã¦ç™ºç”Ÿã™ã‚‹å‰²ã‚Šè¾¼ã¿ã‚¸ãƒ£ãƒ³ãƒ—ã‚¿ã‚¹ã‚¯ã€‚
  * 
  * @author Yuki
  * @version $Revision: 1.3 $, $Date: 2006/01/13 20:32:10 $
  */
 public class JumpTask implements Task {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	private static final String fileVersionID = "$Id: JumpTask.java,v 1.3 2006/01/13 20:32:10 Yuki Exp $";
 
-	/** ’¼—ñ‰»•œŒ³‚ÉAƒf[ƒ^‚ÌŒİŠ·«‚ğŠm”F‚·‚é‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“”Ô†B */
+	/** ç›´åˆ—åŒ–å¾©å…ƒæ™‚ã«ã€ãƒ‡ãƒ¼ã‚¿ã®äº’æ›æ€§ã‚’ç¢ºèªã™ã‚‹ãŸã‚ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ã€‚ */
 	private static final long serialVersionUID = -6548767826568493395L;
 
 	private final JumpStatement jump;
@@ -33,15 +33,15 @@ public class JumpTask implements Task {
 	private final Integer ID;
 
 	/**
-	 * ƒIƒuƒWƒFƒNƒg‚ğ\’z‚·‚éB
-	 * @param jump ƒWƒƒƒ“ƒv‚Ìí—ŞB
-	 * @param label ƒWƒƒƒ“ƒvæƒ‰ƒxƒ‹B
-	 * @param iparam ƒVƒXƒeƒ€•Ï” iparam ‚ÉƒZƒbƒg‚·‚é’lB
-	 * ƒZƒbƒg‚·‚é•K—v‚ª–³‚¢‚Æ‚«‚Í nullB
-	 * @param wparam ƒVƒXƒeƒ€•Ï” wparam ‚ÉƒZƒbƒg‚·‚é’lB
-	 * ƒZƒbƒg‚·‚é•K—v‚ª–³‚¢‚Æ‚«‚Í nullB
-	 * @param lparam ƒVƒXƒeƒ€•Ï” lparam ‚ÉƒZƒbƒg‚·‚é’lB
-	 * ƒZƒbƒg‚·‚é•K—v‚ª–³‚¢‚Æ‚«‚Í nullB
+	 * ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ§‹ç¯‰ã™ã‚‹ã€‚
+	 * @param jump ã‚¸ãƒ£ãƒ³ãƒ—ã®ç¨®é¡ã€‚
+	 * @param label ã‚¸ãƒ£ãƒ³ãƒ—å…ˆãƒ©ãƒ™ãƒ«ã€‚
+	 * @param iparam ã‚·ã‚¹ãƒ†ãƒ å¤‰æ•° iparam ã«ã‚»ãƒƒãƒˆã™ã‚‹å€¤ã€‚
+	 * ã‚»ãƒƒãƒˆã™ã‚‹å¿…è¦ãŒç„¡ã„ã¨ãã¯ nullã€‚
+	 * @param wparam ã‚·ã‚¹ãƒ†ãƒ å¤‰æ•° wparam ã«ã‚»ãƒƒãƒˆã™ã‚‹å€¤ã€‚
+	 * ã‚»ãƒƒãƒˆã™ã‚‹å¿…è¦ãŒç„¡ã„ã¨ãã¯ nullã€‚
+	 * @param lparam ã‚·ã‚¹ãƒ†ãƒ å¤‰æ•° lparam ã«ã‚»ãƒƒãƒˆã™ã‚‹å€¤ã€‚
+	 * ã‚»ãƒƒãƒˆã™ã‚‹å¿…è¦ãŒç„¡ã„ã¨ãã¯ nullã€‚
 	 */
 	public JumpTask(final JumpStatement jump, final int label,
 			final Integer iparam, final Integer wparam, final Integer lparam) {

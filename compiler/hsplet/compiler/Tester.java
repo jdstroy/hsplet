@@ -12,14 +12,14 @@ import edu.stanford.ejalbert.exception.UnsupportedOperatingSystemException;
 public class Tester {
 
 	/**
-	 * ƒeƒXƒg‚ğÀs‚·‚éB
+	 * ãƒ†ã‚¹ãƒˆã‚’å®Ÿè¡Œã™ã‚‹ã€‚
 	 * 
 	 * @param args
-	 *            Às‚Ìˆø”B
+	 *            å®Ÿè¡Œæ™‚ã®å¼•æ•°ã€‚
 	 *            <ol>
-	 *            <li>--port=¶¬‚·‚éJARƒtƒ@ƒCƒ‹–¼</li>
-	 *            <li>--html=•\¦‚·‚éHTMLƒtƒ@ƒCƒ‹–¼</li>
-	 *            <li>--hidden=ƒEƒBƒ“ƒhƒE‚ğ•\¦‚µ‚È‚¢</li>
+	 *            <li>--port=ç”Ÿæˆã™ã‚‹JARãƒ•ã‚¡ã‚¤ãƒ«å</li>
+	 *            <li>--html=è¡¨ç¤ºã™ã‚‹HTMLãƒ•ã‚¡ã‚¤ãƒ«å</li>
+	 *            <li>--hidden=ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’è¡¨ç¤ºã—ãªã„</li>
 	 *            </ol>
 	 * @throws BrowserLaunchingInitializingException 
 	 * @throws BrowserLaunchingExecutionException 
@@ -46,7 +46,7 @@ public class Tester {
 		}
 
 		if (htmlFile == null) {
-			throw new RuntimeException("HTML ƒtƒ@ƒCƒ‹–¼‚ªw’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB");
+			throw new RuntimeException("HTML ãƒ•ã‚¡ã‚¤ãƒ«åãŒæŒ‡å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
 		}
 
 		test(port, htmlFile, hidden);

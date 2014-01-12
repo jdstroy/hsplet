@@ -9,27 +9,27 @@ import java.awt.Component;
 import java.io.Serializable;
 
 /**
- * HSP‚ÌƒRƒ“ƒgƒ[ƒ‹‚ğ‚ ‚ç‚í‚·ƒCƒ“ƒ^[ƒtƒFƒCƒXB
+ * HSPã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã‚’ã‚ã‚‰ã‚ã™ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã€‚
  * 
  * @author Yuki
  * @version $Revision: 1.2 $, $Date: 2006/01/13 05:20:51 $
  */
 public interface HSPControl extends Serializable {
 
-	/** ‚±‚ÌƒNƒ‰ƒX‚ğŠÜ‚Şƒ\[ƒXƒtƒ@ƒCƒ‹‚Ìƒo[ƒWƒ‡ƒ“•¶š—ñB */
+	/** ã“ã®ã‚¯ãƒ©ã‚¹ã‚’å«ã‚€ã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³æ–‡å­—åˆ—ã€‚ */
 	static final String fileVersionID = "$Id: HSPControl.java,v 1.2 2006/01/13 05:20:51 Yuki Exp $";
 
 	/**
-	 * ƒRƒ“ƒ|[ƒlƒ“ƒg‚Æ‚µ‚Ä‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğæ“¾‚·‚éB
-	 * @return ƒRƒ“ƒ|[ƒlƒ“ƒg‚Æ‚µ‚Ä‚Ì‚±‚ÌƒCƒ“ƒXƒ^ƒ“ƒXB
+	 * ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã¨ã—ã¦ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’å–å¾—ã™ã‚‹ã€‚
+	 * @return ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã¨ã—ã¦ã®ã“ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã€‚
 	 */
 	public Component asComponent();
 
 	/**
-	 * ƒRƒ“ƒgƒ[ƒ‹‚É’l‚ğİ’è‚·‚éB
-	 * <p>objprm ‚Åg—p‚³‚ê‚éB</p>
-	 * @param v İ’è‚·‚é•Ï”B
-	 * @param vi İ’è‚·‚é•Ï”‚ÌƒCƒ“ƒfƒbƒNƒXB
+	 * ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«å€¤ã‚’è¨­å®šã™ã‚‹ã€‚
+	 * <p>objprm ã§ä½¿ç”¨ã•ã‚Œã‚‹ã€‚</p>
+	 * @param v è¨­å®šã™ã‚‹å¤‰æ•°ã€‚
+	 * @param vi è¨­å®šã™ã‚‹å¤‰æ•°ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã€‚
 	 */
 	public void setValue(final Operand v, final int vi);
 
